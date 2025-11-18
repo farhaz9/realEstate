@@ -22,7 +22,6 @@ export default function ProgressBar() {
         setScroll(0);
     }
 
-
     if (position > 300) {
       setShowButton(true);
     } else {
@@ -47,12 +46,13 @@ export default function ProgressBar() {
 
   return (
     <>
-      <div className="fixed top-16 left-0 w-full h-1 bg-transparent z-50">
-        <div
-          className="h-1 bg-primary transition-all duration-300 ease-out"
-          style={{ width: `${scroll}%` }}
-        />
+      <div className="fixed inset-0 pointer-events-none z-[60]">
+        <div className="absolute top-0 left-0 bg-primary transition-all duration-300 ease-out" style={{ width: `${scroll}%`, height: '4px' }} />
+        <div className="absolute top-0 right-0 bg-primary transition-all duration-300 ease-out" style={{ height: `${scroll}%`, width: '4px' }} />
+        <div className="absolute bottom-0 right-0 bg-primary transition-all duration-300 ease-out" style={{ width: `${100-scroll}%`, height: '4px' }} />
+        <div className="absolute bottom-0 left-0 bg-primary transition-all duration-300 ease-out" style={{ height: `${100-scroll}%`, width: '4px' }} />
       </div>
+
       <Button
         size="icon"
         className={cn(
