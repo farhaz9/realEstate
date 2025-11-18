@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "hero-1",
-      "description": "Luxury apartment building exterior at dusk",
-      "imageUrl": "https://images.unsplash.com/photo-1531591022136-eb8b0da1e6d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzYzMzgyNjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "modern architecture"
+      "description": "Modern luxury house with a swimming pool at twilight",
+      "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob21lfGVufDB8fHx8MTc2MzM4MTU0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury home"
     },
     {
       "id": "property-1",

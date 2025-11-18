@@ -1,11 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles } from "lucide-react";
+import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
 import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const faqs = [
+  {
+    question: "What types of properties do you specialize in?",
+    answer: "We specialize in high-end luxury properties in Delhi, including apartments, villas, penthouses, and farmhouses in prime locations like South Delhi, Central Delhi, and Lutyens' Delhi."
+  },
+  {
+    question: "Do you offer interior design services?",
+    answer: "Yes, we offer bespoke interior design services to help you personalize your new home. Our team works with you to create a space that reflects your style and meets your needs."
+  },
+  {
+    question: "How does the AI Property Finder work?",
+    answer: "Our AI Property Finder uses advanced algorithms to analyze your preferences, such as price range, location, and desired amenities, to provide you with personalized property recommendations, saving you time and effort."
+  },
+  {
+    question: "Can you assist with legal and financial processes?",
+    answer: "Absolutely. We provide end-to-end assistance, including connecting you with trusted legal advisors and financial experts to ensure a smooth and transparent transaction process."
+  }
+];
+
 
 export default function HomePage() {
   const heroImage = PlaceHolderImages.find((img) => img.id === "hero-1");
@@ -144,6 +167,69 @@ export default function HomePage() {
               </div>
             </div>
           </Card>
+        </div>
+      </section>
+
+      <section id="faq" className="py-16 md:py-24 bg-card">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
+            <p className="mt-2 text-muted-foreground">
+              Have questions? We have answers.
+            </p>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <AccordionItem value={`item-${index}`} key={index}>
+                <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      <section id="contact" className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Get In Touch</h2>
+            <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
+              We're here to help you find your dream property. Contact us today.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+            <div className="grid grid-cols-1 gap-8">
+              <div>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112173.39399844981!2d77.13962699316524!3d28.52735728109861!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce1a7145788c7%3A0x28af8763c3d82343!2sSouth%20Delhi%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700052954881!5m2!1sen!2sin"
+                  width="100%"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="rounded-lg shadow-lg"
+                ></iframe>
+              </div>
+            </div>
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Send us a Message</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form className="space-y-4">
+                    <Input placeholder="Your Name" />
+                    <Input type="email" placeholder="Your Email" />
+                    <Textarea placeholder="Your Message" rows={5} />
+                    <Button type="submit" className="w-full">Send Message</Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </section>
 

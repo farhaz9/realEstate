@@ -13,7 +13,7 @@ import {
 export function ContactButtons() {
     return (
         <TooltipProvider>
-            <div className="fixed bottom-20 right-4 z-40 flex flex-col gap-3 md:bottom-6">
+            <div className="fixed bottom-24 right-4 z-40 flex flex-col gap-3 md:bottom-24">
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button asChild size="icon" className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 shadow-lg">
