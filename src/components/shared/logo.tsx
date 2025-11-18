@@ -13,7 +13,7 @@ export function Logo() {
         alt="Farhaz Homes Logo"
         width={150}
         height={40}
-        className="object-cover"
+        className="object-contain"
         priority
       />
     </Link>
