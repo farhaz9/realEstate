@@ -34,6 +34,7 @@ export default function RootLayout({
           "min-h-screen bg-background font-sans antialiased",
           poppins.variable
         )}
+        suppressHydrationWarning
       >
         <Header />
         <main className="min-h-[calc(100vh-theme(spacing.16))] pt-16 pb-16 md:pb-0">
