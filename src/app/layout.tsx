@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Belleza } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,8 +14,13 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+export const belleza = Belleza({
+  subsets: ['latin'],
+  weight: ['400'],
+});
+
 export const metadata: Metadata = {
-  title: "Delhi Estate Luxe",
+  title: "Farhaz Homes",
   description: "Find high-end luxury properties in Delhi.",
   icons: {
     icon: "/favicon.ico",
@@ -34,7 +39,6 @@ export default function RootLayout({
           "min-h-screen bg-background font-sans antialiased",
           poppins.variable
         )}
-        suppressHydrationWarning
       >
         <Header />
         <main className="min-h-[calc(100vh-theme(spacing.16))] pt-16 pb-16 md:pb-0">
