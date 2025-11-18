@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Palette, Phone, MessageCircle } from "lucide-react";
+import { Home, Palette, Phone, MessageCircle, Building } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "/interiors", label: "Designs", icon: Palette },
+  { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/", label: "Home", icon: Home },
   { href: "/contact", label: "Contact", icon: Phone },
 ];
