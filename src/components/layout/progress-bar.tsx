@@ -14,8 +14,14 @@ export default function ProgressBar() {
     const maxHeight =
       document.documentElement.scrollHeight -
       document.documentElement.clientHeight;
-    const scrollPercent = (position / maxHeight) * 100;
-    setScroll(scrollPercent);
+    
+    if (maxHeight > 0) {
+        const scrollPercent = (position / maxHeight) * 100;
+        setScroll(scrollPercent);
+    } else {
+        setScroll(0);
+    }
+
 
     if (position > 300) {
       setShowButton(true);
@@ -33,6 +39,7 @@ export default function ProgressBar() {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Call on mount to set initial state
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -40,7 +47,7 @@ export default function ProgressBar() {
 
   return (
     <>
-      <div className="fixed top-16 left-0 w-full h-1 bg-transparent z-50">
+      <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50 md:top-16">
         <div
           className="h-1 bg-primary transition-all duration-300 ease-out"
           style={{ width: `${scroll}%` }}
@@ -49,13 +56,13 @@ export default function ProgressBar() {
       <Button
         size="icon"
         className={cn(
-          "fixed bottom-6 right-6 z-50 rounded-full shadow-lg transition-opacity duration-300",
+          "fixed bottom-20 right-4 z-50 rounded-full h-14 w-14 shadow-lg transition-opacity duration-300 md:bottom-6",
           showButton ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={scrollToTop}
         aria-label="Scroll to top"
       >
-        <ChevronUp className="h-6 w-6" />
+        <ChevronUp className="h-7 w-7" />
       </Button>
     </>
   );

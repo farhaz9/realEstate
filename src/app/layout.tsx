@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/layout/header";
 import MobileNav from "@/components/layout/mobile-nav";
 import Footer from "@/components/layout/footer";
-import { ContactButtons } from "@/components/shared/contact-buttons";
+import ProgressBar from "@/components/layout/progress-bar";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -40,7 +40,7 @@ export default function RootLayout({
         <main className="min-h-[calc(100vh-theme(spacing.16))] pt-16 pb-16 md:pb-0">
           {children}
         </main>
-        <ContactButtons />
+        <ProgressBar />
         <MobileNav />
         <Footer />
         <Toaster />
