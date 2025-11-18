@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Palette, Phone } from "lucide-react";
+import { Home, Palette, Phone, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -10,6 +10,10 @@ const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/contact", label: "Contact", icon: Phone },
 ];
+
+const actionButtons = [
+    { href: "https://wa.me/910000000000", label: "WhatsApp", icon: MessageCircle, target:"_blank" },
+]
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -32,6 +36,29 @@ export default function MobileNav() {
               <div className={cn(
                 "flex items-center justify-center h-12 w-12 rounded-full",
                 isActive && link.label === "Home" ? "bg-primary text-primary-foreground" : ""
+              )}>
+                <link.icon className="h-6 w-6" />
+              </div>
+              <span className={cn(
+                link.label === "Home" && "absolute -bottom-1"
+              )}>{link.label}</span>
+            </Link>
+          );
+        })}
+         {actionButtons.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              target={link.target}
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-20",
+                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <div className={cn(
+                "flex items-center justify-center h-12 w-12 rounded-full"
               )}>
                 <link.icon className="h-6 w-6" />
               </div>
