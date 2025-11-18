@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { Poppins, Belleza } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/toaster";
-import Header from "@/components/layout/header";
-import MobileNav from "@/components/layout/mobile-nav";
-import Footer from "@/components/layout/footer";
-import ProgressBar from "@/components/layout/progress-bar";
+import AppProviders from "@/components/layout/app-providers";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -40,14 +36,7 @@ export default function RootLayout({
           poppins.variable
         )}
       >
-        <Header />
-        <main className="min-h-[calc(100vh-theme(spacing.16))] pt-16 pb-16 md:pb-0">
-          {children}
-        </main>
-        <ProgressBar />
-        <MobileNav />
-        <Footer />
-        <Toaster />
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );
