@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { belleza } from '@/app/fonts';
+import Image from 'next/image';
 
 export function Logo() {
   return (
@@ -9,28 +8,14 @@ export function Logo() {
       className="flex items-center gap-2"
       aria-label="Farhaz Homes Home"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-7 w-7 text-primary"
-      >
-        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-        <path d="M2 17l10 5 10-5" />
-        <path d="M2 12l10 5 10-5" />
-      </svg>
-      <span
-        className={cn(
-          'text-xl font-bold tracking-tight text-foreground',
-          belleza.className
-        )}
-      >
-        FARHAZ HOMES
-      </span>
+      <Image
+        src="https://images-r-eal-estae.vercel.app/farhaz%20homes.png"
+        alt="Farhaz Homes Logo"
+        width={150}
+        height={40}
+        className="object-contain"
+        priority
+      />
     </Link>
   );
 }
