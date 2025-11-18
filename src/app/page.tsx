@@ -40,6 +40,16 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="py-12 bg-background">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Best Real Estate Company in Delhi
+            </span>
+          </h2>
+        </div>
+      </section>
+
       <section id="featured-listings" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
