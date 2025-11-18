@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Palette, Phone, MessageCircle, Building } from "lucide-react";
+import { Home, Palette, Phone, MessageCircle, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/interiors", label: "Interiors", icon: Palette },
+  { href: "/services", label: "Services", icon: Briefcase },
   { href: "/", label: "Home", icon: Home },
   { href: "/contact", label: "Contact", icon: Phone },
 ];
@@ -28,7 +29,7 @@ export default function MobileNav() {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-20",
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-16",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 link.label === "Home" && "relative -top-3 bg-background rounded-full p-2 border-t-4 border-primary shadow-lg"
               )}
@@ -53,7 +54,7 @@ export default function MobileNav() {
               href={link.href}
               target={link.target}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-20",
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-16",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -62,9 +63,7 @@ export default function MobileNav() {
               )}>
                 <link.icon className="h-6 w-6" />
               </div>
-              <span className={cn(
-                link.label === "Home" && "absolute -bottom-1"
-              )}>{link.label}</span>
+              <span>{link.label}</span>
             </Link>
           );
         })}

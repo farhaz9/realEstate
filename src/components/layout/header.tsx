@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/properties", label: "Properties" },
   { href: "/builders", label: "Builders" },
   { href: "/interiors", label: "Interiors" },
+  { href: "/services", label: "Services" },
   { href: "/recommendations", label: "AI Finder" },
   { href: "/contact", label: "Contact" },
 ];
