@@ -1,0 +1,124 @@
+import type { Property, Builder, InteriorProject } from '@/types';
+
+export const properties: Property[] = [
+  {
+    id: 'p1',
+    title: 'Modern Apartment in South Delhi',
+    type: 'Apartment',
+    location: 'South Delhi',
+    price: 3.5, // Crores
+    beds: 3,
+    baths: 3,
+    area: 2200,
+    image: 'property-1',
+    description: 'A stunning modern apartment with breathtaking city views, premium fittings, and a spacious layout.',
+  },
+  {
+    id: 'p2',
+    title: 'Luxury Villa with Private Pool',
+    type: 'Villa',
+    location: 'Chattarpur',
+    price: 12,
+    beds: 5,
+    baths: 6,
+    area: 8000,
+    image: 'property-2',
+    description: 'An expansive villa offering ultimate privacy and luxury, complete with a private pool and landscaped gardens.',
+  },
+  {
+    id: 'p3',
+    title: 'Sky-High Penthouse',
+    type: 'Penthouse',
+    location: 'Central Delhi',
+    price: 8.75,
+    beds: 4,
+    baths: 5,
+    area: 4500,
+    image: 'property-3',
+    description: 'Experience life at the top in this exquisite penthouse with panoramic views and world-class amenities.',
+  },
+  {
+    id: 'p4',
+    title: 'Serene Farmhouse Getaway',
+    type: 'Farmhouse',
+    location: 'Mehrauli',
+    price: 15.5,
+    beds: 6,
+    baths: 7,
+    area: 15000,
+    image: 'property-4',
+    description: 'A peaceful retreat from the city, this farmhouse boasts lush greenery, modern comforts, and ample space.',
+  },
+  {
+    id: 'p5',
+    title: 'Chic Hauz Khas Apartment',
+    type: 'Apartment',
+    location: 'Hauz Khas',
+    price: 2.1,
+    beds: 2,
+    baths: 2,
+    area: 1500,
+    image: 'property-5',
+    description: 'A stylish apartment in the trendy Hauz Khas area, perfect for young professionals and artists.',
+  },
+  {
+    id: 'p6',
+    title: 'Gurgaon Corporate Penthouse',
+    type: 'Penthouse',
+    location: 'Gurgaon',
+    price: 9.2,
+    beds: 4,
+    baths: 4,
+    area: 4800,
+    image: 'property-6',
+    description: 'Located in the heart of Gurgaon, this penthouse is ideal for corporate leaders, offering luxury and convenience.',
+  },
+];
+
+export const builders: Builder[] = [
+  {
+    id: 'b1',
+    name: 'Prestige Group',
+    logo: 'builder-logo-1',
+    description: 'One of the leading real estate developers in the country, with a legacy of creating iconic projects.',
+  },
+  {
+    id: 'b2',
+    name: 'DLF',
+    logo: 'builder-logo-2',
+    description: 'With over 70 years of experience, DLF is a name synonymous with quality and trust in Indian real estate.',
+  },
+  {
+    id: 'b3',
+    name: 'Godrej Properties',
+    logo: 'builder-logo-3',
+    description: 'Bringing the Godrej Group philosophy of innovation, sustainability, and excellence to the real estate industry.',
+  },
+  {
+    id: 'b4',
+    name: 'Sobha Ltd',
+    logo: 'builder-logo-4',
+    description: 'Known for their passion for perfection, Sobha developers are committed to delivering the highest quality.',
+  },
+  {
+    id: 'b5',
+    name: 'Raheja Corp',
+    logo: 'builder-logo-5',
+    description: 'A pioneer in creating green buildings and sustainable living spaces across India.',
+  },
+];
+
+export const interiorProjects: InteriorProject[] = [
+  {
+    id: 'i1',
+    title: 'The Minimalist Haven',
+    description: 'A project focused on clean lines, neutral palettes, and creating a sense of calm and space. This design philosophy embraces simplicity to create a serene and uncluttered environment.',
+    images: ['interior-1-1', 'interior-1-2', 'interior-1-3'],
+  },
+  {
+    id: 'i2',
+    title: 'Classic Elegance Redefined',
+    description: 'This project blends timeless design elements with modern luxury. Featuring ornate details, rich textures, and a sophisticated color scheme, it evokes a sense of grandeur and classic style.',
+    images: ['interior-2-1', 'interior-2-2', 'interior-2-3'],
+  },
+];

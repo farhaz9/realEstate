@@ -1,3 +1,118 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-1",
+      "description": "Luxury apartment building exterior at dusk",
+      "imageUrl": "https://images.unsplash.com/photo-1531591022136-eb8b0da1e6d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzYzMzgyNjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern architecture"
+    },
+    {
+      "id": "property-1",
+      "description": "Modern living room with city view",
+      "imageUrl": "https://images.unsplash.com/photo-1554995207-c18c203602cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsaXZpbmclMjByb29tfGVufDB8fHx8MTc2MzQ0NzMxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "living room"
+    },
+    {
+      "id": "property-2",
+      "description": "Spacious villa with a private pool",
+      "imageUrl": "https://images.unsplash.com/photo-1720161263981-84281892ee4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2aWxsYSUyMHBvb2x8ZW58MHx8fHwxNzYzNDI2Njc1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "villa pool"
+    },
+    {
+      "id": "property-3",
+      "description": "Elegant penthouse kitchen with marble island",
+      "imageUrl": "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBraXRjaGVufGVufDB8fHx8MTc2MzQyNjY3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern kitchen"
+    },
+    {
+      "id": "property-4",
+      "description": "Cozy farmhouse with a large garden",
+      "imageUrl": "https://images.unsplash.com/photo-1721786031802-10c0dc92d10a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXJtaG91c2UlMjBnYXJkZW58ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmhouse garden"
+    },
+    {
+      "id": "property-5",
+      "description": "Luxury apartment bedroom with balcony",
+      "imageUrl": "https://images.unsplash.com/photo-1615874959474-d609969a20ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxiZWRyb29tJTIwaW50ZXJpb3J8ZW58MHx8fHwxNzYzMzgxMTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bedroom interior"
+    },
+    {
+      "id": "property-6",
+      "description": "High-rise apartment with panoramic views",
+      "imageUrl": "https://images.unsplash.com/photo-1534298261662-f8fdd25317db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaXR5JTIwc2t5bGluZXxlbnwwfHx8fDE3NjMzNjg4OTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city skyline"
+    },
+    {
+      "id": "builder-logo-1",
+      "description": "Prestige Group logo",
+      "imageUrl": "https://images.unsplash.com/photo-1747862712521-e4a37b12a039?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMGxvZ298ZW58MHx8fHwxNzYzMzcwODA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract logo"
+    },
+    {
+      "id": "builder-logo-2",
+      "description": "DLF logo",
+      "imageUrl": "https://images.unsplash.com/photo-1560005360-f5df6037001a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnZW9tZXRyaWMlMjBsb2dvfGVufDB8fHx8MTc2MzM2MDEzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "geometric logo"
+    },
+    {
+      "id": "builder-logo-3",
+      "description": "Godrej Properties logo",
+      "imageUrl": "https://images.unsplash.com/photo-1610340804490-e9d7b22aee1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtaW5pbWFsaXN0JTIwbG9nb3xlbnwwfHx8fDE3NjMzMjkyNDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist logo"
+    },
+    {
+      "id": "builder-logo-4",
+      "description": "Sobha Ltd logo",
+      "imageUrl": "https://images.unsplash.com/photo-1634729020084-106e70838c97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0eXBvZ3JhcGh5JTIwbG9nb3xlbnwwfHx8fDE3NjM0MzI3MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "typography logo"
+    },
+    {
+      "id": "builder-logo-5",
+      "description": "Raheja Corp logo",
+      "imageUrl": "https://images.unsplash.com/photo-1713176988815-47bb84f325b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb3Jwb3JhdGUlMjBsb2dvfGVufDB8fHx8MTc2MzQxNzM4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "corporate logo"
+    },
+    {
+      "id": "interior-1-1",
+      "description": "Minimalist living room design",
+      "imageUrl": "https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwaW50ZXJpb3J8ZW58MHx8fHwxNzYzMzg3NzU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist interior"
+    },
+    {
+      "id": "interior-1-2",
+      "description": "Detail of a minimalist coffee table setup",
+      "imageUrl": "https://images.unsplash.com/photo-1687515006095-44d8a25b4440?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbnRlcmlvciUyMGRldGFpbHxlbnwwfHx8fDE3NjM0NTA3ODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "interior detail"
+    },
+    {
+      "id": "interior-1-3",
+      "description": "Minimalist bedroom with neutral tones",
+      "imageUrl": "https://images.unsplash.com/photo-1560449752-ac541afdd6b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuZXV0cmFsJTIwYmVkcm9vbXxlbnwwfHx8fDE3NjM0NTA3ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "neutral bedroom"
+    },
+    {
+      "id": "interior-2-1",
+      "description": "Classic luxurious dining room",
+      "imageUrl": "https://images.unsplash.com/photo-1621873815234-781259c55de5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsdXh1cnklMjBkaW5pbmd8ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury dining"
+    },
+    {
+      "id": "interior-2-2",
+      "description": "Chandelier detail in a classic room",
+      "imageUrl": "https://images.unsplash.com/photo-1588436199489-ac376a0b3884?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjaGFuZGVsaWVyfGVufDB8fHx8MTc2MzQ1MDc4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chandelier"
+    },
+    {
+      "id": "interior-2-3",
+      "description": "Ornate details of classic interior design",
+      "imageUrl": "https://images.unsplash.com/photo-1588796460733-82d656bfbc49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjbGFzc2ljJTIwZGVjb3J8ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "classic decor"
+    },
+    {
+      "id": "contact-hero",
+      "description": "Modern office reception area",
+      "imageUrl": "https://images.unsplash.com/photo-1594235046782-8ee6fa676300?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxvZmZpY2UlMjByZWNlcHRpb258ZW58MHx8fHwxNzYzMzgzNzI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "office reception"
+    }
+  ]
 }
