@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Menu } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -18,9 +21,9 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 items-center justify-between bg-background px-4 shadow-sm md:px-6">
+    <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 shadow-sm md:px-6">
       <Logo />
-      <nav className="flex items-center gap-6 text-sm font-medium">
+      <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
         {navLinks.map((link) => (
           <Link
             key={link.href}
@@ -34,6 +37,31 @@ export default function Header() {
           </Link>
         ))}
       </nav>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="icon" className="md:hidden">
+            <Menu className="h-6 w-6" />
+            <span className="sr-only">Toggle navigation menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left">
+          <Logo />
+          <nav className="mt-8 grid gap-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-lg font-medium text-muted-foreground transition-colors hover:text-foreground",
+                  pathname === link.href && "text-primary font-semibold"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
     </header>
   );
 }

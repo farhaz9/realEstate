@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
+import Header from "@/components/layout/header";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
+        <Header />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
