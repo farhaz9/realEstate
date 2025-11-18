@@ -7,7 +7,7 @@ import { PropertyCard } from "@/components/property-card";
 import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
-export default function Home() {
+export default function HomePage() {
   const heroImage = PlaceHolderImages.find((img) => img.id === "hero-1");
 
   return (
@@ -23,7 +23,7 @@ export default function Home() {
             priority
           />
         )}
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-purple-900/50 to-amber-900/50" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             Discover Your Sanctuary in Delhi
