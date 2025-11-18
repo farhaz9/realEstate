@@ -4,7 +4,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
-import { belleza } from "./fonts";
 import ProgressBar from "@/components/layout/progress-bar";
 
 const poppins = Poppins({
@@ -31,8 +30,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          poppins.variable,
-          belleza.className
+          poppins.variable
         )}
         suppressHydrationWarning
       >
