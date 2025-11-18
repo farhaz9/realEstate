@@ -9,7 +9,7 @@ export function Logo() {
       aria-label="Farhaz Homes Home"
     >
       <Image
-        src="https://images-r-eal-estae.vercel.app/farhaz%20homes.png"
+        src="https://images-r-eal-estae.vercel.app/farhaz%20homes%20widtyh.png"
         alt="Farhaz Homes Logo"
         width={150}
         height={40}
