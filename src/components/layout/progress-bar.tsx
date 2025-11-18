@@ -14,12 +14,12 @@ export default function ProgressBar() {
     const maxHeight =
       document.documentElement.scrollHeight -
       document.documentElement.clientHeight;
-    
+
     if (maxHeight > 0) {
-        const scrollPercent = (position / maxHeight) * 100;
-        setScroll(scrollPercent);
+      const scrollPercent = (position / maxHeight) * 100;
+      setScroll(scrollPercent);
     } else {
-        setScroll(0);
+      setScroll(0);
     }
 
     if (position > 300) {
@@ -44,26 +44,53 @@ export default function ProgressBar() {
     };
   }, []);
 
-  return (
-    <>
-      <div className="fixed inset-0 pointer-events-none z-[60]">
-        <div className="absolute top-0 left-0 bg-primary transition-all duration-300 ease-out" style={{ width: `${scroll}%`, height: '4px' }} />
-        <div className="absolute top-0 right-0 bg-primary transition-all duration-300 ease-out" style={{ height: `${scroll}%`, width: '4px' }} />
-        <div className="absolute bottom-0 right-0 bg-primary transition-all duration-300 ease-out" style={{ width: `${100-scroll}%`, height: '4px' }} />
-        <div className="absolute bottom-0 left-0 bg-primary transition-all duration-300 ease-out" style={{ height: `${100-scroll}%`, width: '4px' }} />
-      </div>
+  const radius = 24;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (scroll / 100) * circumference;
 
+  return (
+    <div
+      className={cn(
+        "fixed bottom-4 right-4 z-50 transition-opacity duration-300 md:bottom-6",
+        showButton ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}
+    >
       <Button
         size="icon"
-        className={cn(
-          "fixed bottom-20 right-4 z-50 rounded-full h-14 w-14 shadow-lg transition-opacity duration-300 md:bottom-6",
-          showButton ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
+        className="relative h-14 w-14 rounded-full shadow-lg"
         onClick={scrollToTop}
         aria-label="Scroll to top"
       >
         <ChevronUp className="h-7 w-7" />
       </Button>
-    </>
+      <svg
+        className="absolute top-0 left-0 h-full w-full -rotate-90"
+        width="56"
+        height="56"
+        viewBox="0 0 56 56"
+      >
+        <circle
+          className="text-primary/20"
+          strokeWidth="4"
+          stroke="currentColor"
+          fill="transparent"
+          r={radius}
+          cx="28"
+          cy="28"
+        />
+        <circle
+          className="text-primary"
+          strokeWidth="4"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          stroke="currentColor"
+          fill="transparent"
+          r={radius}
+          cx="28"
+          cy="28"
+        />
+      </svg>
+    </div>
   );
 }
