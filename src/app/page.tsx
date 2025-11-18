@@ -43,7 +43,7 @@ export default function HomePage() {
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent bg-[200%_auto] animate-gradient-pan">
               Best Real Estate Company in Delhi
             </span>
           </h2>
