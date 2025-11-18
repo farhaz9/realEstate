@@ -20,7 +20,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 items-center justify-between bg-background/80 px-4 shadow-sm backdrop-blur-md md:px-6">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 items-center justify-between bg-background px-4 shadow-sm md:px-6">
         <Logo />
         <nav className="flex items-center gap-6 text-sm font-medium">
           {navLinks.map((link) => (
