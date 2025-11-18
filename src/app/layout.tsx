@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Belleza } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
@@ -8,11 +8,6 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-poppins",
-});
-
-export const belleza = Belleza({
-  subsets: ['latin'],
-  weight: ['400'],
 });
 
 export const metadata: Metadata = {

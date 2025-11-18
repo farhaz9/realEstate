@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { belleza } from '@/app/layout';
+import { belleza } from '@/app/fonts';
 
 export function Logo() {
   return (
