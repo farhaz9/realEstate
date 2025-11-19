@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin } from "lucide-react";
@@ -37,7 +38,7 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-[60vh] md:h-[80vh] text-white overflow-hidden">
         <video
-          src="https://videos.pexels.com/video-files/7578552/7578552-hd_1920_1080_25fps.mp4"
+          src="https://images-r-eal-estae.vercel.app/13470975_1920_1080_24fps.mp4"
           autoPlay
           loop
           muted
