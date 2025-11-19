@@ -1,7 +1,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin, MessageCircle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
@@ -101,28 +101,34 @@ export default function HomePage() {
       </section>
 
        <section id="quick-inquiry" className="py-16 md:py-24 bg-card">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary">Interested? Let's Talk</h2>
-              <p className="mt-4 text-muted-foreground">
-                Whether you're interested in one of these properties or have a general inquiry, our team is ready to assist you. Fill out the form, and we'll get in touch shortly.
-              </p>
-            </div>
-             <Card>
-              <CardHeader>
-                <CardTitle>Quick Inquiry</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form className="space-y-4">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary">Interested? Let's Talk</h2>
+            <p className="mt-2 text-muted-foreground">
+              Fill out the form or connect with us on WhatsApp.
+            </p>
+          </div>
+           <Card className="p-2">
+            <CardContent className="p-6">
+              <form className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
                   <Input placeholder="Your Name" />
                   <Input type="email" placeholder="Your Email" />
-                  <Textarea placeholder="Your Message" rows={3} />
+                </div>
+                 <Input type="tel" placeholder="Your Phone Number" />
+                <Textarea placeholder="Your Message" rows={4} />
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button type="submit" className="w-full">Send Inquiry</Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+                  <Button asChild variant="outline" className="w-full">
+                     <Link href="https://wa.me/910000000000" target="_blank" className="flex items-center">
+                        <MessageSquare className="mr-2 h-5 w-5" />
+                        Chat on WhatsApp
+                    </Link>
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </section>
 

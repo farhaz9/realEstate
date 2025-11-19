@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,7 +63,7 @@ export default function ContactPage() {
               </div>
               <div className="flex items-start gap-4">
                 <div className="bg-primary/10 p-3 rounded-full">
-                  <MessageCircle className="h-6 w-6 text-primary" />
+                  <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">WhatsApp</h3>
