@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Palette, Phone, MessageCircle, Briefcase } from "lucide-react";
+import { Home, Palette, MessageCircle, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/services", label: "Services", icon: Briefcase },
   { href: "/", label: "Home", icon: Home },
-  { href: "/contact", label: "Contact", icon: Phone },
 ];
 
 const actionButtons = [
@@ -47,7 +46,6 @@ export default function MobileNav() {
           );
         })}
          {actionButtons.map((link) => {
-          const isActive = pathname === link.href;
           return (
             <Link
               key={link.href}
@@ -55,7 +53,7 @@ export default function MobileNav() {
               target={link.target}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-16",
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                "text-muted-foreground hover:text-foreground"
               )}
             >
               <div className={cn(
