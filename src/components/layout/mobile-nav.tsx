@@ -20,7 +20,6 @@ const navLinks = [
   { href: "/properties", label: "Properties", icon: Building },
   { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/", label: "Home", icon: Home },
-  { href: "https://wa.me/910000000000", label: "WhatsApp", icon: WhatsAppIcon, target:"_blank", className: "animate-blink" },
   { href: "/contact", label: "Contact", icon: MessageCircle, target:"_self" },
 ];
 
@@ -29,7 +28,7 @@ export default function MobileNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
-      <div className="grid h-full grid-cols-5 items-center">
+      <div className="grid h-full grid-cols-4 items-center">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           return (
