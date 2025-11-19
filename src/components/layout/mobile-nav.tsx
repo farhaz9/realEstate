@@ -6,14 +6,12 @@ import { Home, Palette, MessageCircle, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
+  <svg 
+    viewBox="0 0 512 512"
     fill="currentColor"
-    {...props}
-  >
-    <path
-      d="M12.04 2C6.58 2 2.15 6.44 2.15 11.9c0 1.74.45 3.38 1.25 4.81L2 22l5.44-1.42c1.39.75 2.99 1.18 4.6 1.18h.01c5.46 0 9.89-4.44 9.89-9.89S17.5 2 12.04 2m.01 1.67c4.55 0 8.23 3.68 8.23 8.23s-3.68 8.23-8.23 8.23h-.01c-1.46 0-2.86-.38-4.1-1.05L5.1 20.9l1.6-2.94c-.75-1.32-1.18-2.83-1.18-4.41.01-4.55 3.69-8.23 8.24-8.23m4.49 11.16c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2s-1.4-1.85-1.57-2.15-.03-.28.09-.39c.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42s-.54-1.3-.74-1.78c-.2-.48-.4-.42-.54-.42h-.47c-.16 0-.42.06-.64.3s-.89.87-.89 2.12.91 2.46 1.04 2.64c.12.18 1.77 2.7 4.29 3.78 2.52 1.08 2.52.72 2.97.69.45-.03 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"
-    ></path>
+    {...props}>
+    <path d="M414.73 97.1A222.14 222.14 0 00256.94 34C133.32 34 35.15 132.16 35.15 255.79c0 40.45 10.88 78.58 30.88 112.33L32 480l115.39-30.29a220.61 220.61 0 00108.62 27.58h.91c123.63 0 222.79-98.17 222.79-221.8S380.57 97.1 256.94 97.1zM256.94 443.13h-.72a185.73 185.73 0 01-91-24.58l-6.52-3.83-67.59 17.61 17.93-65.8-4.2-6.86a185.34 185.34 0 01-28.32-95.27C76.45 152.12 158.22 70 257.13 70c48.67 0 94.49 19 129.17 53.68s53.68 80.5 53.68 129.17c-.01 98.9-81.87 180.28-183.04 180.28z"></path>
+    <path d="M352.88 309c-4.8-2.39-28.32-13.9-32.69-15.54s-7.56-2.39-10.74.8c-3.18 3.18-12.35 15.54-15.14 18.72-2.8 3.18-5.6 3.58-10.4 1.19s-20.66-7.56-39.33-24.28-29.89-35.84-33.07-41.83-2.39-9 .8-11.58c2.8-2.39 5.6-6 8.39-8.79s3.58-5.19 5.19-8.79.4-6.78-1.2-11.58-10.74-25.86-14.72-35.44-7.96-7.97-10.74-8.39-5.99-.4-9.17-.4-7.56 1.19-11.58 5.99-15.54 15.14-15.54 36.63S160 259s15.94 37 18.33 39.8c2.4 2.8 31.57 48.24 76.54 67.42 10.4 4.39 19 6.78 25.86 8.79 12.35 3.58 23.49 3 32.28-1.59 10-5.2 28.32-23.09 32.28-31.47 4-8.39 4-15.54 2.8-18.72s-4.39-3.58-9.17-5.98z"></path>
   </svg>
 );
 
@@ -33,7 +31,25 @@ export default function MobileNav() {
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
       <div className="grid h-full grid-cols-5 items-center">
         {navLinks.map((link) => {
-          const isActive = pathname === link.href;
+          const isActive = pathname === link.href && link.href !== "/";
+          if (link.href === "/") {
+            return (
+               <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "flex flex-col items-center justify-center text-xs font-medium w-16 h-16 rounded-full p-2 border-t-4 shadow-lg transition-all duration-300",
+                  pathname === "/" 
+                    ? "text-primary border-primary -translate-y-3 bg-background" 
+                    : "text-muted-foreground border-transparent -translate-y-2 bg-background/80 hover:text-primary"
+                )}
+              >
+                <link.icon className="h-6 w-6" />
+                <span>{link.label}</span>
+              </Link>
+            )
+          }
+
           return (
             <Link
               key={link.href}

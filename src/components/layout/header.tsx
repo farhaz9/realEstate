@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
@@ -20,6 +21,7 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 shadow-sm md:px-6">
@@ -38,7 +40,7 @@ export default function Header() {
           </Link>
         ))}
       </nav>
-      <Sheet>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="md:hidden">
             <Menu className="h-6 w-6" />
@@ -52,6 +54,11 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => {
+                  if (pathname === link.href) {
+                    setIsSheetOpen(false);
+                  }
+                }}
                 className={cn(
                   "text-lg font-medium text-muted-foreground transition-colors hover:text-foreground",
                   pathname === link.href && "text-primary font-semibold"
