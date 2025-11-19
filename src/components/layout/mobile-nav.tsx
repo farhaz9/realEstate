@@ -17,9 +17,9 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 const navLinks = [
-  { href: "/interiors", label: "Interiors", icon: Palette },
-  { href: "/services", label: "Services", icon: Briefcase },
   { href: "/", label: "Home", icon: Home },
+  { href: "/properties", label: "Properties", icon: Briefcase },
+  { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "https://wa.me/910000000000", label: "WhatsApp", icon: WhatsAppIcon, target:"_blank", className: "animate-blink" },
   { href: "/contact", label: "Contact", icon: MessageCircle, target:"_self" },
 ];
@@ -31,25 +31,7 @@ export default function MobileNav() {
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
       <div className="grid h-full grid-cols-5 items-center">
         {navLinks.map((link) => {
-          const isActive = pathname === link.href && link.href !== "/";
-          if (link.href === "/") {
-            return (
-               <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "flex flex-col items-center justify-center text-xs font-medium w-16 h-16 rounded-full p-2 border-t-4 shadow-lg transition-all duration-300",
-                  pathname === "/" 
-                    ? "text-primary border-primary -translate-y-3 bg-background" 
-                    : "text-muted-foreground border-transparent -translate-y-2 bg-background/80 hover:text-primary"
-                )}
-              >
-                <link.icon className="h-6 w-6" />
-                <span>{link.label}</span>
-              </Link>
-            )
-          }
-
+          const isActive = pathname === link.href;
           return (
             <Link
               key={link.href}

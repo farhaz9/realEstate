@@ -54,11 +54,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => {
-                  if (pathname === link.href) {
-                    setIsSheetOpen(false);
-                  }
-                }}
+                onClick={() => setIsSheetOpen(false)}
                 className={cn(
                   "text-lg font-medium text-muted-foreground transition-colors hover:text-foreground",
                   pathname === link.href && "text-primary font-semibold"
