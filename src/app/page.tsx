@@ -1,15 +1,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin, MessageSquare } from "lucide-react";
+import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
 import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 const faqs = [
   {
@@ -99,75 +97,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <section id="contact-us" className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold">Contact Us</h2>
-              <p className="mt-2 text-muted-foreground">We'd love to hear from you. Let's find your dream home together.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <MapPin className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg">Our Office</h4>
-                    <p className="text-muted-foreground">123 Luxury Lane, South Delhi, New Delhi, 110017</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Mail className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg">Email Us</h4>
-                    <p className="text-muted-foreground">contact@delhiestateluxe.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Phone className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg">Call Us</h4>
-                    <p className="text-muted-foreground">+91 00000 00000</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <MessageSquare className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg">WhatsApp</h4>
-                    <Link href="https://wa.me/910000000000" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">+91 00000 00000</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Send us a Message</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-4">
-                    <Input placeholder="Your Name" />
-                    <Input type="email" placeholder="Your Email" />
-                    <Input placeholder="Subject" />
-                    <Textarea placeholder="Your Message" rows={5} />
-                    <Button type="submit" className="w-full">Send Message</Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
 
       <section id="why-us" className="py-16 md:py-24 bg-secondary/50">
         <div className="container mx-auto px-4">
@@ -307,5 +236,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
