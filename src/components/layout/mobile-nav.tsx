@@ -12,6 +12,7 @@ const navLinks = [
 ];
 
 const actionButtons = [
+    { href: "/contact", label: "Contact", icon: MessageCircle, target:"_self" },
     { href: "https://wa.me/910000000000", label: "WhatsApp", icon: MessageCircle, target:"_blank" },
 ]
 
