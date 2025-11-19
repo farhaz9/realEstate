@@ -100,48 +100,86 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="why-us" className="py-16 md:py-24 bg-card">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose Delhi Estate Luxe?</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              We offer a seamless and luxurious experience from discovery to possession.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                <HomeIcon className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">Exclusive Portfolio</h3>
-              <p className="mt-2 text-muted-foreground">Access to Delhi's most sought-after luxury homes.</p>
+       <section id="quick-inquiry" className="py-16 md:py-24 bg-card">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-primary">Interested? Let's Talk</h2>
+              <p className="mt-4 text-muted-foreground">
+                Whether you're interested in one of these properties or have a general inquiry, our team is ready to assist you. Fill out the form, and we'll get in touch shortly.
+              </p>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                <Building className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">Builder Partnerships</h3>
-              <p className="mt-2 text-muted-foreground">Collaborations with top-tier builders ensuring quality.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                <Palette className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">Design Services</h3>
-              <p className="mt-2 text-muted-foreground">Bespoke interior solutions to personalize your space.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                <Sparkles className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">AI-Powered Search</h3>
-              <p className="mt-2 text-muted-foreground">Find your perfect match with our smart recommendation tool.</p>
-            </div>
+             <Card>
+              <CardHeader>
+                <CardTitle>Quick Inquiry</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-4">
+                  <Input placeholder="Your Name" />
+                  <Input type="email" placeholder="Your Email" />
+                  <Textarea placeholder="Your Message" rows={3} />
+                  <Button type="submit" className="w-full">Send Inquiry</Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      <section id="ai-recommender" className="py-16 md:py-24 bg-background">
+      <section id="why-us" className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <Card className="overflow-hidden">
+            <div className="grid md:grid-cols-2">
+              <div className="relative h-64 md:h-full w-full">
+                  <Image
+                    src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwb3NofGVufDB8fHx8MTc2NTM4MTU0MXww&ixlib=rb-4.1.0&q=80&w=1080"
+                    alt="Luxury real estate"
+                    data-ai-hint="luxury real estate"
+                    fill
+                    className="object-cover"
+                  />
+              </div>
+              <div className="p-8 md:p-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose Us?</h2>
+                 <p className="mt-2 text-muted-foreground max-w-2xl">
+                  We offer a seamless and luxurious experience from discovery to possession.
+                </p>
+                <div className="mt-8 space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full mt-1">
+                      <HomeIcon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold">Exclusive Portfolio</h3>
+                      <p className="mt-1 text-muted-foreground">Access to Delhi's most sought-after luxury homes.</p>
+                    </div>
+                  </div>
+                   <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full mt-1">
+                      <Sparkles className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold">Personalized Service</h3>
+                      <p className="mt-1 text-muted-foreground">AI-powered search and dedicated expert guidance.</p>
+                    </div>
+                  </div>
+                   <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full mt-1">
+                      <Palette className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold">End-to-End Solutions</h3>
+                      <p className="mt-1 text-muted-foreground">From builder partnerships to bespoke interior design.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <section id="ai-recommender" className="py-16 md:py-24 bg-card">
         <div className="container mx-auto px-4">
           <Card className="bg-secondary text-secondary-foreground border-none overflow-hidden">
             <div className="grid md:grid-cols-2 items-center">
@@ -171,7 +209,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="faq" className="py-16 md:py-24 bg-card">
+      <section id="faq" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
@@ -189,48 +227,6 @@ export default function HomePage() {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
-      </section>
-
-      <section id="contact" className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Get In Touch</h2>
-            <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
-              We're here to help you find your dream property. Contact us today.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            <div className="grid grid-cols-1 gap-8">
-              <div>
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112173.39399844981!2d77.13962699316524!3d28.52735728109861!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce1a7145788c7%3A0x28af8763c3d82343!2sSouth%20Delhi%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700052954881!5m2!1sen!2sin"
-                  width="100%"
-                  height="450"
-                  style={{ border: 0 }}
-                  allowFullScreen={false}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="rounded-lg shadow-lg"
-                ></iframe>
-              </div>
-            </div>
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Send us a Message</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-4">
-                    <Input placeholder="Your Name" />
-                    <Input type="email" placeholder="Your Email" />
-                    <Textarea placeholder="Your Message" rows={5} />
-                    <Button type="submit" className="w-full">Send Message</Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
         </div>
       </section>
 
