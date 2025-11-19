@@ -31,17 +31,17 @@ export default function MobileNav() {
               className={cn(
                 "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-16",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
-                link.label === "Home" && "relative -top-3 bg-background rounded-full p-2 border-t-4 border-primary shadow-lg"
+                link.label === "Home" && "relative"
               )}
             >
               <div className={cn(
                 "flex items-center justify-center h-12 w-12 rounded-full",
-                isActive && link.label === "Home" ? "bg-primary text-primary-foreground" : ""
+                isActive && link.label === "Home" ? "bg-primary text-primary-foreground -translate-y-3 shadow-lg border-2 border-background" : ""
               )}>
                 <link.icon className="h-6 w-6" />
               </div>
               <span className={cn(
-                link.label === "Home" && "absolute -bottom-1"
+                link.label === "Home" && "absolute bottom-0.5"
               )}>{link.label}</span>
             </Link>
           );
