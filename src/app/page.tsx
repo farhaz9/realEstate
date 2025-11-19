@@ -45,7 +45,7 @@ export default function HomePage() {
           playsInline
           className="absolute z-[-1] w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-purple-900/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             Best Real Estate Company in Delhi
