@@ -2,12 +2,14 @@
 import Link from "next/link";
 import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
 import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const faqs = [
   {
@@ -30,6 +32,7 @@ const faqs = [
 
 
 export default function HomePage() {
+  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
   return (
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-[60vh] md:h-[80vh] text-white overflow-hidden">
@@ -94,56 +97,69 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="why-us" className="py-16 md:py-24 bg-secondary/50">
-        <div className="container mx-auto px-4">
-          <Card className="overflow-hidden">
-            <div className="grid md:grid-cols-2">
-              <div className="relative h-64 md:h-full w-full">
-                  <Image
-                    src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwb3NofGVufDB8fHx8MTc2NTM4MTU0MXww&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="Luxury real estate"
-                    data-ai-hint="luxury real estate"
-                    fill
-                    className="object-cover"
-                  />
-              </div>
-              <div className="p-8 md:p-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose Us?</h2>
-                 <p className="mt-2 text-muted-foreground max-w-2xl">
-                  We offer a seamless and luxurious experience from discovery to possession.
-                </p>
-                <div className="mt-8 space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full mt-1">
-                      <HomeIcon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold">Exclusive Portfolio</h3>
-                      <p className="mt-1 text-muted-foreground">Access to Delhi's most sought-after luxury homes.</p>
-                    </div>
-                  </div>
-                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full mt-1">
-                      <Sparkles className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold">Personalized Service</h3>
-                      <p className="mt-1 text-muted-foreground">AI-powered search and dedicated expert guidance.</p>
-                    </div>
-                  </div>
-                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full mt-1">
-                      <Palette className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold">End-to-End Solutions</h3>
-                      <p className="mt-1 text-muted-foreground">From builder partnerships to bespoke interior design.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <section id="contact-form" className="py-16 md:py-24 bg-secondary/50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Quick Inquiry</h2>
+            <p className="mt-2 text-muted-foreground">Have a question? Send us a message and we'll get back to you shortly.</p>
+          </div>
+          <Card>
+            <CardContent className="p-6">
+              <form className="space-y-4">
+                <Input placeholder="Your Name" />
+                <Input type="email" placeholder="Your Email" />
+                <Input placeholder="Subject" />
+                <Textarea placeholder="Your Message" rows={5} />
+                <Button type="submit" className="w-full">Send Message</Button>
+              </form>
+            </CardContent>
           </Card>
+        </div>
+      </section>
+
+      <section id="why-us" className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose Us?</h2>
+            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+              We offer a seamless and luxurious experience from discovery to possession.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <Card className="p-6">
+              <CardHeader className="p-0">
+                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
+                  <HomeIcon className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Exclusive Portfolio</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 mt-2">
+                <p className="text-muted-foreground">Access to Delhi's most sought-after luxury homes.</p>
+              </CardContent>
+            </Card>
+            <Card className="p-6">
+               <CardHeader className="p-0">
+                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
+                  <Sparkles className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Personalized Service</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 mt-2">
+                <p className="text-muted-foreground">AI-powered search and dedicated expert guidance.</p>
+              </CardContent>
+            </Card>
+            <Card className="p-6">
+               <CardHeader className="p-0">
+                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
+                  <Palette className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">End-to-End Solutions</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 mt-2">
+                <p className="text-muted-foreground">From builder partnerships to bespoke interior design.</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
