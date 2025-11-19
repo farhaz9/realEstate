@@ -106,7 +106,7 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'gradient-pan': 'gradient-pan 3s ease infinite',
-        'blink': 'blink 1s 4s infinite',
+        'blink': 'blink 1s 4s 5',
       },
     },
   },
