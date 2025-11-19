@@ -28,7 +28,7 @@ export default function MobileNav() {
               href={link.href}
               target={link.target}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-16",
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors w-16 relative",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -38,7 +38,9 @@ export default function MobileNav() {
               )}>
                 <link.icon className="h-6 w-6" />
               </div>
-              <span className={cn(isHome && "absolute bottom-1")}>
+              <span className={cn(
+                isHome ? "absolute -bottom-0.5" : ""
+              )}>
                 {link.label}
               </span>
             </Link>
