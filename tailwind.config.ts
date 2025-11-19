@@ -99,6 +99,7 @@ export default {
           '100%': { 'background-position': '0% 50%' },
         },
         'blink': {
+          '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.2' },
         }
       },
@@ -106,7 +107,7 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'gradient-pan': 'gradient-pan 3s ease infinite',
-        'blink': 'blink 1s 4s 5',
+        'blink': 'blink 1s ease-in-out 5s infinite',
       },
     },
   },
