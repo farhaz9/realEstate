@@ -51,7 +51,7 @@ export default function ProgressBar() {
   return (
     <div
       className={cn(
-        "fixed bottom-4 right-4 z-50 transition-opacity duration-300 md:bottom-6",
+        "fixed bottom-20 right-4 z-40 transition-opacity duration-300 md:bottom-6",
         showButton ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
     >
