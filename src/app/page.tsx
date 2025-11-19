@@ -34,7 +34,7 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-[60vh] md:h-[80vh] text-white overflow-hidden">
         <video
-            src="https://videos.pexels.com/video-files/8380291/8380291-hd_1920_1080_30fps.mp4"
+            src="https://images-r-eal-estae.vercel.app/farhazhomes.mp4"
             autoPlay
             loop
             muted
