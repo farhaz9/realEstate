@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
@@ -12,9 +13,37 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+const siteUrl = "https://www.farhazhomes.com";
+
 export const metadata: Metadata = {
-  title: "Farhaz Homes",
-  description: "Find high-end luxury properties in Delhi.",
+  title: "Farhaz Homes - Best Real Estate Company in Delhi",
+  description: "Find high-end luxury properties in Delhi. Farhaz Homes offers exclusive apartments, villas, and penthouses in prime locations.",
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: "Farhaz Homes - Best Real Estate Company in Delhi",
+    description: "Find high-end luxury properties in Delhi. Farhaz Homes offers exclusive apartments, villas, and penthouses in prime locations.",
+    url: siteUrl,
+    siteName: 'Farhaz Homes',
+    images: [
+      {
+        url: `${siteUrl}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Luxury home in Delhi by Farhaz Homes',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Farhaz Homes - Best Real Estate Company in Delhi",
+    description: "Find high-end luxury properties in Delhi. Farhaz Homes offers exclusive apartments, villas, and penthouses in prime locations.",
+    images: [`${siteUrl}/og-image.jpg`],
+  },
   icons: {
     icon: "/favicon.ico",
   },

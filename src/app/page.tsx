@@ -37,14 +37,16 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-[60vh] md:h-[80vh] text-white overflow-hidden">
-        <video
-          src="https://images-r-eal-estae.vercel.app/farhazhomes.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute z-[-1] w-full h-full object-cover"
-        />
+        {heroImage && (
+          <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            data-ai-hint={heroImage.imageHint}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
