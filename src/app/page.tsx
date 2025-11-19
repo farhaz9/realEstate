@@ -1,7 +1,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin, MessageCircle, MessageSquare } from "lucide-react";
+import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
@@ -100,34 +100,37 @@ export default function HomePage() {
         </div>
       </section>
 
-       <section id="quick-inquiry" className="py-16 md:py-24 bg-card">
-        <div className="container mx-auto px-4 max-w-2xl">
+       <section id="contact-us" className="py-16 md:py-24 bg-foreground text-background">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">Interested? Let's Talk</h2>
-            <p className="mt-2 text-muted-foreground">
-              Fill out the form or connect with us on WhatsApp.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold">Contact Us</h2>
           </div>
-           <Card className="p-2">
-            <CardContent className="p-6">
-              <form className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Input placeholder="Your Name" />
-                  <Input type="email" placeholder="Your Email" />
+          <Card className="bg-black/80 border-border p-8 text-center max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="flex flex-col items-center">
+                   <div className="bg-primary/10 p-3 rounded-full mb-2">
+                    <Mail className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">Email</h3>
+                  <a href="mailto:contact@delhiestateluxe.com" className="text-muted-foreground hover:text-primary transition-colors">contact@delhiestateluxe.com</a>
                 </div>
-                 <Input type="tel" placeholder="Your Phone Number" />
-                <Textarea placeholder="Your Message" rows={4} />
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button type="submit" className="w-full">Send Inquiry</Button>
-                  <Button asChild variant="outline" className="w-full">
-                     <Link href="https://wa.me/910000000000" target="_blank" className="flex items-center">
-                        <MessageSquare className="mr-2 h-5 w-5" />
-                        Chat on WhatsApp
-                    </Link>
-                  </Button>
+                 <div className="flex flex-col items-center">
+                   <div className="bg-primary/10 p-3 rounded-full mb-2">
+                    <Phone className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">Phone</h3>
+                  <a href="tel:+910000000000" className="text-muted-foreground hover:text-primary transition-colors">+91 00000 00000</a>
                 </div>
-              </form>
-            </CardContent>
+                 <div className="flex flex-col items-center">
+                   <div className="bg-primary/10 p-3 rounded-full mb-2">
+                    <MessageSquare className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">WhatsApp</h3>
+                  <Link href="https://wa.me/910000000000" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
+                    Chat with us
+                  </Link>
+                </div>
+              </div>
           </Card>
         </div>
       </section>
