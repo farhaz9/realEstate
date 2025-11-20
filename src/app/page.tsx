@@ -119,7 +119,7 @@ export default function HomePage() {
            <div className="mt-8 relative">
              <div className="flex overflow-x-auto space-x-6 pb-4 -mx-4 px-4 hide-scrollbar">
               {quickServices.map((service) => (
-                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-20">
+                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-primary">
                     <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
                   </div>
@@ -149,11 +149,11 @@ export default function HomePage() {
               }}
               className="w-full"
             >
-              <CarouselContent className="-ml-4">
+              <CarouselContent className="-ml-4 animate-carousel-nudge">
                 {properties.slice(0, 6).map((property) => (
                   <CarouselItem key={property.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
                     <div className="p-1">
-                      <PropertyCard property={property} />
+                      <PropertyCard property={property} className="shadow-lg shadow-black/5" />
                     </div>
                   </CarouselItem>
                 ))}

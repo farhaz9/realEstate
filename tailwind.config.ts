@@ -102,6 +102,11 @@ export default {
           '0%, 10%, 20%': { opacity: '1' },
           '5%, 15%': { opacity: '0.2' },
           '25%, 100%': { opacity: '1' },
+        },
+        'carousel-nudge': {
+          '0%': { transform: 'translateX(0)' },
+          '5%': { transform: 'translateX(-1rem)' },
+          '10%, 100%': { transform: 'translateX(0)' },
         }
       },
       animation: {
@@ -109,6 +114,7 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'gradient-pan': 'gradient-pan 3s ease infinite',
         'blink': 'blink 5s ease-in-out infinite',
+        'carousel-nudge': 'carousel-nudge 5s ease-in-out',
       },
     },
   },

@@ -6,16 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Bath, BedDouble, Building2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface PropertyCardProps {
   property: Property;
+  className?: string;
 }
 
-export function PropertyCard({ property }: PropertyCardProps) {
+export function PropertyCard({ property, className }: PropertyCardProps) {
   const propertyImage = PlaceHolderImages.find((p) => p.id === property.image);
 
   return (
-    <Card className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+    <Card className={cn("flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
       <CardHeader className="p-0 relative h-56">
         {propertyImage && (
           <Image
