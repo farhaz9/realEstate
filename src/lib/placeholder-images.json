@@ -113,6 +113,36 @@
       "description": "Modern office reception area",
       "imageUrl": "https://images.unsplash.com/photo-1594235046782-8ee6fa676300?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxvZmZpY2UlMjByZWNlcHRpb258ZW58MHx8fHwxNzYzMzgzNzI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "office reception"
+    },
+    {
+      "id": "service-properties",
+      "description": "Exterior of a modern luxury apartment building",
+      "imageUrl": "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bHV4dXJ5JTIwYXBhcnRtZW50fGVufDB8fHx8MTc2MzU2Nzg2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury apartment"
+    },
+    {
+      "id": "service-construction",
+      "description": "A building under construction with cranes",
+      "imageUrl": "https://images.unsplash.com/photo-1638519922476-50688bb1f318?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxidWlsZGluZyUyMGNvbnN0cnVjdGlvbnxlbnwwfHx8fDE3NjM1NDIyNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "building construction"
+    },
+    {
+      "id": "service-interiors",
+      "description": "A stylish and modern living room interior",
+      "imageUrl": "https://images.unsplash.com/photo-1631510390389-c1e4fb20ff31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtb2Rlcm4lMjBpbnRlcmlvcnxlbnwwfHx8fDE3NjM1MzMwNTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern interior"
+    },
+    {
+      "id": "service-furniture",
+      "description": "A beautifully crafted wooden chair in a well-lit room",
+      "imageUrl": "https://images.unsplash.com/photo-1759722667524-d11dd52824e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdHlsaXNoJTIwZnVybml0dXJlfGVufDB8fHx8MTc2MzYyOTc2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "stylish furniture"
+    },
+    {
+      "id": "service-consultancy",
+      "description": "Two professionals in a meeting discussing blueprints",
+      "imageUrl": "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MHx8fHwxNzYzNTczNjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "business meeting"
     }
   ]
 }

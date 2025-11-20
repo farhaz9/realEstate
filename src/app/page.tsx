@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Handshake, Construction, DraftingCompass, Sofa } from "lucide-react";
+import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Handshake, Construction, DraftingCompass, Sofa, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
@@ -28,6 +28,44 @@ const faqs = [
     question: "How do you partner with builders?",
     answer: "We maintain strong partnerships with Delhi's top builders, giving our clients exclusive access to premium projects, quality assurance, and seamless execution from start to finish."
   }
+];
+
+const services = [
+  {
+    icon: Building,
+    title: "Properties",
+    description: "Access a curated portfolio of Delhi's finest luxury properties, handpicked for quality, location, and value.",
+    imageId: "service-properties",
+    href: "/properties"
+  },
+  {
+    icon: Construction,
+    title: "Construction",
+    description: "End-to-end construction services, managed with precision and a commitment to architectural excellence.",
+    imageId: "service-construction",
+    href: "/services"
+  },
+  {
+    icon: DraftingCompass,
+    title: "Interiors",
+    description: "Bespoke interior design solutions that transform your space into a true reflection of your personal style.",
+    imageId: "service-interiors",
+    href: "/interiors"
+  },
+  {
+    icon: Sofa,
+    title: "Furniture",
+    description: "Custom-crafted furniture pieces designed to complement your interiors and elevate your living experience.",
+    imageId: "service-furniture",
+    href: "/services"
+  },
+  {
+    icon: Briefcase,
+    title: "Consultancy",
+    description: "Expert guidance on market trends, investment strategies, and legal processes for informed decision-making.",
+    imageId: "service-consultancy",
+    href: "/services"
+  },
 ];
 
 
@@ -94,8 +132,85 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
+      <section id="services" className="py-16 md:py-24 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Our Services</h2>
+            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+              A complete suite of services to manage every aspect of your real estate journey, from vision to reality.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.slice(0, 3).map((service) => {
+              const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
+              return (
+              <Card key={service.title} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+                <CardHeader className="p-0 relative h-48">
+                  {serviceImage && (
+                    <Image
+                      src={serviceImage.imageUrl}
+                      alt={service.title}
+                      data-ai-hint={serviceImage.imageHint}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  )}
+                </CardHeader>
+                <CardContent className="flex-grow p-6 flex flex-col">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                       <service.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">{service.title}</CardTitle>
+                  </div>
+                  <p className="text-muted-foreground flex-grow">{service.description}</p>
+                   <Button asChild variant="link" className="p-0 h-auto justify-start mt-4">
+                      <Link href={service.href}>
+                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                </CardContent>
+              </Card>
+            )})}
+          </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 justify-center max-w-4xl mx-auto">
+            {services.slice(3, 5).map((service) => {
+                const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
+                return (
+                <Card key={service.title} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+                  <CardHeader className="p-0 relative h-48">
+                    {serviceImage && (
+                      <Image
+                        src={serviceImage.imageUrl}
+                        alt={service.title}
+                        data-ai-hint={serviceImage.imageHint}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    )}
+                  </CardHeader>
+                  <CardContent className="flex-grow p-6 flex flex-col">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="bg-primary/10 p-2 rounded-full">
+                         <service.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <CardTitle className="text-xl">{service.title}</CardTitle>
+                    </div>
+                    <p className="text-muted-foreground flex-grow">{service.description}</p>
+                    <Button asChild variant="link" className="p-0 h-auto justify-start mt-4">
+                      <Link href={service.href}>
+                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )})}
+          </div>
+        </div>
+      </section>
 
-      <section id="contact-form" className="py-16 md:py-24 bg-secondary/50">
+      <section id="contact-form" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Quick Inquiry</h2>
