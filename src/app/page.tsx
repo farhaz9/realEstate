@@ -142,25 +142,27 @@ export default function HomePage() {
               A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-4">
-              {properties.slice(0, 6).map((property) => (
-                <CarouselItem key={property.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1">
-                    <PropertyCard property={property} />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 md:flex" />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 md:flex" />
-          </Carousel>
+          <div className="relative">
+            <div className="absolute top-0 left-0 h-full w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {properties.slice(0, 6).map((property) => (
+                  <CarouselItem key={property.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <PropertyCard property={property} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
         </div>
       </section>
       
