@@ -11,6 +11,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import LottiePlayer from "@/components/shared/lottie-player";
 
 const faqs = [
   {
@@ -131,7 +132,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-primary/5">
+      <section id="featured-listings" className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Featured Properties</h2>
@@ -327,14 +328,8 @@ export default function HomePage() {
                   </Link>
                 </Button>
               </div>
-              <div className="h-64 md:h-full w-full relative">
-                <Image
-                  src="https://picsum.photos/seed/ai-rec/800/600"
-                  alt="AI recommendation concept"
-                  data-ai-hint="futuristic interface"
-                  fill
-                  className="object-cover"
-                />
+              <div className="h-64 md:h-full w-full relative min-h-[300px]">
+                <LottiePlayer src="https://lottie.host/81a242c8-0428-4332-9721-e822c10c14f0/E9VPR5L01y.json" />
               </div>
             </div>
           </Card>
@@ -396,5 +391,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
