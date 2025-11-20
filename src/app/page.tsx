@@ -149,15 +149,17 @@ export default function HomePage() {
               }}
               className="w-full"
             >
-              <CarouselContent className="-ml-4 animate-carousel-nudge">
+              <CarouselContent>
                 {properties.slice(0, 6).map((property) => (
-                  <CarouselItem key={property.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={property.id} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1">
                       <PropertyCard property={property} className="shadow-lg shadow-black/5" />
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
+              <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -translate-x-1/2" />
+              <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 translate-x-1/2" />
             </Carousel>
           </div>
         </div>
