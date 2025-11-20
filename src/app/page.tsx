@@ -10,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const faqs = [
   {
@@ -118,11 +119,25 @@ export default function HomePage() {
               A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.slice(0, 3).map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {properties.slice(0, 6).map((property) => (
+                <CarouselItem key={property.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1">
+                    <PropertyCard property={property} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 hidden md:flex" />
+            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 hidden md:flex" />
+          </Carousel>
           <div className="text-center mt-12">
             <Button asChild variant="outline">
               <Link href="/properties">
@@ -370,4 +385,5 @@ export default function HomePage() {
   );
 }
 
+    
     
