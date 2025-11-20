@@ -1,10 +1,10 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Handshake, Construction, DraftingCompass, Sofa, Briefcase, KeyRound, Compass, Building2 } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
-import { properties, builders } from "@/lib/data";
+import { properties } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
@@ -73,7 +73,7 @@ const quickServices = [
   { href: "/properties", label: "Properties", icon: Building2 },
   { href: "/services", label: "Rent", icon: KeyRound },
   { href: "/services", label: "Architect", icon: DraftingCompass },
-  { href: "/services", label: "Vastu", icon: Compass },
+  { href: "/services", label: "Collaboration", icon: Handshake },
   { href: "/services", label: "Construction", icon: Construction },
   { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/services", label: "Consultancy", icon: Briefcase },
@@ -116,7 +116,8 @@ export default function HomePage() {
               Delhi's Premier Real Estate Partner
             </span>
           </h2>
-           <div className="mt-8">
+           <div className="mt-8 relative">
+            <div className="absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
              <div className="flex overflow-x-auto space-x-6 pb-4 -mx-4 px-4 hide-scrollbar">
               {quickServices.map((service) => (
                 <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-20">
@@ -157,8 +158,8 @@ export default function HomePage() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 hidden md:flex" />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 hidden md:flex" />
+            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 md:flex" />
+            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 md:flex" />
           </Carousel>
         </div>
       </section>
@@ -280,7 +281,7 @@ export default function HomePage() {
             <Card className="p-6">
               <CardHeader className="p-0">
                 <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
-                  <HomeIcon className="h-8 w-8 text-primary" />
+                  <Building className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-xl">Curated Properties</CardTitle>
               </CardHeader>
@@ -293,7 +294,7 @@ export default function HomePage() {
                 <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
                   <Sparkles className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Expert Guidance</CardTitle> overpowering
+                <CardTitle className="text-xl">Expert Guidance</CardTitle>
               </CardHeader>
               <CardContent className="p-0 mt-2">
                 <p className="text-muted-foreground">Personalized consultancy and end-to-end support from our experienced team.</p>
