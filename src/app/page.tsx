@@ -117,11 +117,11 @@ export default function HomePage() {
             </span>
           </h2>
            <div className="mt-8 relative">
-             <div className="flex overflow-x-auto space-x-6 pb-4 -mx-4 px-4 hide-scrollbar">
+             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 -mx-4 px-4 hide-scrollbar">
               {quickServices.map((service) => (
-                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-primary">
-                    <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-20 sm:w-24">
+                  <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-primary">
+                    <service.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary transition-colors group-hover:text-primary-foreground" />
                   </div>
                   <p className="text-xs font-medium text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
                 </Link>
@@ -131,7 +131,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-secondary/30">
+      <section className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Featured Properties</h2>
@@ -142,7 +142,6 @@ export default function HomePage() {
           <Carousel
             opts={{
               align: "start",
-              loop: true,
             }}
             className="w-full"
           >
