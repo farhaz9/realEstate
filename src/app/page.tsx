@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Handshake, Construction, DraftingCompass, Sofa, Briefcase } from "lucide-react";
+import { ArrowRight, Building, Home as HomeIcon, Palette, Sparkles, Handshake, Construction, DraftingCompass, Sofa, Briefcase, KeyRound, Compass, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
@@ -31,7 +31,7 @@ const faqs = [
   }
 ];
 
-const services = [
+const homeServices = [
   {
     icon: Building,
     title: "Properties",
@@ -67,6 +67,16 @@ const services = [
     imageId: "service-consultancy",
     href: "/services"
   },
+];
+
+const quickServices = [
+  { href: "/properties", label: "Properties", icon: Building2 },
+  { href: "/services", label: "Rent", icon: KeyRound },
+  { href: "/services", label: "Architect", icon: DraftingCompass },
+  { href: "/services", label: "Vastu", icon: Compass },
+  { href: "/services", label: "Construction", icon: Construction },
+  { href: "/interiors", label: "Interiors", icon: Palette },
+  { href: "/services", label: "Consultancy", icon: Briefcase },
 ];
 
 
@@ -106,6 +116,18 @@ export default function HomePage() {
               Delhi's Premier Real Estate Partner
             </span>
           </h2>
+           <div className="mt-8">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+              {quickServices.map((service) => (
+                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group w-20">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-primary">
+                    <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                  </div>
+                  <p className="text-xs font-medium text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -150,7 +172,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.slice(0, 3).map((service) => {
+            {homeServices.slice(0, 3).map((service) => {
               const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
               return (
               <Card key={service.title} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
@@ -183,7 +205,7 @@ export default function HomePage() {
             )})}
           </div>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 justify-center max-w-4xl mx-auto">
-            {services.slice(3, 5).map((service) => {
+            {homeServices.slice(3, 5).map((service) => {
                 const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
                 return (
                 <Card key={service.title} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
