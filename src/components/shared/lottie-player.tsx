@@ -1,6 +1,6 @@
 "use client";
 
-import Lottie, { LottieComponentProps } from "lottie-react";
+import Lottie, { type LottieComponentProps } from "lottie-react";
 
 export default function LottiePlayer(props: LottieComponentProps) {
   const animationData =
