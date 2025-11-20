@@ -117,9 +117,9 @@ export default function HomePage() {
             </span>
           </h2>
            <div className="mt-8">
-            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+             <div className="flex overflow-x-auto space-x-6 pb-4 -mx-4 px-4 hide-scrollbar">
               {quickServices.map((service) => (
-                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group w-20">
+                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-20">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-primary">
                     <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
                   </div>
