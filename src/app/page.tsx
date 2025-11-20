@@ -4,7 +4,7 @@ import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, Draft
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/lib/data";
+import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
@@ -146,14 +146,12 @@ export default function HomePage() {
               align: "start",
               loop: true,
             }}
-            className="w-full"
+            className="w-full max-w-6xl mx-auto"
           >
-            <CarouselContent className="animate-carousel-nudge">
+            <CarouselContent className="-ml-4 animate-carousel-nudge">
               {properties.slice(0, 6).map((property, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1">
-                    <PropertyCard property={property} className="shadow-lg" />
-                  </div>
+                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                  <PropertyCard property={property} className="shadow-lg" />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -376,14 +374,14 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
-            {properties.slice(0, 5).map((builder) => {
-              const builderImage = PlaceHolderImages.find(p => p.id === builder.image);
+            {builders.slice(0, 5).map((builder) => {
+              const builderImage = PlaceHolderImages.find(p => p.id === builder.logo);
               return (
                 <div key={builder.id} className="grayscale hover:grayscale-0 transition-all duration-300">
                   {builderImage && (
                     <Image
                       src={builderImage.imageUrl}
-                      alt={builder.title}
+                      alt={builder.name}
                       data-ai-hint={builderImage.imageHint}
                       width={140}
                       height={70}
@@ -399,3 +397,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    

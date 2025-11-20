@@ -17,8 +17,8 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   const propertyImage = PlaceHolderImages.find((p) => p.id === property.image);
 
   return (
-    <Card className={cn("flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
-      <CardHeader className="p-0 relative h-56">
+    <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
+      <CardHeader className="p-0 relative h-56 flex-shrink-0">
         {propertyImage && (
           <Image
             src={propertyImage.imageUrl}
@@ -32,10 +32,10 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <Badge variant="secondary">{property.type}</Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow p-6">
+      <CardContent className="flex-grow p-6 flex flex-col">
         <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
         <CardTitle className="mt-2 text-xl font-semibold leading-tight">{property.title}</CardTitle>
-        <p className="mt-1 text-sm text-muted-foreground">{property.location}</p>
+        <p className="mt-1 text-sm text-muted-foreground flex-grow">{property.location}</p>
 
         <div className="mt-4 flex items-center space-x-4 text-muted-foreground border-t pt-4">
           <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="p-6 pt-0">
+      <CardFooter className="p-6 pt-0 mt-auto">
         <Button className="w-full">
           View Details <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
@@ -60,3 +60,5 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     </Card>
   );
 }
+
+    
