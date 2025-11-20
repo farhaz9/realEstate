@@ -4,7 +4,7 @@ import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, Draft
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/lib/data";
+import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
