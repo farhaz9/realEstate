@@ -1,26 +1,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Gavel, Landmark, HandCoins } from "lucide-react";
+import { Building, Construction, DraftingCompass, Sofa, Briefcase } from "lucide-react";
 
 const services = [
   {
+    icon: Building,
+    title: "Properties",
+    description: "Access a curated portfolio of Delhi's finest luxury properties, handpicked for quality, location, and value.",
+  },
+  {
+    icon: Construction,
+    title: "Construction",
+    description: "End-to-end construction services, managed with precision and a commitment to architectural excellence.",
+  },
+  {
+    icon: DraftingCompass,
+    title: "Interiors",
+    description: "Bespoke interior design solutions that transform your space into a true reflection of your personal style.",
+  },
+  {
+    icon: Sofa,
+    title: "Furniture",
+    description: "Custom-crafted furniture pieces designed to complement your interiors and elevate your living experience.",
+  },
+  {
     icon: Briefcase,
-    title: "Property Management",
-    description: "Comprehensive management services for your properties, ensuring they are well-maintained and profitable.",
-  },
-  {
-    icon: Gavel,
-    title: "Legal Assistance",
-    description: "Expert legal guidance through every step of your real estate transactions, from contracts to closing.",
-  },
-  {
-    icon: Landmark,
-    title: "Financial Services",
-    description: "Connect with our network of financial experts to secure the best loans and financing options for your purchase.",
-  },
-  {
-    icon: HandCoins,
-    title: "Vastu Consultancy",
-    description: "Harmonize your new home with Vastu principles for a prosperous and positive living environment.",
+    title: "Consultancy",
+    description: "Expert guidance on market trends, investment strategies, and legal processes for informed decision-making.",
   },
 ];
 
@@ -30,11 +35,11 @@ export default function ServicesPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold tracking-tight">Our Services</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-          Beyond finding your perfect property, we offer a range of services to make your real estate journey seamless.
+          A complete suite of services to manage every aspect of your real estate journey, from vision to reality.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {services.map((service, index) => (
           <Card key={index} className="text-center flex flex-col items-center p-6 hover:bg-secondary/50 transition-colors">
             <CardHeader>

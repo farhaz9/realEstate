@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground">
-              Your gateway to luxury living in Delhi.
+              Your trusted partner in luxury living.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 md:col-span-3 gap-8">
@@ -18,14 +18,14 @@ export default function Footer() {
               <h3 className="font-semibold tracking-wider uppercase">Explore</h3>
               <ul className="mt-4 space-y-2 text-sm">
                 <li><Link href="/properties" className="text-muted-foreground hover:text-foreground">Properties</Link></li>
+                <li><Link href="/services" className="text-muted-foreground hover:text-foreground">Services</Link></li>
                 <li><Link href="/builders" className="text-muted-foreground hover:text-foreground">Builders</Link></li>
-                <li><Link href="/interiors" className="text-muted-foreground hover:text-foreground">Interiors</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold tracking-wider uppercase">Company</h3>
               <ul className="mt-4 space-y-2 text-sm">
-                <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
+                <li><Link href="/#faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
                 <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
                 <li><Link href="/recommendations" className="text-muted-foreground hover:text-foreground">AI Finder</Link></li>
               </ul>
