@@ -53,10 +53,10 @@ const services = [
     href: "/interiors"
   },
   {
-    icon: Sofa,
-    title: "Furniture",
-    description: "Custom-crafted furniture pieces designed to complement your interiors and elevate your living experience.",
-    imageId: "service-furniture",
+    icon: Sparkles,
+    title: "Miscellaneous",
+    description: "Custom-crafted furniture, lighting, and finishing touches to complement your interiors and elevate your living experience.",
+    imageId: "service-miscellaneous",
     href: "/services"
   },
   {
@@ -369,3 +369,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    

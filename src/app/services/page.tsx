@@ -1,5 +1,6 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Construction, DraftingCompass, Sofa, Briefcase } from "lucide-react";
+import { Building, Construction, DraftingCompass, Sparkles, Briefcase } from "lucide-react";
 
 const services = [
   {
@@ -18,9 +19,9 @@ const services = [
     description: "Bespoke interior design solutions that transform your space into a true reflection of your personal style.",
   },
   {
-    icon: Sofa,
-    title: "Furniture",
-    description: "Custom-crafted furniture pieces designed to complement your interiors and elevate your living experience.",
+    icon: Sparkles,
+    title: "Miscellaneous",
+    description: "Custom-crafted furniture, lighting, and finishing touches to complement your interiors and elevate your living experience.",
   },
   {
     icon: Briefcase,
@@ -57,3 +58,5 @@ export default function ServicesPage() {
     </div>
   );
 }
+
+    
