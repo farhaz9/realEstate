@@ -4,7 +4,7 @@ import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, Draft
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
-import { properties, builders } from "@/lib/data";
+import { properties } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
@@ -141,11 +141,25 @@ export default function HomePage() {
               A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.slice(0, 6).map((property) => (
-              <PropertyCard key={property.id} property={property} className="shadow-lg" />
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="animate-carousel-nudge">
+              {properties.slice(0, 6).map((property, index) => (
+                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1">
+                    <PropertyCard property={property} className="shadow-lg" />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+          </Carousel>
         </div>
       </section>
       
@@ -362,14 +376,14 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
-            {builders.slice(0, 5).map((builder) => {
-              const builderImage = PlaceHolderImages.find(p => p.id === builder.logo);
+            {properties.slice(0, 5).map((builder) => {
+              const builderImage = PlaceHolderImages.find(p => p.id === builder.image);
               return (
                 <div key={builder.id} className="grayscale hover:grayscale-0 transition-all duration-300">
                   {builderImage && (
                     <Image
                       src={builderImage.imageUrl}
-                      alt={builder.name}
+                      alt={builder.title}
                       data-ai-hint={builderImage.imageHint}
                       width={140}
                       height={70}
