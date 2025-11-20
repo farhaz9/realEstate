@@ -131,35 +131,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="featured-listings" className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Featured Properties
-            </h2>
-            <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
-              A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
-            </p>
-          </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-6xl mx-auto"
-          >
-            <CarouselContent className="-ml-4 animate-carousel-nudge">
-              {properties.slice(0, 6).map((property, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
-                  <PropertyCard property={property} className="shadow-lg" />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
-        </div>
-      </section>
       
       <section id="services" className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4">
