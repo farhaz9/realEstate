@@ -141,26 +141,10 @@ export default function HomePage() {
               A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
             </p>
           </div>
-          <div className="relative">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent>
-                {properties.slice(0, 6).map((property) => (
-                  <CarouselItem key={property.id} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1">
-                      <PropertyCard property={property} className="shadow-lg shadow-black/5" />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -translate-x-1/2" />
-              <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 translate-x-1/2" />
-            </Carousel>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {properties.slice(0, 6).map((property) => (
+              <PropertyCard key={property.id} property={property} className="shadow-lg" />
+            ))}
           </div>
         </div>
       </section>
