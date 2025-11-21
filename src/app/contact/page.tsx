@@ -1,34 +1,23 @@
 
-import Image from "next/image";
 import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
+import { PageHero } from "@/components/shared/page-hero";
 
 export default function ContactPage() {
-  const contactHeroImage = PlaceHolderImages.find(p => p.id === "contact-hero");
-
   return (
     <div>
-      <section className="relative w-full h-64 md:h-80">
-        {contactHeroImage && (
-          <Image
-            src={contactHeroImage.imageUrl}
-            alt={contactHeroImage.description}
-            data-ai-hint={contactHeroImage.imageHint}
-            fill
-            className="object-cover"
-          />
-        )}
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
-          <h1 className="text-4xl md:text-5xl font-bold">Contact Delhi's Best Real Estate and Interior Design Company</h1>
-          <p className="mt-2 text-lg">We'd love to hear from you. Let's find your dream home together.</p>
-        </div>
-      </section>
+      <PageHero
+        title="Contact Delhi's Best Real Estate and Interior Design Company"
+        subtitle="We'd love to hear from you. Let's find your dream home together."
+        image={{
+          id: "contact-hero",
+          imageHint: "office reception",
+        }}
+      />
 
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 gap-12">

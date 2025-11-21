@@ -215,6 +215,24 @@
       "description": "Two professionals in a meeting discussing blueprints",
       "imageUrl": "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MHx8fHwxNzYzNTczNjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "business meeting"
+    },
+    {
+      "id": "properties-hero",
+      "description": "Grand exterior of a luxury villa with a pool",
+      "imageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjB2aWxsYXxlbnwwfHx8fDE3MDkyODc1MjJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "luxury villa"
+    },
+    {
+      "id": "interiors-hero",
+      "description": "Bright and elegant modern living room with large windows",
+      "imageUrl": "https://images.unsplash.com/photo-1600607687939-ce8a69a61e05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBsaXZpbmclMjByb29tfGVufDB8fHx8MTcwOTI4NzU1MXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "modern living room"
+    },
+    {
+      "id": "services-hero",
+      "description": "Architects reviewing blueprints on a construction site",
+      "imageUrl": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTcwOTI4NzU3NXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "construction site"
     }
   ]
 }

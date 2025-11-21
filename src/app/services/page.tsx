@@ -5,6 +5,7 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/shared/page-hero";
 
 const services = [
   {
@@ -46,50 +47,50 @@ const services = [
 
 export default function ServicesPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight">Our Services</h1>
-        <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-          A complete suite of services from the best real estate and interior design company in Delhi.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.map((service, index) => {
-          const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
-          return(
-          <Card key={index} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
-            <CardHeader className="p-0 relative h-56">
-              {serviceImage && (
-                <Image
-                  src={serviceImage.imageUrl}
-                  alt={service.title}
-                  data-ai-hint={serviceImage.imageHint}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              )}
-            </CardHeader>
-            <CardContent className="flex-grow p-6 flex flex-col">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="bg-primary/10 p-2 rounded-full">
-                    <service.icon className="h-6 w-6 text-primary" />
+    <div>
+       <PageHero
+        title="Our Services"
+        subtitle="A complete suite of services from the best real estate and interior design company in Delhi."
+        image={{
+          id: "services-hero",
+          imageHint: "construction site",
+        }}
+      />
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {services.map((service, index) => {
+            const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
+            return(
+            <Card key={index} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+              <CardHeader className="p-0 relative h-56">
+                {serviceImage && (
+                  <Image
+                    src={serviceImage.imageUrl}
+                    alt={service.title}
+                    data-ai-hint={serviceImage.imageHint}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                )}
+              </CardHeader>
+              <CardContent className="flex-grow p-6 flex flex-col">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                      <service.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">{service.title}</CardTitle>
                 </div>
-                <CardTitle className="text-xl">{service.title}</CardTitle>
-              </div>
-              <p className="text-muted-foreground flex-grow">{service.description}</p>
-                <Button asChild variant="link" className="p-0 h-auto justify-start mt-4">
-                  <Link href={service.href}>
-                    Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-            </CardContent>
-          </Card>
-        )})}
+                <p className="text-muted-foreground flex-grow">{service.description}</p>
+                  <Button asChild variant="link" className="p-0 h-auto justify-start mt-4">
+                    <Link href={service.href}>
+                      Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+              </CardContent>
+            </Card>
+          )})}
+        </div>
       </div>
     </div>
   );
 }
-
-    
-
