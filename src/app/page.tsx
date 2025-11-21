@@ -296,8 +296,8 @@ export default function HomePage() {
           <Card className="max-w-4xl mx-auto p-6 md:p-10 shadow-lg">
             <div className="space-y-8">
               {whyChooseUsPoints.map((point, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-start gap-6">
-                  <div className="bg-primary/10 p-4 rounded-full text-primary">
+                <div key={index} className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+                  <div className="bg-primary/10 p-4 rounded-full text-primary shrink-0">
                     <point.icon className="h-8 w-8" />
                   </div>
                   <div className="flex-1">
