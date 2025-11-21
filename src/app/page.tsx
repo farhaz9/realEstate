@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import LottiePlayer from "@/components/shared/lottie-player";
+import { Label } from "@/components/ui/label";
 
 const faqs = [
   {
@@ -56,17 +57,17 @@ const homeServices = [
     href: "/interiors"
   },
   {
-    icon: Briefcase,
-    title: "Consultancy",
-    description: "Expert guidance on market trends, investment strategies, and legal processes for informed decision-making.",
-    imageId: "service-consultancy",
-    href: "/services"
-  },
-  {
     icon: Sparkles,
     title: "Miscellaneous",
     description: "Custom-crafted furniture, lighting, and finishing touches to complement your interiors and elevate your living experience.",
     imageId: "service-miscellaneous",
+    href: "/services"
+  },
+  {
+    icon: Briefcase,
+    title: "Consultancy",
+    description: "Expert guidance on market trends, investment strategies, and legal processes for informed decision-making.",
+    imageId: "service-consultancy",
     href: "/services"
   },
 ];
@@ -74,10 +75,10 @@ const homeServices = [
 const quickServices = [
   { href: "/properties", label: "Properties", icon: Building2 },
   { href: "/services", label: "Rent", icon: KeyRound },
+  { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/services", label: "Architect", icon: DraftingCompass },
   { href: "/services", label: "Collaboration", icon: Handshake },
   { href: "/services", label: "Construction", icon: Construction },
-  { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/services", label: "Consultancy", icon: Briefcase },
 ];
 
@@ -271,17 +272,29 @@ export default function HomePage() {
 
       <section id="contact-form" className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4 max-w-2xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Contact Us</h2>
-            <p className="mt-2 text-muted-foreground">Begin your journey with us. We're here to assist you.</p>
-          </div>
           <Card>
+            <CardHeader className="text-center">
+              <CardTitle className="text-3xl md:text-4xl font-bold">Contact Us</CardTitle>
+              <p className="mt-2 text-muted-foreground">Begin your journey with us. We're here to assist you.</p>
+            </CardHeader>
             <CardContent className="p-6">
               <form className="space-y-4">
-                <Input placeholder="Your Name" />
-                <Input type="email" placeholder="Your Email" />
-                <Input type="tel" placeholder="Your Phone Number" />
-                <Textarea placeholder="Your Message" rows={5} />
+                <div className="space-y-2">
+                  <Label htmlFor="name">Your Name <span className="text-destructive">*</span></Label>
+                  <Input id="name" placeholder="Your Name" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Your Email <span className="text-destructive">*</span></Label>
+                  <Input id="email" type="email" placeholder="Your Email" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Your Phone Number <span className="text-destructive">*</span></Label>
+                  <Input id="phone" type="tel" placeholder="Your Phone Number" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Your Message</Label>
+                  <Textarea id="message" placeholder="Your Message" rows={5} />
+                </div>
                  <div className="flex flex-col sm:flex-row gap-4">
                     <Button type="submit" className="w-full">Send Message</Button>
                     <Button className="w-full bg-[#25D366] text-white hover:bg-[#1DAE52]" asChild>
