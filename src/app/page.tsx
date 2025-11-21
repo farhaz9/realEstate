@@ -155,7 +155,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <Card className="overflow-hidden">
             <CardContent className="p-0">
-              <div className="w-full h-64 md:h-80">
+              <div className="w-full h-48 md:h-56">
                 <LottiePlayer src="https://lottie.host/e6494867-25f0-4e1c-b888-68cf6dad67a3/PhlJ848FPS.json" />
               </div>
             </CardContent>
