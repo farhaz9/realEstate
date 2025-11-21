@@ -9,7 +9,7 @@ export default function InteriorsPage() {
   return (
     <div>
       <PageHero
-        title="Best Interior Design in Delhi"
+        title="Interior Design"
         subtitle="Transform your house into a home with personalized interior design services from Delhi's best company. Explore our portfolio."
         image={{
           id: "interiors-hero",
