@@ -24,7 +24,7 @@ export default function ContactPage() {
         )}
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
-          <h1 className="text-4xl md:text-5xl font-bold">Get In Touch</h1>
+          <h1 className="text-4xl md:text-5xl font-bold">Contact Delhi's Best Real Estate and Interior Design Company</h1>
           <p className="mt-2 text-lg">We'd love to hear from you. Let's find your dream home together.</p>
         </div>
       </section>

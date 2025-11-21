@@ -34,9 +34,9 @@ export default function ServicesPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight">Our Services</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Real Estate and Interior Design Services in Delhi</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-          A complete suite of services to manage every aspect of your real estate journey, from vision to reality.
+          A complete suite of services from the best real estate and interior design company in Delhi.
         </p>
       </div>
 

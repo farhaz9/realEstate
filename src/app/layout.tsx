@@ -14,17 +14,20 @@ const poppins = Poppins({
 });
 
 const siteUrl = "https://www.farhazhomes.com";
+const siteTitle = "Farhaz Homes | Best Real Estate and Interior Design Company in Delhi";
+const siteDescription = "Discover Delhi's best real estate and interior design company. Farhaz Homes offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
+
 
 export const metadata: Metadata = {
-  title: "Farhaz Homes | Premier Luxury Real Estate in Delhi",
-  description: "Discover curated luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi with Farhaz Homes. Your trusted partner in luxury living.",
+  title: siteTitle,
+  description: siteDescription,
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: "Farhaz Homes | Premier Luxury Real Estate in Delhi",
-    description: "Discover curated luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi with Farhaz Homes. Your trusted partner in luxury living.",
+    title: siteTitle,
+    description: siteDescription,
     url: siteUrl,
     siteName: 'Farhaz Homes',
     images: [
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
         url: `${siteUrl}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Luxury home in Delhi by Farhaz Homes',
+        alt: 'Luxury real estate and interior design in Delhi by Farhaz Homes',
       },
     ],
     locale: 'en_US',
@@ -40,8 +43,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Farhaz Homes | Premier Luxury Real Estate in Delhi",
-    description: "Discover curated luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi with Farhaz Homes. Your trusted partner in luxury living.",
+    title: siteTitle,
+    description: siteDescription,
     images: [`${siteUrl}/og-image.jpg`],
   },
   icons: {

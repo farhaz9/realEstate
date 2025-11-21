@@ -14,9 +14,9 @@ export default function InteriorsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight">Bespoke Interior Designs</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Best Interior Design in Delhi</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-          Transform your house into a home with our personalized interior design services. Explore our portfolio.
+          Transform your house into a home with personalized interior design services from Delhi's best company. Explore our portfolio.
         </p>
       </div>
 

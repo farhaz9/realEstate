@@ -17,20 +17,20 @@ import { Label } from "@/components/ui/label";
 
 const faqs = [
   {
-    question: "What types of properties do you specialize in?",
-    answer: "We specialize in high-end luxury properties in Delhi, including apartments, villas, penthouses, and farmhouses in prime locations like South Delhi, Central Delhi, and Lutyens' Delhi."
+    question: "What makes you the best real estate company in Delhi?",
+    answer: "As the best real estate company in Delhi, we provide unparalleled access to exclusive luxury properties, expert market insights, and a seamless client experience from start to finish."
   },
   {
-    question: "What does your consultancy service include?",
-    answer: "Our consultancy services cover market analysis, investment strategy, legal guidance, and financial advice to ensure you make informed decisions in your real estate journey."
+    question: "Do you offer interior design services in Delhi?",
+    answer: "Yes, we are a leading interior design company in Delhi, offering bespoke design solutions that transform spaces into personalized, luxurious homes."
   },
   {
-    question: "Do you offer construction and interior design services?",
-    answer: "Yes, we provide end-to-end solutions, from bespoke construction and architectural design to personalized interiors and custom furniture, creating spaces that are uniquely yours."
+    question: "What services do you offer besides property sales and interior design?",
+    answer: "We provide comprehensive solutions, including end-to-end construction management, architectural design, property consultancy, and custom furniture to ensure a complete luxury experience."
   },
   {
-    question: "How do you partner with builders?",
-    answer: "We maintain strong partnerships with Delhi's top builders, giving our clients exclusive access to premium projects, quality assurance, and seamless execution from start to finish."
+    question: "Which areas in Delhi do you specialize in?",
+    answer: "We specialize in high-end properties across Delhi's most prestigious neighborhoods, including South Delhi, Central Delhi, Lutyens' Delhi, and other prime locations."
   }
 ];
 
@@ -117,7 +117,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Crafting Delhi's Finest Homes
+            Best Real Estate and Interior Design Company in Delhi
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
             Your trusted partner in luxury properties, bespoke interiors, and end-to-end real estate solutions.
@@ -163,7 +163,7 @@ export default function HomePage() {
       <section id="featured-listings" className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Featured Properties</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Featured Delhi Properties</h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
               A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
             </p>
@@ -192,7 +192,7 @@ export default function HomePage() {
       <section id="services" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Services</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Our Real Estate & Interior Design Services</h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
               A complete suite of services to manage every aspect of your real estate journey, from vision to reality.
             </p>
@@ -309,7 +309,7 @@ export default function HomePage() {
       <section id="why-us" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Farhaz Homes?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose Delhi's Best Real Estate Company?</h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
               We provide a seamless, end-to-end experience, grounded in trust, transparency, and a commitment to quality.
             </p>
@@ -369,7 +369,7 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
             <p className="mt-2 text-muted-foreground">
-              Your questions, answered.
+              Your questions about the best real estate and interior design company in Delhi, answered.
             </p>
           </div>
           <Accordion type="single" collapsible className="w-full">

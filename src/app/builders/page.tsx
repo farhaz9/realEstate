@@ -8,9 +8,9 @@ export default function BuildersPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight">Our Esteemed Builder Partners</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Our Esteemed Builder Partners in Delhi</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-          We collaborate with the industry's finest to deliver homes of exceptional quality and design.
+          We collaborate with Delhi's finest real estate builders to deliver homes of exceptional quality and design.
         </p>
       </div>
 
