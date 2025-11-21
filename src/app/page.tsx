@@ -56,17 +56,17 @@ const homeServices = [
     href: "/interiors"
   },
   {
-    icon: Sparkles,
-    title: "Miscellaneous",
-    description: "Custom-crafted furniture, lighting, and finishing touches to complement your interiors and elevate your living experience.",
-    imageId: "service-miscellaneous",
-    href: "/services"
-  },
-  {
     icon: Briefcase,
     title: "Consultancy",
     description: "Expert guidance on market trends, investment strategies, and legal processes for informed decision-making.",
     imageId: "service-consultancy",
+    href: "/services"
+  },
+  {
+    icon: Sparkles,
+    title: "Miscellaneous",
+    description: "Custom-crafted furniture, lighting, and finishing touches to complement your interiors and elevate your living experience.",
+    imageId: "service-miscellaneous",
     href: "/services"
   },
 ];
