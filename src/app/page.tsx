@@ -1,4 +1,5 @@
 
+
 import Link from "next/link";
 import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -78,6 +79,24 @@ const quickServices = [
   { href: "/services", label: "Construction", icon: Construction },
   { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/services", label: "Consultancy", icon: Briefcase },
+];
+
+const whyChooseUsPoints = [
+  {
+    icon: Building,
+    title: "Curated Properties",
+    description: "Access to Delhi’s most sought-after luxury homes, vetted for quality and value.",
+  },
+  {
+    icon: Sparkles,
+    title: "Expert Guidance",
+    description: "Personalized consultancy and end-to-end support from our experienced team.",
+  },
+  {
+    icon: Handshake,
+    title: "Trusted Partnerships",
+    description: "Strong collaborations with top builders, ensuring premium quality and craftsmanship.",
+  },
 ];
 
 
@@ -274,41 +293,21 @@ export default function HomePage() {
               We provide a seamless, end-to-end experience, grounded in trust, transparency, and a commitment to quality.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <Card className="p-6">
-              <CardHeader className="p-0">
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
-                  <Building className="h-8 w-8 text-primary" />
+          <Card className="max-w-4xl mx-auto p-6 md:p-10 shadow-lg">
+            <div className="space-y-8">
+              {whyChooseUsPoints.map((point, index) => (
+                <div key={index} className="flex flex-col sm:flex-row items-start gap-6">
+                  <div className="bg-primary/10 p-4 rounded-full text-primary">
+                    <point.icon className="h-8 w-8" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold">{point.title}</h3>
+                    <p className="text-muted-foreground mt-1">{point.description}</p>
+                  </div>
                 </div>
-                <CardTitle className="text-xl">Curated Properties</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0 mt-2">
-                <p className="text-muted-foreground">Access to Delhi’s most sought-after luxury homes, vetted for quality and value.</p>
-              </CardContent>
-            </Card>
-            <Card className="p-6">
-               <CardHeader className="p-0">
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
-                  <Sparkles className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Expert Guidance</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0 mt-2">
-                <p className="text-muted-foreground">Personalized consultancy and end-to-end support from our experienced team.</p>
-              </CardContent>
-            </Card>
-            <Card className="p-6">
-               <CardHeader className="p-0">
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
-                  <Handshake className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Trusted Partnerships</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0 mt-2">
-                <p className="text-muted-foreground">Strong collaborations with top builders, ensuring premium quality and craftsmanship.</p>
-              </CardContent>
-            </Card>
-          </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </section>
 
