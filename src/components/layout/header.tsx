@@ -45,7 +45,7 @@ export default function Header() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="right">
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <Logo />
           <nav className="mt-8 grid gap-4">
