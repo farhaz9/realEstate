@@ -44,7 +44,7 @@
     },
     {
       "id": "builder-logo-1",
-      "description": "Prestige Group logo",
+      "description": "Emaar India logo",
       "imageUrl": "https://images.unsplash.com/photo-1747862712521-e4a37b12a039?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMGxvZ298ZW58MHx8fHwxNzYzMzcwODA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "abstract logo"
     },
@@ -62,13 +62,13 @@
     },
     {
       "id": "builder-logo-4",
-      "description": "Sobha Ltd logo",
+      "description": "Omaxe logo",
       "imageUrl": "https://images.unsplash.com/photo-1634729020084-106e70838c97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0eXBvZ3JhcGh5JTIwbG9nb3xlbnwwfHx8fDE3NjM0MzI3MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "typography logo"
     },
     {
       "id": "builder-logo-5",
-      "description": "Raheja Corp logo",
+      "description": "Ansal API logo",
       "imageUrl": "https://images.unsplash.com/photo-1713176988815-47bb84f325b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb3Jwb3JhdGUlMjBsb2dvfGVufDB8fHx8MTc2MzQxNzM4NHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "corporate logo"
     },
@@ -107,6 +107,78 @@
       "description": "Ornate details of classic interior design",
       "imageUrl": "https://images.unsplash.com/photo-1588796460733-82d656bfbc49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjbGFzc2ljJTIwZGVjb3J8ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "classic decor"
+    },
+    {
+      "id": "interior-3-1",
+      "description": "Modern urban loft living room with exposed brick wall.",
+      "imageUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHx1cmJhbiUyMGxvZnR8ZW58MHx8fHwxNzAwMTU0ODkxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "urban loft"
+    },
+    {
+      "id": "interior-3-2",
+      "description": "Open-plan kitchen in a modern urban loft.",
+      "imageUrl": "https://images.unsplash.com/photo-1600210492493-417193b580a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHw1fHxvcGVuJTIwa2l0Y2hlbiUyMGxvZnR8ZW58MHx8fHwxNzAwMTU0ODkxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "loft kitchen"
+    },
+    {
+      "id": "interior-3-3",
+      "description": "Bedroom in a loft with large windows.",
+      "imageUrl": "https://images.unsplash.com/photo-1594451715429-2598a8a4d402?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwzfHxiZWRyb29tJTIwbG9mdHxlbnwwfHx8fDE3MDAxNTQ4OTF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "loft bedroom"
+    },
+    {
+      "id": "interior-4-1",
+      "description": "Living room with bohemian chic decor.",
+      "imageUrl": "https://images.unsplash.com/photo-1543138241-b6a8a3f8952b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxib2hlbWlhbiUyMGNoaWN8ZW58MHx8fHwxNzAwMTU0ODkyfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "bohemian chic"
+    },
+    {
+      "id": "interior-4-2",
+      "description": "Cozy reading corner with macrame and plants.",
+      "imageUrl": "https://images.unsplash.com/photo-1597148569110-2d88a107e324?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwyfHxib2hvJTIwcmVhZGluZ3xlbnwwfHx8fDE3MDAxNTQ4OTJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "boho reading"
+    },
+    {
+      "id": "interior-4-3",
+      "description": "Bohemian style bedroom with patterned textiles.",
+      "imageUrl": "https://images.unsplash.com/photo-1605335193987-a2e1c98897b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxib2hvJTIwYmVkcm9vbXxlbnwwfHx8fDE3MDAxNTQ4OTJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "boho bedroom"
+    },
+    {
+      "id": "interior-5-1",
+      "description": "Bright and airy Scandinavian living room.",
+      "imageUrl": "https://images.unsplash.com/photo-1616046229478-9901c5536a45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBsaXZpbmclMjByb29tfGVufDB8fHx8MTcwMDE1NDg5M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "scandinavian living"
+    },
+    {
+      "id": "interior-5-2",
+      "description": "Minimalist Scandinavian kitchen with light wood.",
+      "imageUrl": "https://images.unsplash.com/photo-1633211539268-6887f4743e06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBraXRjaGVufGVufDB8fHx8MTcwMDE1NDg5M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "scandinavian kitchen"
+    },
+    {
+      "id": "interior-5-3",
+      "description": "Simple and cozy Scandinavian bedroom.",
+      "imageUrl": "https://images.unsplash.com/photo-1512138672904-2415411a3013?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBiZWRyb29tfGVufDB8fHx8MTcwMDE1NDg5M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "scandinavian bedroom"
+    },
+    {
+      "id": "interior-6-1",
+      "description": "Spacious industrial living room with concrete walls.",
+      "imageUrl": "https://images.unsplash.com/photo-1618221118493-719540501132?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwaW50ZXJpb3J8ZW58MHx8fHwxNzAwMTU0ODk0fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "industrial interior"
+    },
+    {
+      "id": "interior-6-2",
+      "description": "Industrial kitchen with stainless steel and dark tones.",
+      "imageUrl": "https://images.unsplash.com/photo-1594911762331-b6f7203b8794?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwa2l0Y2hlbnxlbnwwfHx8fDE3MDAxNTQ4OTR8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "industrial kitchen"
+    },
+    {
+      "id": "interior-6-3",
+      "description": "Bedroom with industrial elements and soft lighting.",
+      "imageUrl": "https://images.unsplash.com/photo-1589139922264-a69f1095b54b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwYmVkcm9vbXxlbnwwfHx8fDE3MDAxNTQ4OTR8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "industrial bedroom"
     },
     {
       "id": "contact-hero",

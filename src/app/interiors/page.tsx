@@ -1,14 +1,8 @@
+
 import Image from "next/image";
 import { interiorProjects } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 export default function InteriorsPage() {
   return (
@@ -20,43 +14,30 @@ export default function InteriorsPage() {
         </p>
       </div>
 
-      <div className="space-y-16">
-        {interiorProjects.map((project) => (
-          <Card key={project.id} className="overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10">
-            <div className="grid md:grid-cols-5">
-              <div className="md:col-span-2 p-8 flex flex-col justify-center">
-                <h2 className="text-3xl font-bold text-primary">{project.title}</h2>
-                <p className="mt-4 text-muted-foreground">{project.description}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {interiorProjects.map((project) => {
+          const projectImage = PlaceHolderImages.find(p => p.id === project.images[0]);
+          return (
+            <Card key={project.id} className="overflow-hidden group relative">
+              <div className="relative h-96 w-full">
+                {projectImage && (
+                  <Image
+                    src={projectImage.imageUrl}
+                    alt={project.title}
+                    data-ai-hint={projectImage.imageHint}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               </div>
-              <div className="md:col-span-3">
-                <Carousel className="w-full">
-                  <CarouselContent>
-                    {project.images.map((imageId, index) => {
-                      const image = PlaceHolderImages.find(p => p.id === imageId);
-                      return (
-                        <CarouselItem key={index}>
-                           <div className="relative h-96 w-full">
-                            {image && (
-                              <Image
-                                src={image.imageUrl}
-                                alt={`${project.title} - Image ${index + 1}`}
-                                data-ai-hint={image.imageHint}
-                                fill
-                                className="object-cover"
-                              />
-                            )}
-                          </div>
-                        </CarouselItem>
-                      )
-                    })}
-                  </CarouselContent>
-                  <CarouselPrevious className="absolute left-4" />
-                  <CarouselNext className="absolute right-4" />
-                </Carousel>
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h2 className="text-2xl font-bold text-white">{project.title}</h2>
+                <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{project.description}</p>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          )
+        })}
       </div>
     </div>
   );

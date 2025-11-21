@@ -78,31 +78,31 @@ export const properties: Property[] = [
 export const builders: Builder[] = [
   {
     id: 'b1',
-    name: 'Prestige Group',
-    logo: 'builder-logo-1',
-    description: 'One of the leading real estate developers in the country, with a legacy of creating iconic projects.',
-  },
-  {
-    id: 'b2',
     name: 'DLF',
     logo: 'builder-logo-2',
     description: 'With over 70 years of experience, DLF is a name synonymous with quality and trust in Indian real estate.',
   },
   {
-    id: 'b3',
+    id: 'b2',
     name: 'Godrej Properties',
     logo: 'builder-logo-3',
     description: 'Bringing the Godrej Group philosophy of innovation, sustainability, and excellence to the real estate industry.',
   },
   {
+    id: 'b3',
+    name: 'Emaar India',
+    logo: 'builder-logo-1',
+    description: 'One of the leading real estate developers in the country, with a legacy of creating iconic projects.',
+  },
+  {
     id: 'b4',
-    name: 'Sobha Ltd',
+    name: 'Omaxe',
     logo: 'builder-logo-4',
     description: 'Known for their passion for perfection, Sobha developers are committed to delivering the highest quality.',
   },
   {
     id: 'b5',
-    name: 'Raheja Corp',
+    name: 'Ansal API',
     logo: 'builder-logo-5',
     description: 'A pioneer in creating green buildings and sustainable living spaces across India.',
   },
@@ -120,5 +120,29 @@ export const interiorProjects: InteriorProject[] = [
     title: 'Classic Elegance Redefined',
     description: 'This project blends timeless design elements with modern luxury. Featuring ornate details, rich textures, and a sophisticated color scheme, it evokes a sense of grandeur and classic style.',
     images: ['interior-2-1', 'interior-2-2', 'interior-2-3'],
+  },
+  {
+    id: 'i3',
+    title: 'Urban Modern Loft',
+    description: 'Exposed brick, metal accents, and an open-concept layout define this edgy, urban space. It combines industrial elements with modern comforts for a unique city living experience.',
+    images: ['interior-3-1', 'interior-3-2', 'interior-3-3'],
+  },
+  {
+    id: 'i4',
+    title: 'Bohemian Chic Retreat',
+    description: 'A vibrant and eclectic mix of patterns, textures, and natural elements. This style is for the free-spirited, creating a warm, inviting, and personalized atmosphere.',
+    images: ['interior-4-1', 'interior-4-2', 'interior-4-3'],
+  },
+  {
+    id: 'i5',
+    title: 'Scandinavian Sanctuary',
+    description: 'Light-filled and functional, this design emphasizes simplicity, minimalism, and a connection to nature. Light wood tones and cozy textiles create a hygge-inspired living space.',
+    images: ['interior-5-1', 'interior-5-2', 'interior-5-3'],
+  },
+  {
+    id: 'i6',
+    title: 'Industrial Edge',
+    description: 'Raw materials like concrete and steel meet refined finishes. High ceilings and large windows create a dramatic and spacious feel, perfect for a contemporary lifestyle.',
+    images: ['interior-6-1', 'interior-6-2', 'interior-6-3'],
   },
 ];
