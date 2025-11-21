@@ -26,8 +26,8 @@ export default function PropertiesPage() {
       </div>
 
       <Card className="mb-8 p-4 bg-card/50">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+          <div>
             <label htmlFor="location-filter" className="text-sm font-medium text-muted-foreground">Location</label>
             <Select>
               <SelectTrigger id="location-filter">
