@@ -15,7 +15,6 @@ const navLinks = [
   { href: "/properties", label: "Properties" },
   { href: "/interiors", label: "Interiors" },
   { href: "/services", label: "Services" },
-  { href: "/builders", label: "Builders" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -70,3 +69,5 @@ export default function Header() {
     </header>
   );
 }
+
+    

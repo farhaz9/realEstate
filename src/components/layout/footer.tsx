@@ -21,7 +21,6 @@ export default function Footer() {
                 <li><Link href="/properties" className="text-muted-foreground hover:text-foreground">Properties</Link></li>
                 <li><Link href="/interiors" className="text-muted-foreground hover:text-foreground">Interiors</Link></li>
                 <li><Link href="/services" className="text-muted-foreground hover:text-foreground">Services</Link></li>
-                <li><Link href="/builders" className="text-muted-foreground hover:text-foreground">Builders</Link></li>
               </ul>
             </div>
             <div>
@@ -48,3 +47,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+    

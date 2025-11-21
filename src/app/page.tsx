@@ -120,7 +120,7 @@ export default function HomePage() {
             Best Real Estate and Interior Design Company in Delhi
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
-            Your trusted partner in luxury properties, bespoke interiors, and end-to-end real estate solutions.
+            Your trusted partner in luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi.
           </p>
           <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
             <Link href="/properties">
@@ -332,38 +332,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="builders" className="py-16 md:py-24 bg-card">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Our Builder Partners
-            </h2>
-            <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
-              We collaborate with the industry's most reputable builders to deliver homes of exceptional quality and design.
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
-            {builders.slice(0, 5).map((builder) => {
-              const builderImage = PlaceHolderImages.find(p => p.id === builder.logo);
-              return (
-                <div key={builder.id} className="grayscale hover:grayscale-0 transition-all duration-300">
-                  {builderImage && (
-                    <Image
-                      src={builderImage.imageUrl}
-                      alt={builder.name}
-                      data-ai-hint={builderImage.imageHint}
-                      width={140}
-                      height={70}
-                      className="object-contain"
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       <section id="faq" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-12">
@@ -387,5 +355,7 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
 
     
