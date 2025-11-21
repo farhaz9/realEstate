@@ -67,7 +67,7 @@ export default function ServicesPage() {
   return (
     <div>
        <PageHero
-        title="Our Services"
+        title="Services"
         subtitle="A complete suite of services from the best real estate and interior design company in Delhi."
         image={{
           id: "services-hero",
