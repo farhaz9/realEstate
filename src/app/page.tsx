@@ -272,7 +272,7 @@ export default function HomePage() {
       <section id="contact-form" className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Quick Inquiry</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Contact Us</h2>
             <p className="mt-2 text-muted-foreground">Begin your journey with us. We're here to assist you.</p>
           </div>
           <Card>
@@ -318,30 +318,6 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      <section id="ai-recommender" className="py-16 md:py-24 bg-card">
-        <div className="container mx-auto px-4">
-          <Card className="bg-secondary text-secondary-foreground border-none overflow-hidden">
-            <div className="grid md:grid-cols-2 items-center">
-              <div className="p-8 md:p-12">
-                <Sparkles className="h-12 w-12 text-primary mb-4" />
-                <h2 className="text-3xl font-bold">Let AI Find Your Perfect Home</h2>
-                <p className="mt-4 text-muted-foreground">
-                  Our advanced AI analyzes your preferences to suggest properties that are just right for you. Spend less time searching and more time dreaming.
-                </p>
-                <Button asChild size="lg" className="mt-6">
-                  <Link href="/recommendations">
-                    Get Recommendations
-                  </Link>
-                </Button>
-              </div>
-              <div className="h-64 md:h-full w-full relative min-h-[300px]">
-                <LottiePlayer src="https://lottie.host/81a242c8-0428-4332-9721-e822c10c14f0/E9VPR5L01y.json" />
-              </div>
             </div>
           </Card>
         </div>
