@@ -22,7 +22,7 @@ const navLinks = [
   { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/", label: "Home", icon: Home },
   { href: "/contact", label: "Contact", icon: MessageCircle, target:"_self" },
-  { href: "https://wa.me/910000000000", label: "WhatsApp", icon: WhatsAppIcon, target: "_blank", className: "animate-blink" },
+  { href: "https://wa.me/919953414336", label: "WhatsApp", icon: WhatsAppIcon, target: "_blank", className: "animate-blink" },
 ];
 
 export default function MobileNav() {

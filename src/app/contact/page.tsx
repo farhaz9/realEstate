@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +41,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Our Office</h3>
-                  <p className="text-muted-foreground">123 Luxury Lane, South Delhi, New Delhi, 110017</p>
+                  <p className="text-muted-foreground">Rohini, Vijay Vihar, Delhi 110085</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -58,7 +59,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Call Us</h3>
-                  <p className="text-muted-foreground">+91 00000 00000</p>
+                  <p className="text-muted-foreground">+91 9953414336</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -67,7 +68,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">WhatsApp</h3>
-                  <Link href="https://wa.me/910000000000" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">+91 00000 00000</Link>
+                  <Link href="https://wa.me/919953414336" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">+91 9953414336</Link>
                 </div>
               </div>
             </div>
