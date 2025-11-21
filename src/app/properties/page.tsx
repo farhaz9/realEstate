@@ -26,8 +26,8 @@ export default function PropertiesPage() {
       </div>
 
       <Card className="mb-8 p-4 bg-card/50">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
+          <div className="md:col-span-2">
             <label htmlFor="location-filter" className="text-sm font-medium text-muted-foreground">Location</label>
             <Select>
               <SelectTrigger id="location-filter">
@@ -48,10 +48,6 @@ export default function PropertiesPage() {
                 {types.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
               </SelectContent>
             </Select>
-          </div>
-          <div>
-            <label htmlFor="price-filter" className="text-sm font-medium text-muted-foreground">Max Price (Cr)</label>
-            <Input id="price-filter" type="number" placeholder="e.g., 10" />
           </div>
           <Button className="w-full">
             <ListFilter className="mr-2 h-4 w-4" />
