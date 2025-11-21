@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Logo } from "@/components/shared/logo";
 import { Github, Twitter, Linkedin } from "lucide-react";
@@ -18,6 +19,7 @@ export default function Footer() {
               <h3 className="font-semibold tracking-wider uppercase">Explore</h3>
               <ul className="mt-4 space-y-2 text-sm">
                 <li><Link href="/properties" className="text-muted-foreground hover:text-foreground">Properties</Link></li>
+                <li><Link href="/interiors" className="text-muted-foreground hover:text-foreground">Interiors</Link></li>
                 <li><Link href="/services" className="text-muted-foreground hover:text-foreground">Services</Link></li>
                 <li><Link href="/builders" className="text-muted-foreground hover:text-foreground">Builders</Link></li>
               </ul>

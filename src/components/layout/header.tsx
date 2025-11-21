@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -12,6 +13,7 @@ import { Menu } from "lucide-react";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/properties", label: "Properties" },
+  { href: "/interiors", label: "Interiors" },
   { href: "/services", label: "Services" },
   { href: "/builders", label: "Builders" },
   { href: "/contact", label: "Contact" },
