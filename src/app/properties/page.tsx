@@ -19,7 +19,7 @@ export default function PropertiesPage() {
   return (
     <div>
       <PageHero
-        title="Luxury Properties in Delhi"
+        title="Properties"
         subtitle="Browse our curated selection of high-end homes, villas, and apartments from the best real estate company in Delhi."
         image={{
           id: "properties-hero",
