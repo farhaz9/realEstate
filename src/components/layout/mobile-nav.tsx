@@ -1,8 +1,9 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Building, Briefcase, MessageCircle } from "lucide-react";
+import { Home, Building, Briefcase, MessageCircle, ConciergeBell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -18,7 +19,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 const navLinks = [
   { href: "/properties", label: "Properties", icon: Building },
-  { href: "/services", label: "Services", icon: Briefcase },
+  { href: "/services", label: "Services", icon: ConciergeBell },
   { href: "/", label: "Home", icon: Home },
   { href: "https://wa.me/910000000000", label: "WhatsApp", icon: WhatsAppIcon, target: "_blank", className: "animate-blink" },
   { href: "/contact", label: "Contact", icon: MessageCircle, target:"_self" },
