@@ -11,7 +11,7 @@ export default function ContactPage() {
   return (
     <div>
       <PageHero
-        title="Contact Delhi's Best Real Estate and Interior Design Company"
+        title="Contact Us"
         subtitle="We'd love to hear from you. Let's find your dream home together."
         image={{
           id: "contact-hero",
