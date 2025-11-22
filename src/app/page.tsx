@@ -174,7 +174,7 @@ export default function HomePage() {
                   <CarouselItem key={service.title} className="md:basis-1/2 lg:basis-1/3">
                     <Link href={service.href} className="p-1 h-full block">
                       <Card className="overflow-hidden group relative transition-all duration-300 h-full flex flex-col">
-                        <div className="relative h-96">
+                        <div className="relative h-80">
                           {serviceImage && (
                             <Image
                               src={serviceImage.imageUrl}
