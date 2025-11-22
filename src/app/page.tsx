@@ -5,7 +5,7 @@ import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, Draft
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/lib/data";
+import { properties, builders } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
@@ -149,6 +149,51 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section id="builders" className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Our Trusted Partners</h2>
+            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+              We collaborate with the best in the industry to bring your vision to life.
+            </p>
+          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-6xl mx-auto"
+          >
+            <CarouselContent>
+              {builders.map((builder) => {
+                const logoImage = PlaceHolderImages.find(p => p.id === builder.logo);
+                return (
+                  <CarouselItem key={builder.id} className="basis-1/2 md:basis-1/3 lg:basis-1/5">
+                    <div className="p-4">
+                      <Card className="flex items-center justify-center h-32">
+                        <div className="relative w-3/4 h-16">
+                          {logoImage && (
+                            <Image
+                              src={logoImage.imageUrl}
+                              alt={builder.name}
+                              data-ai-hint={logoImage.imageHint}
+                              fill
+                              className="object-contain"
+                            />
+                          )}
+                        </div>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+          </Carousel>
         </div>
       </section>
 
@@ -347,3 +392,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
