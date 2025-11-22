@@ -152,48 +152,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="builders" className="py-16 bg-background">
+      <section id="offers" className="py-16 bg-secondary/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Trusted Partners</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">What We Offer</h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              We collaborate with the best in the industry to bring your vision to life.
+              Comprehensive solutions to bring your vision to life, from dream properties to stunning interiors.
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-6xl mx-auto"
-          >
-            <CarouselContent>
-              {builders.map((builder) => {
-                const logoImage = PlaceHolderImages.find(p => p.id === builder.logo);
-                return (
-                  <CarouselItem key={builder.id} className="basis-1/2 md:basis-1/3 lg:basis-1/5">
-                    <div className="p-4">
-                      <Card className="flex items-center justify-center h-32">
-                        <div className="relative w-3/4 h-16">
-                          {logoImage && (
-                            <Image
-                              src={logoImage.imageUrl}
-                              alt={builder.name}
-                              data-ai-hint={logoImage.imageHint}
-                              fill
-                              className="object-contain"
-                            />
-                          )}
-                        </div>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {homeServices.slice(0, 3).map((service) => {
+              const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
+              return (
+                <Card key={service.title} className="overflow-hidden group relative transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+                  <div className="relative h-96">
+                    {serviceImage && (
+                      <Image
+                        src={serviceImage.imageUrl}
+                        alt={service.title}
+                        data-ai-hint={serviceImage.imageHint}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <service.icon className="h-8 w-8 mb-2 text-primary" />
+                    <h3 className="text-2xl font-bold">{service.title}</h3>
+                    <p className="mt-1 text-sm text-neutral-300">{service.description}</p>
+                    <Button asChild variant="link" className="text-white p-0 h-auto mt-4">
+                      <Link href={service.href}>
+                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -392,5 +389,4 @@ export default function HomePage() {
     </div>
   );
 }
-
     
