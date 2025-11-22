@@ -172,7 +172,7 @@ export default function HomePage() {
                 const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
                 return (
                   <CarouselItem key={service.title} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1 h-full">
+                    <Link href={service.href} className="p-1 h-full block">
                       <Card className="overflow-hidden group relative transition-all duration-300 h-full flex flex-col">
                         <div className="relative h-96">
                           {serviceImage && (
@@ -184,20 +184,13 @@ export default function HomePage() {
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                             />
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                          <service.icon className="h-8 w-8 mb-2 text-primary" />
-                          <h3 className="text-2xl font-bold">{service.title}</h3>
-                          <p className="mt-1 text-sm text-neutral-300">{service.description}</p>
-                          <Button asChild variant="link" className="text-white p-0 h-auto mt-4">
-                            <Link href={service.href}>
-                              Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                            </Link>
-                          </Button>
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                           <h3 className="text-2xl font-bold text-white">{service.title}</h3>
                         </div>
                       </Card>
-                    </div>
+                    </Link>
                   </CarouselItem>
                 );
               })}
