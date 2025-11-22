@@ -152,14 +152,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="pt-0 pb-8 bg-background">
-        <div className="container mx-auto px-4">
-           <div className="w-full h-48 md:h-56 overflow-hidden rounded-lg">
-            <LottiePlayer src="https://lottie.host/e6494867-25f0-4e1c-b888-68cf6dad67a3/PhlJ848FPS.json" />
-          </div>
-        </div>
-      </section>
-
       <section id="featured-listings" className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
