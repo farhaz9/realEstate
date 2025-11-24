@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -23,6 +24,14 @@ import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
+const searchSuggestions = [
+  'Search property in South Delhi',
+  'Rent house in Chattarpur',
+  'Find a 3BHK apartment',
+  'Luxury villa for sale',
+  'Penthouse with city view',
+];
+
 export default function PropertiesPage() {
   const firestore = useFirestore();
   
@@ -32,6 +41,19 @@ export default function PropertiesPage() {
   const [bedrooms, setBedrooms] = useState(0);
   const [bathrooms, setBathrooms] = useState(0);
   const [priceRange, setPriceRange] = useState([0, 20]); // In Crores
+  const [placeholder, setPlaceholder] = useState(searchSuggestions[0]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholder(prev => {
+        const currentIndex = searchSuggestions.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % searchSuggestions.length;
+        return searchSuggestions[nextIndex];
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -84,7 +106,7 @@ export default function PropertiesPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                     id="search"
-                    placeholder="Search by title or description..."
+                    placeholder={placeholder}
                     className="pl-10"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
