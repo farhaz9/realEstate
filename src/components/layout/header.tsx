@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
+import { useUser } from "@/firebase";
+import { UserNav } from "@/components/auth/user-nav";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -21,6 +23,7 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { user, isUserLoading } = useUser();
 
   return (
     <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 shadow-sm md:px-6">
@@ -39,35 +42,57 @@ export default function Header() {
           </Link>
         ))}
       </nav>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="md:hidden">
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Toggle navigation menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="right">
-          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-          <Logo />
-          <nav className="mt-8 grid gap-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "text-lg font-medium text-muted-foreground transition-colors hover:text-foreground",
-                  pathname === link.href && "text-primary font-semibold"
+      <div className="flex items-center gap-4">
+        <div className="hidden md:flex">
+          {isUserLoading ? (
+            <div className="h-10 w-24 rounded-md bg-muted animate-pulse" />
+          ) : user ? (
+            <UserNav />
+          ) : (
+            <Button asChild>
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
+        </div>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="md:hidden">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Toggle navigation menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right">
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+            <Logo />
+            <nav className="mt-8 grid gap-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsSheetOpen(false)}
+                  className={cn(
+                    "text-lg font-medium text-muted-foreground transition-colors hover:text-foreground",
+                    pathname === link.href && "text-primary font-semibold"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+               <div className="border-t pt-4">
+                {isUserLoading ? (
+                  <div className="h-10 w-full rounded-md bg-muted animate-pulse" />
+                ) : user ? (
+                  <UserNav />
+                ) : (
+                  <Button asChild className="w-full">
+                    <Link href="/login" onClick={() => setIsSheetOpen(false)}>Login</Link>
+                  </Button>
                 )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </SheetContent>
-      </Sheet>
+              </div>
+            </nav>
+          </SheetContent>
+        </Sheet>
+      </div>
     </header>
   );
 }
-
-    

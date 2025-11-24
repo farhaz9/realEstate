@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
 import ProgressBar from "@/components/layout/progress-bar";
+import { FirebaseClientProvider } from "@/firebase";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-poppins",
+  display: 'swap',
 });
 
 const siteUrl = "https://www.farhazhomes.com";
@@ -66,9 +68,11 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
-        <Header />
-        <AppProviders>{children}</AppProviders>
-        <ProgressBar />
+        <FirebaseClientProvider>
+          <Header />
+          <AppProviders>{children}</AppProviders>
+          <ProgressBar />
+        </FirebaseClientProvider>
       </body>
     </html>
   );
