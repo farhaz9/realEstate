@@ -1,14 +1,21 @@
+import { Timestamp } from "firebase/firestore";
+
 export type Property = {
   id: string;
+  userId: string;
   title: string;
-  type: 'Apartment' | 'Villa' | 'Penthouse' | 'Farmhouse';
-  location: string;
-  price: number; // in Crores
-  beds: number;
-  baths: number;
-  area: number; // in sqft
-  image: string;
   description: string;
+  price: number;
+  listingType: 'sale' | 'rent';
+  location: string;
+  propertyType: string;
+  bedrooms: number;
+  bathrooms: number;
+  squareFootage: number;
+  amenities: string[];
+  imageUrls: string[];
+  isFeatured: boolean;
+  dateListed: Timestamp;
 };
 
 export type Builder = {

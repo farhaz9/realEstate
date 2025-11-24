@@ -71,14 +71,14 @@ export default function AddPropertyPage() {
       return;
     }
 
-    const propertiesCollection = collection(firestore, `users/${user.uid}/properties`);
+    const propertiesCollection = collection(firestore, 'properties');
     
     addDocumentNonBlocking(propertiesCollection, {
       ...data,
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      imageUrls: [], 
+      imageUrls: ['property-1', 'property-2', 'property-3', 'property-4', 'property-5', 'property-6'].sort(() => 0.5 - Math.random()),
       amenities: [],
     });
 
@@ -148,9 +148,9 @@ export default function AddPropertyPage() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price</FormLabel>
+                      <FormLabel>Price (in INR)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Enter amount in INR" {...field} />
+                        <Input type="number" placeholder="Enter amount" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -159,26 +159,22 @@
         }
       },
       {
-        "path": "/users/{userId}/properties/{propertyId}",
+        "path": "/properties/{propertyId}",
         "definition": {
-          "entityName": "Property",
-          "schema": {
-            "$ref": "#/backend/entities/Property"
-          },
-          "description": "Stores property listings for each user. Each user owns their properties listed under their userId. Enables QAPs because listing operations are limited to each user's own properties.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user who owns the property."
+            "entityName": "Property",
+            "schema": {
+                "$ref": "#/backend/entities/Property"
             },
-            {
-              "name": "propertyId",
-              "description": "The unique identifier for the property."
-            }
-          ]
+            "description": "Public collection of all property listings. Anyone can read, but only the property owner can modify their own listings.",
+            "params": [
+                {
+                    "name": "propertyId",
+                    "description": "The unique identifier for the property."
+                }
+            ]
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to manage users and their property listings in the Delhi Estate Luxe application. It leverages path-based ownership for properties to ensure security and ease of management. Specifically, each user has their own collection of properties under their user document. This enables secure `list` operations, as only the properties belonging to a specific user can be listed when querying `/users/{userId}/properties`. This design achieves authorization independence because access control to the `properties` subcollection is directly tied to the authenticated user's ID, without needing to fetch data from parent documents. This avoids hierarchical authorization dependencies and maintains atomicity during operations.  The structure facilitates straightforward security rules: only the authenticated user can create, read, update, or delete properties within their own `/users/{userId}/properties` collection."
+    "reasoning": "The Firestore structure is designed for a public property marketplace. User profiles are private, stored under '/users/{userId}'. Properties are stored in a top-level '/properties' collection, making them publicly readable for listings. Security rules ensure that while anyone can view properties, only the authenticated owner (verified via the 'userId' field in the property document) can create, update, or delete their own listings. This separation maintains user privacy while allowing for a public, searchable property database."
   }
 }

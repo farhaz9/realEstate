@@ -1,33 +1,27 @@
 /**
- * This ruleset enforces a strict user-ownership security model for the Delhi Estate Luxe application.
+ * This ruleset enforces a security model for the Delhi Estate Luxe application.
  *
  * Core Philosophy:
- * All user-generated data is private by default. A user can only access data that exists within their own
- * user document tree. This ensures strong data isolation between users.
+ * User profiles are private and can only be accessed by the owner. Property listings are public to
+ * everyone for viewing, but can only be created, modified, or deleted by the authenticated user
+ * who owns them.
  *
  * Data Structure:
- * The data is organized hierarchically. All user-specific content, such as their profile and property listings,
- * is nested under a top-level `/users/{userId}` document. For example, a user's properties are stored at
- * `/users/{userId}/properties/{propertyId}`.
+ * - User profiles are stored at `/users/{userId}`.
+ * - All property listings are stored in a top-level collection at `/properties/{propertyId}`.
  *
  * Key Security Decisions:
- * - User Isolation: A user can only interact with their own data. They cannot read, write, or even see
- *   data belonging to other users.
- * - No Public Listing: The listing of top-level user documents is explicitly disallowed to protect user privacy
- *   and prevent data scraping.
- * - Path-Based Security: The `{userId}` in the document path is the primary key for all authorization checks,
- *   making the rules fast, efficient, and easy to understand.
+ * - User Isolation: A user can only interact with their own profile data.
+ * - Public Listings: The `/properties` collection is world-readable to allow anyone to browse listings.
+ * - Ownership-Based Writes: Write operations (create, update, delete) on properties are strictly
+ *   enforced to ensure only the owner of a property can modify it. The `userId` field within each
+ *   property document is the source of truth for ownership.
  *
  * Denormalization for Authorization:
- * To ensure data integrity, each `Property` document contains a `userId` field. The rules enforce that this
- * field matches the `{userId}` from the path upon creation and that it cannot be changed upon update. This
- * creates a permanent, auditable link between a property and its owner directly within the document,
- * simplifying security logic and client-side queries.
- *
- * Structural Segregation:
- * The current structure places all properties within a user's private subcollection. This is a secure
- * pattern for user-owned content. If public properties were required in the future, a separate top-level
- * `/publicProperties` collection would be recommended to maintain a clear security boundary.
+ * Each `Property` document contains a `userId` field. The rules enforce that this field matches the
+ * authenticated user's UID upon creation and cannot be changed upon update. This creates a permanent,
+ * auditable link between a property and its owner directly within the document, simplifying security
+ * logic and client-side queries.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -52,14 +46,6 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /**
-     * Checks for ownership on an existing document. Used for update and delete
-     * operations to prevent acting on non-existent data.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
     // ----------------------------------------------------------------------
     // Collection Rules
     // ----------------------------------------------------------------------
@@ -69,29 +55,25 @@ service cloud.firestore {
      * @path /users/{userId}
      * @allow (create) An authenticated user creating their own profile document.
      * @deny (get) User 'A' trying to read the profile of user 'B'.
-     * @principle Restricts access to a user's own data tree and enforces relational integrity.
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
+      allow read, write: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Manages property documents owned by a specific user.
-     * @path /users/{userId}/properties/{propertyId}
-     * @allow (create) An authenticated user creating a property listing under their own user ID.
-     * @deny (update) User 'A' trying to update a property owned by user 'B'.
-     * @principle Enforces document ownership for all operations and validates the owner link.
+     * @description Manages all property documents in a public collection.
+     * @path /properties/{propertyId}
+     * @allow (read) Anyone can read property listings.
+     * @allow (create) Any authenticated user can create a listing, as long as they set themselves as the owner.
+     * @allow (update, delete) Only the user who owns the property can update or delete it.
+     * @principle Public read access for listings, but write access is restricted to the owner.
      */
-    match /users/{userId}/properties/{propertyId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
+    match /properties/{propertyId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
   }
 }

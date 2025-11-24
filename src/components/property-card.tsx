@@ -14,7 +14,7 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
-  const propertyImage = PlaceHolderImages.find((p) => p.id === property.image);
+  const propertyImage = PlaceHolderImages.find((p) => p.id === (property.imageUrls?.[0] || 'property-1'));
 
   return (
     <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
@@ -29,26 +29,26 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           />
         )}
         <div className="absolute top-4 right-4">
-          <Badge variant="secondary">{property.type}</Badge>
+          <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'}>{property.listingType}</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-6 flex flex-col">
-        <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
+        <p className="text-2xl font-bold text-primary">{formatPrice(property.price / 10000000, true)}</p>
         <CardTitle className="mt-2 text-xl font-semibold leading-tight">{property.title}</CardTitle>
         <p className="mt-1 text-sm text-muted-foreground flex-grow">{property.location}</p>
 
         <div className="mt-4 flex items-center space-x-4 text-muted-foreground border-t pt-4">
           <div className="flex items-center gap-2">
             <BedDouble className="h-4 w-4" />
-            <span className="text-sm">{property.beds} Beds</span>
+            <span className="text-sm">{property.bedrooms} Beds</span>
           </div>
           <div className="flex items-center gap-2">
             <Bath className="h-4 w-4" />
-            <span className="text-sm">{property.baths} Baths</span>
+            <span className="text-sm">{property.bathrooms} Baths</span>
           </div>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
-            <span className="text-sm">{property.area.toLocaleString()} sqft</span>
+            <span className="text-sm">{property.squareFootage.toLocaleString()} sqft</span>
           </div>
         </div>
       </CardContent>
@@ -60,5 +60,3 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     </Card>
   );
 }
-
-    
