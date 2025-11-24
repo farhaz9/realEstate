@@ -91,9 +91,7 @@ export default function PropertiesPage() {
     <div>
       <section className="bg-primary text-primary-foreground py-8 md:py-12">
         <div className="container mx-auto px-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-center">Find Your Dream Property</h1>
-            <p className="text-center text-primary-foreground/80 mt-2">Search our curated listings of luxury homes in Delhi.</p>
-            <div className="mt-6 max-w-2xl mx-auto flex gap-2 items-center">
+            <div className="max-w-2xl mx-auto flex gap-2 items-center">
                 <div className="relative flex-grow">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
@@ -223,5 +221,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
-    
