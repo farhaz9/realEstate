@@ -59,6 +59,9 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
+            <Link href="/my-properties">My Properties</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/add-property">List a Property</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

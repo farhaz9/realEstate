@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,12 +17,15 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, serverTimestamp, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import { PageHero } from '@/components/shared/page-hero';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Banknote, Loader2 } from 'lucide-react';
+import type { Property } from '@/types';
 
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
@@ -44,6 +46,13 @@ export default function AddPropertyPage() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+
+  const userPropertiesQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
+  }, [firestore, user]);
+
+  const { data: userProperties, isLoading: isLoadingUserProperties } = useCollection<Property>(userPropertiesQuery);
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
@@ -88,69 +97,64 @@ export default function AddPropertyPage() {
     });
 
     form.reset();
-    router.push('/properties');
+    router.push('/my-properties');
   }
   
-  if (isUserLoading || !user) {
+  const renderContent = () => {
+    if (isUserLoading || isLoadingUserProperties) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
+
+    if (!user) {
+      return null;
+    }
+
+    if (userProperties && userProperties.length > 0) {
+      return (
+        <div className="container mx-auto px-4 py-16">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>List Another Property</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Alert>
+                <Banknote className="h-4 w-4" />
+                <AlertTitle>Payment Required</AlertTitle>
+                <AlertDescription>
+                  You have used your one free listing. To list another property, please pay the listing fee of ₹99.
+                </AlertDescription>
+              </Alert>
+              <Button className="mt-6 w-full" disabled>
+                Pay ₹99 to List Property
+              </Button>
+               <p className="text-xs text-muted-foreground mt-2 text-center">Payment gateway integration is coming soon.</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+    
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  return (
-    <>
-    <PageHero 
-      title="List a Property"
-      subtitle="Fill in the details below to add your property to our listings."
-      image={{ id: 'properties-hero', imageHint: 'modern living room' }}
-    />
-    <div className="container mx-auto px-4 py-16">
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle>Property Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Property Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Describe your property in detail..." rows={5} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid md:grid-cols-2 gap-8">
+       <div className="container mx-auto px-4 py-16">
+        <Card className="max-w-4xl mx-auto">
+          <CardHeader>
+            <CardTitle>Your First Listing is Free!</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price (in INR)</FormLabel>
+                      <FormLabel>Property Title</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Enter amount" {...field} />
+                        <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -159,45 +163,103 @@ export default function AddPropertyPage() {
 
                 <FormField
                   control={form.control}
-                  name="listingType"
+                  name="description"
                   render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>Listing For</FormLabel>
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex items-center space-x-4"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value="sale" />
-                            </FormControl>
-                            <FormLabel className="font-normal">Sale</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value="rent" />
-                            </FormControl>
-                            <FormLabel className="font-normal">Rent</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
+                        <Textarea placeholder="Describe your property in detail..." rows={5} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-               <div className="grid md:grid-cols-2 gap-8">
-                <FormField
+                <div className="grid md:grid-cols-2 gap-8">
+                  <FormField
                     control={form.control}
-                    name="location"
+                    name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Location / Address</FormLabel>
+                        <FormLabel>Price (in INR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., South Delhi" {...field} />
+                          <Input type="number" placeholder="Enter amount" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="listingType"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Listing For</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex items-center space-x-4"
+                          >
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="sale" />
+                              </FormControl>
+                              <FormLabel className="font-normal">Sale</FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="rent" />
+                              </FormControl>
+                              <FormLabel className="font-normal">Rent</FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Location / Address</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., South Delhi" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="propertyType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Property Type</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Apartment, Villa, Farmhouse" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </div>
+
+                <div className="grid grid-cols-3 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="bedrooms"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bedrooms</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -205,71 +267,53 @@ export default function AddPropertyPage() {
                   />
                   <FormField
                     control={form.control}
-                    name="propertyType"
+                    name="bathrooms"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Property Type</FormLabel>
+                        <FormLabel>Bathrooms</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Apartment, Villa, Farmhouse" {...field} />
+                          <Input type="number" min="0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="squareFootage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Area (sq. ft.)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="e.g., 2200" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? 'Submitting...' : 'List My Property'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-              <div className="grid grid-cols-3 gap-8">
-                <FormField
-                  control={form.control}
-                  name="bedrooms"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bedrooms</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="bathrooms"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bathrooms</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="squareFootage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Area (sq. ft.)</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="e.g., 2200" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="flex justify-end">
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? 'Submitting...' : 'List My Property'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+  return (
+    <>
+      <PageHero 
+        title="List a Property"
+        subtitle="Fill in the details below to add your property to our listings."
+        image={{ id: 'properties-hero', imageHint: 'modern living room' }}
+      />
+      {renderContent()}
     </>
   );
 }
