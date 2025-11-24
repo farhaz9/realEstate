@@ -21,6 +21,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 export default function PropertiesPage() {
   const firestore = useFirestore();
@@ -45,7 +46,7 @@ export default function PropertiesPage() {
     if (!properties) return [];
     
     return properties.filter(p => {
-      const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.description.toLowerCase().includes(searchTerm.toLowerCase());
       const locationMatch = location === 'all' || p.location === location;
       const typeMatch = propertyType === 'all' || p.propertyType === propertyType;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
@@ -78,78 +79,90 @@ export default function PropertiesPage() {
       />
       <div className="container mx-auto px-4 py-16">
         <Card className="mb-8 p-4 bg-card/50">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
-            <div className="lg:col-span-3">
-                <Label htmlFor="search">Search Properties</Label>
-                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                        id="search"
-                        placeholder="Search by title..."
-                        className="pl-10"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-            </div>
-            <div>
-              <Label htmlFor="location-filter">Location</Label>
-              <Select value={location} onValueChange={setLocation}>
-                <SelectTrigger id="location-filter">
-                  <SelectValue placeholder="All Localities" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Localities</SelectItem>
-                  {uniqueLocations.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="type-filter">Property Type</Label>
-              <Select value={propertyType} onValueChange={setPropertyType}>
-                <SelectTrigger id="type-filter">
-                  <SelectValue placeholder="All Types" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  {uniqueTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-             <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <Label htmlFor="bedrooms-filter">Beds</Label>
-                    <Select value={String(bedrooms)} onValueChange={(val) => setBedrooms(Number(val))}>
-                        <SelectTrigger id="bedrooms-filter">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {[0, 1, 2, 3, 4, 5].map(b => <SelectItem key={b} value={String(b)}>{b === 0 ? 'Any' : `${b}+`}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                    <Label htmlFor="bathrooms-filter">Baths</Label>
-                    <Select value={String(bathrooms)} onValueChange={(val) => setBathrooms(Number(val))}>
-                        <SelectTrigger id="bathrooms-filter">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {[0, 1, 2, 3, 4, 5].map(b => <SelectItem key={b} value={String(b)}>{b === 0 ? 'Any' : `${b}+`}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-            <div className="lg:col-span-3">
-                <Label>Price Range: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}</Label>
-                <Slider
-                    min={0}
-                    max={20}
-                    step={0.5}
-                    value={priceRange}
-                    onValueChange={(value) => setPriceRange(value)}
+          <div className="flex gap-4">
+            <div className="relative flex-grow">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                    id="search"
+                    placeholder="Search by title or description..."
+                    className="pl-10"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
+             <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" className="shrink-0">
+                        <ListFilter className="mr-2 h-4 w-4" />
+                        Filters
+                    </Button>
+                </SheetTrigger>
+                <SheetContent>
+                    <SheetHeader>
+                        <SheetTitle>Filter Properties</SheetTitle>
+                    </SheetHeader>
+                     <div className="grid gap-6 mt-6">
+                        <div>
+                        <Label htmlFor="location-filter">Location</Label>
+                        <Select value={location} onValueChange={setLocation}>
+                            <SelectTrigger id="location-filter">
+                            <SelectValue placeholder="All Localities" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectItem value="all">All Localities</SelectItem>
+                            {uniqueLocations.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                        </div>
+                        <div>
+                        <Label htmlFor="type-filter">Property Type</Label>
+                        <Select value={propertyType} onValueChange={setPropertyType}>
+                            <SelectTrigger id="type-filter">
+                            <SelectValue placeholder="All Types" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            {uniqueTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <Label htmlFor="bedrooms-filter">Beds</Label>
+                                <Select value={String(bedrooms)} onValueChange={(val) => setBedrooms(Number(val))}>
+                                    <SelectTrigger id="bedrooms-filter">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {[0, 1, 2, 3, 4, 5].map(b => <SelectItem key={b} value={String(b)}>{b === 0 ? 'Any' : `${b}+`}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label htmlFor="bathrooms-filter">Baths</Label>
+                                <Select value={String(bathrooms)} onValueChange={(val) => setBathrooms(Number(val))}>
+                                    <SelectTrigger id="bathrooms-filter">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {[0, 1, 2, 3, 4, 5].map(b => <SelectItem key={b} value={String(b)}>{b === 0 ? 'Any' : `${b}+`}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div>
+                            <Label>Price Range: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true)}</Label>
+                            <Slider
+                                min={0}
+                                max={20}
+                                step={0.5}
+                                value={priceRange}
+                                onValueChange={(value) => setPriceRange(value)}
+                            />
+                        </div>
+                    </div>
+                </SheetContent>
+            </Sheet>
           </div>
         </Card>
 
