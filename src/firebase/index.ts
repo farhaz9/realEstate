@@ -3,32 +3,47 @@
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
+  const isBrowser = typeof window !== 'undefined';
+  
   if (!getApps().length) {
-    // Important! initializeApp() is called without any arguments because Firebase App Hosting
-    // integrates with the initializeApp() function to provide the environment variables needed to
-    // populate the FirebaseOptions in production. It is critical that we attempt to call initializeApp()
-    // without arguments.
     let firebaseApp;
     try {
-      // Attempt to initialize via Firebase App Hosting environment variables
       firebaseApp = initializeApp();
     } catch (e) {
-      // Only warn in production because it's normal to use the firebaseConfig to initialize
-      // during development
       if (process.env.NODE_ENV === "production") {
         console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
       }
       firebaseApp = initializeApp(firebaseConfig);
     }
+    
+    if (isBrowser) {
+        // IMPORTANT: Replace the placeholder with your actual reCAPTCHA v3 site key.
+        // You can get a key from the Google reCAPTCHA admin console.
+        const reCaptchaSiteKey = 'YOUR_RECAPTCHA_V3_SITE_KEY';
+        
+        if (reCaptchaSiteKey && reCaptchaSiteKey !== 'YOUR_RECAPTCHA_V3_SITE_KEY') {
+            initializeAppCheck(firebaseApp, {
+              provider: new ReCaptchaV3Provider(reCaptchaSiteKey),
+              isTokenAutoRefreshEnabled: true,
+            });
+        } else {
+            console.warn(`
+                Firebase App Check is not initialized.
+                1. Go to the reCAPTCHA admin console and create a new reCAPTCHA v3 key.
+                2. Go to the Firebase Console > App Check and register your site with the key.
+                3. Replace 'YOUR_RECAPTCHA_V3_SITE_KEY' in src/firebase/index.ts with your actual site key.
+            `);
+        }
+    }
 
     return getSdks(firebaseApp);
   }
 
-  // If already initialized, return the SDKs with the already initialized App
   return getSdks(getApp());
 }
 
