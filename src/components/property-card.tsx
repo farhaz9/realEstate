@@ -40,15 +40,15 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         <div className="mt-4 flex items-center space-x-4 text-muted-foreground border-t pt-4">
           <div className="flex items-center gap-2">
             <BedDouble className="h-4 w-4" />
-            <span className="text-sm">{property.bedrooms} Beds</span>
+            <span className="text-sm">{property.bedrooms ?? 0} Beds</span>
           </div>
           <div className="flex items-center gap-2">
             <Bath className="h-4 w-4" />
-            <span className="text-sm">{property.bathrooms} Baths</span>
+            <span className="text-sm">{property.bathrooms ?? 0} Baths</span>
           </div>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
-            <span className="text-sm">{property.squareFootage.toLocaleString()} sqft</span>
+            <span className="text-sm">{property.squareFootage?.toLocaleString() ?? 0} sqft</span>
           </div>
         </div>
       </CardContent>
