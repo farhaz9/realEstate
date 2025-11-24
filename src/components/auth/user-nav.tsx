@@ -17,7 +17,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth, useUser } from '@/firebase';
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
+import Link from 'next/link';
 
 export function UserNav() {
   const { user } = useUser();
@@ -57,9 +58,9 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <DropdownMenuItem>
-            List a Property
-          </DropdownMenuItem> */}
+          <DropdownMenuItem asChild>
+            <Link href="/add-property">List a Property</Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
@@ -69,4 +70,3 @@ export function UserNav() {
     </DropdownMenu>
   );
 }
-

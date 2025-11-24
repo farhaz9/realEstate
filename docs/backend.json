@@ -68,6 +68,11 @@
           "type": "number",
           "description": "The price of the property."
         },
+        "listingType": {
+          "type": "string",
+          "description": "Whether the property is for sale or for rent.",
+          "enum": ["sale", "rent"]
+        },
         "location": {
           "type": "string",
           "description": "The address or location of the property."
@@ -118,14 +123,12 @@
         "title",
         "description",
         "price",
+        "listingType",
         "location",
         "propertyType",
         "bedrooms",
         "bathrooms",
         "squareFootage",
-        "amenities",
-        "imageUrls",
-        "isFeatured",
         "dateListed"
       ]
     }
