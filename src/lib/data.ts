@@ -1,3 +1,4 @@
+
 import type { Property, Builder, InteriorProject } from '@/types';
 
 export const properties: Property[] = [
@@ -152,6 +153,57 @@ export const properties: Property[] = [
     description: 'A 200 sq. meter plot in a gated community in Greater Noida, perfect for building your dream home.',
     amenities: [],
     isFeatured: false,
+    dateListed: new Date(),
+  },
+   {
+    id: 'p10',
+    userId: 'user1',
+    title: 'Modern PG in Mukherjee Nagar',
+    propertyType: 'PG',
+    location: 'Mukherjee Nagar',
+    price: 15000,
+    bedrooms: 1,
+    bathrooms: 1,
+    squareFootage: 250,
+    listingType: 'rent',
+    imageUrls: ['property-5'],
+    description: 'Fully furnished single room PG with AC, Wi-Fi, and meals included. Perfect for students.',
+    amenities: ['AC', 'Wi-Fi', 'Meals'],
+    isFeatured: false,
+    dateListed: new Date(),
+  },
+  {
+    id: 'p11',
+    userId: 'user2',
+    title: 'Spacious 4BHK in Dwarka',
+    propertyType: 'Apartment',
+    location: 'Dwarka',
+    price: 28000000, // 2.8 Cr
+    bedrooms: 4,
+    bathrooms: 4,
+    squareFootage: 2500,
+    listingType: 'sale',
+    imageUrls: ['property-1'],
+    description: 'A large and airy 4BHK apartment in a well-connected sector of Dwarka, with park views.',
+    amenities: ['Gated Community', 'Park'],
+    isFeatured: false,
+    dateListed: new Date(),
+  },
+  {
+    id: 'p12',
+    userId: 'user3',
+    title: 'Office Space for Rent in Connaught Place',
+    propertyType: 'Commercial',
+    location: 'Connaught Place',
+    price: 250000, // 2.5 Lakh rent
+    bedrooms: 0,
+    bathrooms: 2,
+    squareFootage: 2000,
+    listingType: 'rent',
+    imageUrls: ['property-6'],
+    description: 'Prime office space in the heart of Delhi. Fully furnished and ready to move in for your business.',
+    amenities: ['Central AC', 'Power Backup'],
+    isFeatured: true,
     dateListed: new Date(),
   },
 ];

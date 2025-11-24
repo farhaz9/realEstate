@@ -33,7 +33,7 @@ const propertyFormSchema = z.object({
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
   location: z.string().min(3, { message: 'Location is required.' }),
-  propertyType: z.string().min(3, { message: 'Property type is required.' }),
+  propertyType: z.string().min(2, { message: 'Property type is required.' }),
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
   squareFootage: z.coerce.number().positive({ message: 'Square footage must be a positive number.' }),
@@ -243,7 +243,7 @@ export default function AddPropertyPage() {
                         <FormItem>
                           <FormLabel>Property Type</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., Apartment, Villa, Farmhouse" {...field} />
+                            <Input placeholder="e.g., Apartment, Villa, PG" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
