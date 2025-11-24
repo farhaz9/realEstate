@@ -33,7 +33,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-6 flex flex-col">
-        <p className="text-2xl font-bold text-primary">{formatPrice(property.price / 10000000, true)}</p>
+        <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
         <CardTitle className="mt-2 text-xl font-semibold leading-tight">{property.title}</CardTitle>
         <p className="mt-1 text-sm text-muted-foreground flex-grow">{property.location}</p>
 
@@ -48,7 +48,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           </div>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
-            <span className="text-sm">{property.squareFootage?.toLocaleString() ?? 0} sqft</span>
+            <span className="text-sm">{property.squareFootage ? `${property.squareFootage.toLocaleString()} sqft` : 'N/A'}</span>
           </div>
         </div>
       </CardContent>

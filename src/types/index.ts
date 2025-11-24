@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 
 export type Property = {
   id: string;
@@ -15,7 +14,7 @@ export type Property = {
   amenities: string[];
   imageUrls: string[];
   isFeatured: boolean;
-  dateListed: Timestamp;
+  dateListed: Date | any; // Changed to allow Date object
 };
 
 export type Builder = {
