@@ -19,6 +19,9 @@ import {
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
+import { Shield } from 'lucide-react';
+
+const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
 
 export function UserNav() {
   const { user } = useUser();
@@ -32,6 +35,8 @@ export function UserNav() {
   if (!user) {
     return null;
   }
+
+  const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
 
   return (
     <DropdownMenu>
@@ -64,6 +69,14 @@ export function UserNav() {
           <DropdownMenuItem asChild>
             <Link href="/add-property">List a Property</Link>
           </DropdownMenuItem>
+           {isAuthorizedAdmin && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className='text-primary hover:!text-primary'>
+                <Shield className="mr-2 h-4 w-4" />
+                <span>Admin Panel</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
