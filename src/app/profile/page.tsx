@@ -11,12 +11,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Loader2, User, Mail, Phone, Briefcase, Upload } from 'lucide-react';
 import { PageHero } from '@/components/shared/page-hero';
 import type { User as UserType, Property } from '@/types';
 import { PropertyCard } from '@/components/property-card';
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -118,7 +118,9 @@ export default function ProfilePage() {
     return (
       <>
         <PageHero title="My Profile" subtitle="Manage your account details and listings." image={{ id: 'contact-hero', imageHint: 'desk with personal items' }}/>
-        {renderLoading()}
+        <div className="container mx-auto px-4 py-16">
+            {renderLoading()}
+        </div>
       </>
     );
   }
@@ -134,25 +136,29 @@ export default function ProfilePage() {
       <PageHero title="My Profile" subtitle="Manage your account details and listings." image={{ id: 'contact-hero', imageHint: 'desk with personal items' }}/>
       
       <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <Card>
-              <CardHeader className="items-center text-center">
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="properties">My Properties</TabsTrigger>
+          </TabsList>
+          <TabsContent value="profile">
+            <Card className="max-w-2xl mx-auto mt-6">
+               <CardHeader className="items-center text-center p-6">
                 <div className="relative">
-                  <Avatar className="h-28 w-28 border-4 border-background shadow-md">
+                  <Avatar className="h-32 w-32 border-4 border-background shadow-md">
                     <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                    <AvatarFallback className="text-4xl">
+                    <AvatarFallback className="text-5xl">
                         {user.displayName?.charAt(0).toUpperCase() ?? 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <Button
                     size="icon"
-                    className="absolute bottom-1 right-1 h-8 w-8 rounded-full"
+                    className="absolute bottom-1 right-1 h-9 w-9 rounded-full"
                     onClick={handleAvatarClick}
                     disabled={isUploading}
+                    aria-label="Upload new picture"
                   >
-                    {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                    <span className="sr-only">Upload new picture</span>
+                    {isUploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
                   </Button>
                   <Input 
                     type="file" 
@@ -162,40 +168,41 @@ export default function ProfilePage() {
                     accept="image/png, image/jpeg" 
                   />
                 </div>
-                <CardTitle className="mt-4">{user.displayName}</CardTitle>
-                <CardDescription>Welcome back!</CardDescription>
+                <CardTitle className="mt-4 text-3xl">{user.displayName}</CardTitle>
+                <CardDescription>Welcome back to your profile!</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                    <User className="h-5 w-5 text-muted-foreground"/>
-                    <p className="text-sm">{userProfile.fullName}</p>
-                  </div>
-                   <div className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                    <Mail className="h-5 w-5 text-muted-foreground"/>
-                    <p className="text-sm">{user.email}</p>
-                  </div>
-                   <div className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                    <Phone className="h-5 w-5 text-muted-foreground"/>
-                    <p className="text-sm">{userProfile.phone}</p>
-                  </div>
-                   <div className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                    <Briefcase className="h-5 w-5 text-muted-foreground"/>
-                    <p className="text-sm">{categoryDisplay[userProfile.category] || userProfile.category}</p>
+              <CardContent className="p-6 border-t">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
+                        <User className="h-5 w-5 text-muted-foreground"/>
+                        <p className="text-sm font-medium">{userProfile.fullName}</p>
+                      </div>
+                       <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
+                        <Mail className="h-5 w-5 text-muted-foreground"/>
+                        <p className="text-sm font-medium">{user.email}</p>
+                      </div>
+                       <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
+                        <Phone className="h-5 w-5 text-muted-foreground"/>
+                        <p className="text-sm font-medium">{userProfile.phone}</p>
+                      </div>
+                       <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
+                        <Briefcase className="h-5 w-5 text-muted-foreground"/>
+                        <p className="text-sm font-medium">{categoryDisplay[userProfile.category] || userProfile.category}</p>
+                      </div>
                   </div>
               </CardContent>
             </Card>
-          </div>
-          <div className="md:col-span-2">
-            <h2 className="text-2xl font-bold mb-6">My Listed Properties</h2>
-            {arePropertiesLoading ? renderLoading() : (
+          </TabsContent>
+          <TabsContent value="properties">
+             {arePropertiesLoading ? renderLoading() : (
               properties && properties.length > 0 ? (
-                <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                   {properties.map(property => (
                     <PropertyCard key={property.id} property={property}/>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                <div className="text-center py-24 border-2 border-dashed rounded-lg mt-6">
                     <h3 className="text-xl font-semibold">You haven't listed any properties yet.</h3>
                     <p className="text-muted-foreground mt-2">Your first listing is on us!</p>
                     <Button asChild className="mt-6">
@@ -204,8 +211,8 @@ export default function ProfilePage() {
                 </div>
               )
             )}
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </>
   );
