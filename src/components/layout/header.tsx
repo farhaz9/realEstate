@@ -149,7 +149,7 @@ export default function Header() {
                       href={link.href}
                       onClick={() => setIsSheetOpen(false)}
                       className={cn(
-                        "rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
+                        "uppercase rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
                         pathname === link.href && "bg-primary/10 text-primary font-semibold"
                       )}
                     >
