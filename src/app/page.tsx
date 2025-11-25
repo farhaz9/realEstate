@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Label } from "@/components/ui/label";
-import { NearbyProperties } from "@/components/shared/nearby-properties";
+import { FeaturedProperties } from "@/components/shared/nearby-properties";
 
 const faqs = [
   {
@@ -147,7 +147,7 @@ export default function HomePage() {
         </div>
       </section>
       
-      <NearbyProperties />
+      <FeaturedProperties />
 
       <section id="offers" className="py-16 bg-secondary/30">
         <div className="container mx-auto px-4">

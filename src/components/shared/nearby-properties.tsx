@@ -1,75 +1,27 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
 import type { Property } from '@/types';
 import { PropertyCard } from '@/components/property-card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { Loader2, MapPin } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export function NearbyProperties() {
+export function FeaturedProperties() {
   const firestore = useFirestore();
-  const [permissionStatus, setPermissionStatus] = useState<PermissionState>('prompt');
-  const [isLoading, setIsLoading] = useState(true);
-
-  // For MVP, we simulate location detection and show properties from a default "nearby" location.
-  const nearbyLocation = 'South Delhi';
 
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    
-    let q = query(collection(firestore, 'properties'));
-    
-    // If location permission is granted, we show "nearby" properties.
-    // Otherwise, we show featured properties.
-    if (permissionStatus === 'granted') {
-      q = query(q, where('location', '==', nearbyLocation), limit(10));
-    } else {
-      q = query(q, where('isFeatured', '==', true), limit(10));
-    }
-    return q;
-  }, [firestore, permissionStatus]);
+    return query(collection(firestore, 'properties'), where('isFeatured', '==', true), limit(10));
+  }, [firestore]);
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
   
-  const handleRequestLocation = () => {
-    setIsLoading(true);
-    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-      if (result.state === 'granted') {
-        setPermissionStatus('granted');
-      } else if (result.state === 'prompt') {
-        navigator.geolocation.getCurrentPosition(
-          () => setPermissionStatus('granted'),
-          () => setPermissionStatus('denied'),
-        );
-      } else {
-        setPermissionStatus(result.state);
-      }
-    });
-  }
+  const title = 'Featured Properties';
+  const subtitle = 'A curated selection of our top properties';
 
-  useEffect(() => {
-    if (typeof navigator !== 'undefined' && navigator.permissions) {
-      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-        setPermissionStatus(result.state);
-        setIsLoading(false);
-      });
-    } else {
-        setIsLoading(false);
-        setPermissionStatus('denied'); // Geolocation not supported
-    }
-  }, []);
-  
-  const title = permissionStatus === 'granted' ? 'Properties Near You' : 'Featured Properties';
-  const subtitle = permissionStatus === 'granted' 
-    ? `Showing properties in ${nearbyLocation}`
-    : 'A curated selection of our top properties';
-
-
-  if (isLoading || isLoadingProperties) {
+  if (isLoadingProperties) {
     return (
         <section className="py-16 md:py-24 bg-primary/5">
             <div className="container mx-auto px-4">
@@ -79,32 +31,29 @@ export function NearbyProperties() {
                         Please wait while we fetch the best properties for you.
                     </p>
                 </div>
-                <div className="flex justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="flex flex-col h-full overflow-hidden border rounded-lg">
+                            <Skeleton className="h-56 w-full" />
+                            <div className="p-6 flex-grow flex flex-col">
+                                <Skeleton className="h-6 w-1/3" />
+                                <Skeleton className="h-5 w-2/3 mt-2" />
+                                <Skeleton className="h-4 w-1/2 mt-1" />
+                                <div className="mt-4 flex items-center space-x-4 border-t pt-4">
+                                    <Skeleton className="h-5 w-1/4" />
+                                    <Skeleton className="h-5 w-1/4" />
+                                    <Skeleton className="h-5 w-1/4" />
+                                </div>
+                            </div>
+                             <div className="p-6 pt-0 mt-auto">
+                                <Skeleton className="h-10 w-full" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
     );
-  }
-
-  if (permissionStatus !== 'granted') {
-     return (
-        <section className="py-16 md:py-24 bg-primary/5">
-            <div className="container mx-auto px-4 text-center">
-                 <div className="max-w-2xl mx-auto">
-                    <MapPin className="h-12 w-12 mx-auto text-primary" />
-                    <h2 className="text-3xl md:text-4xl font-bold mt-4">Discover Properties Near You</h2>
-                    <p className="mt-2 text-muted-foreground">
-                        Enable location services to see listings in your area for a more personalized experience.
-                    </p>
-                    <Button onClick={handleRequestLocation} className="mt-6">
-                        <MapPin className="mr-2 h-4 w-4" />
-                        Detect my location
-                    </Button>
-                </div>
-            </div>
-        </section>
-     )
   }
   
   if (!properties || properties.length === 0) {
