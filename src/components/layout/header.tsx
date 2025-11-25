@@ -137,9 +137,6 @@ export default function Header() {
                   <div className="flex justify-center">
                     <Logo />
                   </div>
-                  <SheetDescription className="text-center">
-                    Navigate through our exclusive real estate and design services.
-                  </SheetDescription>
                 </SheetHeader>
                 <Separator />
                 <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
@@ -149,7 +146,7 @@ export default function Header() {
                       href={link.href}
                       onClick={() => setIsSheetOpen(false)}
                       className={cn(
-                        "uppercase rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
+                        "uppercase rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:text-primary"
                       )}
                     >
                       {link.label}
