@@ -5,7 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price: number, inCrores: boolean = false) {
+export function formatPrice(price: number, inCrores: boolean = false, isMax: boolean = false) {
+  if (inCrores) {
+    if (price === 20 && isMax) return '₹20 Cr+'
+    return `₹${price.toFixed(price % 1 === 0 ? 0 : 1)} Cr`;
+  }
+
   if (price >= 10000000) { // If price is 1 Cr or more
     const amount = price / 10000000;
     return `₹${amount.toFixed(2)} Cr`;

@@ -91,53 +91,67 @@ export default function PropertiesPage() {
     <div>
       <section className="bg-primary text-primary-foreground py-8 md:py-12">
         <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto flex gap-2 items-center">
-                <div className="relative flex-grow">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                        id="search"
-                        placeholder={placeholder}
-                        className="pl-10 text-foreground"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            <div className="max-w-4xl mx-auto">
+              <div className="relative flex-grow">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                      id="search"
+                      placeholder={placeholder}
+                      className="pl-10 text-foreground"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+              </div>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div className="md:col-span-1">
+                  <Label className="text-xs font-semibold text-primary-foreground/80">Location</Label>
+                  <Select value={location} onValueChange={setLocation}>
+                    <SelectTrigger className="bg-background text-foreground">
+                      <SelectValue placeholder="All Localities" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Localities</SelectItem>
+                      {uniqueLocations.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-1">
+                  <Label className="text-xs font-semibold text-primary-foreground/80">Property Type</Label>
+                   <Select value={propertyType} onValueChange={setPropertyType}>
+                    <SelectTrigger className="bg-background text-foreground">
+                      <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      {uniqueTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                 <div className="md:col-span-1">
+                   <Label className="text-xs font-semibold text-primary-foreground/80">
+                     Price: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
+                  </Label>
+                   <Slider
+                      min={0}
+                      max={20}
+                      step={0.5}
+                      value={priceRange}
+                      onValueChange={(value) => setPriceRange(value)}
+                      className="[&>span]:bg-background"
+                   />
                 </div>
                  <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="secondary" className="shrink-0">
+                        <Button variant="secondary" className="w-full">
                             <ListFilter className="mr-2 h-4 w-4" />
-                            Filters
+                            More Filters
                         </Button>
                     </SheetTrigger>
                     <SheetContent>
                         <SheetHeader>
-                            <SheetTitle>Filter Properties</SheetTitle>
+                            <SheetTitle>Advanced Filters</SheetTitle>
                         </SheetHeader>
                          <div className="grid gap-6 mt-6">
-                            <div>
-                            <Label htmlFor="location-filter">Location</Label>
-                            <Select value={location} onValueChange={setLocation}>
-                                <SelectTrigger id="location-filter">
-                                <SelectValue placeholder="All Localities" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                <SelectItem value="all">All Localities</SelectItem>
-                                {uniqueLocations.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            </div>
-                            <div>
-                            <Label htmlFor="type-filter">Property Type</Label>
-                            <Select value={propertyType} onValueChange={setPropertyType}>
-                                <SelectTrigger id="type-filter">
-                                <SelectValue placeholder="All Types" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                <SelectItem value="all">All Types</SelectItem>
-                                {uniqueTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label htmlFor="bedrooms-filter">Beds</Label>
@@ -162,19 +176,10 @@ export default function PropertiesPage() {
                                     </Select>
                                 </div>
                             </div>
-                            <div>
-                                <Label>Price Range: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true)}</Label>
-                                <Slider
-                                    min={0}
-                                    max={20}
-                                    step={0.5}
-                                    value={priceRange}
-                                    onValueChange={(value) => setPriceRange(value)}
-                                />
-                            </div>
                         </div>
                     </SheetContent>
                 </Sheet>
+            </div>
             </div>
         </div>
       </section>
