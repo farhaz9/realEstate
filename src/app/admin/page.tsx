@@ -34,14 +34,16 @@ export default function AdminPage() {
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
+    if (isUserLoading) return; // Wait until user status is resolved
+
+    if (!user) {
       toast({
         title: "Authentication Required",
         description: "You must be logged in to view this page.",
         variant: "destructive",
       });
       router.push('/login');
-    } else if (!isUserLoading && user && !isAuthorizedAdmin) {
+    } else if (!isAuthorizedAdmin) {
        toast({
         title: "Access Denied",
         description: "You are not authorized to view this page.",
@@ -61,10 +63,7 @@ export default function AdminPage() {
       );
     }
     
-    if (error) {
-        return <div className="text-center text-destructive py-16">Error: {error.message}</div>;
-    }
-    
+    // This check is important. Only proceed if authorization is confirmed.
     if (!isAuthorizedAdmin) {
         return (
             <div className="container mx-auto px-4 py-16">
@@ -77,13 +76,17 @@ export default function AdminPage() {
                             <ShieldAlert className="h-4 w-4" />
                             <AlertTitle>Not Authorized</AlertTitle>
                             <AlertDescription>
-                                You do not have permission to access this page. You will be redirected shortly.
+                                You do not have permission to access this page. Redirecting...
                             </AlertDescription>
                         </Alert>
                     </CardContent>
                 </Card>
             </div>
         );
+    }
+    
+    if (error) {
+        return <div className="text-center text-destructive py-16">Error: {error.message}</div>;
     }
 
     if (properties && properties.length > 0) {
