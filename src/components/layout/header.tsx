@@ -75,7 +75,7 @@ export default function Header() {
       <div className="container p-2">
         <div className={cn(
           "h-14 items-center rounded-full p-2 md:px-4",
-          "bg-background/80 backdrop-blur-sm shadow-md",
+          "bg-background shadow-md",
           "grid grid-cols-3"
         )}>
           <div className="flex items-center gap-2">
