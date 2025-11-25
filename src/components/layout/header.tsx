@@ -7,7 +7,14 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetFooter,
+  SheetHeader,
+} from "../ui/sheet";
 import {
   Home,
   Building,
@@ -18,6 +25,7 @@ import {
   Github,
   Twitter,
   Linkedin,
+  X,
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -28,12 +36,12 @@ import { Button as MovingBorderButton } from "@/components/ui/moving-border";
 
 
 const navLinks = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/properties", label: "Properties", icon: Building },
-  { href: "/interiors", label: "Interiors", icon: Palette },
-  { href: "/professionals", label: "Professionals", icon: Users },
-  { href: "/services", label: "Services", icon: Briefcase },
-  { href: "/contact", label: "Contact", icon: Mail },
+  { href: "/", label: "Home" },
+  { href: "/properties", label: "Properties" },
+  { href: "/interiors", label: "Interiors" },
+  { href: "/professionals", label: "Professionals" },
+  { href: "/services", label: "Services" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -132,8 +140,13 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="flex flex-col">
-                <SheetHeader>
-                  <SheetTitle className="sr-only">Navigation</SheetTitle>
+                <SheetClose asChild>
+                  <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3">
+                    <X className="h-6 w-6" />
+                    <span className="sr-only">Close navigation menu</span>
+                  </Button>
+                </SheetClose>
+                 <SheetHeader>
                   <div className="flex justify-center">
                     <Logo />
                   </div>
