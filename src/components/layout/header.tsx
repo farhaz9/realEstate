@@ -146,7 +146,7 @@ export default function Header() {
                       href={link.href}
                       onClick={() => setIsSheetOpen(false)}
                       className={cn(
-                        "uppercase rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:text-primary"
+                        "uppercase rounded-lg px-3 py-3 text-4xl font-medium text-muted-foreground transition-all hover:text-primary"
                       )}
                     >
                       {link.label}
