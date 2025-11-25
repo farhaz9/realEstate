@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { ArrowUp } from 'lucide-react';
 
 export function ScrollProgress() {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const circumference = 2 * Math.PI * 20; // 2 * pi * radius (where radius is 20)
   const offset = circumference - (progress / 100) * circumference;
@@ -24,16 +25,26 @@ export function ScrollProgress() {
         setProgress(0);
       }
       
-      setIsVisible(scrollPosition > 200);
+      if (scrollPosition > 200) {
+        setIsVisible(true);
+        if (scrollTimeout.current) {
+          clearTimeout(scrollTimeout.current);
+        }
+        scrollTimeout.current = setTimeout(() => {
+          setIsVisible(false);
+        }, 1500); // Hide after 1.5 seconds of no scrolling
+      } else {
+        setIsVisible(false);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Initial check
-    handleScroll();
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
     };
   }, []);
 
