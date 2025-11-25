@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Auth, // Import Auth type for type hinting
@@ -6,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
   // Assume getAuth and app are initialized elsewhere
 } from 'firebase/auth';
 
@@ -37,3 +39,10 @@ export function initiateGoogleSignIn(authInstance: Auth): void {
     signInWithPopup(authInstance, provider);
     // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
 }
+
+/** Sends a password reset email. This function returns a promise that should be handled in the UI. */
+export function initiatePasswordReset(authInstance: Auth, email: string): Promise<void> {
+    return sendPasswordResetEmail(authInstance, email);
+}
+
+    

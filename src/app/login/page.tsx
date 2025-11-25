@@ -13,13 +13,25 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, initiateEmailSignIn, initiateEmailSignUp, initiateGoogleSignIn } from '@/firebase';
+import { useAuth, initiateEmailSignIn, initiateEmailSignUp, initiateGoogleSignIn, initiatePasswordReset } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -55,6 +67,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -88,6 +101,7 @@ export default function LoginPage() {
         switch (error.code) {
           case 'auth/user-not-found':
           case 'auth/wrong-password':
+          case 'auth/invalid-credential':
             errorMessage = 'Invalid email or password.';
             break;
           case 'auth/email-already-in-use':
@@ -128,6 +142,32 @@ export default function LoginPage() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if (!auth || !resetEmail) return;
+
+    try {
+        await initiatePasswordReset(auth, resetEmail);
+        toast({
+            title: 'Password Reset Email Sent',
+            description: 'Please check your inbox for instructions to reset your password.',
+        });
+    } catch (error: unknown) {
+        console.error(error);
+        let errorMessage = "Could not send password reset email. Please try again.";
+        if (error instanceof FirebaseError) {
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+                errorMessage = "No user found with this email address.";
+            }
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Reset Failed',
+            description: errorMessage,
+        });
+    }
+  };
+
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <Card className="w-full max-w-md">
@@ -157,7 +197,38 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                     {isLogin && (
+                       <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                           <Button variant="link" type="button" className="p-0 h-auto text-xs">Forgot Password?</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Reset Your Password</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Enter your email address and we'll send you a link to reset your password.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="space-y-2">
+                                <Label htmlFor="reset-email">Email</Label>
+                                <Input
+                                    id="reset-email"
+                                    type="email"
+                                    placeholder="m@example.com"
+                                    value={resetEmail}
+                                    onChange={(e) => setResetEmail(e.target.value)}
+                                />
+                            </div>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                </div>
                 <Input
                   id="password"
                   type="password"
