@@ -108,7 +108,27 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '5%': { transform: 'translateX(-1rem)' },
           '10%, 100%': { transform: 'translateX(0)' },
-        }
+        },
+        "zoom-in-90": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.9)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "zoom-out-90": {
+          "0%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "scale(0.9)",
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -116,6 +136,8 @@ export default {
         'gradient-pan': 'gradient-pan 3s ease infinite',
         'blink': 'blink 5s ease-in-out infinite',
         'carousel-nudge': 'carousel-nudge 5s ease-in-out',
+        "zoom-in-90": "zoom-in-90 0.2s ease-out",
+        "zoom-out-90": "zoom-out-90 0.2s ease-out",
       },
     },
   },
