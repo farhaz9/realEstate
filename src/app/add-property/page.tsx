@@ -24,6 +24,16 @@ import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import { PageHero } from '@/components/shared/page-hero';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Banknote, Loader2 } from 'lucide-react';
 import type { Property } from '@/types';
 
@@ -109,7 +119,7 @@ export default function AddPropertyPage() {
   const renderContent = () => {
     if (isUserLoading || isLoadingUserProperties) {
       return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-[40vh]">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       );
@@ -121,26 +131,28 @@ export default function AddPropertyPage() {
 
     if (userProperties && userProperties.length > 0) {
       return (
-        <div className="container mx-auto px-4 py-16">
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle>List Another Property</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Alert>
+        <AlertDialog open={true}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Unlock Unlimited Listings</AlertDialogTitle>
+              <AlertDialogDescription>
+                You have used your one free property listing. To continue listing more properties, please subscribe for just ₹99.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+             <Alert>
                 <Banknote className="h-4 w-4" />
-                <AlertTitle>Payment Required</AlertTitle>
+                <AlertTitle>One-Time Payment</AlertTitle>
                 <AlertDescription>
-                  You have used your one free listing. To list another property, please pay the listing fee of ₹99.
+                 This is a single payment for lifetime access to unlimited listings.
                 </AlertDescription>
               </Alert>
-              <Button className="mt-6 w-full" disabled>
-                Pay ₹99 to List Property
-              </Button>
-               <p className="text-xs text-muted-foreground mt-2 text-center">Payment gateway integration is coming soon.</p>
-            </CardContent>
-          </Card>
-        </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => router.push('/')}>Cancel</AlertDialogCancel>
+              <AlertDialogAction disabled>Subscribe for ₹99</AlertDialogAction>
+            </AlertDialogFooter>
+             <p className="text-xs text-muted-foreground mt-2 text-center">Payment gateway integration is coming soon.</p>
+          </AlertDialogContent>
+        </AlertDialog>
       );
     }
     
@@ -323,3 +335,5 @@ export default function AddPropertyPage() {
     </>
   );
 }
+
+    
