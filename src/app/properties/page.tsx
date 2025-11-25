@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ListFilter, Search } from 'lucide-react';
+import { ListFilter, Search, Building2, Bed, Home, PlusCircle } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -21,6 +21,8 @@ import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Link from 'next/link';
 
 const searchSuggestions = [
   'Search property in South Delhi',
@@ -33,9 +35,9 @@ const searchSuggestions = [
 export default function PropertiesPage() {
   const firestore = useFirestore();
   
+  const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [location, setLocation] = useState('all');
-  const [propertyType, setPropertyType] = useState('all');
   const [bedrooms, setBedrooms] = useState(0);
   const [bathrooms, setBathrooms] = useState(0);
   const [priceRange, setPriceRange] = useState([0, 20]); // In Crores
@@ -66,18 +68,22 @@ export default function PropertiesPage() {
     if (!properties) return [];
     
     return properties.filter(p => {
+      const tabMatch = activeTab === 'all' || 
+                       (activeTab === 'buy' && p.listingType === 'sale') ||
+                       (activeTab === 'rent' && p.listingType === 'rent') ||
+                       (activeTab === 'pg' && p.propertyType.toLowerCase() === 'pg');
+
       const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                               p.location.address.toLowerCase().includes(searchTerm.toLowerCase());
       const locationMatch = location === 'all' || p.location.state === location || p.location.pincode === location;
-      const typeMatch = propertyType === 'all' || p.propertyType === propertyType;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
       const priceMatch = p.price >= priceRange[0] * 10000000 && p.price <= priceRange[1] * 10000000;
       
-      return searchTermMatch && locationMatch && typeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
+      return tabMatch && searchTermMatch && locationMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
-  }, [properties, searchTerm, location, propertyType, bedrooms, bathrooms, priceRange]);
+  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -85,31 +91,47 @@ export default function PropertiesPage() {
       return states;
   }, [properties]);
 
-  const uniqueTypes = useMemo(() => {
-    if (!properties) return [];
-    return [...new Set(properties.map(p => p.propertyType))];
-  }, [properties]);
 
   return (
     <div>
-      <section className="bg-primary text-primary-foreground py-8 md:py-12">
-        <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <div className="relative flex-grow">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                      id="search"
-                      placeholder={placeholder}
-                      className="pl-10 text-foreground"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-              </div>
-              <div className="mt-4 flex gap-4 items-end overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
+      <section className="bg-background border-b sticky top-16 z-40">
+        <div className="container mx-auto px-4 pt-4">
+          <div className="flex justify-between items-center">
+             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList>
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="buy">Buy</TabsTrigger>
+                <TabsTrigger value="rent">Rent</TabsTrigger>
+                <TabsTrigger value="pg">PG / Co-living</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Button asChild className="hidden sm:flex ml-4 flex-shrink-0">
+                <Link href="/add-property">
+                    Post Ad
+                    <span className="ml-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-sm">FREE</span>
+                </Link>
+            </Button>
+          </div>
+           <div className="relative flex-grow my-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                  id="search"
+                  placeholder={placeholder}
+                  className="pl-10 text-foreground"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+              />
+          </div>
+        </div>
+      </section>
+      
+       <div className="bg-muted/40 border-b py-2">
+            <div className="container mx-auto px-4">
+              <div className="flex gap-4 items-end overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
                 <div className="flex-shrink-0 min-w-[150px] space-y-1">
-                  <Label className="text-xs font-semibold text-primary-foreground/80">Location</Label>
+                  <Label className="text-xs font-semibold">Location</Label>
                   <Select value={location} onValueChange={setLocation}>
-                    <SelectTrigger className="bg-background text-foreground">
+                    <SelectTrigger className="bg-background text-foreground h-9">
                       <SelectValue placeholder="All Localities" />
                     </SelectTrigger>
                     <SelectContent>
@@ -118,20 +140,9 @@ export default function PropertiesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex-shrink-0 min-w-[150px] space-y-1">
-                  <Label className="text-xs font-semibold text-primary-foreground/80">Property Type</Label>
-                   <Select value={propertyType} onValueChange={setPropertyType}>
-                    <SelectTrigger className="bg-background text-foreground">
-                      <SelectValue placeholder="All Types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      {uniqueTypes.map((type, index) => <SelectItem key={`${type}-${index}`} value={type}>{type}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+                
                  <div className="flex-shrink-0 min-w-[200px] flex-grow space-y-1">
-                   <Label className="text-xs font-semibold text-primary-foreground/80 truncate">
+                   <Label className="text-xs font-semibold truncate">
                      Price: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
                   </Label>
                    <Slider
@@ -145,9 +156,9 @@ export default function PropertiesPage() {
                 </div>
                  <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="secondary" className="flex-shrink-0">
+                        <Button variant="outline" className="flex-shrink-0 h-9 bg-background">
                             <ListFilter className="mr-2 h-4 w-4" />
-                            More Filters
+                            Filters
                         </Button>
                     </SheetTrigger>
                     <SheetContent>
@@ -185,9 +196,9 @@ export default function PropertiesPage() {
             </div>
             </div>
         </div>
-      </section>
 
-      <div className="container mx-auto px-4 py-16">
+
+      <div className="container mx-auto px-4 py-8 sm:py-12">
         {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
@@ -229,3 +240,5 @@ export default function PropertiesPage() {
     </div>
   );
 }
+
+    
