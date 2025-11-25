@@ -12,8 +12,10 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose,
-  SheetFooter,
   SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
 } from "../ui/sheet";
 import {
   Home,
@@ -92,7 +94,7 @@ export default function Header() {
                   "px-4 py-1.5 rounded-full transition-colors",
                   isHomePage ? "text-neutral-300 hover:text-white" : "text-muted-foreground hover:text-foreground",
                   pathname === link.href
-                    ? isHomePage ? "bg-white/10 text-white font-semibold" : "bg-muted text-foreground font-semibold"
+                    ? isHomePage ? "bg-white/10 text-white font-semibold" : "text-muted text-foreground font-semibold"
                     : ""
                 )}
               >
@@ -140,17 +142,21 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="flex flex-col">
+                <SheetHeader className="sr-only">
+                  <SheetTitle>Mobile Menu</SheetTitle>
+                  <SheetDescription>
+                    Navigate through our exclusive real estate and design services.
+                  </SheetDescription>
+                </SheetHeader>
                 <SheetClose asChild>
                   <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3">
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close navigation menu</span>
                   </Button>
                 </SheetClose>
-                 <SheetHeader>
-                  <div className="flex justify-center">
+                 <div className="flex justify-center">
                     <Logo />
                   </div>
-                </SheetHeader>
                 <Separator />
                 <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
                   {navLinks.map((link) => (
