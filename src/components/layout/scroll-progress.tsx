@@ -59,14 +59,14 @@ export function ScrollProgress() {
           cx="22"
           cy="22"
           r="20"
-          strokeWidth="3"
+          strokeWidth="4"
           className="stroke-primary/20 fill-none"
         />
         <circle
           cx="22"
           cy="22"
           r="20"
-          strokeWidth="3"
+          strokeWidth="4"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
