@@ -5,8 +5,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
-import ProgressBar from "@/components/layout/progress-bar";
 import { FirebaseClientProvider } from "@/firebase";
+import { ScrollProgress } from "@/components/layout/scroll-progress";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -59,6 +59,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -71,7 +72,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <Header />
           <AppProviders>{children}</AppProviders>
-          <ProgressBar />
+          <ScrollProgress />
         </FirebaseClientProvider>
       </body>
     </html>
