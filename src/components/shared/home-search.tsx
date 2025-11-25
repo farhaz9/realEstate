@@ -30,7 +30,7 @@ export function HomeSearch() {
                 variant="link"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'text-muted-foreground hover:text-primary font-semibold text-sm md:text-base p-0 h-auto relative transition-colors',
+                  'text-muted-foreground hover:text-primary font-semibold text-sm md:text-base p-0 h-auto relative transition-colors group',
                   activeTab === tab.id && 'text-primary'
                 )}
               >
@@ -38,6 +38,7 @@ export function HomeSearch() {
                 {activeTab === tab.id && (
                   <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-primary rounded-full" />
                 )}
+                 <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-primary rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
               </Button>
             ))}
           </div>
