@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -22,11 +23,7 @@ export default function ProgressBar() {
       setScroll(0);
     }
 
-    if (position > 300) {
-      setShowButton(true);
-    } else {
-      setShowButton(false);
-    }
+    setShowButton(position > 300);
   };
 
   const scrollToTop = () => {
