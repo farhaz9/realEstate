@@ -1,3 +1,4 @@
+
 import type { User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, Star } from 'lucide-react';
