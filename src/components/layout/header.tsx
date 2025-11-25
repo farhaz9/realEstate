@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
+import { Skeleton } from "../ui/skeleton";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -43,14 +44,25 @@ export default function Header() {
           </Link>
         ))}
       </nav>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <div className="hidden md:flex">
           {isUserLoading ? (
-            <div className="h-10 w-24 rounded-md bg-muted animate-pulse" />
+            <Skeleton className="h-10 w-24 rounded-md" />
           ) : user ? (
             <UserNav />
           ) : (
             <Button asChild>
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
+        </div>
+         <div className="flex items-center gap-2 md:hidden">
+          {isUserLoading ? (
+            <Skeleton className="h-8 w-8 rounded-full" />
+          ) : user ? (
+            <UserNav />
+          ) : (
+             <Button asChild size="sm" variant="outline">
               <Link href="/login">Login</Link>
             </Button>
           )}
@@ -79,17 +91,6 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-               <div className="border-t pt-4">
-                {isUserLoading ? (
-                  <div className="h-10 w-full rounded-md bg-muted animate-pulse" />
-                ) : user ? (
-                  <UserNav />
-                ) : (
-                  <Button asChild className="w-full">
-                    <Link href="/login" onClick={() => setIsSheetOpen(false)}>Login</Link>
-                  </Button>
-                )}
-              </div>
             </nav>
           </SheetContent>
         </Sheet>
