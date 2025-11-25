@@ -24,6 +24,8 @@ import { UserNav } from "@/components/auth/user-nav";
 import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { useOnScroll } from "@/hooks/use-on-scroll";
+import { Button as MovingBorderButton } from "@/components/ui/moving-border";
+
 
 const navLinks = [
   { href: "/", label: "Home", icon: Home },
@@ -84,15 +86,21 @@ export default function Header() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <div className="hidden md:flex">
+            <div className="hidden md:flex items-center gap-2">
               {isUserLoading ? (
                 <Skeleton className="h-10 w-10 rounded-full" />
               ) : user ? (
                 <UserNav />
               ) : (
-                <Button asChild>
-                  <Link href="/login">Login</Link>
-                </Button>
+                <MovingBorderButton
+                  as={Link}
+                  href="/login"
+                  containerClassName="h-10 w-auto"
+                  className="bg-slate-900/80 text-white"
+                  borderRadius="2rem"
+                >
+                  Login
+                </MovingBorderButton>
               )}
             </div>
             <div className="flex items-center gap-2 md:hidden">
