@@ -95,7 +95,7 @@ const whyChooseUsPoints = [
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative w-full h-[60vh] md:h-[80vh] text-white overflow-hidden">
+      <section className="relative w-full h-screen text-white overflow-hidden">
         <video
             src="https://images-r-eal-estae.vercel.app/farhazhomes.mp4"
             autoPlay
