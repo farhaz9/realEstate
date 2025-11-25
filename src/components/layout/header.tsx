@@ -11,11 +11,11 @@ import {
   Sheet,
   SheetContent,
   SheetClose,
-  SheetHeader,
   SheetFooter,
   SheetTitle,
   SheetDescription,
   SheetTrigger,
+  SheetHeader,
 } from "../ui/sheet";
 import {
   Github,
@@ -74,7 +74,7 @@ export default function Header() {
       <div className="container p-2">
         <div className={cn(
           "flex h-14 items-center justify-between rounded-full p-2 md:px-4",
-           "bg-black/50"
+           "bg-background shadow-md"
         )}>
           <Logo />
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
@@ -84,9 +84,9 @@ export default function Header() {
                 href={link.href}
                 className={cn(
                   "px-4 py-1.5 rounded-full transition-colors",
-                  "text-neutral-300 hover:text-white",
+                  "text-muted-foreground hover:text-foreground",
                   pathname === link.href
-                    ? "bg-white/10 text-white font-semibold"
+                    ? "bg-primary/10 text-primary font-semibold"
                     : ""
                 )}
               >
@@ -107,7 +107,7 @@ export default function Header() {
                   containerClassName="h-10 w-auto"
                   className={cn(
                     "font-semibold",
-                    "bg-black/50 text-white border-white/20"
+                    "bg-slate-800 text-white border-slate-700"
                   )}
                   borderRadius="2rem"
                 >
@@ -121,7 +121,7 @@ export default function Header() {
               ) : user ? (
                 <UserNav />
               ) : (
-                <Button asChild size="sm" variant={"outline"} className={cn("text-white border-white/50")}>
+                <Button asChild size="sm" variant={"outline"}>
                   <Link href="/login">Login</Link>
                 </Button>
               )}
@@ -134,16 +134,14 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent>
-                 <SheetHeader className="sr-only">
+                <SheetHeader className="sr-only">
                    <SheetTitle>Mobile Menu</SheetTitle>
                    <SheetDescription>Site navigation</SheetDescription>
                  </SheetHeader>
-                 <SheetClose asChild>
-                  <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3">
+                 <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3" onClick={() => setIsSheetOpen(false)}>
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close navigation menu</span>
                   </Button>
-                </SheetClose>
                 <div className="flex justify-center">
                     <Logo />
                   </div>
