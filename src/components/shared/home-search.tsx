@@ -30,7 +30,7 @@ export function HomeSearch() {
                 variant="link"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'text-muted-foreground hover:text-primary font-semibold text-sm md:text-base p-0 h-auto relative transition-colors group',
+                  'text-muted-foreground hover:text-primary font-semibold text-sm md:text-base p-0 h-auto relative transition-colors group no-underline hover:no-underline',
                   activeTab === tab.id && 'text-primary'
                 )}
               >
