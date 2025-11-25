@@ -54,11 +54,15 @@ export default function ProgressBar() {
     >
       <Button
         size="icon"
-        className="relative h-14 w-14 rounded-full shadow-lg"
+        className="relative h-14 w-14 rounded-full shadow-lg font-bold text-sm"
         onClick={scrollToTop}
         aria-label="Scroll to top"
       >
-        <ChevronUp className="h-7 w-7" />
+        {Math.round(scroll) < 100 ? (
+            <>{`${Math.round(scroll)}%`}</>
+        ) : (
+            <ChevronUp className="h-6 w-6" />
+        )}
       </Button>
       <svg
         className="absolute top-0 left-0 h-full w-full -rotate-90"
