@@ -94,7 +94,7 @@ export default function PropertiesPage() {
 
   return (
     <div>
-      <section className="bg-background border-b sticky top-16 z-40">
+      <section className="bg-background border-b">
         <div className="container mx-auto px-4 pt-4">
           <div className="flex justify-between items-center">
              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
