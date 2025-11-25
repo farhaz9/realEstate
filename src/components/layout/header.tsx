@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState }from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
@@ -12,18 +12,12 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose,
-  SheetHeader,
-  SheetFooter,
   SheetTitle,
   SheetDescription,
+  SheetHeader,
+  SheetFooter,
 } from "../ui/sheet";
 import {
-  Home,
-  Building,
-  Palette,
-  Users,
-  Briefcase,
-  Mail,
   Github,
   Twitter,
   Linkedin,
@@ -75,14 +69,14 @@ export default function Header() {
 
   return (
     <header className={cn(
-      "sticky top-0 z-50 w-full transition-transform duration-300",
+      "sticky top-0 z-50 w-full transition-all duration-300",
       isScrollingUp ? "translate-y-0" : "-translate-y-full",
-       isHomePage ? "bg-transparent" : "bg-background/80 backdrop-blur-sm border-b"
+      "bg-transparent"
     )}>
       <div className="container p-2">
         <div className={cn(
           "flex h-14 items-center justify-between rounded-full p-2 md:px-4",
-           isHomePage ? "bg-black/20 border border-white/20" : ""
+           "bg-transparent"
         )}>
           <Logo />
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
@@ -92,9 +86,9 @@ export default function Header() {
                 href={link.href}
                 className={cn(
                   "px-4 py-1.5 rounded-full transition-colors",
-                  isHomePage ? "text-neutral-300 hover:text-white" : "text-muted-foreground hover:text-foreground",
+                  "text-neutral-300 hover:text-white",
                   pathname === link.href
-                    ? isHomePage ? "bg-white/10 text-white font-semibold" : "text-muted text-foreground font-semibold"
+                    ? "bg-white/10 text-white font-semibold"
                     : ""
                 )}
               >
@@ -115,7 +109,7 @@ export default function Header() {
                   containerClassName="h-10 w-auto"
                   className={cn(
                     "font-semibold",
-                    isHomePage ? "bg-black/50 text-white border-white/20" : "bg-slate-900/80 text-white"
+                    "bg-black/50 text-white border-white/20"
                   )}
                   borderRadius="2rem"
                 >
@@ -129,7 +123,7 @@ export default function Header() {
               ) : user ? (
                 <UserNav />
               ) : (
-                <Button asChild size="sm" variant={isHomePage ? "outline" : "default"} className={cn(isHomePage && "text-white border-white/50")}>
+                <Button asChild size="sm" variant={"outline"} className={cn("text-white border-white/50")}>
                   <Link href="/login">Login</Link>
                 </Button>
               )}
@@ -141,20 +135,18 @@ export default function Header() {
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="flex flex-col">
-                <SheetHeader className="sr-only">
-                  <SheetTitle>Mobile Menu</SheetTitle>
-                  <SheetDescription>
-                    Navigate through our exclusive real estate and design services.
-                  </SheetDescription>
-                </SheetHeader>
-                <SheetClose asChild>
+              <SheetContent>
+                 <SheetHeader>
+                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                   <SheetDescription className="sr-only">Site navigation</SheetDescription>
+                 </SheetHeader>
+                 <SheetClose asChild>
                   <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3">
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close navigation menu</span>
                   </Button>
                 </SheetClose>
-                 <div className="flex justify-center">
+                <div className="flex justify-center">
                     <Logo />
                   </div>
                 <Separator />
