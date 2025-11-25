@@ -147,8 +147,6 @@ export default function HomePage() {
         </div>
       </section>
       
-      <FeaturedProperties />
-
       <section id="offers" className="py-16 bg-secondary/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -188,6 +186,8 @@ export default function HomePage() {
           </Carousel>
         </div>
       </section>
+
+      <FeaturedProperties />
 
       <section id="contact-form" className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4 max-w-2xl">
