@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import {
-  Menu,
   Home,
   Building,
   Palette,
@@ -33,6 +32,25 @@ const navLinks = [
   { href: "/services", label: "Services", icon: Briefcase },
   { href: "/contact", label: "Contact", icon: Mail },
 ];
+
+const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <line x1="3" y1="8" x2="21" y2="8" />
+    <line x1="3" y1="16" x2="21" y2="16" />
+  </svg>
+);
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -84,7 +102,7 @@ export default function Header() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button variant="default" size="icon" className="md:hidden rounded-full">
-              <Menu className="h-6 w-6" />
+              <TwoStripesIcon className="h-6 w-6" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
