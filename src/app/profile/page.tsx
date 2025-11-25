@@ -147,8 +147,8 @@ export default function ProfilePage() {
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
                     <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                    <AvatarFallback className="text-5xl">
-                        {user.displayName?.charAt(0).toUpperCase() ?? 'U'}
+                    <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                        <User className="h-16 w-16" />
                     </AvatarFallback>
                   </Avatar>
                   <Button
