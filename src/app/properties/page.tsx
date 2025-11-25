@@ -102,8 +102,8 @@ export default function PropertiesPage() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                   />
               </div>
-              <div className="mt-4 flex flex-col md:flex-row gap-4 items-center">
-                <div className="w-full md:w-auto md:flex-1">
+              <div className="mt-4 flex gap-4 items-end overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
+                <div className="flex-shrink-0 min-w-[150px] space-y-1">
                   <Label className="text-xs font-semibold text-primary-foreground/80">Location</Label>
                   <Select value={location} onValueChange={setLocation}>
                     <SelectTrigger className="bg-background text-foreground">
@@ -115,7 +115,7 @@ export default function PropertiesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="w-full md:w-auto md:flex-1">
+                <div className="flex-shrink-0 min-w-[150px] space-y-1">
                   <Label className="text-xs font-semibold text-primary-foreground/80">Property Type</Label>
                    <Select value={propertyType} onValueChange={setPropertyType}>
                     <SelectTrigger className="bg-background text-foreground">
@@ -127,8 +127,8 @@ export default function PropertiesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                 <div className="w-full md:w-auto md:flex-1">
-                   <Label className="text-xs font-semibold text-primary-foreground/80">
+                 <div className="flex-shrink-0 min-w-[200px] flex-grow space-y-1">
+                   <Label className="text-xs font-semibold text-primary-foreground/80 truncate">
                      Price: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
                   </Label>
                    <Slider
@@ -142,7 +142,7 @@ export default function PropertiesPage() {
                 </div>
                  <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="secondary" className="w-full md:w-auto">
+                        <Button variant="secondary" className="flex-shrink-0">
                             <ListFilter className="mr-2 h-4 w-4" />
                             More Filters
                         </Button>
