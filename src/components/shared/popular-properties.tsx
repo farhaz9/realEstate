@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PopularPropertyCard } from './popular-property-card';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 export function PopularProperties() {
   const firestore = useFirestore();
@@ -16,7 +17,7 @@ export function PopularProperties() {
     if (!firestore) return null;
     // For now, "popular" is just the 4 most recent listings.
     // This could be changed to a `isPopular` flag or based on views.
-    return query(collection(firestore, 'properties'), limit(4));
+    return query(collection(firestore, 'properties'), limit(8));
   }, [firestore]);
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
@@ -41,9 +42,9 @@ export function PopularProperties() {
           {subtitle}
         </p>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {isLoadingProperties ? (
-            [...Array(4)].map((_, i) => (
+        {isLoadingProperties ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
               <div key={i} className="flex flex-col space-y-3">
                   <Skeleton className="h-[125px] w-full rounded-xl" />
                   <div className="space-y-2">
@@ -52,13 +53,26 @@ export function PopularProperties() {
                     <Skeleton className="h-4 w-[100px]" />
                   </div>
               </div>
-            ))
-          ) : (
-            properties?.map((property) => (
-              <PopularPropertyCard key={property.id} property={property} />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <Carousel
+            opts={{
+              align: 'start',
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {properties?.map((property) => (
+                <CarouselItem key={property.id} className="basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-4">
+                   <div className="h-full">
+                    <PopularPropertyCard property={property} />
+                   </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        )}
       </div>
     </section>
   );

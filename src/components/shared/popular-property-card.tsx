@@ -16,8 +16,8 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
   const imageCount = property.imageUrls?.length ?? 0;
 
   return (
-    <Link href="#" className="block group">
-        <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md">
+    <Link href="#" className="block group h-full">
+        <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md h-full flex flex-col">
             <div className="relative h-40">
                 {propertyImage && (
                     <Image
@@ -35,10 +35,10 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
                     </div>
                 )}
             </div>
-            <div className="p-4 bg-card">
+            <div className="p-4 bg-card flex-grow flex flex-col">
                 <p className="font-semibold truncate">{`${property.bedrooms} BHK ${property.propertyType}`}</p>
                 <p className="font-bold text-lg text-primary">{formatPrice(property.price)} | <span className="text-base font-medium text-muted-foreground">{property.squareFootage.toLocaleString()} sqft</span></p>
-                <p className="text-sm text-muted-foreground truncate">{property.location.address}</p>
+                <p className="text-sm text-muted-foreground truncate flex-grow">{property.location.address}</p>
                 <p className="text-sm font-medium mt-2">Ready to Move</p>
             </div>
         </div>
