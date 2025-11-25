@@ -1,0 +1,65 @@
+
+'use client';
+
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, limit } from 'firebase/firestore';
+import type { Property } from '@/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PopularPropertyCard } from './popular-property-card';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+
+export function PopularProperties() {
+  const firestore = useFirestore();
+
+  const propertiesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    // For now, "popular" is just the 4 most recent listings.
+    // This could be changed to a `isPopular` flag or based on views.
+    return query(collection(firestore, 'properties'), limit(4));
+  }, [firestore]);
+
+  const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
+  
+  const title = 'Popular Properties';
+  const subtitle = 'Check out some of the most popular listings from our owners.';
+
+  if (!isLoadingProperties && (!properties || properties.length === 0)) {
+    return null; // Don't render the section if there are no properties
+  }
+  
+  return (
+    <section id="popular-listings" className="py-16 md:py-24 bg-background">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold">{title}</h2>
+          <Link href="/properties" className="flex items-center text-sm font-semibold text-primary hover:underline">
+            See all <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </div>
+        <p className="text-muted-foreground max-w-2xl mb-12">
+          {subtitle}
+        </p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {isLoadingProperties ? (
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="flex flex-col space-y-3">
+                  <Skeleton className="h-[125px] w-full rounded-xl" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[150px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[100px]" />
+                  </div>
+              </div>
+            ))
+          ) : (
+            properties?.map((property) => (
+              <PopularPropertyCard key={property.id} property={property} />
+            ))
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}

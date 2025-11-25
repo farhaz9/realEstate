@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -13,10 +14,13 @@ export function formatPrice(price: number, inCrores: boolean = false, isMax: boo
 
   if (price >= 10000000) { // If price is 1 Cr or more
     const amount = price / 10000000;
-    return `₹${amount.toFixed(2)} Cr`;
+    // Use toFixed(2) to show precision, then remove trailing .00
+    const formattedAmount = amount.toFixed(2).replace(/\.00$/, '');
+    return `₹${formattedAmount} Cr`;
   } else if (price >= 100000) { // If price is 1 Lakh or more
     const amount = price / 100000;
-    return `₹${amount.toFixed(2)} Lakhs`;
+    const formattedAmount = amount.toFixed(2).replace(/\.00$/, '');
+    return `₹${formattedAmount} Lac`;
   } else {
     return `₹${price.toLocaleString('en-IN')}`;
   }

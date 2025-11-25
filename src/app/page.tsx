@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Label } from "@/components/ui/label";
 import { FeaturedProperties } from "@/components/shared/nearby-properties";
+import { PopularProperties } from "@/components/shared/popular-properties";
 
 const faqs = [
   {
@@ -186,6 +187,8 @@ export default function HomePage() {
           </Carousel>
         </div>
       </section>
+      
+      <PopularProperties />
 
       <FeaturedProperties />
 
