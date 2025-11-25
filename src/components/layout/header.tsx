@@ -10,12 +10,12 @@ import { Button } from "../ui/button";
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
   SheetClose,
-  SheetTitle,
-  SheetDescription,
   SheetHeader,
   SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
 } from "../ui/sheet";
 import {
   Github,
@@ -65,8 +65,6 @@ export default function Header() {
   const { user, isUserLoading } = useUser();
   const { isScrollingUp } = useOnScroll();
 
-  const isHomePage = pathname === "/";
-
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
@@ -76,7 +74,7 @@ export default function Header() {
       <div className="container p-2">
         <div className={cn(
           "flex h-14 items-center justify-between rounded-full p-2 md:px-4",
-           "bg-transparent"
+           "bg-black/50"
         )}>
           <Logo />
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
@@ -136,9 +134,9 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent>
-                 <SheetHeader>
-                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                   <SheetDescription className="sr-only">Site navigation</SheetDescription>
+                 <SheetHeader className="sr-only">
+                   <SheetTitle>Mobile Menu</SheetTitle>
+                   <SheetDescription>Site navigation</SheetDescription>
                  </SheetHeader>
                  <SheetClose asChild>
                   <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3">
