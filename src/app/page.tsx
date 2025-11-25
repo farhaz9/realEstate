@@ -163,36 +163,28 @@ export default function HomePage() {
           <Carousel
             opts={{
               align: "start",
-              loop: true,
             }}
             className="w-full"
           >
             <CarouselContent>
-              {homeServices.slice(0, 3).map((service) => {
-                const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
-                return (
+              {homeServices.map((service) => (
                   <CarouselItem key={service.title} className="md:basis-1/2 lg:basis-1/3">
-                    <Link href={service.href} className="p-1 h-full block">
-                      <Card className="overflow-hidden group relative transition-all duration-300 h-full flex flex-col">
-                        <div className="relative h-80">
-                          {serviceImage && (
-                            <Image
-                              src={serviceImage.imageUrl}
-                              alt={service.title}
-                              data-ai-hint={serviceImage.imageHint}
-                              fill
-                              className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="p-1 h-full">
+                      <Card className="flex flex-col text-center items-center justify-center p-6 h-full group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+                        <div className="bg-primary/10 p-4 rounded-full mb-4 transition-colors group-hover:bg-primary">
+                           <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                        </div>
+                        <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
+                        <p className="text-muted-foreground text-sm flex-grow">{service.description}</p>
+                        <Button asChild variant="link" className="mt-4">
+                          <Link href={service.href}>
+                            Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                          </Link>
+                        </Button>
                       </Card>
-                    </Link>
+                    </div>
                   </CarouselItem>
-                );
-              })}
+                ))}
             </CarouselContent>
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
@@ -226,83 +218,6 @@ export default function HomePage() {
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
           </Carousel>
-        </div>
-      </section>
-      
-      <section id="services" className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Real Estate & Interior Design Services</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              A complete suite of services to manage every aspect of your real estate journey, from vision to reality.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {homeServices.slice(0, 3).map((service) => {
-              const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
-              return (
-              <Card key={service.title} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
-                <CardHeader className="p-0 relative h-48">
-                  {serviceImage && (
-                    <Image
-                      src={serviceImage.imageUrl}
-                      alt={service.title}
-                      data-ai-hint={serviceImage.imageHint}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  )}
-                </CardHeader>
-                <CardContent className="flex-grow p-6 flex flex-col">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                       <service.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <CardTitle className="text-xl">{service.title}</CardTitle>
-                  </div>
-                  <p className="text-muted-foreground flex-grow">{service.description}</p>
-                   <Button asChild variant="link" className="p-0 h-auto justify-start mt-4">
-                      <Link href={service.href}>
-                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                </CardContent>
-              </Card>
-            )})}
-          </div>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 justify-center max-w-4xl mx-auto">
-            {homeServices.slice(3, 5).map((service) => {
-                const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
-                return (
-                <Card key={service.title} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
-                  <CardHeader className="p-0 relative h-48">
-                    {serviceImage && (
-                      <Image
-                        src={serviceImage.imageUrl}
-                        alt={service.title}
-                        data-ai-hint={serviceImage.imageHint}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    )}
-                  </CardHeader>
-                  <CardContent className="flex-grow p-6 flex flex-col">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="bg-primary/10 p-2 rounded-full">
-                         <service.icon className="h-6 w-6 text-primary" />
-                      </div>
-                      <CardTitle className="text-xl">{service.title}</CardTitle>
-                    </div>
-                    <p className="text-muted-foreground flex-grow">{service.description}</p>
-                    <Button asChild variant="link" className="p-0 h-auto justify-start mt-4">
-                      <Link href={service.href}>
-                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )})}
-          </div>
         </div>
       </section>
 
