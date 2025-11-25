@@ -66,8 +66,10 @@ export default function PropertiesPage() {
     if (!properties) return [];
     
     return properties.filter(p => {
-      const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const locationMatch = location === 'all' || p.location === location;
+      const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              p.location.address.toLowerCase().includes(searchTerm.toLowerCase());
+      const locationMatch = location === 'all' || p.location.state === location || p.location.pincode === location;
       const typeMatch = propertyType === 'all' || p.propertyType === propertyType;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
@@ -79,7 +81,8 @@ export default function PropertiesPage() {
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
-      return [...new Set(properties.map(p => p.location))];
+      const states = [...new Set(properties.map(p => p.location.state))];
+      return states;
   }, [properties]);
 
   const uniqueTypes = useMemo(() => {

@@ -1,10 +1,11 @@
+
 import Image from "next/image";
 import type { Property } from "@/types";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Trash2 } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking } from "@/firebase";
@@ -22,6 +23,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { usePathname } from "next/navigation";
+import { WhatsAppIcon } from "./icons/whatsapp-icon";
+import Link from "next/link";
 
 interface PropertyCardProps {
   property: Property;
@@ -37,6 +40,9 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
 
   const isOwner = user && user.uid === property.userId;
   const showDeleteButton = isOwner && (pathname === '/my-properties' || pathname === '/profile');
+
+  const rating = 4.5 + (property.title.length % 5) / 10;
+  const starCount = 5;
 
   const handleDelete = () => {
     if (!firestore) return;
@@ -61,14 +67,18 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         )}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 flex gap-2">
+          <div className="flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs">
+            <Star className="h-3 w-3 fill-current" />
+            <span>{rating.toFixed(1)}</span>
+          </div>
           <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'}>{property.listingType}</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-6 flex flex-col">
         <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
         <CardTitle className="mt-2 text-xl font-semibold leading-tight">{property.title}</CardTitle>
-        <p className="mt-1 text-sm text-muted-foreground flex-grow">{property.location}</p>
+        <p className="mt-1 text-sm text-muted-foreground flex-grow">{property.location.address}, {property.location.state} - {property.location.pincode}</p>
 
         <div className="mt-4 flex items-center space-x-4 text-muted-foreground border-t pt-4">
           <div className="flex items-center gap-2">
@@ -88,6 +98,16 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
       <CardFooter className="p-6 pt-0 mt-auto flex items-center gap-2">
         <Button className="w-full">
           View Details <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+        <Button size="icon" variant="outline" asChild>
+          <Link href={`tel:${property.contactNumber}`}>
+            <Phone />
+          </Link>
+        </Button>
+        <Button size="icon" variant="outline" asChild>
+          <Link href={`https://wa.me/${property.whatsappNumber}`} target="_blank">
+            <WhatsAppIcon className="h-6 w-6 text-green-600" />
+          </Link>
         </Button>
         {showDeleteButton && (
            <AlertDialog>

@@ -43,7 +43,13 @@ const propertyFormSchema = z.object({
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
-  location: z.string().min(3, { message: 'Location is required.' }),
+  location: z.object({
+    address: z.string().min(10, { message: 'Full address is required.' }),
+    pincode: z.string().regex(/^\d{6}$/, { message: 'Must be a 6-digit Indian pincode.' }),
+    state: z.string().min(2, { message: 'State is required.' }),
+  }),
+  contactNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
+  whatsappNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   propertyType: z.string().min(2, { message: 'Property type is required.' }),
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
@@ -72,7 +78,13 @@ export default function AddPropertyPage() {
       description: '',
       price: 0,
       listingType: 'sale',
-      location: '',
+      location: {
+        address: '',
+        pincode: '',
+        state: '',
+      },
+      contactNumber: '',
+      whatsappNumber: '',
       propertyType: '',
       bedrooms: 0,
       bathrooms: 0,
@@ -214,6 +226,90 @@ export default function AddPropertyPage() {
                     </FormItem>
                   )}
                 />
+                
+                <div className="grid md:grid-cols-3 gap-8">
+                  <FormField
+                      control={form.control}
+                      name="location.address"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-3">
+                          <FormLabel>Full Address</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="location.pincode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pincode</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., 110017" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="location.state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>State</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Delhi" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="propertyType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Property Type</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Apartment, Villa, PG" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                   <FormField
+                      control={form.control}
+                      name="contactNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contact Number</FormLabel>
+                          <FormControl>
+                            <Input type="tel" placeholder="e.g., 9876543210" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="whatsappNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>WhatsApp Number</FormLabel>
+                          <FormControl>
+                            <Input type="tel" placeholder="e.g., 9876543210" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </div>
 
                 <div className="grid md:grid-cols-2 gap-8">
                   <FormField
@@ -260,35 +356,6 @@ export default function AddPropertyPage() {
                       </FormItem>
                     )}
                   />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  <FormField
-                      control={form.control}
-                      name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Location / Address</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., South Delhi" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="propertyType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Property Type</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Apartment, Villa, PG" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                 </div>
 
                 <div className="grid grid-cols-3 gap-8">

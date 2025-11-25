@@ -6,7 +6,13 @@ export type Property = {
   description: string;
   price: number;
   listingType: 'sale' | 'rent';
-  location: string;
+  location: {
+    address: string;
+    pincode: string;
+    state: string;
+  };
+  contactNumber: string;
+  whatsappNumber: string;
   propertyType: string;
   bedrooms: number;
   bathrooms: number;
