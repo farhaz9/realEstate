@@ -80,7 +80,7 @@ export default function ProgressBar() {
           cy="28"
         />
         <circle
-          className="text-primary"
+          className="text-primary transition-all duration-300"
           strokeWidth="4"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
