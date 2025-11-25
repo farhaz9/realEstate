@@ -29,6 +29,7 @@ import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { useOnScroll } from "@/hooks/use-on-scroll";
 import { Button as MovingBorderButton } from "@/components/ui/moving-border";
+import { motion } from "framer-motion";
 
 
 const navLinks = [
@@ -138,10 +139,17 @@ export default function Header() {
                    <SheetTitle>Mobile Menu</SheetTitle>
                    <SheetDescription>Site navigation</SheetDescription>
                  </SheetHeader>
-                 <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3" onClick={() => setIsSheetOpen(false)}>
+                 <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                  <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3" onClick={() => setIsSheetOpen(false)}>
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close navigation menu</span>
                   </Button>
+                </motion.div>
                 <div className="flex justify-center">
                     <Logo />
                   </div>
