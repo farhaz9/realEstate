@@ -14,8 +14,8 @@ import {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-  SheetTrigger,
   SheetHeader,
+  SheetTrigger,
 } from "../ui/sheet";
 import {
   Github,
@@ -144,8 +144,9 @@ export default function Header() {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
+                    className="absolute top-3 right-3"
                   >
-                  <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3" onClick={() => setIsSheetOpen(false)}>
+                  <Button variant="default" size="icon" className="md:hidden rounded-full" onClick={() => setIsSheetOpen(false)}>
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close navigation menu</span>
                   </Button>
