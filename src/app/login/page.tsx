@@ -112,8 +112,9 @@ export default function LoginPage() {
       try {
         await signInWithEmailAndPassword(auth, email, password);
         toast({
-          title: 'Success!',
-          description: 'You have been logged in. Redirecting...',
+          title: 'Login Successful!',
+          description: 'Welcome back!',
+          variant: 'success',
         });
         router.push('/');
       } catch (error) {
@@ -154,8 +155,9 @@ export default function LoginPage() {
         });
         
         toast({
-          title: 'Success!',
-          description: 'You have been signed up. Redirecting...',
+          title: 'Sign Up Successful!',
+          description: 'Welcome to Farhaz Homes!',
+          variant: 'success',
         });
         router.push('/');
       } catch (error) {
@@ -170,8 +172,9 @@ export default function LoginPage() {
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider);
         toast({
-            title: 'Success!',
-            description: 'You have been logged in with Google. Redirecting...',
+            title: 'Login Successful!',
+            description: 'Welcome back!',
+            variant: 'success',
         });
         router.push('/');
     } catch (error: unknown) {
@@ -359,5 +362,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    

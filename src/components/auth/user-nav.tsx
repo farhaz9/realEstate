@@ -35,6 +35,7 @@ export function UserNav() {
     toast({
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
+      variant: 'destructive',
     });
   };
 
