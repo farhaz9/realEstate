@@ -16,12 +16,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, serverTimestamp, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PageHero } from '@/components/shared/page-hero';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
@@ -33,8 +33,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Banknote, Loader2 } from 'lucide-react';
+import { Banknote, Loader2, Star } from 'lucide-react';
 import type { Property } from '@/types';
 
 const propertyFormSchema = z.object({
@@ -110,6 +111,7 @@ export default function AddPropertyPage() {
     toast({
       title: 'Property Listed!',
       description: 'Your property has been successfully listed.',
+      variant: 'success',
     });
 
     form.reset();
@@ -131,28 +133,48 @@ export default function AddPropertyPage() {
 
     if (userProperties && userProperties.length > 0) {
       return (
-        <AlertDialog open={true}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Unlock Unlimited Listings</AlertDialogTitle>
-              <AlertDialogDescription>
-                You have used your one free property listing. To continue listing more properties, please subscribe for just ₹99.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-             <Alert>
-                <Banknote className="h-4 w-4" />
-                <AlertTitle>One-Time Payment</AlertTitle>
-                <AlertDescription>
-                 This is a single payment for lifetime access to unlimited listings.
-                </AlertDescription>
-              </Alert>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => router.push('/')}>Cancel</AlertDialogCancel>
-              <AlertDialogAction disabled>Subscribe for ₹99</AlertDialogAction>
-            </AlertDialogFooter>
-             <p className="text-xs text-muted-foreground mt-2 text-center">Payment gateway integration is coming soon.</p>
-          </AlertDialogContent>
-        </AlertDialog>
+        <div className="container mx-auto px-4 py-16">
+          <Card className="max-w-lg mx-auto text-center">
+            <CardHeader>
+              <CardTitle>Unlock Unlimited Listings</CardTitle>
+              <CardDescription>You've used your one free property listing.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Star className="h-12 w-12 text-yellow-400 mx-auto fill-yellow-400" />
+              <p className="mt-4 text-muted-foreground">To continue listing more properties and gain premium features, please subscribe to our unlimited plan.</p>
+            </CardContent>
+            <CardFooter className="flex-col gap-2">
+               <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="w-full">Subscribe for ₹99</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Premium Subscription</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Gain lifetime access to unlimited property listings and premium support for a one-time payment.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                   <Alert>
+                      <Banknote className="h-4 w-4" />
+                      <AlertTitle>One-Time Payment: ₹99</AlertTitle>
+                      <AlertDescription>
+                       This is a single payment for lifetime access to unlimited listings. No recurring fees.
+                      </AlertDescription>
+                    </Alert>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => router.push('/')}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction disabled>Proceed to Payment</AlertDialogAction>
+                  </AlertDialogFooter>
+                   <p className="text-xs text-muted-foreground mt-2 text-center">Payment gateway integration is coming soon.</p>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Button variant="link" size="sm" onClick={() => router.push('/my-properties')}>
+                View My Properties
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       );
     }
     
@@ -335,5 +357,3 @@ export default function AddPropertyPage() {
     </>
   );
 }
-
-    
