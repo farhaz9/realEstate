@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ListFilter, Search, Building2, Bed, Home, PlusCircle } from 'lucide-react';
+import { ListFilter, Search } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
