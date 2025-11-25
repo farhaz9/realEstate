@@ -91,7 +91,7 @@ export default function PropertiesPage() {
     <div>
       <section className="bg-primary text-primary-foreground py-8 md:py-12">
         <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <div className="relative flex-grow">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
@@ -102,8 +102,8 @@ export default function PropertiesPage() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                   />
               </div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div className="md:col-span-1">
+              <div className="mt-4 flex flex-col md:flex-row gap-4 items-center">
+                <div className="w-full md:w-auto md:flex-1">
                   <Label className="text-xs font-semibold text-primary-foreground/80">Location</Label>
                   <Select value={location} onValueChange={setLocation}>
                     <SelectTrigger className="bg-background text-foreground">
@@ -115,7 +115,7 @@ export default function PropertiesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="md:col-span-1">
+                <div className="w-full md:w-auto md:flex-1">
                   <Label className="text-xs font-semibold text-primary-foreground/80">Property Type</Label>
                    <Select value={propertyType} onValueChange={setPropertyType}>
                     <SelectTrigger className="bg-background text-foreground">
@@ -127,7 +127,7 @@ export default function PropertiesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                 <div className="md:col-span-1">
+                 <div className="w-full md:w-auto md:flex-1">
                    <Label className="text-xs font-semibold text-primary-foreground/80">
                      Price: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
                   </Label>
@@ -137,12 +137,12 @@ export default function PropertiesPage() {
                       step={0.5}
                       value={priceRange}
                       onValueChange={(value) => setPriceRange(value)}
-                      className="[&>span]:bg-background"
+                      className="[&>span]:bg-background py-2"
                    />
                 </div>
                  <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="secondary" className="w-full">
+                        <Button variant="secondary" className="w-full md:w-auto">
                             <ListFilter className="mr-2 h-4 w-4" />
                             More Filters
                         </Button>
