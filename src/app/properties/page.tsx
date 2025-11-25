@@ -114,7 +114,7 @@ export default function PropertiesPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Localities</SelectItem>
-                      {uniqueLocations.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
+                      {uniqueLocations.map((loc, index) => <SelectItem key={`${loc}-${index}`} value={loc}>{loc}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -126,7 +126,7 @@ export default function PropertiesPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Types</SelectItem>
-                      {uniqueTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                      {uniqueTypes.map((type, index) => <SelectItem key={`${type}-${index}`} value={type}>{type}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
