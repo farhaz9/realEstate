@@ -19,7 +19,7 @@ import {
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
-import { Shield } from 'lucide-react';
+import { Shield, User } from 'lucide-react';
 
 const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
 
@@ -45,7 +45,7 @@ export function UserNav() {
           <Avatar className="h-8 w-8">
             <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
             <AvatarFallback>
-              {user.email?.charAt(0).toUpperCase() ?? 'U'}
+              <User className="h-5 w-5" />
             </AvatarFallback>
           </Avatar>
         </Button>
