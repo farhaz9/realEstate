@@ -20,8 +20,8 @@ export function HomeSearch() {
   const [activeTab, setActiveTab] = useState('rent');
 
   return (
-    <section className="bg-background/95 border-b sticky top-16 z-40 backdrop-blur-sm">
-      <div className="container mx-auto px-4 py-4">
+    <section className="bg-background/95 border-b py-4">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 md:gap-8">
             {searchTabs.map(tab => (
