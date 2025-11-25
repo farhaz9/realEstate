@@ -77,7 +77,73 @@ export default function Header() {
           "flex h-14 items-center justify-between rounded-full p-2 md:px-4",
            "bg-background shadow-md"
         )}>
-          <Logo />
+          <div className="flex items-center gap-2 md:hidden">
+              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="default" size="icon" className="rounded-full">
+                    <TwoStripesIcon className="h-6 w-6" />
+                    <span className="sr-only">Toggle navigation menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left">
+                   <SheetHeader className="sr-only">
+                    <SheetTitle>Mobile Menu</SheetTitle>
+                    <SheetDescription>Site navigation</SheetDescription>
+                  </SheetHeader>
+                  <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
+                      className="absolute top-3 left-3"
+                    >
+                    <Button variant="default" size="icon" className="md:hidden rounded-full" onClick={() => setIsSheetOpen(false)}>
+                      <X className="h-6 w-6" />
+                      <span className="sr-only">Close navigation menu</span>
+                    </Button>
+                  </motion.div>
+                  <motion.div 
+                    initial={{ x: '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: '-100%' }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="flex flex-col h-full"
+                  >
+                    <div className="flex justify-center mt-12">
+                      <Logo />
+                    </div>
+                    <Separator />
+                    <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
+                      {navLinks.map((link) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setIsSheetOpen(false)}
+                          className={cn(
+                            "uppercase rounded-lg px-3 py-3 text-4xl font-medium text-muted-foreground transition-all hover:text-primary"
+                          )}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </nav>
+                    <SheetFooter>
+                      <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
+                        <div className="flex space-x-4">
+                          <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
+                          <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
+                          <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
+                        </div>
+                        <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
+                      </div>
+                    </SheetFooter>
+                  </motion.div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          <div className="hidden md:flex">
+             <Logo />
+          </div>
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
             {navLinks.map((link) => (
               <Link
@@ -96,7 +162,6 @@ export default function Header() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-2">
               {isUserLoading ? (
                 <Skeleton className="h-10 w-10 rounded-full" />
               ) : user ? (
@@ -116,72 +181,6 @@ export default function Header() {
                 </MovingBorderButton>
               )}
             </div>
-            <div className="flex items-center gap-2 md:hidden">
-              {isUserLoading ? (
-                <Skeleton className="h-8 w-8 rounded-full" />
-              ) : user ? (
-                <UserNav />
-              ) : (
-                <Button asChild size="sm" variant={"outline"}>
-                  <Link href="/login">Login</Link>
-                </Button>
-              )}
-            </div>
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="default" size="icon" className="md:hidden rounded-full">
-                  <TwoStripesIcon className="h-6 w-6" />
-                  <span className="sr-only">Toggle navigation menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader className="sr-only">
-                   <SheetTitle>Mobile Menu</SheetTitle>
-                   <SheetDescription>Site navigation</SheetDescription>
-                 </SheetHeader>
-                 <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
-                    transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
-                    className="absolute top-3 right-3"
-                  >
-                  <Button variant="default" size="icon" className="md:hidden rounded-full" onClick={() => setIsSheetOpen(false)}>
-                    <X className="h-6 w-6" />
-                    <span className="sr-only">Close navigation menu</span>
-                  </Button>
-                </motion.div>
-                <div className="flex justify-center">
-                    <Logo />
-                  </div>
-                <Separator />
-                <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsSheetOpen(false)}
-                      className={cn(
-                        "uppercase rounded-lg px-3 py-3 text-4xl font-medium text-muted-foreground transition-all hover:text-primary"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </nav>
-                <SheetFooter>
-                  <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
-                    <div className="flex space-x-4">
-                      <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
-                      <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
-                      <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
-                    </div>
-                    <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
-                  </div>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
-          </div>
         </div>
       </div>
     </header>
