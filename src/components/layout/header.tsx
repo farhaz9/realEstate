@@ -7,19 +7,31 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import {
+  Menu,
+  Home,
+  Building,
+  Palette,
+  Users,
+  Briefcase,
+  Mail,
+  Github,
+  Twitter,
+  Linkedin,
+} from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
 import { Skeleton } from "../ui/skeleton";
+import { Separator } from "../ui/separator";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/properties", label: "Properties" },
-  { href: "/interiors", label: "Interiors" },
-  { href: "/professionals", label: "Professionals" },
-  { href: "/services", label: "Services" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/properties", label: "Properties", icon: Building },
+  { href: "/interiors", label: "Interiors", icon: Palette },
+  { href: "/professionals", label: "Professionals", icon: Users },
+  { href: "/services", label: "Services", icon: Briefcase },
+  { href: "/contact", label: "Contact", icon: Mail },
 ];
 
 export default function Header() {
@@ -76,24 +88,42 @@ export default function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right">
-            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            <Logo />
-            <nav className="mt-8 grid gap-4">
+          <SheetContent side="right" className="flex flex-col">
+            <SheetHeader>
+              <SheetTitle asChild>
+                <Logo />
+              </SheetTitle>
+              <SheetDescription>
+                 Navigate through our exclusive real estate and design services.
+              </SheetDescription>
+            </SheetHeader>
+            <Separator />
+            <nav className="mt-4 grid gap-2 flex-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsSheetOpen(false)}
                   className={cn(
-                    "text-lg font-medium text-muted-foreground transition-colors hover:text-foreground",
-                    pathname === link.href && "text-primary font-semibold"
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-lg font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
+                    pathname === link.href && "bg-primary/10 text-primary font-semibold"
                   )}
                 >
+                  <link.icon className="h-5 w-5" />
                   {link.label}
                 </Link>
               ))}
             </nav>
+            <SheetFooter>
+              <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
+                <div className="flex space-x-4">
+                  <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
+                  <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
+                  <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
+                </div>
+                <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
+              </div>
+            </SheetFooter>
           </SheetContent>
         </Sheet>
       </div>
