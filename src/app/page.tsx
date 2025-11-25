@@ -4,16 +4,12 @@ import Link from "next/link";
 import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PropertyCard } from "@/components/property-card";
-import { properties, builders } from "@/lib/data";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import LottiePlayer from "@/components/shared/lottie-player";
 import { Label } from "@/components/ui/label";
+import { NearbyProperties } from "@/components/shared/nearby-properties";
 
 const faqs = [
   {
@@ -102,7 +98,6 @@ const whyChooseUsPoints = [
 
 
 export default function HomePage() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
   return (
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-[70vh] md:h-[90vh] text-white overflow-hidden">
@@ -151,6 +146,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
+      <NearbyProperties />
 
       <section id="offers" className="py-16 bg-secondary/30">
         <div className="container mx-auto px-4">
@@ -185,35 +182,6 @@ export default function HomePage() {
                     </div>
                   </CarouselItem>
                 ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
-        </div>
-      </section>
-
-      <section id="featured-listings" className="py-16 md:py-24 bg-primary/5">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Featured Delhi Properties</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              A curated selection of Delhi’s most exclusive properties, combining luxury, comfort, and prime locations.
-            </p>
-          </div>
-          <Carousel
-            opts={{
-              align: "start",
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {properties.map((property) => (
-                <CarouselItem key={property.id} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
-                    <PropertyCard property={property} />
-                  </div>
-                </CarouselItem>
-              ))}
             </CarouselContent>
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
