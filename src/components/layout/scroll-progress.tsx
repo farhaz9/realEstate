@@ -74,11 +74,7 @@ export function ScrollProgress() {
         />
       </svg>
       <div className="absolute flex h-full w-full items-center justify-center">
-        {progress < 100 ? (
-          <span className="text-sm font-bold text-primary">{Math.round(progress)}%</span>
-        ) : (
-          <ArrowUp className="h-5 w-5 text-primary" />
-        )}
+        <ArrowUp className="h-5 w-5 text-primary" />
       </div>
     </button>
   );
