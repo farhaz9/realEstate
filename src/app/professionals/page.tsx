@@ -46,7 +46,7 @@ export default function ProfessionalsPage() {
 
     if (data && data.length > 0) {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="flex flex-col gap-6">
           {data.map((professional) => (
             <ProfessionalCard key={professional.id} professional={professional} />
           ))}
@@ -69,7 +69,7 @@ export default function ProfessionalsPage() {
         subtitle="Connect with top-rated real estate agents and interior designers in Delhi."
         image={{ id: 'contact-hero', imageHint: 'business meeting' }}
       />
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 max-w-4xl">
         <Tabs defaultValue="all" className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
             <TabsList className="grid w-full sm:w-auto grid-cols-3">
