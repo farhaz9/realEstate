@@ -67,11 +67,12 @@ export default function Header() {
     <header className={cn(
       "sticky top-0 z-50 w-full transition-transform duration-300",
       isScrollingUp ? "translate-y-0" : "-translate-y-full",
+       isHomePage ? "bg-transparent" : "bg-background/80 backdrop-blur-sm border-b"
     )}>
       <div className="container p-2">
         <div className={cn(
-          "flex h-14 items-center justify-between rounded-full p-2 shadow-lg backdrop-blur-sm md:px-4",
-          isHomePage ? "bg-black/20 border border-white/20" : "bg-background/95 border"
+          "flex h-14 items-center justify-between rounded-full p-2 md:px-4",
+           isHomePage ? "bg-black/20 border border-white/20" : ""
         )}>
           <Logo />
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
