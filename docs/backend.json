@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -10,13 +11,9 @@
           "type": "string",
           "description": "Unique identifier for the user entity."
         },
-        "firstName": {
+        "fullName": {
           "type": "string",
-          "description": "The user's first name."
-        },
-        "lastName": {
-          "type": "string",
-          "description": "The user's last name."
+          "description": "The user's full name."
         },
         "email": {
           "type": "string",
@@ -27,6 +24,11 @@
           "type": "string",
           "description": "The user's phone number."
         },
+        "category": {
+          "type": "string",
+          "description": "The category of the user.",
+          "enum": ["listing-property", "real-estate-agent", "interior-designer"]
+        },
         "dateJoined": {
           "type": "string",
           "description": "The date and time the user joined the platform.",
@@ -35,10 +37,10 @@
       },
       "required": [
         "id",
-        "firstName",
-        "lastName",
+        "fullName",
         "email",
         "phone",
+        "category",
         "dateJoined"
       ]
     },
@@ -178,3 +180,5 @@
     "reasoning": "The Firestore structure is designed for a public property marketplace. User profiles are private, stored under '/users/{userId}'. Properties are stored in a top-level '/properties' collection, making them publicly readable for listings. Security rules ensure that while anyone can view properties, only the authenticated owner (verified via the 'userId' field in the property document) can create, update, or delete their own listings. This separation maintains user privacy while allowing for a public, searchable property database."
   }
 }
+
+    

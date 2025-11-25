@@ -13,13 +13,12 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, initiateEmailSignIn, initiateEmailSignUp, initiateGoogleSignIn, initiatePasswordReset } from '@/firebase';
+import { useAuth, initiatePasswordReset } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
-import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,8 +30,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -68,8 +68,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [category, setCategory] = useState('');
   const [resetEmail, setResetEmail] = useState('');
   const auth = useAuth();
+  const firestore = getFirestore();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -123,8 +127,32 @@ export default function LoginPage() {
         });
         return;
       }
+      if (!fullName || !phone || !category) {
+        toast({
+            variant: 'destructive',
+            title: 'Missing Information',
+            description: 'Please fill out all fields.',
+        });
+        return;
+      }
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Update Firebase Auth profile
+        await updateProfile(user, { displayName: fullName });
+
+        // Create user document in Firestore
+        const userDocRef = doc(firestore, 'users', user.uid);
+        await setDoc(userDocRef, {
+            id: user.uid,
+            fullName: fullName,
+            email: user.email,
+            phone: phone,
+            category: category,
+            dateJoined: serverTimestamp(),
+        });
+        
         toast({
           title: 'Success!',
           description: 'You have been signed up. Redirecting...',
@@ -194,6 +222,32 @@ export default function LoginPage() {
         <CardContent>
           <div className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="e.g., John Doe"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
+                  </div>
+                   <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="e.g., 9999988888"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -247,16 +301,31 @@ export default function LoginPage() {
                 />
               </div>
               {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </div>
+                <>
+                    <div className="space-y-2">
+                        <Label htmlFor="confirm-password">Confirm Password</Label>
+                        <Input
+                            id="confirm-password"
+                            type="password"
+                            required
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="category">You are a...</Label>
+                        <Select onValueChange={setCategory} value={category}>
+                            <SelectTrigger id="category">
+                                <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="listing-property">Property Owner / Lister</SelectItem>
+                                <SelectItem value="real-estate-agent">Real Estate Agent</SelectItem>
+                                <SelectItem value="interior-designer">Interior Designer</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </>
               )}
               <Button type="submit" className="w-full">
                 {isLogin ? 'Login' : 'Sign Up'}
@@ -280,7 +349,7 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <Button variant="link" onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? 'Don\'t have an account? Sign Up' : 'Already have an account? Login'}
+            {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
           </Button>
             <Button variant="link" asChild className="text-sm text-muted-foreground">
                 <Link href="/">Back to Home</Link>
