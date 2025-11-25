@@ -52,11 +52,17 @@ export default function MyPropertiesPage() {
 
     if (properties && properties.length > 0) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
+        <>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold">Manage Your Listings</h2>
+            <p className="text-muted-foreground mt-2">You have {properties.length} active propert{properties.length === 1 ? 'y' : 'ies'}.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {properties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        </>
       );
     }
 
