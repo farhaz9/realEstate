@@ -51,11 +51,11 @@ export function HomeSearch() {
           </div>
         </div>
         <div className="relative mt-4">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             id="search-city"
             placeholder="Search by city, location, or project"
-            className="pl-10 pr-28 h-12 text-base"
+            className="pl-12 pr-14 h-12 text-base rounded-full"
           />
           <Button size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full">
             <Search />
