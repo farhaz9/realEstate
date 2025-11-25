@@ -131,7 +131,7 @@ export default function Header() {
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="flex flex-col rounded-none">
+              <SheetContent side="right" className="flex flex-col">
                 <SheetHeader>
                   <SheetTitle className="sr-only">Navigation</SheetTitle>
                   <div className="flex justify-center">
@@ -149,8 +149,7 @@ export default function Header() {
                       href={link.href}
                       onClick={() => setIsSheetOpen(false)}
                       className={cn(
-                        "uppercase rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
-                        pathname === link.href && "bg-primary/10 text-primary font-semibold"
+                        "uppercase rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
                       )}
                     >
                       {link.label}
