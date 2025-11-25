@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Property } from "@/types";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { formatPrice } from "@/lib/utils";
-import { Camera } from 'lucide-react';
+import { Camera, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
 interface PopularPropertyCardProps {
@@ -38,7 +38,10 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
             <div className="p-4 bg-card flex-grow flex flex-col">
                 <p className="font-semibold truncate">{`${property.bedrooms} BHK ${property.propertyType}`}</p>
                 <p className="font-bold text-lg text-primary">{formatPrice(property.price)} | <span className="text-base font-medium text-muted-foreground">{property.squareFootage.toLocaleString()} sqft</span></p>
-                <p className="text-sm text-muted-foreground truncate flex-grow">{property.location.address}</p>
+                <div className="flex items-start gap-2 mt-2 text-sm text-muted-foreground flex-grow">
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <p className="truncate">{property.location.address}</p>
+                </div>
                 <p className="text-sm font-medium mt-2">Ready to Move</p>
             </div>
         </div>
