@@ -30,3 +30,13 @@ export type InteriorProject = {
   description: string;
   images: string[];
 };
+
+export type User = {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  category: 'listing-property' | 'real-estate-agent' | 'interior-designer';
+  dateJoined: Date | any;
+  photoURL?: string;
+}
