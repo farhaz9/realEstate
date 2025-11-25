@@ -57,9 +57,15 @@ export default function AddPropertyPage() {
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
     defaultValues: {
+      title: '',
+      description: '',
+      price: 0,
       listingType: 'sale',
+      location: '',
+      propertyType: '',
       bedrooms: 0,
       bathrooms: 0,
+      squareFootage: 0,
     },
   });
 
