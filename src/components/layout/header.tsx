@@ -70,17 +70,17 @@ export default function Header() {
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
       isScrollingUp ? "translate-y-0" : "-translate-y-full",
-      "bg-transparent"
     )}>
       <div className="container p-2">
         <div className={cn(
-          "flex h-14 items-center justify-between rounded-full p-2 md:px-4",
-           "bg-background shadow-md"
+          "h-14 items-center rounded-full p-2 md:px-4",
+          "bg-background shadow-md",
+          "grid grid-cols-3"
         )}>
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2">
               <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="default" size="icon" className="rounded-full">
+                  <Button variant="default" size="icon" className="rounded-full md:hidden">
                     <TwoStripesIcon className="h-6 w-6" />
                     <span className="sr-only">Toggle navigation menu</span>
                   </Button>
@@ -140,28 +140,45 @@ export default function Header() {
                   </motion.div>
                 </SheetContent>
               </Sheet>
-            </div>
-          <div className="hidden md:flex">
+               <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                {navLinks.slice(1,3).map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "px-4 py-1.5 rounded-full transition-colors",
+                      "text-muted-foreground hover:text-foreground",
+                      pathname === link.href
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : ""
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+          </div>
+          <div className="flex justify-center">
              <Logo />
           </div>
-          <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "px-4 py-1.5 rounded-full transition-colors",
-                  "text-muted-foreground hover:text-foreground",
-                  pathname === link.href
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : ""
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-end">
+             <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                {navLinks.slice(3).map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "px-4 py-1.5 rounded-full transition-colors",
+                      "text-muted-foreground hover:text-foreground",
+                      pathname === link.href
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : ""
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
               {isUserLoading ? (
                 <Skeleton className="h-10 w-10 rounded-full" />
               ) : user ? (
