@@ -89,7 +89,7 @@ export function UserNav() {
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
