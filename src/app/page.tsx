@@ -148,7 +148,7 @@ export default function HomePage() {
               Comprehensive solutions to bring your vision to life, from dream properties to stunning interiors.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {homeServices.map((service) => (
               <Card key={service.title} className="flex flex-col text-center items-center justify-center p-6 h-full group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
                 <div className="bg-primary/10 p-4 rounded-full mb-4 transition-colors group-hover:bg-primary">
