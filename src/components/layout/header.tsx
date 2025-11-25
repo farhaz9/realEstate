@@ -58,91 +58,93 @@ export default function Header() {
   const { user, isUserLoading } = useUser();
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 shadow-sm md:px-6">
-      <Logo />
-      <nav className="hidden items-center gap-1 text-sm font-medium md:flex bg-muted/50 p-1 rounded-full border">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "px-4 py-1.5 rounded-full transition-colors text-muted-foreground hover:text-foreground",
-              pathname === link.href
-                ? "bg-background text-foreground font-semibold shadow-sm"
-                : ""
+    <header className="sticky top-4 z-50 w-full">
+      <div className="container flex h-16 items-center justify-between rounded-full border bg-background/95 p-2 shadow-lg backdrop-blur-sm md:px-4">
+        <Logo />
+        <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "px-4 py-1.5 rounded-full transition-colors text-muted-foreground hover:text-foreground",
+                pathname === link.href
+                  ? "bg-muted text-foreground font-semibold"
+                  : ""
+              )}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
+          <div className="hidden md:flex">
+            {isUserLoading ? (
+              <Skeleton className="h-10 w-10 rounded-full" />
+            ) : user ? (
+              <UserNav />
+            ) : (
+              <Button asChild>
+                <Link href="/login">Login</Link>
+              </Button>
             )}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
-      <div className="flex items-center gap-2">
-        <div className="hidden md:flex">
-          {isUserLoading ? (
-            <Skeleton className="h-10 w-24 rounded-md" />
-          ) : user ? (
-            <UserNav />
-          ) : (
-            <Button asChild>
-              <Link href="/login">Login</Link>
-            </Button>
-          )}
-        </div>
-         <div className="flex items-center gap-2 md:hidden">
-          {isUserLoading ? (
-            <Skeleton className="h-8 w-8 rounded-full" />
-          ) : user ? (
-            <UserNav />
-          ) : (
-             <Button asChild size="sm" variant="outline">
-              <Link href="/login">Login</Link>
-            </Button>
-          )}
-        </div>
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger asChild>
-            <Button variant="default" size="icon" className="md:hidden rounded-full">
-              <TwoStripesIcon className="h-6 w-6" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="flex flex-col">
-            <SheetHeader>
-              <SheetTitle className="sr-only">Navigation</SheetTitle>
-              <Logo />
-              <SheetDescription>
-                 Navigate through our exclusive real estate and design services.
-              </SheetDescription>
-            </SheetHeader>
-            <Separator />
-            <nav className="mt-4 grid gap-2 flex-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsSheetOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-lg font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
-                    pathname === link.href && "bg-primary/10 text-primary font-semibold"
-                  )}
-                >
-                  <link.icon className="h-5 w-5" />
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-            <SheetFooter>
-              <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
-                <div className="flex space-x-4">
-                  <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
-                  <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
-                  <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
+          </div>
+          <div className="flex items-center gap-2 md:hidden">
+            {isUserLoading ? (
+              <Skeleton className="h-8 w-8 rounded-full" />
+            ) : user ? (
+              <UserNav />
+            ) : (
+              <Button asChild size="sm" variant="outline">
+                <Link href="/login">Login</Link>
+              </Button>
+            )}
+          </div>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="default" size="icon" className="md:hidden rounded-full">
+                <TwoStripesIcon className="h-6 w-6" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="flex flex-col">
+              <SheetHeader>
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
+                <Logo />
+                <SheetDescription>
+                  Navigate through our exclusive real estate and design services.
+                </SheetDescription>
+              </SheetHeader>
+              <Separator />
+              <nav className="mt-4 grid gap-2 flex-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsSheetOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-lg font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
+                      pathname === link.href && "bg-primary/10 text-primary font-semibold"
+                    )}
+                  >
+                    <link.icon className="h-5 w-5" />
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <SheetFooter>
+                <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
+                  <div className="flex space-x-4">
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
+                  </div>
+                  <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
                 </div>
-                <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
-              </div>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
