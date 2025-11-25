@@ -67,7 +67,7 @@ export default function Header() {
       isScrollingUp ? "translate-y-0" : "-translate-y-full",
     )}>
       <div className="container p-2">
-        <div className="flex h-16 items-center justify-between rounded-full border bg-background/95 p-2 shadow-lg backdrop-blur-sm md:px-4">
+        <div className="flex h-14 items-center justify-between rounded-full border bg-background/95 p-2 shadow-lg backdrop-blur-sm md:px-4">
           <Logo />
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
             {navLinks.map((link) => (
