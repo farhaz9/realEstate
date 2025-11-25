@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { FeaturedProperties } from "@/components/shared/nearby-properties";
 import { PopularProperties } from "@/components/shared/popular-properties";
+import { HomeSearch } from "@/components/shared/home-search";
 
 const faqs = [
   {
@@ -93,7 +94,9 @@ const whyChooseUsPoints = [
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative w-full h-[70vh] md:h-[90vh] text-white overflow-hidden">
+      <HomeSearch />
+
+      <section className="relative w-full h-[60vh] md:h-[80vh] text-white overflow-hidden">
         <video
             src="https://images-r-eal-estae.vercel.app/farhazhomes.mp4"
             autoPlay
@@ -103,18 +106,13 @@ export default function HomePage() {
             className="absolute top-0 left-0 w-full h-full object-cover -z-10"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+        <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 md:pb-24 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             beautiful homes
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
             Your trusted partner in luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi.
           </p>
-          <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
-            <Link href="/properties">
-              Explore Properties <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
         </div>
       </section>
 
