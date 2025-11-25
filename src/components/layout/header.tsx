@@ -61,13 +61,18 @@ export default function Header() {
   const { user, isUserLoading } = useUser();
   const { isScrollingUp } = useOnScroll();
 
+  const isHomePage = pathname === "/";
+
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-transform duration-300",
       isScrollingUp ? "translate-y-0" : "-translate-y-full",
     )}>
       <div className="container p-2">
-        <div className="flex h-14 items-center justify-between rounded-full border bg-background/95 p-2 shadow-lg backdrop-blur-sm md:px-4">
+        <div className={cn(
+          "flex h-14 items-center justify-between rounded-full p-2 shadow-lg backdrop-blur-sm md:px-4",
+          isHomePage ? "bg-black/20 border border-white/20" : "bg-background/95 border"
+        )}>
           <Logo />
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
             {navLinks.map((link) => (
@@ -75,9 +80,10 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-4 py-1.5 rounded-full transition-colors text-muted-foreground hover:text-foreground",
+                  "px-4 py-1.5 rounded-full transition-colors",
+                  isHomePage ? "text-neutral-300 hover:text-white" : "text-muted-foreground hover:text-foreground",
                   pathname === link.href
-                    ? "bg-muted text-foreground font-semibold"
+                    ? isHomePage ? "bg-white/10 text-white font-semibold" : "bg-muted text-foreground font-semibold"
                     : ""
                 )}
               >
@@ -96,7 +102,10 @@ export default function Header() {
                   as={Link}
                   href="/login"
                   containerClassName="h-10 w-auto"
-                  className="bg-slate-900/80 text-white"
+                  className={cn(
+                    "font-semibold",
+                    isHomePage ? "bg-black/50 text-white border-white/20" : "bg-slate-900/80 text-white"
+                  )}
                   borderRadius="2rem"
                 >
                   Login
@@ -109,7 +118,7 @@ export default function Header() {
               ) : user ? (
                 <UserNav />
               ) : (
-                <Button asChild size="sm" variant="outline">
+                <Button asChild size="sm" variant={isHomePage ? "outline" : "default"} className={cn(isHomePage && "text-white border-white/50")}>
                   <Link href="/login">Login</Link>
                 </Button>
               )}
@@ -121,7 +130,7 @@ export default function Header() {
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="flex flex-col">
+              <SheetContent side="right" className="flex flex-col rounded-none">
                 <SheetHeader>
                   <SheetTitle className="sr-only">Navigation</SheetTitle>
                   <Logo />
