@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Loader2, User, Mail, Phone, Briefcase, Upload } from 'lucide-react';
-import { PageHero } from '@/components/shared/page-hero';
 import type { User as UserType, Property } from '@/types';
 import { PropertyCard } from '@/components/property-card';
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
@@ -94,6 +93,7 @@ export default function ProfilePage() {
         toast({
           title: "Profile Picture Updated",
           description: "Your new picture has been saved.",
+          variant: 'success',
         });
       };
     } catch (error) {
@@ -117,7 +117,12 @@ export default function ProfilePage() {
   if (isUserLoading || isProfileLoading || !user || !userProfile) {
     return (
       <>
-        <PageHero title="My Profile" subtitle="Manage your account details and listings." image={{ id: 'contact-hero', imageHint: 'desk with personal items' }}/>
+        <div className="bg-muted">
+            <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold">My Profile</h1>
+                <p className="text-muted-foreground">Manage your account details and listings.</p>
+            </div>
+        </div>
         <div className="container mx-auto px-4 py-16">
             {renderLoading()}
         </div>
@@ -133,21 +138,27 @@ export default function ProfilePage() {
 
   return (
     <>
-      <PageHero title="My Profile" subtitle="Manage your account details and listings." image={{ id: 'contact-hero', imageHint: 'desk with personal items' }}/>
+      <div className="bg-muted/40">
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold">My Profile</h1>
+            <p className="text-muted-foreground">Manage your account details and listings.</p>
+        </div>
+      </div>
       
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto mb-8">
+            <TabsTrigger value="profile">Profile Details</TabsTrigger>
             <TabsTrigger value="properties">My Properties</TabsTrigger>
           </TabsList>
+          
           <TabsContent value="profile">
-            <Card className="max-w-2xl mx-auto mt-6">
-               <CardHeader className="items-center text-center p-6">
+            <Card className="max-w-2xl mx-auto">
+               <CardHeader className="items-center text-center p-6 bg-muted/30">
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
                     <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                    <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                    <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                         <User className="h-16 w-16" />
                     </AvatarFallback>
                   </Avatar>
@@ -169,40 +180,53 @@ export default function ProfilePage() {
                   />
                 </div>
                 <CardTitle className="mt-4 text-3xl">{user.displayName}</CardTitle>
-                <CardDescription>Welcome back to your profile!</CardDescription>
+                <CardDescription>Welcome back to your dashboard!</CardDescription>
               </CardHeader>
-              <CardContent className="p-6 border-t">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                        <User className="h-5 w-5 text-muted-foreground"/>
-                        <p className="text-sm font-medium">{userProfile.fullName}</p>
+              <CardContent className="p-6">
+                  <div className="space-y-4">
+                      <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                        <User className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                        <div className="flex-grow">
+                          <p className="text-xs text-muted-foreground">Full Name</p>
+                          <p className="text-sm font-medium">{userProfile.fullName}</p>
+                        </div>
                       </div>
-                       <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                        <Mail className="h-5 w-5 text-muted-foreground"/>
-                        <p className="text-sm font-medium">{user.email}</p>
+                       <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                        <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                        <div className="flex-grow">
+                          <p className="text-xs text-muted-foreground">Email Address</p>
+                          <p className="text-sm font-medium">{user.email}</p>
+                        </div>
                       </div>
-                       <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                        <Phone className="h-5 w-5 text-muted-foreground"/>
-                        <p className="text-sm font-medium">{userProfile.phone}</p>
+                       <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                        <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                        <div className="flex-grow">
+                          <p className="text-xs text-muted-foreground">Phone Number</p>
+                          <p className="text-sm font-medium">{userProfile.phone}</p>
+                        </div>
                       </div>
-                       <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                        <Briefcase className="h-5 w-5 text-muted-foreground"/>
-                        <p className="text-sm font-medium">{categoryDisplay[userProfile.category] || userProfile.category}</p>
+                       <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                        <Briefcase className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                         <div className="flex-grow">
+                          <p className="text-xs text-muted-foreground">User Category</p>
+                          <p className="text-sm font-medium">{categoryDisplay[userProfile.category] || userProfile.category}</p>
+                        </div>
                       </div>
                   </div>
               </CardContent>
             </Card>
           </TabsContent>
+
           <TabsContent value="properties">
              {arePropertiesLoading ? renderLoading() : (
               properties && properties.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {properties.map(property => (
                     <PropertyCard key={property.id} property={property}/>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-24 border-2 border-dashed rounded-lg mt-6">
+                <div className="text-center py-24 border-2 border-dashed rounded-lg">
                     <h3 className="text-xl font-semibold">You haven't listed any properties yet.</h3>
                     <p className="text-muted-foreground mt-2">Your first listing is on us!</p>
                     <Button asChild className="mt-6">
