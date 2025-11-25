@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -29,7 +30,7 @@ export function HomeSearch() {
                 variant="link"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'text-muted-foreground font-semibold text-sm md:text-base p-0 h-auto relative',
+                  'text-muted-foreground hover:text-primary font-semibold text-sm md:text-base p-0 h-auto relative transition-colors',
                   activeTab === tab.id && 'text-primary'
                 )}
               >
