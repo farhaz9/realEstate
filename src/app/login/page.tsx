@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -72,73 +73,81 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const handleAuthError = (error: unknown) => {
+    console.error(error);
+    let errorMessage = 'An unexpected error occurred.';
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          errorMessage = 'Invalid email or password.';
+          break;
+        case 'auth/email-already-in-use':
+          errorMessage = 'An account already exists with this email. Please login.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. It must be at least 6 characters long.';
+          break;
+        default:
+          errorMessage = 'Authentication failed. Please try again.';
+      }
+    }
+    toast({
+      variant: 'destructive',
+      title: 'Authentication Error',
+      description: errorMessage,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!auth) return;
 
-    try {
-      if (isLogin) {
-        initiateEmailSignIn(auth, email, password);
-      } else {
-        if (password !== confirmPassword) {
-          toast({
-            variant: 'destructive',
-            title: 'Passwords do not match',
-          });
-          return;
-        }
-        initiateEmailSignUp(auth, email, password);
+    if (isLogin) {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        toast({
+          title: 'Success!',
+          description: 'You have been logged in. Redirecting...',
+        });
+        router.push('/');
+      } catch (error) {
+        handleAuthError(error);
       }
-      toast({
-        title: 'Success!',
-        description: `You have been ${isLogin ? 'logged in' : 'signed up'}. Redirecting...`,
-      });
-      router.push('/');
-    } catch (error: unknown) {
-      console.error(error);
-      let errorMessage = 'An unexpected error occurred.';
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case 'auth/user-not-found':
-          case 'auth/wrong-password':
-          case 'auth/invalid-credential':
-            errorMessage = 'Invalid email or password.';
-            break;
-          case 'auth/email-already-in-use':
-            errorMessage = 'An account already exists with this email.';
-            break;
-          default:
-            errorMessage = 'Authentication failed. Please try again.';
-        }
+    } else {
+      if (password !== confirmPassword) {
+        toast({
+          variant: 'destructive',
+          title: 'Passwords do not match',
+        });
+        return;
       }
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Error',
-        description: errorMessage,
-      });
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        toast({
+          title: 'Success!',
+          description: 'You have been signed up. Redirecting...',
+        });
+        router.push('/');
+      } catch (error) {
+        handleAuthError(error);
+      }
     }
   };
 
   const handleGoogleSignIn = async () => {
     if (!auth) return;
     try {
-        initiateGoogleSignIn(auth);
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
         toast({
             title: 'Success!',
             description: 'You have been logged in with Google. Redirecting...',
         });
         router.push('/');
     } catch (error: unknown) {
-        console.error(error);
-        let errorMessage = 'An unexpected error occurred.';
-        if (error instanceof FirebaseError) {
-            errorMessage = error.message;
-        }
-        toast({
-            variant: 'destructive',
-            title: 'Google Sign-In Error',
-            description: errorMessage,
-        });
+        handleAuthError(error);
     }
   };
 
