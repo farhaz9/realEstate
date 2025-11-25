@@ -11,8 +11,8 @@ export function Logo() {
       <Image
         src="https://images-r-eal-estae.vercel.app/farhaz%20homes%20widtyh.png"
         alt="Farhaz Homes Logo"
-        width={150}
-        height={40}
+        width={200}
+        height={53}
         className="object-contain"
         priority
       />
