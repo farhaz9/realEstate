@@ -22,6 +22,7 @@ import {
   Twitter,
   Linkedin,
   X,
+  LogIn,
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -69,12 +70,12 @@ export default function Header() {
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
-      isScrollingUp ? "translate-y-0" : "-translate-y-full",
+       isScrollingUp ? "translate-y-0" : "-translate-y-full",
     )}>
       <div className="container p-2">
         <div className={cn(
           "h-14 items-center rounded-full p-2 md:px-4",
-          "bg-background shadow-md",
+          "bg-background/80 backdrop-blur-sm shadow-md",
           "grid grid-cols-3"
         )}>
           <div className="flex items-center gap-2">
@@ -184,18 +185,12 @@ export default function Header() {
               ) : user ? (
                 <UserNav />
               ) : (
-                <MovingBorderButton
-                  as={Link}
-                  href="/login"
-                  containerClassName="h-10 w-auto"
-                  className={cn(
-                    "font-semibold",
-                    "bg-slate-800 text-white border-slate-700"
-                  )}
-                  borderRadius="2rem"
-                >
-                  Login
-                </MovingBorderButton>
+                <Button asChild variant="ghost" size="icon" className="rounded-full">
+                  <Link href="/login">
+                    <LogIn />
+                    <span className="sr-only">Login</span>
+                  </Link>
+                </Button>
               )}
             </div>
         </div>
