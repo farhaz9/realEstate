@@ -90,9 +90,8 @@ export default function Header() {
           </SheetTrigger>
           <SheetContent side="right" className="flex flex-col">
             <SheetHeader>
-              <SheetTitle asChild>
-                <Logo />
-              </SheetTitle>
+              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <Logo />
               <SheetDescription>
                  Navigate through our exclusive real estate and design services.
               </SheetDescription>
