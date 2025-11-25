@@ -23,7 +23,7 @@ export function initializeFirebase() {
     
     if (isBrowser) {
         // IMPORTANT: Replace the placeholder with your actual reCAPTCHA v3 site key.
-        // You can get a key from the Google reCAPTCHA admin console.
+        // You can get this key from the Google reCAPTCHA admin console.
         const reCaptchaSiteKey = 'YOUR_RECAPTCHA_V3_SITE_KEY';
         
         if (reCaptchaSiteKey && reCaptchaSiteKey !== 'YOUR_RECAPTCHA_V3_SITE_KEY') {
