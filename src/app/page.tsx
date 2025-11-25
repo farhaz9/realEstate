@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Label } from "@/components/ui/label";
 import { FeaturedProperties } from "@/components/shared/nearby-properties";
 import { PopularProperties } from "@/components/shared/popular-properties";
@@ -58,13 +57,6 @@ const homeServices = [
     title: "Miscellaneous",
     description: "Custom-crafted furniture, lighting, and finishing touches to complement your interiors and elevate your living experience.",
     imageId: "service-miscellaneous",
-    href: "/services"
-  },
-  {
-    icon: Briefcase,
-    title: "Consultancy",
-    description: "Expert guidance on market trends, investment strategies, and legal processes for informed decision-making.",
-    imageId: "service-consultancy",
     href: "/services"
   },
 ];
@@ -156,35 +148,22 @@ export default function HomePage() {
               Comprehensive solutions to bring your vision to life, from dream properties to stunning interiors.
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {homeServices.map((service) => (
-                  <CarouselItem key={service.title} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1 h-full">
-                      <Card className="flex flex-col text-center items-center justify-center p-6 h-full group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
-                        <div className="bg-primary/10 p-4 rounded-full mb-4 transition-colors group-hover:bg-primary">
-                           <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
-                        </div>
-                        <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
-                        <p className="text-muted-foreground text-sm flex-grow">{service.description}</p>
-                        <Button asChild variant="link" className="mt-4">
-                          <Link href={service.href}>
-                            Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {homeServices.map((service) => (
+              <Card key={service.title} className="flex flex-col text-center items-center justify-center p-6 h-full group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+                <div className="bg-primary/10 p-4 rounded-full mb-4 transition-colors group-hover:bg-primary">
+                   <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                </div>
+                <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
+                <p className="text-muted-foreground text-sm flex-grow">{service.description}</p>
+                <Button asChild variant="link" className="mt-4">
+                  <Link href={service.href}>
+                    Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
       
