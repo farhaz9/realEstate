@@ -134,24 +134,25 @@ export default function Header() {
               <SheetContent side="right" className="flex flex-col rounded-none">
                 <SheetHeader>
                   <SheetTitle className="sr-only">Navigation</SheetTitle>
-                  <Logo />
-                  <SheetDescription>
+                  <div className="flex justify-center">
+                    <Logo />
+                  </div>
+                  <SheetDescription className="text-center">
                     Navigate through our exclusive real estate and design services.
                   </SheetDescription>
                 </SheetHeader>
                 <Separator />
-                <nav className="mt-4 grid gap-2 flex-1">
+                <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
                   {navLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsSheetOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-lg font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
+                        "rounded-lg px-3 py-2 text-2xl font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary",
                         pathname === link.href && "bg-primary/10 text-primary font-semibold"
                       )}
                     >
-                      <link.icon className="h-5 w-5" />
                       {link.label}
                     </Link>
                   ))}
