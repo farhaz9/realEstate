@@ -20,16 +20,22 @@ import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { Shield, User } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
 
 export function UserNav() {
   const { user } = useUser();
   const auth = useAuth();
+  const { toast } = useToast();
 
   const handleSignOut = async () => {
     if (!auth) return;
     await signOut(auth);
+    toast({
+      title: 'Logged Out',
+      description: 'You have been successfully logged out.',
+    });
   };
 
   if (!user) {
