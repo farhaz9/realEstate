@@ -5,10 +5,13 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { PageHero } from '@/components/shared/page-hero';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User as UserIcon } from 'lucide-react';
 import { ProfessionalCard } from '@/components/professional-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 export default function ProfessionalsPage() {
   const firestore = useFirestore();
@@ -27,6 +30,11 @@ export default function ProfessionalsPage() {
   const filteredProfessionals = professionals?.filter(p => 
     p.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const categoryDisplay: Record<string, string> = {
+    'real-estate-agent': 'Real Estate Agent',
+    'interior-designer': 'Interior Designer'
+  };
 
   const realEstateAgents = filteredProfessionals?.filter(p => p.category === 'real-estate-agent');
   const interiorDesigners = filteredProfessionals?.filter(p => p.category === 'interior-designer');
@@ -46,11 +54,31 @@ export default function ProfessionalsPage() {
 
     if (data && data.length > 0) {
       return (
-        <div className="space-y-4">
+        <Accordion type="single" collapsible className="w-full space-y-4">
           {data.map((professional) => (
-            <ProfessionalCard key={professional.id} professional={professional} />
+            <AccordionItem value={professional.id} key={professional.id} className="border rounded-lg overflow-hidden bg-card">
+              <AccordionTrigger className="p-4 hover:no-underline hover:bg-muted/50">
+                <div className="flex items-center gap-4 text-left">
+                  <Avatar className="h-16 w-16 border">
+                    <AvatarImage src={professional.photoURL} alt={professional.fullName} />
+                    <AvatarFallback className="text-3xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                      <UserIcon className="h-8 w-8" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-grow">
+                    <h3 className="font-bold text-lg">{professional.fullName}</h3>
+                    <Badge variant="secondary">{categoryDisplay[professional.category] || professional.category}</Badge>
+                  </div>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="p-4 border-t">
+                  <ProfessionalCard professional={professional} />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       );
     }
 
