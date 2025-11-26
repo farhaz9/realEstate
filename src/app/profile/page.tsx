@@ -9,9 +9,9 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Loader2, User, Mail, Phone, Briefcase, Upload } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, Upload, Save } from 'lucide-react';
 import type { User as UserType, Property } from '@/types';
 import { PropertyCard } from '@/components/property-card';
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
@@ -25,8 +25,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const userDocRef = useMemoFirebase(() => {
@@ -64,9 +65,9 @@ export default function ProfilePage() {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !user || !firebaseApp) return;
+    if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) { // 2MB limit
       toast({
@@ -77,55 +78,72 @@ export default function ProfilePage() {
       return;
     }
 
-    setIsUploading(true);
+    setNewAvatarFile(file);
 
+    // Create a temporary URL for instant preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setAvatarUrl(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const handleSaveChanges = async () => {
+    if (!newAvatarFile || !user || !firebaseApp || !userDocRef) {
+      toast({
+        title: "No Changes to Save",
+        description: "You haven't selected a new profile picture.",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    
     try {
+      // 1. Convert file to data URL for upload
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(newAvatarFile);
       reader.onload = async () => {
         const dataUrl = reader.result as string;
         
-        // Optimistic UI update
-        setAvatarUrl(dataUrl);
-        
+        // 2. Upload to Firebase Storage
         const storage = getStorage(firebaseApp);
         const storageRef = ref(storage, `profile-pictures/${user.uid}`);
-        
         await uploadString(storageRef, dataUrl, 'data_url');
         const photoURL = await getDownloadURL(storageRef);
 
-        // Final update with the permanent URL
-        setAvatarUrl(photoURL);
-
-        // We update both Auth and Firestore for consistency
+        // 3. Update Auth and Firestore
         if (auth.currentUser) {
             await updateProfile(auth.currentUser, { photoURL });
         }
-        
-        // This update will trigger the useDoc hook to refetch and update the UI
-        if (userDocRef) {
-            await updateDoc(userDocRef, { photoURL });
-        }
+        await updateDoc(userDocRef, { photoURL });
 
+        // 4. Finalize state
+        setAvatarUrl(photoURL);
+        setNewAvatarFile(null);
         toast({
-          title: "Profile Picture Updated",
-          description: "Your new picture has been saved.",
+          title: "Profile Saved!",
+          description: "Your new profile picture has been saved.",
           variant: 'success',
         });
       };
+      reader.onerror = () => {
+        throw new Error("Failed to read file.");
+      }
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Error saving profile:", error);
       toast({
-        title: "Upload Failed",
-        description: "Could not update your profile picture. Please try again.",
+        title: "Save Failed",
+        description: "Could not save your changes. Please try again.",
         variant: "destructive"
       });
-      // Revert optimistic update on error
+      // Revert optimistic UI update on error
       setAvatarUrl(userProfile?.photoURL ?? null);
     } finally {
-      setIsUploading(false);
+      setIsSaving(false);
     }
-  };
+  }
+
 
   const renderLoading = () => (
     <div className="flex items-center justify-center py-16">
@@ -193,10 +211,10 @@ export default function ProfilePage() {
                     size="icon"
                     className="absolute bottom-1 right-1 h-9 w-9 rounded-full"
                     onClick={handleAvatarClick}
-                    disabled={isUploading}
+                    disabled={isSaving}
                     aria-label="Upload new picture"
                   >
-                    {isUploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
+                    {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
                   </Button>
                   <Input 
                     type="file" 
@@ -241,6 +259,16 @@ export default function ProfilePage() {
                       </div>
                   </div>
               </CardContent>
+              <CardFooter>
+                 <Button 
+                    className="w-full" 
+                    onClick={handleSaveChanges} 
+                    disabled={!newAvatarFile || isSaving}
+                  >
+                    {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+                    {isSaving ? 'Saving...' : 'Save Profile'}
+                  </Button>
+              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -268,3 +296,5 @@ export default function ProfilePage() {
     </>
   );
 }
+
+    
