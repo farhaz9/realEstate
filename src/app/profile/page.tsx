@@ -100,46 +100,63 @@ export default function ProfilePage() {
     setIsSaving(true);
     
     try {
-      // 1. Convert file to data URL for upload
       const reader = new FileReader();
       reader.readAsDataURL(newAvatarFile);
+
       reader.onload = async () => {
-        const dataUrl = reader.result as string;
-        
-        // 2. Upload to Firebase Storage
-        const storage = getStorage(firebaseApp);
-        const storageRef = ref(storage, `profile-pictures/${user.uid}`);
-        await uploadString(storageRef, dataUrl, 'data_url');
-        const photoURL = await getDownloadURL(storageRef);
+        try {
+          const dataUrl = reader.result as string;
+          
+          const storage = getStorage(firebaseApp);
+          const storageRef = ref(storage, `profile-pictures/${user.uid}`);
+          await uploadString(storageRef, dataUrl, 'data_url');
+          const photoURL = await getDownloadURL(storageRef);
 
-        // 3. Update Auth and Firestore
-        if (auth.currentUser) {
+          if (auth.currentUser) {
             await updateProfile(auth.currentUser, { photoURL });
-        }
-        await updateDoc(userDocRef, { photoURL });
+          }
+          await updateDoc(userDocRef, { photoURL });
 
-        // 4. Finalize state
-        setAvatarUrl(photoURL);
-        setNewAvatarFile(null);
-        toast({
-          title: "Profile Saved!",
-          description: "Your new profile picture has been saved.",
-          variant: 'success',
-        });
+          setAvatarUrl(photoURL);
+          setNewAvatarFile(null);
+
+          toast({
+            title: "Profile Saved!",
+            description: "Your new profile picture has been saved.",
+            variant: 'success',
+          });
+
+        } catch (innerError) {
+           console.error("Error during upload/update:", innerError);
+           toast({
+             title: "Save Failed",
+             description: "Could not save your changes. Please try again.",
+             variant: "destructive"
+           });
+           setAvatarUrl(userProfile?.photoURL ?? null); // Revert UI
+        } finally {
+          setIsSaving(false);
+        }
       };
-      reader.onerror = () => {
-        throw new Error("Failed to read file.");
-      }
+
+      reader.onerror = (error) => {
+        console.error("File reading error:", error);
+        toast({
+          title: "File Error",
+          description: "Could not read the selected file.",
+          variant: "destructive",
+        });
+        setIsSaving(false);
+      };
+      
     } catch (error) {
-      console.error("Error saving profile:", error);
+      console.error("Error preparing file for save:", error);
       toast({
         title: "Save Failed",
-        description: "Could not save your changes. Please try again.",
+        description: "Could not prepare your image for saving. Please try again.",
         variant: "destructive"
       });
-      // Revert optimistic UI update on error
-      setAvatarUrl(userProfile?.photoURL ?? null);
-    } finally {
+      setAvatarUrl(userProfile?.photoURL ?? null); // Revert UI
       setIsSaving(false);
     }
   }
@@ -265,7 +282,7 @@ export default function ProfilePage() {
                     onClick={handleSaveChanges} 
                     disabled={!newAvatarFile || isSaving}
                   >
-                    {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+                    {isSaving ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2"/>}
                     {isSaving ? 'Saving...' : 'Save Profile'}
                   </Button>
               </CardFooter>
@@ -296,5 +313,3 @@ export default function ProfilePage() {
     </>
   );
 }
-
-    
