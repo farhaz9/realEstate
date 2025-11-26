@@ -56,10 +56,12 @@ export default function ProfilePage() {
   }, [user, isUserLoading, router, toast]);
   
   useEffect(() => {
-    if (userProfile?.photoURL) {
+    // This effect ensures the avatarUrl state is updated if the userProfile data changes from Firestore
+    // It also respects the local preview if a new file has been selected but not yet saved
+    if (userProfile?.photoURL && !newAvatarFile) {
       setAvatarUrl(userProfile.photoURL);
     }
-  }, [userProfile]);
+  }, [userProfile, newAvatarFile]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -96,49 +98,59 @@ export default function ProfilePage() {
       });
       return;
     }
-
+  
     setIsSaving(true);
-    
+  
     try {
       const reader = new FileReader();
-      reader.readAsDataURL(newAvatarFile);
-
-      reader.onload = async () => {
+      
+      // Define what happens when the file is read
+      reader.onload = async (e) => {
+        const dataUrl = e.target?.result as string;
+        if (!dataUrl) {
+          toast({ title: "File Read Error", description: "Could not read file data.", variant: "destructive" });
+          setIsSaving(false);
+          return;
+        }
+  
         try {
-          const dataUrl = reader.result as string;
-          
+          // 1. Upload to Storage
           const storage = getStorage(firebaseApp);
           const storageRef = ref(storage, `profile-pictures/${user.uid}`);
           await uploadString(storageRef, dataUrl, 'data_url');
           const photoURL = await getDownloadURL(storageRef);
-
+  
+          // 2. Update Auth Profile & Firestore Document
           if (auth.currentUser) {
             await updateProfile(auth.currentUser, { photoURL });
           }
           await updateDoc(userDocRef, { photoURL });
-
+  
+          // 3. Update UI
           setAvatarUrl(photoURL);
-          setNewAvatarFile(null);
-
+          setNewAvatarFile(null); // Clear the pending file state
+  
           toast({
             title: "Profile Saved!",
             description: "Your new profile picture has been saved.",
             variant: 'success',
           });
-
-        } catch (innerError) {
-           console.error("Error during upload/update:", innerError);
-           toast({
-             title: "Save Failed",
-             description: "Could not save your changes. Please try again.",
-             variant: "destructive"
-           });
-           setAvatarUrl(userProfile?.photoURL ?? null); // Revert UI
+  
+        } catch (uploadError) {
+          console.error("Error during upload/update:", uploadError);
+          toast({
+            title: "Save Failed",
+            description: "Could not save your changes. Please try again.",
+            variant: "destructive"
+          });
+          // Revert UI to the original image from the profile
+          setAvatarUrl(userProfile?.photoURL ?? null); 
         } finally {
           setIsSaving(false);
         }
       };
-
+  
+      // Define what happens on a file read error
       reader.onerror = (error) => {
         console.error("File reading error:", error);
         toast({
@@ -148,7 +160,10 @@ export default function ProfilePage() {
         });
         setIsSaving(false);
       };
-      
+  
+      // Start reading the file
+      reader.readAsDataURL(newAvatarFile);
+  
     } catch (error) {
       console.error("Error preparing file for save:", error);
       toast({
@@ -159,7 +174,7 @@ export default function ProfilePage() {
       setAvatarUrl(userProfile?.photoURL ?? null); // Revert UI
       setIsSaving(false);
     }
-  }
+  };
 
 
   const renderLoading = () => (
