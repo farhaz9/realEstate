@@ -89,10 +89,12 @@ export default function Header() {
                     <SheetDescription>Site navigation</SheetDescription>
                   </SheetHeader>
                   
-                    <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3" onClick={() => setIsSheetOpen(false)}>
+                  <SheetClose asChild>
+                    <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 left-3 transition-all duration-300 ease-in-out transform hover:rotate-90">
                       <X className="h-6 w-6" />
                       <span className="sr-only">Close navigation menu</span>
                     </Button>
+                  </SheetClose>
                   
                   <div className="flex flex-col h-full">
                     <div className="flex justify-center mt-12">
