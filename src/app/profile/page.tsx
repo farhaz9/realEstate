@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase, useFirebaseApp } from '@/firebase';
 import { doc, collection, query, where, updateDoc } from 'firebase/firestore';
 import { updateProfile, getAuth } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
+  const firebaseApp = useFirebaseApp();
   const auth = getAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -58,7 +59,7 @@ export default function ProfilePage() {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !user) return;
+    if (!file || !user || !firebaseApp) return;
 
     if (file.size > 2 * 1024 * 1024) { // 2MB limit
       toast({
@@ -76,7 +77,7 @@ export default function ProfilePage() {
       reader.readAsDataURL(file);
       reader.onload = async () => {
         const dataUrl = reader.result as string;
-        const storage = getStorage();
+        const storage = getStorage(firebaseApp);
         const storageRef = ref(storage, `profile-pictures/${user.uid}`);
         
         await uploadString(storageRef, dataUrl, 'data_url');
