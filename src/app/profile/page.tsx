@@ -83,10 +83,12 @@ export default function ProfilePage() {
         await uploadString(storageRef, dataUrl, 'data_url');
         const photoURL = await getDownloadURL(storageRef);
 
+        // We update both Auth and Firestore for consistency
         if (auth.currentUser) {
             await updateProfile(auth.currentUser, { photoURL });
         }
         
+        // This update will trigger the useDoc hook to refetch and update the UI
         if (userDocRef) {
             await updateDoc(userDocRef, { photoURL });
         }
@@ -131,6 +133,14 @@ export default function ProfilePage() {
     );
   }
 
+  const getInitials = (name: string) => {
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
   const categoryDisplay: Record<string, string> = {
     'listing-property': 'Property Owner',
     'real-estate-agent': 'Real Estate Agent',
@@ -158,9 +168,9 @@ export default function ProfilePage() {
                <CardHeader className="items-center text-center p-6 bg-muted/30">
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-                    <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                    <AvatarImage src={userProfile.photoURL ?? ''} alt={userProfile.fullName ?? ''} />
                     <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
-                        <User className="h-16 w-16" />
+                        {userProfile.fullName ? getInitials(userProfile.fullName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
                   </Avatar>
                   <Button
@@ -180,7 +190,7 @@ export default function ProfilePage() {
                     accept="image/png, image/jpeg" 
                   />
                 </div>
-                <CardTitle className="mt-4 text-3xl">{user.displayName}</CardTitle>
+                <CardTitle className="mt-4 text-3xl">{userProfile.fullName}</CardTitle>
                 <CardDescription>Welcome back to your dashboard!</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
@@ -196,7 +206,7 @@ export default function ProfilePage() {
                         <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
                         <div className="flex-grow">
                           <p className="text-xs text-muted-foreground">Email Address</p>
-                          <p className="text-sm font-medium">{user.email}</p>
+                          <p className="text-sm font-medium">{userProfile.email}</p>
                         </div>
                       </div>
                        <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
