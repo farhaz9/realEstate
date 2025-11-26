@@ -26,6 +26,7 @@ export default function ProfilePage() {
   const { toast } = useToast();
 
   const [isUploading, setIsUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const userDocRef = useMemoFirebase(() => {
@@ -52,6 +53,12 @@ export default function ProfilePage() {
       router.push('/login');
     }
   }, [user, isUserLoading, router, toast]);
+  
+  useEffect(() => {
+    if (userProfile?.photoURL) {
+      setAvatarUrl(userProfile.photoURL);
+    }
+  }, [userProfile]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -77,11 +84,18 @@ export default function ProfilePage() {
       reader.readAsDataURL(file);
       reader.onload = async () => {
         const dataUrl = reader.result as string;
+        
+        // Optimistic UI update
+        setAvatarUrl(dataUrl);
+        
         const storage = getStorage(firebaseApp);
         const storageRef = ref(storage, `profile-pictures/${user.uid}`);
         
         await uploadString(storageRef, dataUrl, 'data_url');
         const photoURL = await getDownloadURL(storageRef);
+
+        // Final update with the permanent URL
+        setAvatarUrl(photoURL);
 
         // We update both Auth and Firestore for consistency
         if (auth.currentUser) {
@@ -106,6 +120,8 @@ export default function ProfilePage() {
         description: "Could not update your profile picture. Please try again.",
         variant: "destructive"
       });
+      // Revert optimistic update on error
+      setAvatarUrl(userProfile?.photoURL ?? null);
     } finally {
       setIsUploading(false);
     }
@@ -168,7 +184,7 @@ export default function ProfilePage() {
                <CardHeader className="items-center text-center p-6 bg-muted/30">
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-                    <AvatarImage src={userProfile.photoURL ?? ''} alt={userProfile.fullName ?? ''} />
+                    <AvatarImage src={avatarUrl ?? ''} alt={userProfile.fullName ?? ''} />
                     <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                         {userProfile.fullName ? getInitials(userProfile.fullName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
