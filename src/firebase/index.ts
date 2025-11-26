@@ -14,33 +14,38 @@ export function initializeFirebase() {
   if (!getApps().length) {
     let firebaseApp;
     try {
+      // This will automatically initialize from the server-side configuration.
       firebaseApp = initializeApp();
     } catch (e) {
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
+      // If server-side config isn't available (e.g., local dev), fall back.
+      if (process.env.NODE_ENV !== "production") {
+        console.warn('Automatic server-side initialization failed. Falling back to firebaseConfig object for local development.', e);
       }
       firebaseApp = initializeApp(firebaseConfig);
     }
     
-    if (isBrowser) {
-        // IMPORTANT: Replace the placeholder with your actual reCAPTCHA v3 site key.
-        // You can get this key from the Google reCAPTCHA admin console.
-        const reCaptchaSiteKey = 'YOUR_RECAPTCHA_V3_SITE_KEY';
-        
-        if (reCaptchaSiteKey && reCaptchaSiteKey !== 'YOUR_RECAPTCHA_V3_SITE_KEY') {
-            initializeAppCheck(firebaseApp, {
-              provider: new ReCaptchaV3Provider(reCaptchaSiteKey),
-              isTokenAutoRefreshEnabled: true,
-            });
-        } else {
-            console.warn(`
-                Firebase App Check is not initialized.
-                1. Go to the reCAPTCHA admin console and create a new reCAPTCHA v3 key.
-                2. Go to the Firebase Console > App Check and register your site with the key.
-                3. Replace 'YOUR_RECAPTCHA_V3_SITE_KEY' in src/firebase/index.ts with your actual site key.
-            `);
-        }
+    // IMPORTANT: App Check is a production security feature.
+    // For local development, it can be tricky to set up. We are temporarily
+    // bypassing it here to ensure core Firebase services work.
+    // To enable for production:
+    // 1. Get a reCAPTCHA v3 site key from the Google Cloud console.
+    // 2. Add it to your environment variables.
+    // 3. Uncomment the code block below.
+    /*
+    if (isBrowser && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+        initializeAppCheck(firebaseApp, {
+          provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+          isTokenAutoRefreshEnabled: true,
+        });
+    } else if (isBrowser) {
+        console.warn(`
+            Firebase App Check is not initialized. For production, you should:
+            1. Go to the reCAPTCHA admin console and create a new reCAPTCHA v3 key.
+            2. Add it as NEXT_PUBLIC_RECAPTCHA_SITE_KEY to your environment variables.
+            3. Go to the Firebase Console > App Check and register your site with the key.
+        `);
     }
+    */
 
     return getSdks(firebaseApp);
   }
