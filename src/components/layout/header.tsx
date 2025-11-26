@@ -29,9 +29,6 @@ import { UserNav } from "@/components/auth/user-nav";
 import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { useOnScroll } from "@/hooks/use-on-scroll";
-import { Button as MovingBorderButton } from "@/components/ui/moving-border";
-import { motion } from "framer-motion";
-
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -91,25 +88,13 @@ export default function Header() {
                     <SheetTitle>Mobile Menu</SheetTitle>
                     <SheetDescription>Site navigation</SheetDescription>
                   </SheetHeader>
-                  <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
-                      className="absolute top-3 left-3"
-                    >
-                    <Button variant="default" size="icon" className="md:hidden rounded-full" onClick={() => setIsSheetOpen(false)}>
+                  
+                    <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 right-3" onClick={() => setIsSheetOpen(false)}>
                       <X className="h-6 w-6" />
                       <span className="sr-only">Close navigation menu</span>
                     </Button>
-                  </motion.div>
-                  <motion.div 
-                    initial={{ x: '-100%' }}
-                    animate={{ x: 0 }}
-                    exit={{ x: '-100%' }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    className="flex flex-col h-full"
-                  >
+                  
+                  <div className="flex flex-col h-full">
                     <div className="flex justify-center mt-12">
                       <Logo />
                     </div>
@@ -138,7 +123,7 @@ export default function Header() {
                         <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
                       </div>
                     </SheetFooter>
-                  </motion.div>
+                  </div>
                 </SheetContent>
               </Sheet>
                <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
