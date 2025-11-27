@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, forwardRef } from 'react';
 import { useImageKit } from '@/imagekit/provider';
 import { IKUpload, IKUploadProps } from 'imagekitio-react';
 import { Button } from '@/components/ui/button';
@@ -16,13 +16,13 @@ interface ImageUploaderProps {
 }
 
 // Wrapper component to prevent non-DOM props from being passed down
-const CleanIKUpload = (props: IKUploadProps) => {
-  const { imageKit, inputRef, ...rest } = props;
-  // This component will be called by IKUpload internally. We intercept and remove
-  // props that should not be passed to the underlying DOM element.
-  // @ts-ignore
-  return <IKUpload {...rest} />;
-};
+// We use forwardRef to correctly pass the ref to the underlying IKUpload component.
+const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
+  const { imageKit, ...rest } = props;
+  // @ts-ignore - The library's component passes unrecognized props, so we manually pass only the valid ones.
+  return <IKUpload {...rest} ref={ref} />;
+});
+CleanIKUpload.displayName = 'CleanIKUpload';
 
 
 export function ImageUploader({ value, onChange, folder = 'other' }: ImageUploaderProps) {
@@ -105,12 +105,10 @@ export function ImageUploader({ value, onChange, folder = 'other' }: ImageUpload
                 onUploadStart={() => setIsUploading(true)}
                 onSuccess={handleUploadSuccess}
                 onError={handleUploadError}
-                inputRef={uploaderRef}
+                ref={uploaderRef}
                 />
          </div>
       )}
     </div>
   );
 }
-
-    

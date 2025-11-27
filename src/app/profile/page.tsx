@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, forwardRef } from 'react';
 import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection, query, where, updateDoc } from 'firebase/firestore';
 import { updateProfile, getAuth } from 'firebase/auth';
@@ -18,13 +18,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useImageKit } from '@/imagekit/provider';
 import { IKUpload, IKUploadProps } from 'imagekitio-react';
 
-const CleanIKUpload = (props: IKUploadProps) => {
-  const { imageKit, inputRef, ...rest } = props;
+const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
+  const { imageKit, ...rest } = props;
   // This component will be called by IKUpload internally. We intercept and remove
   // props that should not be passed to the underlying DOM element.
   // @ts-ignore
-  return <IKUpload {...rest} />;
-};
+  return <IKUpload {...rest} ref={ref} />;
+});
+CleanIKUpload.displayName = 'CleanIKUpload';
 
 
 export default function ProfilePage() {
@@ -200,7 +201,7 @@ export default function ProfilePage() {
                         isPrivateFile={false}
                         onSuccess={handleUploadSuccess}
                         onError={handleUploadError}
-                        inputRef={fileInputRef}
+                        ref={fileInputRef}
                       />
                     </div>
                   )}
@@ -295,5 +296,3 @@ export default function ProfilePage() {
     </>
   );
 }
-
-    
