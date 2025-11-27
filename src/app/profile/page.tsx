@@ -2,20 +2,21 @@
 'use client';
 
 import { useEffect, useState, useRef, forwardRef } from 'react';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import { updateProfile, getAuth } from 'firebase/auth';
+import { updateProfile, getAuth, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, Upload, Save } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, Upload, Save, LogOut, Shield } from 'lucide-react';
 import type { User as UserType, Property } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useImageKit } from '@/imagekit/provider';
 import { IKUpload, IKUploadProps } from 'imagekitio-react';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
+import Link from 'next/link';
 
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,11 +28,13 @@ const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) =
 });
 CleanIKUpload.displayName = 'CleanIKUpload';
 
+const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
+
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const auth = getAuth();
+  const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const imageKitContext = useImageKit();
@@ -101,6 +104,16 @@ export default function ProfilePage() {
     });
     setIsSaving(false);
   };
+  
+  const handleSignOut = async () => {
+    if (!auth) return;
+    await signOut(auth);
+    toast({
+      title: 'Logged Out',
+      description: 'You have been successfully logged out.',
+      variant: 'destructive',
+    });
+  };
 
   const renderLoading = () => (
     <div className="flex items-center justify-center py-16">
@@ -154,6 +167,8 @@ export default function ProfilePage() {
     'real-estate-agent': 'Real Estate Agent',
     'interior-designer': 'Interior Designer'
   };
+  
+  const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
 
   const displayAvatar = newAvatarUrl || userProfile.photoURL;
 
@@ -245,7 +260,7 @@ export default function ProfilePage() {
                       </div>
                   </div>
               </CardContent>
-              <CardFooter className="p-6">
+              <CardFooter className="p-6 flex flex-col gap-2">
                  <Button
                   onClick={handleSaveChanges}
                   disabled={!newAvatarUrl || isSaving}
@@ -259,9 +274,21 @@ export default function ProfilePage() {
                   ) : (
                     <>
                       <Save className="mr-2 h-4 w-4" />
-                      Save Profile
+                      Save Profile Picture
                     </>
                   )}
+                </Button>
+                {isAuthorizedAdmin && (
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href="/admin">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin Panel
+                    </Link>
+                  </Button>
+                )}
+                 <Button onClick={handleSignOut} variant="destructive" className="w-full">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
                 </Button>
               </CardFooter>
             </Card>
