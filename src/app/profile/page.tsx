@@ -1,32 +1,20 @@
 
 'use client';
 
-import { useEffect, useState, useRef, forwardRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
-import { updateProfile, getAuth, signOut } from 'firebase/auth';
+import { doc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, Upload, Save, LogOut, Shield } from 'lucide-react';
-import type { User as UserType, Property } from '@/types';
+import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield } from 'lucide-react';
+import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useImageKit } from '@/imagekit/provider';
-import { IKUpload, IKUploadProps } from 'imagekitio-react';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import Link from 'next/link';
-
-const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { publicKey, urlEndpoint, authenticationEndpoint, inputRef, ...rest } = props;
-  // This component will be called by IKUpload internally. We intercept and remove
-  // props that should not be passed to the underlying DOM element.
-  // @ts-ignore
-  return <IKUpload {...rest} ref={ref} />;
-});
-CleanIKUpload.displayName = 'CleanIKUpload';
 
 const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
 
@@ -37,11 +25,6 @@ export default function ProfilePage() {
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const imageKitContext = useImageKit();
-
-  const [isSaving, setIsSaving] = useState(false);
-  const [newAvatarUrl, setNewAvatarUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -61,49 +44,6 @@ export default function ProfilePage() {
     }
   }, [user, isUserLoading, router, toast]);
 
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleUploadSuccess = (res: any) => {
-    const photoURL = res.url;
-    setNewAvatarUrl(photoURL);
-    // Don't save immediately, wait for the save button
-  };
-  
-  const handleSaveChanges = async () => {
-     if (!newAvatarUrl || !auth.currentUser || !userDocRef) {
-      toast({ title: "Nothing to save", description: "Select a new profile picture first.", variant: "destructive" });
-      return;
-    }
-    
-    setIsSaving(true);
-    try {
-        await updateProfile(auth.currentUser, { photoURL: newAvatarUrl });
-        await updateDoc(userDocRef, { photoURL: newAvatarUrl });
-        toast({
-          title: "Profile Saved!",
-          description: "Your new profile picture has been saved.",
-          variant: 'success',
-        });
-        setNewAvatarUrl(null); // Reset after saving
-    } catch (error) {
-      console.error("Error saving profile picture:", error);
-      toast({ title: "Save Failed", description: "Could not save your new profile picture.", variant: "destructive" });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleUploadError = (err: any) => {
-    console.error("Upload Error:", err);
-    toast({
-      title: "Upload Failed",
-      description: "Could not upload your image. Please try again.",
-      variant: "destructive",
-    });
-    setIsSaving(false);
-  };
   
   const handleSignOut = async () => {
     if (!auth) return;
@@ -170,7 +110,7 @@ export default function ProfilePage() {
   
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
 
-  const displayAvatar = newAvatarUrl || userProfile.photoURL;
+  const displayAvatar = userProfile.photoURL;
 
   return (
     <>
@@ -198,32 +138,6 @@ export default function ProfilePage() {
                         {userProfile.fullName ? getInitials(userProfile.fullName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
                   </Avatar>
-                  
-                  {imageKitContext?.urlEndpoint && imageKitContext.publicKey && (
-                     <div style={{ display: 'none' }}>
-                      <CleanIKUpload
-                        publicKey={imageKitContext.publicKey}
-                        urlEndpoint={imageKitContext.urlEndpoint}
-                        authenticationEndpoint={`${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit-auth`}
-                        fileName={`profile_${user.uid}.jpg`}
-                        folder="/profiles"
-                        useUniqueFileName={false}
-                        isPrivateFile={false}
-                        onSuccess={handleUploadSuccess}
-                        onError={handleUploadError}
-                        inputRef={fileInputRef}
-                      />
-                    </div>
-                  )}
-                  <Button
-                    size="icon"
-                    className="absolute bottom-1 right-1 h-9 w-9 rounded-full"
-                    onClick={handleAvatarClick}
-                    disabled={isSaving}
-                    aria-label="Upload new picture"
-                  >
-                    <Upload className="h-5 w-5" />
-                  </Button>
                 </div>
                 <CardTitle className="mt-4 text-3xl">{userProfile.fullName}</CardTitle>
                 <CardDescription>Welcome back to your dashboard!</CardDescription>
@@ -261,23 +175,6 @@ export default function ProfilePage() {
                   </div>
               </CardContent>
               <CardFooter className="p-6 flex flex-col gap-2">
-                 <Button
-                  onClick={handleSaveChanges}
-                  disabled={!newAvatarUrl || isSaving}
-                  className="w-full"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="mr-2 h-4 w-4" />
-                      Save Profile Picture
-                    </>
-                  )}
-                </Button>
                 {isAuthorizedAdmin && (
                   <Button asChild variant="outline" className="w-full">
                     <Link href="/admin">

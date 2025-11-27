@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -7,14 +8,18 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
+      // Anyone can read user profiles (needed for property owner info)
       allow read: if true;
+      // Only the owner can write to their own profile
       allow write: if isOwner(userId);
     }
     
     match /properties/{propertyId} {
-      // Allow anyone to read properties, but only owners to write.
+      // Allow anyone to read properties
       allow read: if true;
+      // Allow authenticated users to create properties
       allow create: if request.auth != null;
+      // Only allow the owner of the property to update or delete it
       allow update, delete: if isOwner(resource.data.userId);
     }
 

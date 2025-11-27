@@ -7,7 +7,6 @@ import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
 import { FirebaseClientProvider } from "@/firebase";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
-import { ImageKitProvider } from "@/imagekit/provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -71,11 +70,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <FirebaseClientProvider>
-          <ImageKitProvider>
-            <Header />
-            <AppProviders>{children}</AppProviders>
-            <ScrollProgress />
-          </ImageKitProvider>
+          <Header />
+          <AppProviders>{children}</AppProviders>
+          <ScrollProgress />
         </FirebaseClientProvider>
       </body>
     </html>

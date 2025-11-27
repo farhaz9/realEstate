@@ -45,7 +45,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Banknote, Loader2, Star } from 'lucide-react';
 import type { Property } from '@/types';
-import { ImageUploader } from '@/components/shared/image-uploader';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
@@ -162,6 +161,10 @@ export default function AddPropertyPage() {
     if (!data.ageOfConstruction) {
       delete propertyData.ageOfConstruction;
     }
+    if (!data.imageUrls) {
+      propertyData.imageUrls = [];
+    }
+
 
     addDocumentNonBlocking(propertiesCollection, propertyData);
 
@@ -244,24 +247,6 @@ export default function AddPropertyPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                  control={form.control}
-                  name="imageUrls"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Property Images (Optional)</FormLabel>
-                      <FormControl>
-                        <ImageUploader
-                          value={field.value || []}
-                          onChange={field.onChange}
-                          folder="properties"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="title"
@@ -568,4 +553,3 @@ export default function AddPropertyPage() {
     </>
   );
 }
-    
