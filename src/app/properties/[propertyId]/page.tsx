@@ -71,12 +71,12 @@ export default function PropertyDetailPage() {
     return query(
       collection(firestore, 'properties'),
       where('propertyType', '==', property.propertyType),
-      where('id', '!=', property.id),
-      limit(3)
+      limit(4) // Fetch 4 to have a chance to exclude the current one and still have 3
     );
   }, [firestore, property]);
 
-  const { data: relatedProperties } = useCollection<Property>(relatedPropertiesQuery);
+  const { data: relatedPropertiesData } = useCollection<Property>(relatedPropertiesQuery);
+  const relatedProperties = relatedPropertiesData?.filter(p => p.id !== propertyId).slice(0, 3);
 
   const isInWishlist = userProfile?.wishlist?.includes(propertyId) ?? false;
   
@@ -310,5 +310,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    
