@@ -12,7 +12,8 @@ interface PopularPropertyCardProps {
 }
 
 export function PopularPropertyCard({ property, className }: PopularPropertyCardProps) {
-  const propertyImage = PlaceHolderImages.find((p) => p.id === (property.imageUrls?.[0] || 'property-1'));
+  const hasImages = property.imageUrls && property.imageUrls.length > 0;
+  const propertyImage = PlaceHolderImages.find((p) => p.id === (hasImages ? property.imageUrls![0] : 'default-property'));
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
@@ -49,3 +50,5 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
     </Link>
   );
 }
+
+    

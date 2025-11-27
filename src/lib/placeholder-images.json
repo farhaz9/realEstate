@@ -233,6 +233,12 @@
       "description": "Architects reviewing blueprints on a construction site",
       "imageUrl": "https://ik.imagekit.io/farhaz/services-hero_Z4gA9tZfE.jpg",
       "imageHint": "construction site"
+    },
+    {
+      "id": "default-property",
+      "description": "Default placeholder image for a property",
+      "imageUrl": "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg",
+      "imageHint": "modern house"
     }
   ]
 }

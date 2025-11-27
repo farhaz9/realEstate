@@ -135,7 +135,9 @@ export default function PropertyDetailPage() {
     );
   }
 
-  const mainImage = PlaceHolderImages.find(p => p.id === (property.imageUrls?.[0] || 'property-1'));
+  const hasImages = property.imageUrls && property.imageUrls.length > 0;
+  const mainImage = PlaceHolderImages.find(p => p.id === (hasImages ? property.imageUrls![0] : 'default-property'));
+
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
@@ -308,4 +310,5 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
+
     

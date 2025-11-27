@@ -33,7 +33,8 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
-  const propertyImage = PlaceHolderImages.find((p) => p.id === (property.imageUrls?.[0] || 'property-1'));
+  const hasImages = property.imageUrls && property.imageUrls.length > 0;
+  const propertyImage = PlaceHolderImages.find((p) => p.id === (hasImages ? property.imageUrls![0] : 'default-property'));
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -180,3 +181,5 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     </Card>
   );
 }
+
+    
