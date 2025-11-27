@@ -33,7 +33,9 @@ import {
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -75,10 +77,19 @@ export default function LoginPage() {
   const [resetEmail, setResetEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [inlineError, setInlineError] = useState('');
+
   const auth = useAuth();
   const firestore = getFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  
+  const handleToggleForm = () => {
+    setIsLogin(!isLogin);
+    setInlineError(''); // Clear error when toggling
+    setPassword('');
+    setConfirmPassword('');
+  }
 
   const handleAuthError = (error: unknown) => {
     console.error(error);
@@ -91,8 +102,10 @@ export default function LoginPage() {
           errorMessage = 'Invalid email or password.';
           break;
         case 'auth/email-already-in-use':
-          errorMessage = 'An account already exists with this email. Please login.';
-          break;
+          // Instead of a toast, switch to login view and show an inline message
+          setIsLogin(true);
+          setInlineError('An account already exists with this email. Please log in.');
+          return; // Skip the toast
         case 'auth/weak-password':
           errorMessage = 'Password is too weak. It must be at least 6 characters long.';
           break;
@@ -110,6 +123,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!auth) return;
+    setInlineError(''); // Clear previous errors
 
     if (isLogin) {
       try {
@@ -160,7 +174,7 @@ export default function LoginPage() {
         
         toast({
           title: 'Sign Up Successful!',
-          description: 'Welcome to Farhaz Homes!',
+          description: 'Welcome to Delhi Estate Luxe!',
           variant: 'success',
         });
         router.push('/');
@@ -246,6 +260,12 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+             {inlineError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{inlineError}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <>
@@ -397,7 +417,7 @@ export default function LoginPage() {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-4">
-          <Button variant="link" onClick={() => setIsLogin(!isLogin)}>
+          <Button variant="link" onClick={handleToggleForm}>
             {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
           </Button>
             <Button variant="link" asChild className="text-sm text-muted-foreground">
