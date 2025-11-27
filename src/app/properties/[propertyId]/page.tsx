@@ -109,13 +109,13 @@ export default function PropertyDetailPage() {
   const mainImage = PlaceHolderImages.find(p => p.id === (property.imageUrls?.[0] || 'property-1'));
   const galleryImages = property.imageUrls.map(id => PlaceHolderImages.find(p => p.id === id)).filter(Boolean);
 
-  const squareFeet = property.squareYards * 9;
+  const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
   const keySpecs = [
     { label: 'Bedrooms', value: property.bedrooms, icon: BedDouble },
     { label: 'Bathrooms', value: property.bathrooms, icon: Bath },
-    { label: 'Area (sq. yd.)', value: `${property.squareYards.toLocaleString()}`, icon: Building2 },
-    { label: 'Area (sq. ft.)', value: `${squareFeet.toLocaleString()}`, icon: Building2 },
+    { label: 'Area (sq. yd.)', value: property.squareYards ? `${property.squareYards.toLocaleString()}`: 'N/A', icon: Building2 },
+    { label: 'Area (sq. ft.)', value: squareFeet ? `${squareFeet.toLocaleString()}` : 'N/A', icon: Building2 },
     { label: 'Property Type', value: property.propertyType, icon: Building2 },
     { label: 'Listing Type', value: property.listingType, icon: Badge },
   ];
