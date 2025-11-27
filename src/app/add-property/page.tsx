@@ -46,6 +46,21 @@ import { Banknote, Loader2, Star } from 'lucide-react';
 import type { Property } from '@/types';
 import { ImageUploader } from '@/components/shared/image-uploader';
 
+const indianStates = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", 
+  "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", 
+  "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", 
+  "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+];
+
+const propertyTypes = [
+  "Apartment", "Villa", "Independent House", "Plot", "PG / Co-living", "Commercial"
+];
+
+
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
@@ -296,9 +311,16 @@ export default function AddPropertyPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>State</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Delhi" {...field} />
-                          </FormControl>
+                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a state" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -309,9 +331,16 @@ export default function AddPropertyPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Property Type</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Apartment, Villa, PG" {...field} />
-                          </FormControl>
+                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a property type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -345,7 +374,7 @@ export default function AddPropertyPage() {
                     name="overlooking"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Overlooking</FormLabel>
+                        <FormLabel>Overlooking (Optional)</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., Park, Main Road" {...field} />
                         </FormControl>
@@ -358,7 +387,7 @@ export default function AddPropertyPage() {
                     name="ageOfConstruction"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Age of Construction</FormLabel>
+                        <FormLabel>Age of Construction (Optional)</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., 1-5 years" {...field} />
                         </FormControl>
