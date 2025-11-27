@@ -69,35 +69,36 @@ export function ImageUploader({ value, onChange, folder = 'other' }: ImageUpload
             </Button>
           </div>
         ))}
-        {imageKit && (
-          <div
-            className="relative aspect-square border-2 border-dashed rounded-md flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer"
-            onClick={() => uploaderRef.current?.click()}
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-8 w-8 animate-spin" />
-                <p className="mt-2 text-sm">Uploading...</p>
-              </>
-            ) : (
-              <>
-                <UploadCloud className="h-8 w-8" />
-                <p className="mt-2 text-sm text-center">Click to upload</p>
-              </>
-            )}
-            <IKUpload
-              imageKit={imageKit}
-              folder={`/${folder}`}
-              onUploadStart={() => setIsUploading(true)}
-              onSuccess={handleUploadSuccess}
-              onError={handleUploadError}
-              style={{ display: 'none' }}
-              inputRef={uploaderRef}
-            />
-          </div>
-        )}
+        <div
+          className="relative aspect-square border-2 border-dashed rounded-md flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer"
+          onClick={() => uploaderRef.current?.click()}
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <p className="mt-2 text-sm">Uploading...</p>
+            </>
+          ) : (
+            <>
+              <UploadCloud className="h-8 w-8" />
+              <p className="mt-2 text-sm text-center">Click to upload</p>
+            </>
+          )}
+        </div>
       </div>
       
+      {imageKit && (
+        <div style={{ display: 'none' }}>
+          <IKUpload
+            imageKit={imageKit}
+            folder={`/${folder}`}
+            onUploadStart={() => setIsUploading(true)}
+            onSuccess={handleUploadSuccess}
+            onError={handleUploadError}
+            inputRef={uploaderRef}
+          />
+        </div>
+      )}
     </div>
   );
 }
