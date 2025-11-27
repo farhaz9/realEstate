@@ -94,6 +94,8 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     });
   };
 
+  const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
+
   return (
     <Card asChild className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
       <Link href={`/properties/${property.id}`}>
@@ -134,7 +136,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             </div>
             <div className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
-              <span className="text-sm">{property.squareYards ? `${property.squareYards.toLocaleString()} sqyd` : 'N/A'}</span>
+              <span className="text-sm">{squareFeet ? `${squareFeet.toLocaleString()} sqft` : 'N/A'}</span>
             </div>
           </div>
         </CardContent>

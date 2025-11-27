@@ -114,7 +114,6 @@ export default function PropertyDetailPage() {
   const keySpecs = [
     { label: 'Bedrooms', value: property.bedrooms, icon: BedDouble },
     { label: 'Bathrooms', value: property.bathrooms, icon: Bath },
-    { label: 'Area (sq. yd.)', value: property.squareYards ? `${property.squareYards.toLocaleString()}`: 'N/A', icon: Building2 },
     { label: 'Area (sq. ft.)', value: squareFeet ? `${squareFeet.toLocaleString()}` : 'N/A', icon: Building2 },
     { label: 'Property Type', value: property.propertyType, icon: Building2 },
     { label: 'Listing Type', value: property.listingType, icon: Badge },

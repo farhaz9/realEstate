@@ -14,6 +14,7 @@ interface PopularPropertyCardProps {
 export function PopularPropertyCard({ property, className }: PopularPropertyCardProps) {
   const propertyImage = PlaceHolderImages.find((p) => p.id === (property.imageUrls?.[0] || 'property-1'));
   const imageCount = property.imageUrls?.length ?? 0;
+  const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
   return (
     <Link href={`/properties/${property.id}`} className="block group h-full">
@@ -37,7 +38,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
             </div>
             <div className="p-4 bg-card flex-grow flex flex-col">
                 <p className="font-semibold truncate">{`${property.bedrooms} BHK ${property.propertyType}`}</p>
-                <p className="font-bold text-lg text-primary">{formatPrice(property.price)} {property.squareYards && `|`} <span className="text-base font-medium text-muted-foreground">{property.squareYards?.toLocaleString()} sqyd</span></p>
+                <p className="font-bold text-lg text-primary">{formatPrice(property.price)} {squareFeet ? `|` : ''} <span className="text-base font-medium text-muted-foreground">{squareFeet ? `${squareFeet.toLocaleString()} sqft` : ''}</span></p>
                 <div className="flex items-start gap-2 mt-2 text-sm text-muted-foreground flex-grow">
                   <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
                   <p className="truncate">{property.location.address}</p>
