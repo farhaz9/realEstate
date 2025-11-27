@@ -155,6 +155,7 @@ export default function LoginPage() {
             phone: phone,
             category: category,
             dateJoined: serverTimestamp(),
+            photoURL: user.photoURL || '',
         });
         
         toast({
