@@ -79,7 +79,7 @@ service cloud.firestore {
     /**
      * @description Manages all property documents in a public collection.
      * @path /properties/{propertyId}
-     * @allow (read) Anyone can read property listings.
+     * @allow (read, list) Anyone can read and list property listings.
      * @allow (create) Any authenticated user can create a listing, as long as they set themselves as the owner.
      * @allow (update, delete) Only the user who owns the property can update or delete it.
      * @principle Public read access for listings, but write access is restricted to the owner.
