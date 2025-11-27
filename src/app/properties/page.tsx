@@ -92,7 +92,7 @@ export default function PropertiesPage() {
       let tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
-                       (activeTab === 'pg' && p.propertyType.toLowerCase().includes('pg'));
+                       (activeTab === 'pg' && p.propertyType?.toLowerCase().includes('pg'));
 
       // AI-driven search logic
       if (aiAnalysis && searchTerm) {
@@ -100,18 +100,18 @@ export default function PropertiesPage() {
           tabMatch = p.listingType === aiAnalysis.listingType;
         }
 
-        const aiLocationMatch = !aiAnalysis.location || p.location.address.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location.state.toLowerCase().includes(aiAnalysis.location.toLowerCase());
-        const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
+        const aiLocationMatch = !aiAnalysis.location || p.location?.address?.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location?.state?.toLowerCase().includes(aiAnalysis.location.toLowerCase());
+        const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType?.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
         const aiBedroomsMatch = !aiAnalysis.bedrooms || p.bedrooms >= aiAnalysis.bedrooms;
 
         return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
       }
       
       // Fallback to manual filtering if no AI analysis
-      const searchTermMatch = !searchTerm || p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              p.location.address.toLowerCase().includes(searchTerm.toLowerCase());
-      const locationMatch = location === 'all' || p.location.state === location || p.location.pincode === location;
+      const searchTermMatch = !searchTerm || (p.title && p.title.toLowerCase().includes(searchTerm.toLowerCase())) || 
+                              (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                              (p.location?.address && p.location.address.toLowerCase().includes(searchTerm.toLowerCase()));
+      const locationMatch = location === 'all' || p.location?.state === location || p.location?.pincode === location;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
       const priceMatch = p.price >= priceRange[0] * 10000000 && p.price <= priceRange[1] * 10000000;
@@ -122,7 +122,7 @@ export default function PropertiesPage() {
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
-      const states = [...new Set(properties.map(p => p.location.state))];
+      const states = [...new Set(properties.map(p => p.location?.state).filter(Boolean) as string[])];
       return states;
   }, [properties]);
 
@@ -290,5 +290,7 @@ export default function PropertiesPage() {
     </div>
   );
 }
+
+    
 
     
