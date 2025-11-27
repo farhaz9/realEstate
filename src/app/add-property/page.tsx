@@ -78,7 +78,7 @@ const propertyFormSchema = z.object({
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
   squareYards: z.coerce.number().positive({ message: 'Square yards must be a positive number.' }),
-  imageUrls: z.array(z.string()),
+  imageUrls: z.array(z.string()).optional(),
   furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
     required_error: 'Please select a furnishing status.',
   }),
@@ -122,6 +122,8 @@ export default function AddPropertyPage() {
       squareYards: 0,
       imageUrls: [],
       amenities: '',
+      overlooking: '',
+      ageOfConstruction: '',
     },
   });
 
@@ -146,13 +148,22 @@ export default function AddPropertyPage() {
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
 
-    addDocumentNonBlocking(propertiesCollection, {
+    const propertyData: Partial<Property> = {
       ...data,
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-    });
+    };
+
+    if (!data.overlooking) {
+      delete propertyData.overlooking;
+    }
+    if (!data.ageOfConstruction) {
+      delete propertyData.ageOfConstruction;
+    }
+
+    addDocumentNonBlocking(propertiesCollection, propertyData);
 
     toast({
       title: 'Property Listed!',
@@ -241,7 +252,7 @@ export default function AddPropertyPage() {
                       <FormLabel>Property Images (Optional)</FormLabel>
                       <FormControl>
                         <ImageUploader
-                          value={field.value}
+                          value={field.value || []}
                           onChange={field.onChange}
                           folder="properties"
                         />
