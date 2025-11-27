@@ -7,12 +7,12 @@ import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { PageHero } from '@/components/shared/page-hero';
 import { Loader2, User as UserIcon } from 'lucide-react';
-import { ProfessionalCard } from '@/components/professional-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { ProfessionalCard } from '@/components/professional-card';
 
 export default function ProfessionalsPage() {
   const firestore = useFirestore();

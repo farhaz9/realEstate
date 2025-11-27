@@ -14,6 +14,7 @@ import { HomeSearch } from "@/components/shared/home-search";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
 
 const faqs = [
   {
@@ -171,6 +172,8 @@ export default function HomePage() {
       </section>
       
       <PopularProperties />
+
+      <FeaturedProfessionals />
 
       <FeaturedProperties />
 
