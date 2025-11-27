@@ -71,7 +71,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
 
             <div className="mt-4 flex items-center justify-between gap-2">
                 <Button variant="link" size="sm" asChild>
-                    <Link href={`/professionals`}>View Details</Link>
+                    <Link href={`/professionals/${professional.id}`}>View Details</Link>
                 </Button>
                 <Button size="sm" asChild className="flex-grow">
                     <Link href={`/properties?agent=${professional.id}`}>View Properties</Link>
