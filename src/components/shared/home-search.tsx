@@ -32,23 +32,25 @@ export function HomeSearch() {
   return (
     <section className="bg-background/95 border-b py-6 -mt-16 relative z-20 container mx-auto rounded-lg shadow-lg">
       <div className="px-4">
-        <div className="flex items-center space-x-6 border-b mb-4">
-            {searchTabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  'py-2 text-sm md:text-base font-semibold transition-colors relative',
-                  activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-primary'
-                )}
-              >
-                {tab.label}
-                {activeTab === tab.id && (
-                  <span className="absolute -bottom-px left-0 w-full h-0.5 bg-primary rounded-full" />
-                )}
-              </button>
-            ))}
-            <Link href="/profile?tab=listings" className="ml-auto text-sm font-semibold text-muted-foreground hover:text-primary relative pb-2">
+        <div className="flex justify-between items-center border-b mb-4">
+            <div className="flex items-center space-x-6">
+              {searchTabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    'py-2 text-sm md:text-base font-semibold transition-colors relative',
+                    activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                  )}
+                >
+                  {tab.label}
+                  {activeTab === tab.id && (
+                    <span className="absolute -bottom-px left-0 w-full h-0.5 bg-primary rounded-full" />
+                  )}
+                </button>
+              ))}
+            </div>
+            <Link href="/profile?tab=listings" className="text-sm font-semibold text-muted-foreground hover:text-primary relative pb-2">
                 Post Ad
                 <span className="absolute top-[-10px] right-[-25px] bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-sm text-[10px]">FREE</span>
             </Link>
