@@ -31,7 +31,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
-import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -172,16 +172,34 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     if (!auth) return;
     try {
-        const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
-        toast({
-            title: 'Login Successful!',
-            description: 'Welcome back!',
-            variant: 'success',
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user document exists, if not, create it
+      const userDocRef = doc(firestore, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          id: user.uid,
+          fullName: user.displayName,
+          email: user.email,
+          phone: user.phoneNumber || '', // Phone number might not be available from Google
+          category: 'listing-property', // Default category
+          dateJoined: serverTimestamp(),
+          photoURL: user.photoURL,
         });
-        router.push('/');
+      }
+      
+      toast({
+        title: 'Login Successful!',
+        description: `Welcome back, ${user.displayName}!`,
+        variant: 'success',
+      });
+      router.push('/');
     } catch (error: unknown) {
-        handleAuthError(error);
+      handleAuthError(error);
     }
   };
 

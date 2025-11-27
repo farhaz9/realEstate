@@ -35,7 +35,7 @@ export default function ProfilePage() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
   
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserType>(userDocRef);
+  const { data: userProfile, isLoading: isProfileLoading, error: profileError } = useDoc<UserType>(userDocRef);
 
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -56,8 +56,6 @@ export default function ProfilePage() {
   }, [user, isUserLoading, router, toast]);
   
   useEffect(() => {
-    // This effect ensures the avatarUrl state is updated if the userProfile data changes from Firestore
-    // It also respects the local preview if a new file has been selected but not yet saved
     if (userProfile?.photoURL && !newAvatarFile) {
       setAvatarUrl(userProfile.photoURL);
     }
@@ -81,8 +79,6 @@ export default function ProfilePage() {
     }
 
     setNewAvatarFile(file);
-
-    // Create a temporary URL for instant preview
     const reader = new FileReader();
     reader.onload = (e) => {
       setAvatarUrl(e.target?.result as string);
@@ -104,7 +100,6 @@ export default function ProfilePage() {
     try {
       const reader = new FileReader();
       
-      // Define what happens when the file is read
       reader.onload = async (e) => {
         const dataUrl = e.target?.result as string;
         if (!dataUrl) {
@@ -114,21 +109,18 @@ export default function ProfilePage() {
         }
   
         try {
-          // 1. Upload to Storage
           const storage = getStorage(firebaseApp);
           const storageRef = ref(storage, `profile-pictures/${user.uid}`);
           await uploadString(storageRef, dataUrl, 'data_url');
           const photoURL = await getDownloadURL(storageRef);
   
-          // 2. Update Auth Profile & Firestore Document
           if (auth.currentUser) {
             await updateProfile(auth.currentUser, { photoURL });
           }
           await updateDoc(userDocRef, { photoURL });
   
-          // 3. Update UI
           setAvatarUrl(photoURL);
-          setNewAvatarFile(null); // Clear the pending file state
+          setNewAvatarFile(null); 
   
           toast({
             title: "Profile Saved!",
@@ -143,14 +135,12 @@ export default function ProfilePage() {
             description: "Could not save your changes. Please try again.",
             variant: "destructive"
           });
-          // Revert UI to the original image from the profile
           setAvatarUrl(userProfile?.photoURL ?? null); 
         } finally {
           setIsSaving(false);
         }
       };
   
-      // Define what happens on a file read error
       reader.onerror = (error) => {
         console.error("File reading error:", error);
         toast({
@@ -161,7 +151,6 @@ export default function ProfilePage() {
         setIsSaving(false);
       };
   
-      // Start reading the file
       reader.readAsDataURL(newAvatarFile);
   
     } catch (error) {
@@ -171,11 +160,10 @@ export default function ProfilePage() {
         description: "Could not prepare your image for saving. Please try again.",
         variant: "destructive"
       });
-      setAvatarUrl(userProfile?.photoURL ?? null); // Revert UI
+      setAvatarUrl(userProfile?.photoURL ?? null);
       setIsSaving(false);
     }
   };
-
 
   const renderLoading = () => (
     <div className="flex items-center justify-center py-16">
@@ -183,7 +171,7 @@ export default function ProfilePage() {
     </div>
   );
 
-  if (isUserLoading || isProfileLoading || !user || !userProfile) {
+  if (isUserLoading || isProfileLoading) {
     return (
       <>
         <div className="bg-muted">
@@ -194,6 +182,23 @@ export default function ProfilePage() {
         </div>
         <div className="container mx-auto px-4 py-16">
             {renderLoading()}
+        </div>
+      </>
+    );
+  }
+
+  if (!user || !userProfile) {
+     return (
+      <>
+        <div className="bg-muted">
+            <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold">My Profile</h1>
+                <p className="text-muted-foreground">Manage your account details and listings.</p>
+            </div>
+        </div>
+        <div className="container mx-auto px-4 py-16 text-center">
+            <p>Could not load user profile. Please try again.</p>
+             {profileError && <p className="text-sm text-destructive">{profileError.message}</p>}
         </div>
       </>
     );
@@ -234,7 +239,7 @@ export default function ProfilePage() {
                <CardHeader className="items-center text-center p-6 bg-muted/30">
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-                    <AvatarImage src={avatarUrl ?? ''} alt={userProfile.fullName ?? ''} />
+                    <AvatarImage src={avatarUrl ?? userProfile.photoURL ?? ''} alt={userProfile.fullName ?? ''} />
                     <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                         {userProfile.fullName ? getInitials(userProfile.fullName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
@@ -279,7 +284,7 @@ export default function ProfilePage() {
                         <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
                         <div className="flex-grow">
                           <p className="text-xs text-muted-foreground">Phone Number</p>
-                          <p className="text-sm font-medium">{userProfile.phone}</p>
+                          <p className="text-sm font-medium">{userProfile.phone || 'Not provided'}</p>
                         </div>
                       </div>
                        <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
@@ -328,3 +333,5 @@ export default function ProfilePage() {
     </>
   );
 }
+
+    
