@@ -20,7 +20,10 @@ export type Property = {
   amenities: string[];
   imageUrls: string[];
   isFeatured: boolean;
-  dateListed: Date | any; // Changed to allow Date object
+  dateListed: Date | any;
+  furnishing?: 'unfurnished' | 'semi-furnished' | 'fully-furnished';
+  overlooking?: string;
+  ageOfConstruction?: string;
 };
 
 export type Builder = {

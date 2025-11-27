@@ -2,8 +2,8 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useFirestore, useDoc, useMemoFirebase, useUser } from '@/firebase';
-import { doc, arrayUnion, arrayRemove, updateDoc } from 'firebase/firestore';
+import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection } from '@/firebase';
+import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
 import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified } from 'lucide-react';
 import Image from 'next/image';
@@ -17,9 +17,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { PropertyCard } from '@/components/property-card';
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -49,6 +47,18 @@ export default function PropertyDetailPage() {
 
   const { data: userProfile } = useDoc<User>(userDocRef);
   
+  const relatedPropertiesQuery = useMemoFirebase(() => {
+    if (!firestore || !property) return null;
+    return query(
+      collection(firestore, 'properties'),
+      where('propertyType', '==', property.propertyType),
+      where('id', '!=', property.id),
+      limit(3)
+    );
+  }, [firestore, property]);
+
+  const { data: relatedProperties } = useCollection<Property>(relatedPropertiesQuery);
+
   const isInWishlist = userProfile?.wishlist?.includes(propertyId) ?? false;
   
   const handleWishlistToggle = async () => {
@@ -113,17 +123,27 @@ export default function PropertyDetailPage() {
   const keySpecs = [
     { label: 'Bedrooms', value: property.bedrooms, icon: BedDouble },
     { label: 'Bathrooms', value: property.bathrooms, icon: Bath },
-    { label: 'Area (sq. ft.)', value: squareFeet ? `${squareFeet.toLocaleString()}` : 'N/A', icon: Building2 },
+    { label: 'Area (sq. ft.)', value: squareFeet ? `${squareFeet.toLocaleString()}`: 'N/A', icon: Building2 },
     { label: 'Property Type', value: property.propertyType, icon: Building2 },
     { label: 'Listing Type', value: property.listingType, icon: Badge },
   ];
+  
+  const moreDetails = [
+      { label: 'Bedrooms', value: `${property.bedrooms} BHK` },
+      { label: 'Price Breakup', value: `${formatPrice(property.price)}`},
+      { label: 'Address', value: `${property.location.address}, ${property.location.state}` },
+      { label: 'Furnishing', value: property.furnishing?.replace('-', ' ') || 'N/A' },
+      { label: 'Overlooking', value: property.overlooking || 'N/A' },
+      { label: 'Age of Construction', value: property.ageOfConstruction || 'N/A' },
+    ];
+
 
   return (
     <div className="bg-muted/40">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-8">
             <Card>
               <CardContent className="p-0">
                 <div className="relative h-96 w-full">
@@ -196,6 +216,22 @@ export default function PropertyDetailPage() {
                 </div>
               </CardContent>
             </Card>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>More Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                        {moreDetails.map(detail => (
+                            <div key={detail.label} className="grid grid-cols-2">
+                                <p className="font-medium text-muted-foreground">{detail.label}</p>
+                                <p className="capitalize">{detail.value}</p>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
           </div>
           {/* Sticky Sidebar */}
           <div className="lg:sticky top-24 h-fit">
@@ -234,7 +270,19 @@ export default function PropertyDetailPage() {
             </Card>
           </div>
         </div>
+
+        {relatedProperties && relatedProperties.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold mb-8">Related Properties</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {relatedProperties.map((relatedProperty) => (
+                <PropertyCard key={relatedProperty.id} property={relatedProperty} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+    

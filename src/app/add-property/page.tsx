@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +25,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
 import { PageHero } from '@/components/shared/page-hero';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,6 +64,11 @@ const propertyFormSchema = z.object({
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
   squareYards: z.coerce.number().positive({ message: 'Square yards must be a positive number.' }),
   imageUrls: z.array(z.string()).min(1, { message: 'Please upload at least one image.' }),
+  furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
+    required_error: 'Please select a furnishing status.',
+  }),
+  overlooking: z.string().optional(),
+  ageOfConstruction: z.string().optional(),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -301,6 +314,56 @@ export default function AddPropertyPage() {
                       )}
                     />
                 </div>
+                 <div className="grid md:grid-cols-3 gap-8">
+                   <FormField
+                    control={form.control}
+                    name="furnishing"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Furnishing</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select furnishing status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="unfurnished">Unfurnished</SelectItem>
+                            <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
+                            <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="overlooking"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Overlooking</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., Park, Main Road" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="ageOfConstruction"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Age of Construction</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., 1-5 years" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="grid md:grid-cols-2 gap-8">
                    <FormField
@@ -444,5 +507,4 @@ export default function AddPropertyPage() {
     </>
   );
 }
-
     

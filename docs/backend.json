@@ -147,6 +147,19 @@
           "type": "string",
           "description": "The date the property was listed.",
           "format": "date-time"
+        },
+        "furnishing": {
+            "type": "string",
+            "description": "The furnishing status of the property.",
+            "enum": ["unfurnished", "semi-furnished", "fully-furnished"]
+        },
+        "overlooking": {
+            "type": "string",
+            "description": "What the property overlooks (e.g., Pool, Garden, Main Road)."
+        },
+        "ageOfConstruction": {
+            "type": "string",
+            "description": "The age of the property's construction (e.g., 0-1 year, 1-5 years)."
         }
       },
       "required": [
