@@ -49,12 +49,14 @@ export function UserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
-            <AvatarFallback>
-              <User className="h-5 w-5" />
-            </AvatarFallback>
-          </Avatar>
+          <Link href="/profile">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
+              <AvatarFallback>
+                <User className="h-5 w-5" />
+              </AvatarFallback>
+            </Avatar>
+          </Link>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
