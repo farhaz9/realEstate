@@ -8,10 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import type { Property } from '@/types';
 import { PageHero } from '@/components/shared/page-hero';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { PropertyCard } from '@/components/property-card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function MyPropertiesPage() {
   const { user, isUserLoading } = useUser();
@@ -61,6 +62,17 @@ export default function MyPropertiesPage() {
             {properties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}
+             <Link href="/add-property">
+              <Card className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Plus className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold">List a New Property</h3>
+                  <p className="text-sm text-muted-foreground">Your next listing could be someone's dream home.</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </>
       );
