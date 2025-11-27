@@ -15,26 +15,17 @@ service cloud.firestore {
       // Only the authenticated owner of the profile can write (create, update, delete).
       allow write: if isOwner(userId);
     }
-    
-    // This rule is critical for allowing collection-wide queries.
-    // It allows anyone to list all documents in the 'properties' collection.
-    match /properties {
-      allow list: if true;
-    }
 
-    // Rules for individual 'properties' documents
+    // Rules for the 'properties' collection
     match /properties/{propertyId} {
-      // Allow anyone to get a single property document.
-      allow get: if true;
+      // Allow anyone to read any property listing. This covers both 'get' and 'list'.
+      allow read: if true;
       
       // Allow any authenticated user to create a new property.
-      // We check ownership for updates/deletes.
       allow create: if request.auth != null;
       
       // Only allow the user who owns the property to update or delete it.
-      // It compares the UID of the requesting user with the 'userId' field in the document.
       allow update, delete: if isOwner(resource.data.userId);
     }
-
   }
 }
