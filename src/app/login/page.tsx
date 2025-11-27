@@ -189,7 +189,7 @@ export default function LoginPage() {
           phone: user.phoneNumber || '', // Phone number might not be available from Google
           category: 'listing-property', // Default category
           dateJoined: serverTimestamp(),
-          photoURL: user.photoURL,
+          photoURL: user.photoURL || '',
         });
       }
       
@@ -408,5 +408,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
