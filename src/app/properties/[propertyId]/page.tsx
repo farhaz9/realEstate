@@ -16,7 +16,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { PropertyCard } from '@/components/property-card';
+import { PopularPropertyCard } from '@/components/shared/popular-property-card';
 import React from 'react';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
@@ -301,7 +301,7 @@ export default function PropertyDetailPage() {
             <h2 className="text-3xl font-bold mb-8">Related Properties</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {relatedProperties.map((relatedProperty) => (
-                <PropertyCard key={relatedProperty.id} property={relatedProperty} />
+                <PopularPropertyCard key={relatedProperty.id} property={relatedProperty} />
               ))}
             </div>
           </div>
