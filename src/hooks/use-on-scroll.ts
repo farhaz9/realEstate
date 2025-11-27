@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 
-export function useOnScroll() {
+export function useOnScroll(scrollThreshold = 0) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(true);
   const [prevScrollY, setPrevScrollY] = useState(0);
@@ -11,7 +11,7 @@ export function useOnScroll() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 0);
+      setIsScrolled(currentScrollY > scrollThreshold);
       setIsScrollingUp(currentScrollY < prevScrollY || currentScrollY <= 0);
       setPrevScrollY(currentScrollY);
     };
@@ -21,7 +21,7 @@ export function useOnScroll() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [prevScrollY]);
+  }, [prevScrollY, scrollThreshold]);
 
   return { isScrolled, isScrollingUp };
 }

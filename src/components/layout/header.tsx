@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState }from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -23,12 +23,15 @@ import {
   Linkedin,
   X,
   LogIn,
+  Search,
+  MapPin
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
 import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { useOnScroll } from "@/hooks/use-on-scroll";
+import { Input } from "../ui/input";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -57,131 +60,164 @@ const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(`/properties?q=${searchTerm}`);
+  };
+  
+  return (
+    <div className="bg-destructive text-destructive-foreground p-2 flex items-center gap-2">
+      <Button variant="ghost" size="icon" onClick={onMenuClick} className="hover:bg-destructive/50 focus-visible:bg-destructive/50">
+        <TwoStripesIcon className="h-6 w-6" />
+      </Button>
+      <form onSubmit={handleSearch} className="flex-grow relative">
+        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Input
+          placeholder="Search by City, Locality, Project"
+          className="bg-background text-foreground h-10 rounded-full pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </form>
+    </div>
+  );
+}
+
 
 export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user, isUserLoading } = useUser();
-  const { isScrollingUp } = useOnScroll();
+  const { isScrolled } = useOnScroll(200); // Trigger when scrolled more than 200px
+
+  const isHomePage = pathname === '/';
 
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
-       isScrollingUp ? "translate-y-0" : "-translate-y-full",
     )}>
-      <div className="container p-2">
-        <div className={cn(
-          "h-14 items-center rounded-full p-2 md:px-4",
-          "bg-background shadow-md",
-          "grid grid-cols-3"
-        )}>
-          <div className="flex items-center gap-2">
-              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="default" size="icon" className="rounded-full md:hidden">
-                    <TwoStripesIcon className="h-6 w-6" />
-                    <span className="sr-only">Toggle navigation menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left">
-                   <SheetHeader className="sr-only">
-                    <SheetTitle>Mobile Menu</SheetTitle>
-                    <SheetDescription>Site navigation</SheetDescription>
-                  </SheetHeader>
-                  
-                  <SheetClose asChild>
-                    <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 left-3 transition-all duration-300 ease-in-out transform hover:rotate-90">
-                      <X className="h-6 w-6" />
-                      <span className="sr-only">Close navigation menu</span>
-                    </Button>
-                  </SheetClose>
-                  
-                  <div className="flex flex-col h-full">
-                    <div className="flex justify-center mt-12">
-                      <Logo />
-                    </div>
-                    <Separator />
-                    <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
-                      {navLinks.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          onClick={() => setIsSheetOpen(false)}
-                          className={cn(
-                            "uppercase rounded-lg px-3 py-3 text-4xl font-medium text-muted-foreground transition-all hover:text-primary"
-                          )}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
-                    </nav>
-                    <SheetFooter>
-                      <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
-                        <div className="flex space-x-4">
-                          <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
-                          <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
-                          <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
-                        </div>
-                        <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
-                      </div>
-                    </SheetFooter>
+       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetContent side="left">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Mobile Menu</SheetTitle>
+              <SheetDescription>Site navigation</SheetDescription>
+            </SheetHeader>
+            
+            <SheetClose asChild>
+              <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 left-3 transition-all duration-300 ease-in-out transform hover:rotate-90">
+                <X className="h-6 w-6" />
+                <span className="sr-only">Close navigation menu</span>
+              </Button>
+            </SheetClose>
+            
+            <div className="flex flex-col h-full">
+              <div className="flex justify-center mt-12">
+                <Logo />
+              </div>
+              <Separator />
+              <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsSheetOpen(false)}
+                    className={cn(
+                      "uppercase rounded-lg px-3 py-3 text-4xl font-medium text-muted-foreground transition-all hover:text-primary"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <SheetFooter>
+                <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
+                  <div className="flex space-x-4">
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
                   </div>
-                </SheetContent>
-              </Sheet>
-               <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                {navLinks.slice(1,3).map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "px-4 py-1.5 rounded-full transition-colors",
-                      "text-muted-foreground hover:text-foreground",
-                      pathname === link.href
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : ""
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-          </div>
-          <div className="flex justify-center">
-             <Logo />
-          </div>
-          <div className="flex items-center gap-2 justify-end">
-             <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                {navLinks.slice(3).map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "px-4 py-1.5 rounded-full transition-colors",
-                      "text-muted-foreground hover:text-foreground",
-                      pathname === link.href
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : ""
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-              {isUserLoading ? (
-                <Skeleton className="h-10 w-10 rounded-full" />
-              ) : user ? (
-                <UserNav />
-              ) : (
-                <Button asChild variant="ghost" size="icon" className="rounded-full">
-                  <Link href="/login">
-                    <LogIn />
-                    <span className="sr-only">Login</span>
-                  </Link>
-                </Button>
-              )}
+                  <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
+                </div>
+              </SheetFooter>
             </div>
-        </div>
-      </div>
+          </SheetContent>
+
+        {isHomePage && isScrolled ? (
+          <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} />
+        ) : (
+          <div className="container p-2">
+            <div className={cn(
+              "h-14 items-center rounded-full p-2 md:px-4",
+              "bg-background shadow-md",
+              "grid grid-cols-3"
+            )}>
+              <div className="flex items-center gap-2">
+                  <SheetTrigger asChild>
+                    <Button variant="default" size="icon" className="rounded-full md:hidden">
+                      <TwoStripesIcon className="h-6 w-6" />
+                      <span className="sr-only">Toggle navigation menu</span>
+                    </Button>
+                  </SheetTrigger>
+                  <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                    {navLinks.slice(1,3).map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                          "px-4 py-1.5 rounded-full transition-colors",
+                          "text-muted-foreground hover:text-foreground",
+                          pathname === link.href
+                            ? "bg-primary/10 text-primary font-semibold"
+                            : ""
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </nav>
+              </div>
+              <div className="flex justify-center">
+                <Logo />
+              </div>
+              <div className="flex items-center gap-2 justify-end">
+                <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                    {navLinks.slice(3).map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                          "px-4 py-1.5 rounded-full transition-colors",
+                          "text-muted-foreground hover:text-foreground",
+                          pathname === link.href
+                            ? "bg-primary/10 text-primary font-semibold"
+                            : ""
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </nav>
+                  {isUserLoading ? (
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                  ) : user ? (
+                    <UserNav />
+                  ) : (
+                    <Button asChild variant="ghost" size="icon" className="rounded-full">
+                      <Link href="/login">
+                        <LogIn />
+                        <span className="sr-only">Login</span>
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+            </div>
+          </div>
+        )}
+      </Sheet>
     </header>
   );
 }
