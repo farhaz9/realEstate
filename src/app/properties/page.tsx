@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ListFilter, Search } from 'lucide-react';
+import { ListFilter, Search, ArrowUpDown } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -41,6 +41,7 @@ export default function PropertiesPage() {
   const [bedrooms, setBedrooms] = useState(0);
   const [bathrooms, setBathrooms] = useState(0);
   const [priceRange, setPriceRange] = useState([0, 20]); // In Crores
+  const [sortBy, setSortBy] = useState('dateListed-desc');
   const [placeholder, setPlaceholder] = useState(searchSuggestions[0]);
 
   useEffect(() => {
@@ -58,9 +59,10 @@ export default function PropertiesPage() {
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     let q: Query = collection(firestore, 'properties');
-    q = query(q, orderBy('dateListed', 'desc'));
+    const [sortField, sortDirection] = sortBy.split('-');
+    q = query(q, orderBy(sortField, sortDirection as 'asc' | 'desc'));
     return q;
-  }, [firestore]);
+  }, [firestore, sortBy]);
 
   const { data: properties, isLoading, error } = useCollection<Property>(propertiesQuery);
 
@@ -94,7 +96,7 @@ export default function PropertiesPage() {
 
   return (
     <div>
-      <section className="bg-background border-b">
+      <section className="bg-background border-b sticky top-14 z-40">
         <div className="container mx-auto px-4 pt-4">
           <div className="flex justify-between items-center">
              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -117,21 +119,15 @@ export default function PropertiesPage() {
               <Input
                   id="search"
                   placeholder={placeholder}
-                  className="pl-10 text-foreground"
+                  className="pl-10 text-foreground h-12 rounded-full"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
           </div>
-        </div>
-      </section>
-      
-       <div className="bg-muted/40 border-b py-2">
-            <div className="container mx-auto px-4">
-              <div className="flex gap-4 items-end overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
+           <div className="flex gap-4 items-center overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
                 <div className="flex-shrink-0 min-w-[150px] space-y-1">
-                  <Label className="text-xs font-semibold">Location</Label>
                   <Select value={location} onValueChange={setLocation}>
-                    <SelectTrigger className="bg-background text-foreground h-9">
+                    <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
                       <SelectValue placeholder="All Localities" />
                     </SelectTrigger>
                     <SelectContent>
@@ -141,8 +137,8 @@ export default function PropertiesPage() {
                   </Select>
                 </div>
                 
-                 <div className="flex-shrink-0 min-w-[200px] flex-grow space-y-1">
-                   <Label className="text-xs font-semibold truncate">
+                 <div className="flex-shrink-0 min-w-[200px] flex-grow max-w-xs space-y-1 px-4">
+                   <Label className="text-xs font-semibold truncate text-center block">
                      Price: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
                   </Label>
                    <Slider
@@ -156,7 +152,7 @@ export default function PropertiesPage() {
                 </div>
                  <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="outline" className="flex-shrink-0 h-9 bg-background">
+                        <Button variant="outline" className="flex-shrink-0 h-9 bg-background shadow-sm">
                             <ListFilter className="mr-2 h-4 w-4" />
                             Filters
                         </Button>
@@ -193,11 +189,23 @@ export default function PropertiesPage() {
                         </div>
                     </SheetContent>
                 </Sheet>
-            </div>
+                 <div className="flex-shrink-0 min-w-[150px] space-y-1 ml-auto">
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
+                            <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="dateListed-desc">Newest First</SelectItem>
+                            <SelectItem value="dateListed-asc">Oldest First</SelectItem>
+                            <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                            <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
         </div>
-
-
+      </section>
+      
       <div className="container mx-auto px-4 py-8 sm:py-12">
         {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -240,5 +248,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
-    

@@ -64,14 +64,13 @@ const homeServices = [
 ];
 
 const quickServices = [
-  { href: "/properties", label: "Properties", icon: Building2 },
-  { href: "/services", label: "Rent", icon: KeyRound },
-  { href: "/interiors", label: "Interiors", icon: Palette },
-  { href: "/services", label: "Architect", icon: DraftingCompass },
-  { href: "/services", label: "Collaboration", icon: Handshake },
-  { href: "/services", label: "Construction", icon: Construction },
-  { href: "/services", label: "Consultancy", icon: ConciergeBell },
-];
+    { href: "/properties", label: "Properties", icon: Building2 },
+    { href: "/properties?type=rent", label: "Rent", icon: KeyRound },
+    { href: "/interiors", label: "Interiors", icon: Palette },
+    { href: "/professionals", label: "Agents", icon: Briefcase },
+    { href: "/services", label: "Construction", icon: Construction },
+    { href: "/contact", label: "Consultancy", icon: ConciergeBell },
+  ];
 
 const whyChooseUsPoints = [
   {
@@ -107,7 +106,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 md:pb-24 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            beautiful homes
+            Find Your Dream Home
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
             Your trusted partner in luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi.
@@ -125,13 +124,13 @@ export default function HomePage() {
             </span>
           </h2>
            <div className="mt-8 relative">
-             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 -mx-4 px-4 hide-scrollbar">
+             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 -mx-4 px-4 hide-scrollbar justify-center">
               {quickServices.map((service) => (
-                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-20 sm:w-24">
-                  <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-primary">
-                    <service.icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary group-hover:scale-105 group-hover:shadow-lg">
+                    <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
                   </div>
-                  <p className="text-xs font-medium text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
+                  <p className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
                 </Link>
               ))}
             </div>

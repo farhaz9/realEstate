@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { MapPin, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { Logo } from './logo';
+import { useRouter } from 'next/navigation';
 
 const searchTabs = [
   { id: 'buy', label: 'Buy' },
@@ -17,11 +18,22 @@ const searchTabs = [
 ];
 
 export function HomeSearch() {
-  const [activeTab, setActiveTab] = useState('rent');
+  const [activeTab, setActiveTab] = useState('buy');
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const query = new URLSearchParams({
+      type: activeTab,
+      q: searchTerm,
+    }).toString();
+    router.push(`/properties?${query}`);
+  };
 
   return (
-    <section className="bg-background/95 border-b py-4">
-      <div className="container mx-auto px-4">
+    <section className="bg-background/95 border-b py-4 -mt-12 relative z-20 container mx-auto rounded-lg shadow-lg">
+      <div className="px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 md:gap-8">
             {searchTabs.map(tab => (
@@ -43,7 +55,6 @@ export function HomeSearch() {
             ))}
           </div>
           <div className="hidden md:flex items-center gap-2">
-            <Logo />
              <Button asChild variant="ghost" className="font-semibold">
                 <Link href="/add-property">
                     Post Ad
@@ -52,17 +63,22 @@ export function HomeSearch() {
             </Button>
           </div>
         </div>
-        <div className="relative mt-4">
-          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            id="search-city"
-            placeholder="Search by city, location, or project"
-            className="pl-12 pr-14 h-12 text-base rounded-full"
-          />
-          <Button size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full">
-            <Search />
-          </Button>
-        </div>
+        <form onSubmit={handleSearch}>
+            <div className="relative mt-4">
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+                id="search-city"
+                placeholder="Search by location or project"
+                className="pl-12 pr-28 h-12 text-base rounded-full"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Button type="submit" size="lg" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 rounded-full">
+                <Search className="h-5 w-5 mr-2" />
+                Search
+            </Button>
+            </div>
+        </form>
       </div>
     </section>
   );
