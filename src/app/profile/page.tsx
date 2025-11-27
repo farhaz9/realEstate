@@ -16,7 +16,16 @@ import type { User as UserType, Property } from '@/types';
 import { PropertyCard } from '@/components/property-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useImageKit } from '@/imagekit/provider';
-import { IKUpload } from 'imagekitio-react';
+import { IKUpload, IKUploadProps } from 'imagekitio-react';
+
+const CleanIKUpload = (props: IKUploadProps) => {
+  const { imageKit, ...rest } = props;
+  // This component will be called by IKUpload internally, we just need to pass the props through
+  // without the imageKit one which causes the error.
+  // @ts-ignore
+  return <IKUpload {...rest} />;
+};
+
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -174,17 +183,19 @@ export default function ProfilePage() {
                   </Avatar>
                   
                   {imageKit && (
-                    <IKUpload
-                      imageKit={imageKit}
-                      fileName={`profile_${user.uid}.jpg`}
-                      folder="/profiles"
-                      useUniqueFileName={false}
-                      isPrivateFile={false}
-                      onSuccess={handleUploadSuccess}
-                      onError={handleUploadError}
-                      style={{ display: 'none' }}
-                      inputRef={fileInputRef}
-                    />
+                    <div style={{ display: 'none' }}>
+                      <IKUpload
+                        imageKit={imageKit}
+                        fileName={`profile_${user.uid}.jpg`}
+                        folder="/profiles"
+                        useUniqueFileName={false}
+                        isPrivateFile={false}
+                        onSuccess={handleUploadSuccess}
+                        onError={handleUploadError}
+                        style={{ display: 'none' }}
+                        inputRef={fileInputRef}
+                      />
+                    </div>
                   )}
                   <Button
                     size="icon"

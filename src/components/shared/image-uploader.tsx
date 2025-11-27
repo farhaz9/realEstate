@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useState, useRef } from 'react';
 import { useImageKit } from '@/imagekit/provider';
-import { IKUpload } from 'imagekitio-react';
+import { IKUpload, IKUploadProps } from 'imagekitio-react';
 import { Button } from '@/components/ui/button';
 import { Loader2, UploadCloud, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +13,16 @@ interface ImageUploaderProps {
   onChange: (urls: string[]) => void;
   folder?: string;
 }
+
+// Wrapper component to prevent non-DOM props from being passed down
+const CleanIKUpload = (props: IKUploadProps) => {
+  const { imageKit, ...rest } = props;
+  // This component will be called by IKUpload internally, we just need to pass the props through
+  // without the imageKit one which causes the error.
+  // @ts-ignore
+  return <IKUpload {...rest} />;
+};
+
 
 export function ImageUploader({ value, onChange, folder = 'other' }: ImageUploaderProps) {
   const imageKit = useImageKit();
@@ -88,16 +97,17 @@ export function ImageUploader({ value, onChange, folder = 'other' }: ImageUpload
       </div>
       
       {imageKit && (
-        <div style={{ display: 'none' }}>
-          <IKUpload
-            imageKit={imageKit}
-            folder={`/${folder}`}
-            onUploadStart={() => setIsUploading(true)}
-            onSuccess={handleUploadSuccess}
-            onError={handleUploadError}
-            inputRef={uploaderRef}
-          />
-        </div>
+         <div style={{ display: 'none' }}>
+            <IKUpload
+                imageKit={imageKit}
+                folder={`/${folder}`}
+                onUploadStart={() => setIsUploading(true)}
+                onSuccess={handleUploadSuccess}
+                onError={handleUploadError}
+                inputRef={uploaderRef}
+                style={{ display: 'none' }}
+                />
+         </div>
       )}
     </div>
   );
