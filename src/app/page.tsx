@@ -123,14 +123,14 @@ export default function HomePage() {
       <HomeSearch />
 
       <section className="py-12 bg-background">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">
+        <div className="container mx-auto px-0 sm:px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase px-4">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent bg-[200%_auto] animate-gradient-pan">
               Best Real Estate and Interior Design Company
             </span>
           </h2>
            <div className="mt-8 relative">
-             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar">
+             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar px-4">
               {quickServices.map((service) => (
                 <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary group-hover:scale-105 group-hover:shadow-lg">
