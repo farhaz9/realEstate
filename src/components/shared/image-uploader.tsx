@@ -18,6 +18,7 @@ interface ImageUploaderProps {
 // This wrapper component intercepts and removes props that are not valid on a DOM element.
 // The imagekitio-react library incorrectly passes some of its internal props down.
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { publicKey, urlEndpoint, authenticationEndpoint, inputRef, ...rest } = props;
   // This component will be called by IKUpload internally. We intercept and remove
   // props that should not be passed to the underlying DOM element.
