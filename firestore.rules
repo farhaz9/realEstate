@@ -64,15 +64,13 @@ service cloud.firestore {
     /**
      * @description Manages user profile documents.
      * @path /users/{userId}
+     * @allow (get) Anyone can read user profiles to display owner information on property pages.
      * @allow (create) An authenticated user creating their own profile document.
-     * @allow (get) Any user can read basic profile info for property listings and professional pages.
      * @deny (get) User 'A' trying to read sensitive profile info of user 'B'.
      * @principle Restricts access to a user's own data tree, but allows public reads for display purposes.
      */
     match /users/{userId} {
-      // Any signed-in user can read another user's document (for owner details on property page).
-      // Creating a user document is only for the owner.
-      allow get: if isSignedIn();
+      allow get: if true;
       allow create: if isOwner(userId);
       allow update: if isOwner(userId) && isUpdatingAllowedUserFields();
       allow list: if isSignedIn(); // Allow listing users for the professionals page.
