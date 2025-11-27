@@ -16,7 +16,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
   const imageCount = property.imageUrls?.length ?? 0;
 
   return (
-    <Link href="#" className="block group h-full">
+    <Link href={`/properties/${property.id}`} className="block group h-full">
         <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md h-full flex flex-col">
             <div className="relative h-40">
                 {propertyImage && (
@@ -48,5 +48,3 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
     </Link>
   );
 }
-
-    
