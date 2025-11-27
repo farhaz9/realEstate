@@ -19,7 +19,7 @@ import { FeaturedProfessionals } from "@/components/shared/featured-professional
 const faqs = [
   {
     question: "What makes you the best real estate company in Delhi?",
-    answer: "As the best real estate company in Delhi, we provide unparalleled access to exclusive luxury properties, expert market insights, and a seamless client experience from start to finish."
+    answer: "As the best real_estate company in Delhi, we provide unparalleled access to exclusive luxury properties, expert market insights, and a seamless client experience from start to finish."
   },
   {
     question: "Do you offer interior design services in Delhi?",
@@ -130,7 +130,7 @@ export default function HomePage() {
             </span>
           </h2>
            <div className="mt-8 relative">
-             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar justify-center">
+             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar">
               {quickServices.map((service) => (
                 <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary group-hover:scale-105 group-hover:shadow-lg">
