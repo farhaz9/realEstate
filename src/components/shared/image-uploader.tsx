@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useImageKit } from '@/imagekit/provider';
 import { IKUpload } from 'imagekitio-react';
 import { Button } from '@/components/ui/button';
