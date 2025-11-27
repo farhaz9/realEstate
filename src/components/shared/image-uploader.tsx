@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef } from 'react';
@@ -98,14 +99,13 @@ export function ImageUploader({ value, onChange, folder = 'other' }: ImageUpload
       
       {imageKit && (
          <div style={{ display: 'none' }}>
-            <IKUpload
+            <CleanIKUpload
                 imageKit={imageKit}
                 folder={`/${folder}`}
                 onUploadStart={() => setIsUploading(true)}
                 onSuccess={handleUploadSuccess}
                 onError={handleUploadError}
                 inputRef={uploaderRef}
-                style={{ display: 'none' }}
                 />
          </div>
       )}

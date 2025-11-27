@@ -71,17 +71,25 @@ export default function ProfilePage() {
   const handleUploadSuccess = async (res: any) => {
     const photoURL = res.url;
     setNewAvatarUrl(photoURL);
+    // Don't save immediately, wait for the save button
+  };
+  
+  const handleSaveChanges = async () => {
+     if (!newAvatarUrl || !auth.currentUser || !userDocRef) {
+      toast({ title: "Nothing to save", description: "Select a new profile picture first.", variant: "destructive" });
+      return;
+    }
+    
     setIsSaving(true);
     try {
-      if (auth.currentUser && userDocRef) {
-        await updateProfile(auth.currentUser, { photoURL });
-        await updateDoc(userDocRef, { photoURL });
+        await updateProfile(auth.currentUser, { photoURL: newAvatarUrl });
+        await updateDoc(userDocRef, { photoURL: newAvatarUrl });
         toast({
           title: "Profile Saved!",
           description: "Your new profile picture has been saved.",
           variant: 'success',
         });
-      }
+        setNewAvatarUrl(null); // Reset after saving
     } catch (error) {
       console.error("Error saving profile picture:", error);
       toast({ title: "Save Failed", description: "Could not save your new profile picture.", variant: "destructive" });
@@ -184,7 +192,7 @@ export default function ProfilePage() {
                   
                   {imageKit && (
                     <div style={{ display: 'none' }}>
-                      <IKUpload
+                      <CleanIKUpload
                         imageKit={imageKit}
                         fileName={`profile_${user.uid}.jpg`}
                         folder="/profiles"
@@ -192,7 +200,6 @@ export default function ProfilePage() {
                         isPrivateFile={false}
                         onSuccess={handleUploadSuccess}
                         onError={handleUploadError}
-                        style={{ display: 'none' }}
                         inputRef={fileInputRef}
                       />
                     </div>
@@ -204,7 +211,7 @@ export default function ProfilePage() {
                     disabled={isSaving}
                     aria-label="Upload new picture"
                   >
-                    {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
+                    <Upload className="h-5 w-5" />
                   </Button>
                 </div>
                 <CardTitle className="mt-4 text-3xl">{userProfile.fullName}</CardTitle>
@@ -242,6 +249,25 @@ export default function ProfilePage() {
                       </div>
                   </div>
               </CardContent>
+              <CardFooter className="p-6">
+                 <Button
+                  onClick={handleSaveChanges}
+                  disabled={!newAvatarUrl || isSaving}
+                  className="w-full"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Save Profile
+                    </>
+                  )}
+                </Button>
+              </CardFooter>
             </Card>
           </TabsContent>
 
