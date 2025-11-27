@@ -121,9 +121,9 @@
           "type": "number",
           "description": "The number of bathrooms in the property."
         },
-        "squareFootage": {
+        "squareYards": {
           "type": "number",
-          "description": "The square footage of the property."
+          "description": "The area of the property in square yards."
         },
         "amenities": {
           "type": "array",
@@ -162,7 +162,7 @@
         "propertyType",
         "bedrooms",
         "bathrooms",
-        "squareFootage",
+        "squareYards",
         "dateListed"
       ]
     }
@@ -212,3 +212,5 @@
     "reasoning": "The Firestore structure is designed for a public property marketplace. User profiles are private, stored under '/users/{userId}'. Properties are stored in a top-level '/properties' collection, making them publicly readable for listings. Security rules ensure that while anyone can view properties, only the authenticated owner (verified via the 'userId' field in the property document) can create, update, or delete their own listings. The User entity now includes a `wishlist` array to store property IDs, and rules allow users to modify their own wishlist. This separation maintains user privacy while allowing for a public, searchable property database with personalized features."
   }
 }
+
+    

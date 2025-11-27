@@ -16,7 +16,7 @@ export type Property = {
   propertyType: string;
   bedrooms: number;
   bathrooms: number;
-  squareFootage: number;
+  squareYards: number;
   amenities: string[];
   imageUrls: string[];
   isFeatured: boolean;
@@ -47,3 +47,5 @@ export type User = {
   photoURL?: string;
   wishlist?: string[];
 }
+
+    

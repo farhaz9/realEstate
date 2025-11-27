@@ -131,7 +131,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           </div>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
-            <span className="text-sm">{property.squareFootage ? `${property.squareFootage.toLocaleString()} sqft` : 'N/A'}</span>
+            <span className="text-sm">{property.squareYards ? `${property.squareYards.toLocaleString()} sqyd` : 'N/A'}</span>
           </div>
         </div>
       </CardContent>
@@ -174,3 +174,5 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     </Card>
   );
 }
+
+    

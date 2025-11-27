@@ -54,7 +54,7 @@ const propertyFormSchema = z.object({
   propertyType: z.string().min(2, { message: 'Property type is required.' }),
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
-  squareFootage: z.coerce.number().positive({ message: 'Square footage must be a positive number.' }),
+  squareYards: z.coerce.number().positive({ message: 'Square yards must be a positive number.' }),
   imageUrls: z.array(z.string()).min(1, { message: 'Please upload at least one image.' }),
 });
 
@@ -90,7 +90,7 @@ export default function AddPropertyPage() {
       propertyType: '',
       bedrooms: 0,
       bathrooms: 0,
-      squareFootage: 0,
+      squareYards: 0,
       imageUrls: [],
     },
   });
@@ -407,12 +407,12 @@ export default function AddPropertyPage() {
                   />
                   <FormField
                     control={form.control}
-                    name="squareFootage"
+                    name="squareYards"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Area (sq. ft.)</FormLabel>
+                        <FormLabel>Area (sq. yards)</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="e.g., 2200" {...field} />
+                          <Input type="number" placeholder="e.g., 250" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -444,3 +444,5 @@ export default function AddPropertyPage() {
     </>
   );
 }
+
+    
