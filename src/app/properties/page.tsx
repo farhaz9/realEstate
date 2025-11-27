@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
 import {
   Select,
@@ -34,9 +35,10 @@ const searchSuggestions = [
 
 export default function PropertiesPage() {
   const firestore = useFirestore();
+  const searchParams = useSearchParams();
   
-  const [activeTab, setActiveTab] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [location, setLocation] = useState('all');
   const [bedrooms, setBedrooms] = useState(0);
   const [bathrooms, setBathrooms] = useState(0);
@@ -73,7 +75,7 @@ export default function PropertiesPage() {
       const tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
-                       (activeTab === 'pg' && p.propertyType.toLowerCase() === 'pg');
+                       (activeTab === 'pg' && p.propertyType.toLowerCase().includes('pg'));
 
       const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -108,7 +110,7 @@ export default function PropertiesPage() {
               </TabsList>
             </Tabs>
             <Button asChild className="hidden sm:flex ml-4 flex-shrink-0">
-                <Link href="/add-property">
+                <Link href="/profile?tab=listings">
                     Post Ad
                     <span className="ml-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-sm">FREE</span>
                 </Link>

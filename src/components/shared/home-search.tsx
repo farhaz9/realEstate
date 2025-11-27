@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -47,7 +48,7 @@ export function HomeSearch() {
                 )}
               </button>
             ))}
-            <Link href="/add-property" className="ml-auto text-sm font-semibold text-muted-foreground hover:text-primary relative pb-2">
+            <Link href="/profile?tab=listings" className="ml-auto text-sm font-semibold text-muted-foreground hover:text-primary relative pb-2">
                 Post Ad
                 <span className="absolute top-[-10px] right-[-25px] bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-sm text-[10px]">FREE</span>
             </Link>

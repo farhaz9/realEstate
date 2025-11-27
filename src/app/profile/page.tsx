@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -19,12 +19,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'profile';
+
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -107,7 +110,7 @@ export default function ProfilePage() {
       </div>
       
       <div className="container mx-auto px-4 py-12">
-        <Tabs defaultValue="profile" className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto mb-8">
             <TabsTrigger value="profile">Profile Details</TabsTrigger>
             <TabsTrigger value="listings">My Listings</TabsTrigger>
@@ -198,4 +201,12 @@ export default function ProfilePage() {
       </div>
     </>
   );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<Loader2 className="h-8 w-8 animate-spin" />}>
+      <ProfilePageContent />
+    </Suspense>
+  )
 }
