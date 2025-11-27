@@ -130,7 +130,7 @@ export default function HomePage() {
             </span>
           </h2>
            <div className="mt-8 relative">
-             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 -mx-4 px-4 hide-scrollbar justify-center">
+             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar justify-center">
               {quickServices.map((service) => (
                 <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary group-hover:scale-105 group-hover:shadow-lg">
