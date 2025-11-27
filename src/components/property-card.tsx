@@ -94,12 +94,22 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         variant: "success",
     });
   };
+  
+  const handlePhoneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    window.location.href = `tel:${property.contactNumber}`;
+  };
+
+  const handleWhatsAppClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    window.open(`https://wa.me/${property.whatsappNumber}`, '_blank');
+  };
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
   return (
-    <Card asChild className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
-      <Link href={`/properties/${property.id}`}>
+    <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
+      <Link href={`/properties/${property.id}`} className="block">
         <CardHeader className="p-0 relative h-56 flex-shrink-0">
           {propertyImage && (
             <Image
@@ -141,19 +151,18 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="p-6 pt-0 mt-auto flex items-center gap-2">
-          <Button className="w-full">
-            View Details <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <Button size="icon" variant="outline" asChild>
-            <Link href={`tel:${property.contactNumber}`}>
-              <Phone />
+      </Link>
+      <CardFooter className="p-6 pt-0 mt-auto flex items-center gap-2">
+          <Button asChild className="w-full">
+            <Link href={`/properties/${property.id}`}>
+              View Details <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button size="icon" variant="outline" asChild>
-            <Link href={`https://wa.me/${property.whatsappNumber}`} target="_blank">
-              <WhatsAppIcon className="h-6 w-6 text-green-600" />
-            </Link>
+          <Button size="icon" variant="outline" onClick={handlePhoneClick}>
+            <Phone />
+          </Button>
+          <Button size="icon" variant="outline" onClick={handleWhatsAppClick}>
+            <WhatsAppIcon className="h-6 w-6 text-green-600" />
           </Button>
           {showDeleteButton && (
             <AlertDialog>
@@ -177,9 +186,6 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             </AlertDialog>
           )}
         </CardFooter>
-      </Link>
     </Card>
   );
 }
-
-    
