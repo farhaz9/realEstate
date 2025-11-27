@@ -1,93 +1,13 @@
-
-/**
- * This ruleset enforces a security model for the Delhi Estate Luxe application.
- *
- * Core Philosophy:
- * User profiles are private and can only be accessed by the owner. Property listings are public to
- * everyone for viewing, but can only be created, modified, or deleted by the authenticated user
- * who owns them.
- *
- * Data Structure:
- * - User profiles are stored at `/users/{userId}`.
- * - All property listings are stored in a top-level collection at `/properties/{propertyId}`.
- *
- * Key Security Decisions:
- * - User Isolation: A user can only interact with their own profile data.
- * - Public Listings: The `/properties` collection is world-readable to allow anyone to browse listings.
- * - Ownership-Based Writes: Write operations (create, update, delete) on properties are strictly
- *   enforced to ensure only the owner of a property can modify it. The `userId` field within each
- *   property document is the source of truth for ownership.
- * - Wishlist Management: Users can only modify their own wishlist, which is a field on their user document.
- *
- * Denormalization for Authorization:
- * Each `Property` document contains a `userId` field. The rules enforce that this field matches the
- * authenticated user's UID upon creation and cannot be changed upon update. This creates a permanent,
- * auditable link between a property and its owner directly within the document, simplifying security
- * logic and client-side queries.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ----------------------------------------------------------------------
-    // Helper Functions
-    // ----------------------------------------------------------------------
-
-    /**
-     * Checks if the user is authenticated.
-     */
-    function isSignedIn() {
-      return request.auth != null;
+    match /properties/{docId} {
+      allow read, write: if request.auth != null;
     }
 
-    /**
-     * Checks if the currently authenticated user's UID matches the provided userId.
-     * This is the foundation of the ownership model.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-    
-    /**
-     * Checks if the user is updating only the fields they are allowed to.
-     * For user profiles, this is currently the wishlist and photoURL.
-     */
-    function isUpdatingAllowedUserFields() {
-      let allowedFields = ['wishlist', 'photoURL'];
-      return request.resource.data.keys().hasOnly(allowedFields);
-    }
-
-    // ----------------------------------------------------------------------
-    // Collection Rules
-    // ----------------------------------------------------------------------
-
-    /**
-     * @description Manages user profile documents.
-     * @path /users/{userId}
-     * @allow (get) Anyone can read user profiles to display owner information on property pages.
-     * @allow (create) An authenticated user creating their own profile document.
-     * @deny (get) User 'A' trying to read sensitive profile info of user 'B'.
-     * @principle Restricts access to a user's own data tree, but allows public reads for display purposes.
-     */
-    match /users/{userId} {
-      allow get: if true;
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && isUpdatingAllowedUserFields();
-      allow list: if isSignedIn(); // Allow listing users for the professionals page.
-    }
-
-    /**
-     * @description Manages all property documents in a public collection.
-     * @path /properties/{propertyId}
-     * @allow (read, list) Anyone can read individual property listings and query the entire collection.
-     * @allow (create) Any authenticated user can create a listing, as long as they set themselves as the owner.
-     * @allow (update, delete) Only the user who owns the property can update or delete it.
-     * @principle Public read access for listings, but write access is restricted to the owner.
-     */
-    match /properties/{propertyId} {
-      allow read, list: if true;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
