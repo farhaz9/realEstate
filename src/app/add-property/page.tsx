@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -77,7 +78,7 @@ const propertyFormSchema = z.object({
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
   squareYards: z.coerce.number().positive({ message: 'Square yards must be a positive number.' }),
-  imageUrls: z.array(z.string()).min(1, { message: 'Please upload at least one image.' }),
+  imageUrls: z.array(z.string()),
   furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
     required_error: 'Please select a furnishing status.',
   }),
@@ -237,7 +238,7 @@ export default function AddPropertyPage() {
                   name="imageUrls"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Property Images</FormLabel>
+                      <FormLabel>Property Images (Optional)</FormLabel>
                       <FormControl>
                         <ImageUploader
                           value={field.value}
