@@ -92,7 +92,7 @@ export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user, isUserLoading } = useUser();
-  const { isScrolled } = useOnScroll(200); // Trigger when scrolled more than 200px
+  const { isScrolled } = useOnScroll('offers'); 
 
   const isHomePage = pathname === '/';
 
