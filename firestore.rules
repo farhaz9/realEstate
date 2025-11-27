@@ -12,9 +12,17 @@ service cloud.firestore {
     }
     
     match /properties/{propertyId} {
-      allow read: if true;
+      // Allow anyone to read a single property document
+      allow get: if true;
+      // Allow authenticated users to create properties
       allow create: if request.auth != null;
+      // Allow only the owner to update or delete their property
       allow update, delete: if isOwner(resource.data.userId);
+    }
+
+    // This rule is necessary to allow querying the entire properties collection
+    match /properties {
+        allow list: if true;
     }
   }
 }
