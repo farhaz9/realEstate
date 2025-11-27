@@ -2,12 +2,12 @@
 'use client';
 
 import { useState, useRef, forwardRef } from 'react';
-import { useImageKit } from '@/imagekit/provider';
 import { IKUpload, IKUploadProps } from 'imagekitio-react';
 import { Button } from '@/components/ui/button';
 import { Loader2, UploadCloud, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { useImageKit } from '@/imagekit/provider';
 
 interface ImageUploaderProps {
   value: string[];
@@ -18,9 +18,9 @@ interface ImageUploaderProps {
 // Wrapper component to prevent non-DOM props from being passed down
 // We use forwardRef to correctly pass the ref to the underlying IKUpload component.
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
-  const { imageKit, inputRef, ...rest } = props;
+  const { publicKey, urlEndpoint, authenticationEndpoint, ...rest } = props;
   // @ts-ignore - The library's component passes unrecognized props, so we manually pass only the valid ones.
-  return <IKUpload {...rest} ref={ref} />;
+  return <IKUpload {...rest} ref={ref} publicKey={publicKey} urlEndpoint={urlEndpoint} authenticationEndpoint={authenticationEndpoint} />;
 });
 CleanIKUpload.displayName = 'CleanIKUpload';
 
