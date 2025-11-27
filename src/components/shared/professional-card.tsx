@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { User as UserIcon } from 'lucide-react';
+import Image from 'next/image';
 
 interface ProfessionalCardProps {
   professional: User;
@@ -25,20 +26,57 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
     return name.substring(0, 2).toUpperCase();
   }
 
+  // Placeholder data as it's not in the User model
+  const operatingSince = 2010 + (professional.fullName.length % 10);
+  const buyersServed = 1000 + (professional.fullName.length * 50);
+  const propertiesForSale = 10 + (professional.fullName.length % 15);
+  const propertiesForRent = 5 + (professional.fullName.length % 20);
+
   return (
-    <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:border-primary">
-       <CardContent className="p-6 text-center">
-            <Avatar className="h-24 w-24 mx-auto border-4 border-background shadow-md">
-                <AvatarImage src={professional.photoURL} alt={professional.fullName} />
-                <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
-                    {professional.fullName ? getInitials(professional.fullName) : <UserIcon />}
-                </AvatarFallback>
-            </Avatar>
-            <h3 className="mt-4 font-bold text-lg truncate">{professional.fullName}</h3>
-            <Badge variant="secondary" className="mt-1">{categoryDisplay[professional.category] || professional.category}</Badge>
-            <Button asChild className="mt-4 w-full" size="sm">
-                <Link href={`/professionals`}>View Details</Link>
-            </Button>
+    <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/20">
+       <CardContent className="p-4">
+            <div className="flex gap-4">
+                <Avatar className="h-20 w-20 border-2 border-primary">
+                    <AvatarImage src={professional.photoURL} alt={professional.fullName} />
+                    <AvatarFallback className="text-3xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                        {professional.fullName ? getInitials(professional.fullName) : <UserIcon />}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="flex-grow">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <Badge variant="secondary">{categoryDisplay[professional.category] || professional.category}</Badge>
+                            <h3 className="font-bold text-xl mt-1">{professional.fullName}</h3>
+                        </div>
+                        <Image src="https://placehold.co/80x30/png?text=Badge" alt="Preferred Agent" width={60} height={22} className="opacity-70" />
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">B S Associates</p>
+                </div>
+            </div>
+
+            <div className="mt-4 text-xs text-muted-foreground">
+                <span>Operating Since {operatingSince}</span> | <span>{buyersServed}+ Buyers Served</span>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <p className="text-lg font-bold">{propertiesForSale}</p>
+                    <p className="text-xs text-muted-foreground">Properties for Sale</p>
+                </div>
+                <div>
+                    <p className="text-lg font-bold">{propertiesForRent}</p>
+                    <p className="text-xs text-muted-foreground">Properties for Rent</p>
+                </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between gap-2">
+                <Button variant="link" size="sm" asChild>
+                    <Link href={`/professionals`}>View Details</Link>
+                </Button>
+                <Button size="sm" asChild className="flex-grow">
+                    <Link href={`/properties?agent=${professional.id}`}>View Properties</Link>
+                </Button>
+            </div>
        </CardContent>
     </Card>
   );
