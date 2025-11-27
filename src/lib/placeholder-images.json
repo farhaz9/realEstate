@@ -3,235 +3,235 @@
     {
       "id": "hero-1",
       "description": "Modern luxury house with a swimming pool at twilight",
-      "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob21lfGVufDB8fHx8MTc2MzM4MTU0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/hero-1_H4s-UrQ5W.jpg",
       "imageHint": "luxury home"
     },
     {
       "id": "property-1",
       "description": "Modern living room with city view",
-      "imageUrl": "https://images.unsplash.com/photo-1554995207-c18c203602cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsaXZpbmclMjByb29tfGVufDB8fHx8MTc2MzQ0NzMxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/property-1_T7oAoyvUo.jpg",
       "imageHint": "living room"
     },
     {
       "id": "property-2",
       "description": "Spacious villa with a private pool",
-      "imageUrl": "https://images.unsplash.com/photo-1720161263981-84281892ee4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2aWxsYSUyMHBvb2x8ZW58MHx8fHwxNzYzNDI2Njc1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/property-2_Uv3gI6k1o.jpg",
       "imageHint": "villa pool"
     },
     {
       "id": "property-3",
       "description": "Elegant penthouse kitchen with marble island",
-      "imageUrl": "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBraXRjaGVufGVufDB8fHx8MTc2MzQyNjY3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/property-3_gL7A9yZfE.jpg",
       "imageHint": "modern kitchen"
     },
     {
       "id": "property-4",
       "description": "Cozy farmhouse with a large garden",
-      "imageUrl": "https://images.unsplash.com/photo-1721786031802-10c0dc92d10a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXJtaG91c2UlMjBnYXJkZW58ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/property-4_IZU2a_f-q.jpg",
       "imageHint": "farmhouse garden"
     },
     {
       "id": "property-5",
       "description": "Luxury apartment bedroom with balcony",
-      "imageUrl": "https://images.unsplash.com/photo-1615874959474-d609969a20ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxiZWRyb29tJTIwaW50ZXJpb3J8ZW58MHx8fHwxNzYzMzgxMTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/property-5_c2aJg8d-M.jpg",
       "imageHint": "bedroom interior"
     },
     {
       "id": "property-6",
       "description": "High-rise apartment with panoramic views",
-      "imageUrl": "https://images.unsplash.com/photo-1534298261662-f8fdd25317db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaXR5JTIwc2t5bGluZXxlbnwwfHx8fDE3NjMzNjg4OTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/property-6_R9yA9tZfE.jpg",
       "imageHint": "city skyline"
     },
     {
       "id": "builder-logo-1",
       "description": "Emaar India logo",
-      "imageUrl": "https://images.unsplash.com/photo-1747862712521-e4a37b12a039?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMGxvZ298ZW58MHx8fHwxNzYzMzcwODA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/builder-logo-1_bK4A9yZfE.jpg",
       "imageHint": "abstract logo"
     },
     {
       "id": "builder-logo-2",
       "description": "DLF logo",
-      "imageUrl": "https://images.unsplash.com/photo-1560005360-f5df6037001a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnZW9tZXRyaWMlMjBsb2dvfGVufDB8fHx8MTc2MzM2MDEzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/builder-logo-2_Z4gA9tZfE.jpg",
       "imageHint": "geometric logo"
     },
     {
       "id": "builder-logo-3",
       "description": "Godrej Properties logo",
-      "imageUrl": "https://images.unsplash.com/photo-1610340804490-e9d7b22aee1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtaW5pbWFsaXN0JTIwbG9nb3xlbnwwfHx8fDE3NjMzMjkyNDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/builder-logo-3_gU3A9tZfE.jpg",
       "imageHint": "minimalist logo"
     },
     {
       "id": "builder-logo-4",
       "description": "Omaxe logo",
-      "imageUrl": "https://images.unsplash.com/photo-1634729020084-106e70838c97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0eXBvZ3JhcGh5JTIwbG9nb3xlbnwwfHx8fDE3NjM0MzI3MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/builder-logo-4_gL7A9yZfE.jpg",
       "imageHint": "typography logo"
     },
     {
       "id": "builder-logo-5",
       "description": "Ansal API logo",
-      "imageUrl": "https://images.unsplash.com/photo-1713176988815-47bb84f325b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb3Jwb3JhdGUlMjBsb2dvfGVufDB8fHx8MTc2MzQxNzM4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/builder-logo-5_H4s-UrQ5W.jpg",
       "imageHint": "corporate logo"
     },
     {
       "id": "interior-1-1",
       "description": "Minimalist living room design",
-      "imageUrl": "https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwaW50ZXJpb3J8ZW58MHx8fHwxNzYzMzg3NzU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-1-1_bK4A9yZfE.jpg",
       "imageHint": "minimalist interior"
     },
     {
       "id": "interior-1-2",
       "description": "Detail of a minimalist coffee table setup",
-      "imageUrl": "https://images.unsplash.com/photo-1687515006095-44d8a25b4440?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbnRlcmlvciUyMGRldGFpbHxlbnwwfHx8fDE3NjM0NTA3ODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-1-2_Z4gA9tZfE.jpg",
       "imageHint": "interior detail"
     },
     {
       "id": "interior-1-3",
       "description": "Minimalist bedroom with neutral tones",
-      "imageUrl": "https://images.unsplash.com/photo-1560449752-ac541afdd6b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuZXV0cmFsJTIwYmVkcm9vbXxlbnwwfHx8fDE3NjM0NTA3ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-1-3_gU3A9tZfE.jpg",
       "imageHint": "neutral bedroom"
     },
     {
       "id": "interior-2-1",
       "description": "Classic luxurious dining room",
-      "imageUrl": "https://images.unsplash.com/photo-1621873815234-781259c55de5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsdXh1cnklMjBkaW5pbmd8ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-2-1_gL7A9yZfE.jpg",
       "imageHint": "luxury dining"
     },
     {
       "id": "interior-2-2",
       "description": "Chandelier detail in a classic room",
-      "imageUrl": "https://images.unsplash.com/photo-1588436199489-ac376a0b3884?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjaGFuZGVsaWVyfGVufDB8fHx8MTc2MzQ1MDc4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-2-2_H4s-UrQ5W.jpg",
       "imageHint": "chandelier"
     },
     {
       "id": "interior-2-3",
       "description": "Ornate details of classic interior design",
-      "imageUrl": "https://images.unsplash.com/photo-1588796460733-82d656bfbc49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjbGFzc2ljJTIwZGVjb3J8ZW58MHx8fHwxNzYzNDUwNzg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-2-3_bK4A9yZfE.jpg",
       "imageHint": "classic decor"
     },
     {
       "id": "interior-3-1",
       "description": "Modern urban loft living room with exposed brick wall.",
-      "imageUrl": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHx1cmJhbiUyMGxvZnR8ZW58MHx8fHwxNzAwMTU0ODkxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-3-1_Z4gA9tZfE.jpg",
       "imageHint": "urban loft"
     },
     {
       "id": "interior-3-2",
       "description": "Open-plan kitchen in a modern urban loft.",
-      "imageUrl": "https://images.unsplash.com/photo-1600210492493-417193b580a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHw1fHxvcGVuJTIwa2l0Y2hlbiUyMGxvZnR8ZW58MHx8fHwxNzAwMTU0ODkxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-3-2_gU3A9tZfE.jpg",
       "imageHint": "loft kitchen"
     },
     {
       "id": "interior-3-3",
       "description": "Bedroom in a loft with large windows.",
-      "imageUrl": "https://images.unsplash.com/photo-1594451715429-2598a8a4d402?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwzfHxiZWRyb29tJTIwbG9mdHxlbnwwfHx8fDE3MDAxNTQ4OTF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-3-3_gL7A9yZfE.jpg",
       "imageHint": "loft bedroom"
     },
     {
       "id": "interior-4-1",
       "description": "Living room with bohemian chic decor.",
-      "imageUrl": "https://images.unsplash.com/photo-1543138241-b6a8a3f8952b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxib2hlbWlhbiUyMGNoaWN8ZW58MHx8fHwxNzAwMTU0ODkyfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-4-1_H4s-UrQ5W.jpg",
       "imageHint": "bohemian chic"
     },
     {
       "id": "interior-4-2",
       "description": "Cozy reading corner with macrame and plants.",
-      "imageUrl": "https://images.unsplash.com/photo-1597148569110-2d88a107e324?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwyfHxib2hvJTIwcmVhZGluZ3xlbnwwfHx8fDE3MDAxNTQ4OTJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-4-2_bK4A9yZfE.jpg",
       "imageHint": "boho reading"
     },
     {
       "id": "interior-4-3",
       "description": "Bohemian style bedroom with patterned textiles.",
-      "imageUrl": "https://images.unsplash.com/photo-1605335193987-a2e1c98897b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxib2hvJTIwYmVkcm9vbXxlbnwwfHx8fDE3MDAxNTQ4OTJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-4-3_Z4gA9tZfE.jpg",
       "imageHint": "boho bedroom"
     },
     {
       "id": "interior-5-1",
       "description": "Bright and airy Scandinavian living room.",
-      "imageUrl": "https://images.unsplash.com/photo-1616046229478-9901c5536a45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBsaXZpbmclMjByb29tfGVufDB8fHx8MTcwMDE1NDg5M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-5-1_gU3A9tZfE.jpg",
       "imageHint": "scandinavian living"
     },
     {
       "id": "interior-5-2",
       "description": "Minimalist Scandinavian kitchen with light wood.",
-      "imageUrl": "https://images.unsplash.com/photo-1633211539268-6887f4743e06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBraXRjaGVufGVufDB8fHx8MTcwMDE1NDg5M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-5-2_gL7A9yZfE.jpg",
       "imageHint": "scandinavian kitchen"
     },
     {
       "id": "interior-5-3",
       "description": "Simple and cozy Scandinavian bedroom.",
-      "imageUrl": "https://images.unsplash.com/photo-1512138672904-2415411a3013?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBiZWRyb29tfGVufDB8fHx8MTcwMDE1NDg5M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-5-3_H4s-UrQ5W.jpg",
       "imageHint": "scandinavian bedroom"
     },
     {
       "id": "interior-6-1",
       "description": "Spacious industrial living room with concrete walls.",
-      "imageUrl": "https://images.unsplash.com/photo-1618221118493-719540501132?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwaW50ZXJpb3J8ZW58MHx8fHwxNzAwMTU0ODk0fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-6-1_bK4A9yZfE.jpg",
       "imageHint": "industrial interior"
     },
     {
       "id": "interior-6-2",
       "description": "Industrial kitchen with stainless steel and dark tones.",
-      "imageUrl": "https://images.unsplash.com/photo-1594911762331-b6f7203b8794?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwa2l0Y2hlbnxlbnwwfHx8fDE3MDAxNTQ4OTR8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-6-2_Z4gA9tZfE.jpg",
       "imageHint": "industrial kitchen"
     },
     {
       "id": "interior-6-3",
       "description": "Bedroom with industrial elements and soft lighting.",
-      "imageUrl": "https://images.unsplash.com/photo-1589139922264-a69f1095b54b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwYmVkcm9vbXxlbnwwfHx8fDE3MDAxNTQ4OTR8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interior-6-3_gU3A9tZfE.jpg",
       "imageHint": "industrial bedroom"
     },
     {
       "id": "contact-hero",
       "description": "Modern office reception area",
-      "imageUrl": "https://images.unsplash.com/photo-1594235046782-8ee6fa676300?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxvZmZpY2UlMjByZWNlcHRpb258ZW58MHx8fHwxNzYzMzgzNzI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/contact-hero_gL7A9yZfE.jpg",
       "imageHint": "office reception"
     },
     {
       "id": "service-properties",
       "description": "Exterior of a modern luxury apartment building",
-      "imageUrl": "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bHV4dXJ5JTIwYXBhcnRtZW50fGVufDB8fHx8MTc2MzU2Nzg2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/service-properties_H4s-UrQ5W.jpg",
       "imageHint": "luxury apartment"
     },
     {
       "id": "service-construction",
       "description": "A building under construction with cranes",
-      "imageUrl": "https://images.unsplash.com/photo-1638519922476-50688bb1f318?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxidWlsZGluZyUyMGNvbnN0cnVjdGlvbnxlbnwwfHx8fDE3NjM1NDIyNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/service-construction_bK4A9yZfE.jpg",
       "imageHint": "building construction"
     },
     {
       "id": "service-interiors",
       "description": "A stylish and modern living room interior",
-      "imageUrl": "https://images.unsplash.com/photo-1631510390389-c1e4fb20ff31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtb2Rlcm4lMjBpbnRlcmlvcnxlbnwwfHx8fDE3NjM1MzMwNTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/service-interiors_Z4gA9tZfE.jpg",
       "imageHint": "modern interior"
     },
     {
       "id": "service-miscellaneous",
       "description": "Detail of custom joinery and lighting in a luxury home.",
-      "imageUrl": "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwyMHx8bHV4dXJ5JTIwZGV0YWlsfGVufDB8fHx8MTY5OTk2NDgzN3ww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/service-miscellaneous_gU3A9tZfE.jpg",
       "imageHint": "custom finishing"
     },
     {
       "id": "service-consultancy",
       "description": "Two professionals in a meeting discussing blueprints",
-      "imageUrl": "https://images.unsplash.com/photo-1573164574572-cb89e39749b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MHx8fHwxNzYzNTczNjM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/service-consultancy_gL7A9yZfE.jpg",
       "imageHint": "business meeting"
     },
     {
       "id": "properties-hero",
       "description": "Grand exterior of a luxury villa with a pool",
-      "imageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjB2aWxsYXxlbnwwfHx8fDE3MDkyODc1MjJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/properties-hero_H4s-UrQ5W.jpg",
       "imageHint": "luxury villa"
     },
     {
       "id": "interiors-hero",
       "description": "Bright and elegant modern living room with large windows",
-      "imageUrl": "https://images.unsplash.com/photo-1618220179428-22790b461013?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHw1fHxtb2Rlcm4lMjBpbnRlcmlvciUyMGRlc2lnbnxlbnwwfHx8fDE3MDkyODc1NTF8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/interiors-hero_bK4A9yZfE.jpg",
       "imageHint": "modern living room"
     },
     {
       "id": "services-hero",
       "description": "Architects reviewing blueprints on a construction site",
-      "imageUrl": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzk2NTR8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTcwOTI4NzU3NXww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://ik.imagekit.io/farhaz/services-hero_Z4gA9tZfE.jpg",
       "imageHint": "construction site"
     }
   ]

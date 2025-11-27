@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase, useFirebaseApp } from '@/firebase';
+import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection, query, where, updateDoc } from 'firebase/firestore';
 import { updateProfile, getAuth } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -14,20 +14,20 @@ import { Input } from '@/components/ui/input';
 import { Loader2, User, Mail, Phone, Briefcase, Upload, Save } from 'lucide-react';
 import type { User as UserType, Property } from '@/types';
 import { PropertyCard } from '@/components/property-card';
-import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useImageKit } from '@/imagekit/provider';
+import { IKUpload } from 'imagekitio-react';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const firebaseApp = useFirebaseApp();
   const auth = getAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const imageKit = useImageKit();
 
   const [isSaving, setIsSaving] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
+  const [newAvatarUrl, setNewAvatarUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const userDocRef = useMemoFirebase(() => {
@@ -54,115 +54,41 @@ export default function ProfilePage() {
       router.push('/login');
     }
   }, [user, isUserLoading, router, toast]);
-  
-  useEffect(() => {
-    if (userProfile?.photoURL && !newAvatarFile) {
-      setAvatarUrl(userProfile.photoURL);
-    }
-  }, [userProfile, newAvatarFile]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-      toast({
-        title: "File Too Large",
-        description: "Please select an image smaller than 2MB.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setNewAvatarFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setAvatarUrl(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-  
-  const handleSaveChanges = async () => {
-    if (!newAvatarFile || !user || !firebaseApp || !userDocRef) {
-      toast({
-        title: "No Changes to Save",
-        description: "You haven't selected a new profile picture.",
-      });
-      return;
-    }
-  
+  const handleUploadSuccess = async (res: any) => {
+    const photoURL = res.url;
+    setNewAvatarUrl(photoURL);
     setIsSaving(true);
-  
     try {
-      const reader = new FileReader();
-      
-      reader.onload = async (e) => {
-        const dataUrl = e.target?.result as string;
-        if (!dataUrl) {
-          toast({ title: "File Read Error", description: "Could not read file data.", variant: "destructive" });
-          setIsSaving(false);
-          return;
-        }
-  
-        try {
-          const storage = getStorage(firebaseApp);
-          const storageRef = ref(storage, `profile-pictures/${user.uid}`);
-          await uploadString(storageRef, dataUrl, 'data_url');
-          const photoURL = await getDownloadURL(storageRef);
-  
-          if (auth.currentUser) {
-            await updateProfile(auth.currentUser, { photoURL });
-          }
-          await updateDoc(userDocRef, { photoURL });
-  
-          setAvatarUrl(photoURL);
-          setNewAvatarFile(null); 
-  
-          toast({
-            title: "Profile Saved!",
-            description: "Your new profile picture has been saved.",
-            variant: 'success',
-          });
-  
-        } catch (uploadError) {
-          console.error("Error during upload/update:", uploadError);
-          toast({
-            title: "Save Failed",
-            description: "Could not save your changes. Please try again.",
-            variant: "destructive"
-          });
-          setAvatarUrl(userProfile?.photoURL ?? null); 
-        } finally {
-          setIsSaving(false);
-        }
-      };
-  
-      reader.onerror = (error) => {
-        console.error("File reading error:", error);
+      if (auth.currentUser && userDocRef) {
+        await updateProfile(auth.currentUser, { photoURL });
+        await updateDoc(userDocRef, { photoURL });
         toast({
-          title: "File Error",
-          description: "Could not read the selected file.",
-          variant: "destructive",
+          title: "Profile Saved!",
+          description: "Your new profile picture has been saved.",
+          variant: 'success',
         });
-        setIsSaving(false);
-      };
-  
-      reader.readAsDataURL(newAvatarFile);
-  
+      }
     } catch (error) {
-      console.error("Error preparing file for save:", error);
-      toast({
-        title: "Save Failed",
-        description: "Could not prepare your image for saving. Please try again.",
-        variant: "destructive"
-      });
-      setAvatarUrl(userProfile?.photoURL ?? null);
+      console.error("Error saving profile picture:", error);
+      toast({ title: "Save Failed", description: "Could not save your new profile picture.", variant: "destructive" });
+    } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleUploadError = (err: any) => {
+    console.error("Upload Error:", err);
+    toast({
+      title: "Upload Failed",
+      description: "Could not upload your image. Please try again.",
+      variant: "destructive",
+    });
+    setIsSaving(false);
   };
 
   const renderLoading = () => (
@@ -218,6 +144,8 @@ export default function ProfilePage() {
     'interior-designer': 'Interior Designer'
   };
 
+  const displayAvatar = newAvatarUrl || userProfile.photoURL;
+
   return (
     <>
       <div className="bg-muted/40">
@@ -239,11 +167,25 @@ export default function ProfilePage() {
                <CardHeader className="items-center text-center p-6 bg-muted/30">
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-                    <AvatarImage src={avatarUrl ?? userProfile.photoURL ?? ''} alt={userProfile.fullName ?? ''} />
+                    <AvatarImage src={displayAvatar ?? ''} alt={userProfile.fullName ?? ''} />
                     <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                         {userProfile.fullName ? getInitials(userProfile.fullName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
                   </Avatar>
+                  
+                  {imageKit && (
+                    <IKUpload
+                      imageKit={imageKit}
+                      fileName={`profile_${user.uid}.jpg`}
+                      folder="/profiles"
+                      useUniqueFileName={false}
+                      isPrivateFile={false}
+                      onSuccess={handleUploadSuccess}
+                      onError={handleUploadError}
+                      style={{ display: 'none' }}
+                      inputRef={fileInputRef}
+                    />
+                  )}
                   <Button
                     size="icon"
                     className="absolute bottom-1 right-1 h-9 w-9 rounded-full"
@@ -253,13 +195,6 @@ export default function ProfilePage() {
                   >
                     {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
                   </Button>
-                  <Input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleFileChange}
-                    className="hidden" 
-                    accept="image/png, image/jpeg" 
-                  />
                 </div>
                 <CardTitle className="mt-4 text-3xl">{userProfile.fullName}</CardTitle>
                 <CardDescription>Welcome back to your dashboard!</CardDescription>
@@ -296,16 +231,6 @@ export default function ProfilePage() {
                       </div>
                   </div>
               </CardContent>
-              <CardFooter>
-                 <Button 
-                    className="w-full" 
-                    onClick={handleSaveChanges} 
-                    disabled={!newAvatarFile || isSaving}
-                  >
-                    {isSaving ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2"/>}
-                    {isSaving ? 'Saving...' : 'Save Profile'}
-                  </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -333,5 +258,3 @@ export default function ProfilePage() {
     </>
   );
 }
-
-    

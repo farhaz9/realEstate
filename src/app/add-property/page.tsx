@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Banknote, Loader2, Star } from 'lucide-react';
 import type { Property } from '@/types';
+import { ImageUploader } from '@/components/shared/image-uploader';
 
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
@@ -54,6 +55,7 @@ const propertyFormSchema = z.object({
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
   squareFootage: z.coerce.number().positive({ message: 'Square footage must be a positive number.' }),
+  imageUrls: z.array(z.string()).min(1, { message: 'Please upload at least one image.' }),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -89,6 +91,7 @@ export default function AddPropertyPage() {
       bedrooms: 0,
       bathrooms: 0,
       squareFootage: 0,
+      imageUrls: [],
     },
   });
 
@@ -116,7 +119,6 @@ export default function AddPropertyPage() {
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      imageUrls: ['property-1', 'property-2', 'property-3', 'property-4', 'property-5', 'property-6'].sort(() => 0.5 - Math.random()),
       amenities: [],
     });
 
@@ -199,6 +201,24 @@ export default function AddPropertyPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="imageUrls"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Property Images</FormLabel>
+                      <FormControl>
+                        <ImageUploader
+                          value={field.value}
+                          onChange={field.onChange}
+                          folder="properties"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="title"
