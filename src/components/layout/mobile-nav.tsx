@@ -3,16 +3,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Building, Palette, MessageCircle } from "lucide-react";
+import { Home, Building, Palette, MessageCircle, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 
 const navLinks = [
   { href: "/properties", label: "Properties", icon: Building },
   { href: "/interiors", label: "Interiors", icon: Palette },
   { href: "/", label: "Home", icon: Home },
-  { href: "/contact", label: "Contact", icon: MessageCircle, target:"_self" },
-  { href: "https://wa.me/919953414336", label: "WhatsApp", icon: WhatsAppIcon, target: "_blank", className: "animate-blink" },
+  { href: "/wishlist", label: "Wishlist", icon: Heart },
+  { href: "/contact", label: "Contact", icon: MessageCircle },
 ];
 
 export default function MobileNav() {
@@ -27,7 +26,6 @@ export default function MobileNav() {
             <Link
               key={link.href}
               href={link.href}
-              target={link.target || "_self"}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",

@@ -1,3 +1,4 @@
+
 /**
  * This ruleset enforces a security model for the Delhi Estate Luxe application.
  *
@@ -16,6 +17,7 @@
  * - Ownership-Based Writes: Write operations (create, update, delete) on properties are strictly
  *   enforced to ensure only the owner of a property can modify it. The `userId` field within each
  *   property document is the source of truth for ownership.
+ * - Wishlist Management: Users can only modify their own wishlist, which is a field on their user document.
  *
  * Denormalization for Authorization:
  * Each `Property` document contains a `userId` field. The rules enforce that this field matches the
@@ -45,6 +47,15 @@ service cloud.firestore {
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
+    
+    /**
+     * Checks if the user is updating only the fields they are allowed to.
+     * For user profiles, this is currently the wishlist and photoURL.
+     */
+    function isUpdatingAllowedUserFields() {
+      let allowedFields = ['wishlist', 'photoURL'];
+      return request.resource.data.keys().hasOnly(allowedFields);
+    }
 
     // ----------------------------------------------------------------------
     // Collection Rules
@@ -58,7 +69,8 @@ service cloud.firestore {
      * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read, create: if isOwner(userId);
+      allow update: if isOwner(userId) && isUpdatingAllowedUserFields();
       allow list: if isSignedIn();
     }
 

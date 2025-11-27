@@ -45,4 +45,5 @@ export type User = {
   category: 'listing-property' | 'real-estate-agent' | 'interior-designer';
   dateJoined: Date | any;
   photoURL?: string;
+  wishlist?: string[];
 }
