@@ -18,7 +18,7 @@ interface ImageUploaderProps {
 // Wrapper component to prevent non-DOM props from being passed down
 // We use forwardRef to correctly pass the ref to the underlying IKUpload component.
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
-  const { imageKit, ...rest } = props;
+  const { imageKit, inputRef, ...rest } = props;
   // @ts-ignore - The library's component passes unrecognized props, so we manually pass only the valid ones.
   return <IKUpload {...rest} ref={ref} />;
 });
@@ -26,7 +26,7 @@ CleanIKUpload.displayName = 'CleanIKUpload';
 
 
 export function ImageUploader({ value, onChange, folder = 'other' }: ImageUploaderProps) {
-  const imageKit = useImageKit();
+  const imageKitContext = useImageKit();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const uploaderRef = useRef<HTMLInputElement>(null);
@@ -97,15 +97,17 @@ export function ImageUploader({ value, onChange, folder = 'other' }: ImageUpload
         </div>
       </div>
       
-      {imageKit && (
+      {imageKitContext?.urlEndpoint && imageKitContext.publicKey && (
          <div style={{ display: 'none' }}>
             <CleanIKUpload
-                imageKit={imageKit}
+                publicKey={imageKitContext.publicKey}
+                urlEndpoint={imageKitContext.urlEndpoint}
+                authenticationEndpoint={`${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit-auth`}
                 folder={`/${folder}`}
                 onUploadStart={() => setIsUploading(true)}
                 onSuccess={handleUploadSuccess}
                 onError={handleUploadError}
-                ref={uploaderRef}
+                inputRef={uploaderRef}
                 />
          </div>
       )}

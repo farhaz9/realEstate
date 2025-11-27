@@ -2,24 +2,23 @@
 'use client';
 
 import { useEffect, useState, useRef, forwardRef } from 'react';
-import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, query, where, updateDoc } from 'firebase/firestore';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import { updateProfile, getAuth } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Loader2, User, Mail, Phone, Briefcase, Upload, Save } from 'lucide-react';
 import type { User as UserType, Property } from '@/types';
-import { PropertyCard } from '@/components/property-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useImageKit } from '@/imagekit/provider';
 import { IKUpload, IKUploadProps } from 'imagekitio-react';
+import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
-  const { imageKit, ...rest } = props;
+  const { imageKit, inputRef, ...rest } = props;
   // This component will be called by IKUpload internally. We intercept and remove
   // props that should not be passed to the underlying DOM element.
   // @ts-ignore
@@ -34,7 +33,7 @@ export default function ProfilePage() {
   const auth = getAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const imageKit = useImageKit();
+  const imageKitContext = useImageKit();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newAvatarUrl, setNewAvatarUrl] = useState<string | null>(null);
@@ -46,13 +45,6 @@ export default function ProfilePage() {
   }, [firestore, user]);
   
   const { data: userProfile, isLoading: isProfileLoading, error: profileError } = useDoc<UserType>(userDocRef);
-
-  const userPropertiesQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
-  }, [firestore, user]);
-
-  const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -69,7 +61,7 @@ export default function ProfilePage() {
     fileInputRef.current?.click();
   };
 
-  const handleUploadSuccess = async (res: any) => {
+  const handleUploadSuccess = (res: any) => {
     const photoURL = res.url;
     setNewAvatarUrl(photoURL);
     // Don't save immediately, wait for the save button
@@ -191,17 +183,19 @@ export default function ProfilePage() {
                     </AvatarFallback>
                   </Avatar>
                   
-                  {imageKit && (
-                    <div style={{ display: 'none' }}>
+                  {imageKitContext?.urlEndpoint && imageKitContext.publicKey && (
+                     <div style={{ display: 'none' }}>
                       <CleanIKUpload
-                        imageKit={imageKit}
+                        publicKey={imageKitContext.publicKey}
+                        urlEndpoint={imageKitContext.urlEndpoint}
+                        authenticationEndpoint={`${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit-auth`}
                         fileName={`profile_${user.uid}.jpg`}
                         folder="/profiles"
                         useUniqueFileName={false}
                         isPrivateFile={false}
                         onSuccess={handleUploadSuccess}
                         onError={handleUploadError}
-                        ref={fileInputRef}
+                        inputRef={fileInputRef}
                       />
                     </div>
                   )}
@@ -272,24 +266,8 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="properties">
-             {arePropertiesLoading ? renderLoading() : (
-              properties && properties.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {properties.map(property => (
-                    <PropertyCard key={property.id} property={property}/>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-24 border-2 border-dashed rounded-lg">
-                    <h3 className="text-xl font-semibold">You haven't listed any properties yet.</h3>
-                    <p className="text-muted-foreground mt-2">Your first listing is on us!</p>
-                    <Button asChild className="mt-6">
-                        <a href="/add-property">List a Property</a>
-                    </Button>
-                </div>
-              )
-            )}
+         <TabsContent value="properties">
+            <MyPropertiesTab />
           </TabsContent>
         </Tabs>
       </div>
