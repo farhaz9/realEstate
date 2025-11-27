@@ -18,14 +18,20 @@ service cloud.firestore {
 
     // Rules for the 'properties' collection
     match /properties/{propertyId} {
-      // Allow anyone to read any property listing. This covers both 'get' and 'list'.
-      allow read: if true;
+      // Allow anyone to get a single property document.
+      allow get: if true;
       
       // Allow any authenticated user to create a new property.
       allow create: if request.auth != null;
       
       // Only allow the user who owns the property to update or delete it.
       allow update, delete: if isOwner(resource.data.userId);
+    }
+
+    // THIS RULE IS THE FIX: It explicitly allows listing the entire collection.
+    match /properties {
+      // Allow anyone to list (query) the entire properties collection.
+      allow list: if true;
     }
   }
 }
