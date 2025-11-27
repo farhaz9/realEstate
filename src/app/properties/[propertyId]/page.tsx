@@ -227,26 +227,6 @@ export default function PropertyDetailPage() {
                       <Link href={`https://wa.me/${property.whatsappNumber}`} target="_blank"><MessageSquare className="mr-2" /> WhatsApp</Link>
                     </Button>
                  </div>
-                 
-                 <Separator className="my-6" />
-                 
-                  <form className="space-y-4">
-                    <h3 className="font-semibold text-center">Contact Seller</h3>
-                    <div className="space-y-1">
-                      <Label htmlFor="contact-name">Name</Label>
-                      <Input id="contact-name" defaultValue={user?.displayName || ''} placeholder="Your Name" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="contact-email">Email</Label>
-                      <Input id="contact-email" type="email" defaultValue={user?.email || ''} placeholder="Your Email"/>
-                    </div>
-                     <div className="space-y-1">
-                      <Label htmlFor="contact-message">Message</Label>
-                      <Textarea id="contact-message" placeholder={`I am interested in "${property.title}"...`}/>
-                    </div>
-                    <Button className="w-full">Send Message</Button>
-                  </form>
-
                </CardContent>
                  <CardFooter className="p-2 bg-muted/50 justify-center">
                     <p className="text-xs text-muted-foreground text-center">Posted on {new Date(property.dateListed?.seconds * 1000).toLocaleDateString()}</p>
