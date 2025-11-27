@@ -19,9 +19,9 @@ import { useImageKit } from '@/imagekit/provider';
 import { IKUpload, IKUploadProps } from 'imagekitio-react';
 
 const CleanIKUpload = (props: IKUploadProps) => {
-  const { imageKit, ...rest } = props;
-  // This component will be called by IKUpload internally, we just need to pass the props through
-  // without the imageKit one which causes the error.
+  const { imageKit, inputRef, ...rest } = props;
+  // This component will be called by IKUpload internally. We intercept and remove
+  // props that should not be passed to the underlying DOM element.
   // @ts-ignore
   return <IKUpload {...rest} />;
 };
@@ -295,3 +295,5 @@ export default function ProfilePage() {
     </>
   );
 }
+
+    
