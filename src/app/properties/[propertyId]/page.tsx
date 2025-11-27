@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection } from '@/firebase';
 import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
-import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified } from 'lucide-react';
+import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { formatPrice } from '@/lib/utils';
@@ -18,6 +17,26 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PropertyCard } from '@/components/property-card';
+import React from 'react';
+
+const amenityIcons: { [key: string]: React.ElementType } = {
+  'gym': Dumbbell,
+  'swimming pool': Droplets,
+  'parking': ParkingSquare,
+  'wifi': Wifi,
+  'tv': Tv,
+  'park': Trees,
+  'air conditioning': Wind,
+  'kitchen': Utensils,
+  'refrigerator': Refrigerator,
+};
+
+const getAmenityIcon = (amenity: string) => {
+  const normalizedAmenity = amenity.toLowerCase();
+  // Find a matching key in our icon map
+  const iconKey = Object.keys(amenityIcons).find(key => normalizedAmenity.includes(key));
+  return iconKey ? amenityIcons[iconKey] : Building2; // Return a default icon if no match
+};
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -196,23 +215,27 @@ export default function PropertyDetailPage() {
                     <h2 className="text-2xl font-semibold mb-4">About this property</h2>
                     <p className="text-muted-foreground whitespace-pre-wrap">{property.description}</p>
                   </div>
-
+                  
                   {property.amenities && property.amenities.length > 0 && (
                     <>
                       <Separator className="my-6" />
                       <div>
                         <h2 className="text-2xl font-semibold mb-4">Amenities</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                          {property.amenities.map(amenity => (
-                            <div key={amenity} className="flex items-center gap-2">
-                              <Check className="h-5 w-5 text-green-500" />
-                              <span className="text-muted-foreground">{amenity}</span>
-                            </div>
-                          ))}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-8">
+                          {property.amenities.map(amenity => {
+                             const Icon = getAmenityIcon(amenity);
+                             return (
+                                <div key={amenity} className="flex items-center gap-3">
+                                  <Icon className="h-6 w-6 text-primary" />
+                                  <span className="capitalize">{amenity}</span>
+                                </div>
+                             )
+                          })}
                         </div>
                       </div>
                     </>
                   )}
+
                 </div>
               </CardContent>
             </Card>

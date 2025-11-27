@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -69,6 +68,7 @@ const propertyFormSchema = z.object({
   }),
   overlooking: z.string().optional(),
   ageOfConstruction: z.string().optional(),
+  amenities: z.string().optional(),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -105,6 +105,7 @@ export default function AddPropertyPage() {
       bathrooms: 0,
       squareYards: 0,
       imageUrls: [],
+      amenities: '',
     },
   });
 
@@ -127,12 +128,14 @@ export default function AddPropertyPage() {
 
     const propertiesCollection = collection(firestore, 'properties');
     
+    const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
+
     addDocumentNonBlocking(propertiesCollection, {
       ...data,
+      amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      amenities: [],
     });
 
     toast({
@@ -364,6 +367,23 @@ export default function AddPropertyPage() {
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="amenities"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Amenities (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Enter a comma-separated list of amenities.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="grid md:grid-cols-2 gap-8">
                    <FormField
