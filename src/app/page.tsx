@@ -36,28 +36,28 @@ const homeServices = [
   {
     icon: Building,
     title: "Properties",
-    description: "Access a curated portfolio of Delhi's finest luxury properties.",
+    description: "Delhi's finest luxury properties.",
     imageId: "service-properties",
     href: "/properties"
   },
   {
     icon: Construction,
     title: "Construction",
-    description: "End-to-end construction services with a commitment to excellence.",
+    description: "End-to-end construction services.",
     imageId: "service-construction",
     href: "/services"
   },
   {
     icon: DraftingCompass,
     title: "Interiors",
-    description: "Bespoke interior design solutions that reflect your personal style.",
+    description: "Bespoke interior design solutions.",
     imageId: "service-interiors",
     href: "/interiors"
   },
     {
     icon: Sparkles,
     title: "Miscellaneous",
-    description: "Custom-crafted furniture and lighting to elevate your living experience.",
+    description: "Custom furniture and lighting.",
     imageId: "service-miscellaneous",
     href: "/services"
   },
