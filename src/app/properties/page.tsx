@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
 import {
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ListFilter, Search, ArrowUpDown } from 'lucide-react';
+import { ListFilter, Search, ArrowUpDown, Sparkles } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
+import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
 
 const searchSuggestions = [
   'Search property in South Delhi',
@@ -45,6 +46,9 @@ export default function PropertiesPage() {
   const [priceRange, setPriceRange] = useState([0, 20]); // In Crores
   const [sortBy, setSortBy] = useState('dateListed-desc');
   const [placeholder, setPlaceholder] = useState(searchSuggestions[0]);
+  const [isAiSearchPending, startAiSearchTransition] = useTransition();
+  const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,6 +61,19 @@ export default function PropertiesPage() {
 
     return () => clearInterval(interval);
   }, []);
+  
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!searchTerm) {
+      setAiAnalysis(null);
+      return;
+    }
+
+    startAiSearchTransition(async () => {
+      const analysis = await analyzeSearchQuery({ query: searchTerm });
+      setAiAnalysis(analysis);
+    });
+  }
 
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -72,12 +89,26 @@ export default function PropertiesPage() {
     if (!properties) return [];
     
     return properties.filter(p => {
-      const tabMatch = activeTab === 'all' || 
+      let tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
                        (activeTab === 'pg' && p.propertyType.toLowerCase().includes('pg'));
 
-      const searchTermMatch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      // AI-driven search logic
+      if (aiAnalysis && searchTerm) {
+        if (aiAnalysis.listingType) {
+          tabMatch = p.listingType === aiAnalysis.listingType;
+        }
+
+        const aiLocationMatch = !aiAnalysis.location || p.location.address.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location.state.toLowerCase().includes(aiAnalysis.location.toLowerCase());
+        const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
+        const aiBedroomsMatch = !aiAnalysis.bedrooms || p.bedrooms >= aiAnalysis.bedrooms;
+
+        return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
+      }
+      
+      // Fallback to manual filtering if no AI analysis
+      const searchTermMatch = !searchTerm || p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                               p.location.address.toLowerCase().includes(searchTerm.toLowerCase());
       const locationMatch = location === 'all' || p.location.state === location || p.location.pincode === location;
@@ -87,7 +118,7 @@ export default function PropertiesPage() {
       
       return tabMatch && searchTermMatch && locationMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange]);
+  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange, aiAnalysis]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -116,16 +147,25 @@ export default function PropertiesPage() {
                 </Link>
             </Button>
           </div>
-           <div className="relative flex-grow my-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                  id="search"
-                  placeholder={placeholder}
-                  className="pl-10 text-foreground h-12 rounded-full"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-          </div>
+           <form onSubmit={handleSearch}>
+             <div className="relative flex-grow my-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                    id="search"
+                    placeholder={placeholder}
+                    className="pl-10 pr-36 text-foreground h-12 rounded-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                 <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    <span className="font-semibold">Powered by Gemini</span>
+                  </div>
+                 <Button type="submit" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full" disabled={isAiSearchPending}>
+                    {isAiSearchPending ? <ArrowUpDown className="h-5 w-5 animate-bounce" /> : <Search className="h-5 w-5" />}
+                </Button>
+            </div>
+           </form>
            <div className="flex gap-4 items-center overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4">
                 <div className="flex-shrink-0 min-w-[150px] space-y-1">
                   <Select value={location} onValueChange={setLocation}>
@@ -209,7 +249,7 @@ export default function PropertiesPage() {
       </section>
       
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        {isLoading ? (
+        {isLoading || isAiSearchPending ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex flex-col h-full overflow-hidden border rounded-lg">
@@ -243,10 +283,12 @@ export default function PropertiesPage() {
         ) : (
             <div className="text-center py-16 text-muted-foreground">
                 <p className="text-lg font-semibold">No properties found.</p>
-                <p>Try adjusting your search filters.</p>
+                <p>Try adjusting your search filters or rephrasing your search.</p>
             </div>
         )}
       </div>
     </div>
   );
 }
+
+    
