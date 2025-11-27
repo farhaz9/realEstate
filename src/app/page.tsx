@@ -97,7 +97,7 @@ export default function HomePage() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative w-full h-[70vh] text-white overflow-hidden">
+      <section className="relative w-full h-[60vh] text-white overflow-hidden">
         {heroImage && (
            <Image
             src={heroImage.imageUrl}
