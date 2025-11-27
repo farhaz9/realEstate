@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PopularPropertyCard } from '@/components/shared/popular-property-card';
 import React from 'react';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -71,12 +72,12 @@ export default function PropertyDetailPage() {
     return query(
       collection(firestore, 'properties'),
       where('propertyType', '==', property.propertyType),
-      limit(4) // Fetch 4 to have a chance to exclude the current one and still have 3
+      limit(6) 
     );
   }, [firestore, property]);
 
   const { data: relatedPropertiesData } = useCollection<Property>(relatedPropertiesQuery);
-  const relatedProperties = relatedPropertiesData?.filter(p => p.id !== propertyId).slice(0, 3);
+  const relatedProperties = relatedPropertiesData?.filter(p => p.id !== propertyId);
 
   const isInWishlist = userProfile?.wishlist?.includes(propertyId) ?? false;
   
@@ -299,11 +300,22 @@ export default function PropertyDetailPage() {
         {relatedProperties && relatedProperties.length > 0 && (
           <div className="mt-16">
             <h2 className="text-3xl font-bold mb-8">Related Properties</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {relatedProperties.map((relatedProperty) => (
-                <PopularPropertyCard key={relatedProperty.id} property={relatedProperty} />
-              ))}
-            </div>
+             <Carousel
+              opts={{
+                align: 'start',
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {relatedProperties.map((relatedProperty) => (
+                  <CarouselItem key={relatedProperty.id} className="basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-4">
+                     <div className="h-full">
+                      <PopularPropertyCard property={relatedProperty} />
+                     </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           </div>
         )}
       </div>
