@@ -1,6 +1,12 @@
 {
   "placeholderImages": [
     {
+      "id": "home-hero",
+      "description": "Abstract illustration of modern architecture with purple and blue gradients",
+      "imageUrl": "https://images.unsplash.com/photo-1760434773841-7eef8a7af7c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cmVhbCUyMGVzdGF0ZSUyMGlsbHVzdHJhdGlvbnxlbnwwfHx8fDE3NjQyNTgzNjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "real estate illustration"
+    },
+    {
       "id": "hero-1",
       "description": "Modern luxury house with a swimming pool at twilight",
       "imageUrl": "https://ik.imagekit.io/farhaz/hero-1_H4s-UrQ5W.jpg",

@@ -12,6 +12,8 @@ import { FeaturedProperties } from "@/components/shared/nearby-properties";
 import { PopularProperties } from "@/components/shared/popular-properties";
 import { HomeSearch } from "@/components/shared/home-search";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import Image from "next/image";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const faqs = [
   {
@@ -92,18 +94,21 @@ const whyChooseUsPoints = [
 
 
 export default function HomePage() {
+  const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
   return (
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-screen text-white overflow-hidden">
-        <video
-            src="https://images-r-eal-estae.vercel.app/farhazhomes.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover -z-10"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        {heroImage && (
+           <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            data-ai-hint={heroImage.imageHint}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-primary/30 to-transparent" />
         <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 md:pb-24 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             Find Your Dream Home
