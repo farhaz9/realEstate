@@ -107,7 +107,6 @@ export default function PropertyDetailPage() {
   }
 
   const mainImage = PlaceHolderImages.find(p => p.id === (property.imageUrls?.[0] || 'property-1'));
-  const galleryImages = property.imageUrls.map(id => PlaceHolderImages.find(p => p.id === id)).filter(Boolean);
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
@@ -190,22 +189,6 @@ export default function PropertyDetailPage() {
                               <span className="text-muted-foreground">{amenity}</span>
                             </div>
                           ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  
-                  {galleryImages.length > 1 && (
-                     <>
-                      <Separator className="my-6" />
-                      <div>
-                        <h2 className="text-2xl font-semibold mb-4">Image Gallery</h2>
-                        <div className="grid grid-cols-2 gap-4">
-                           {galleryImages.slice(1).map((image, index) => (
-                             image && <div key={index} className="relative aspect-video">
-                               <Image src={image.imageUrl} alt={`${property.title} gallery image ${index + 1}`} fill className="object-cover rounded-md" />
-                             </div>
-                           ))}
                         </div>
                       </div>
                     </>
