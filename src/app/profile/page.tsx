@@ -18,11 +18,11 @@ import { IKUpload, IKUploadProps } from 'imagekitio-react';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
-  const { publicKey, urlEndpoint, authenticationEndpoint, ...rest } = props;
+  const { publicKey, urlEndpoint, authenticationEndpoint, inputRef, ...rest } = props;
   // This component will be called by IKUpload internally. We intercept and remove
   // props that should not be passed to the underlying DOM element.
   // @ts-ignore
-  return <IKUpload {...rest} ref={ref} publicKey={publicKey} urlEndpoint={urlEndpoint} authenticationEndpoint={authenticationEndpoint} />;
+  return <IKUpload {...rest} ref={ref} />;
 });
 CleanIKUpload.displayName = 'CleanIKUpload';
 

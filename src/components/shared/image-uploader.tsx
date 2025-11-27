@@ -15,12 +15,14 @@ interface ImageUploaderProps {
   folder?: string;
 }
 
-// Wrapper component to prevent non-DOM props from being passed down
-// We use forwardRef to correctly pass the ref to the underlying IKUpload component.
+// This wrapper component intercepts and removes props that are not valid on a DOM element.
+// The imagekitio-react library incorrectly passes some of its internal props down.
 const CleanIKUpload = forwardRef<HTMLInputElement, IKUploadProps>((props, ref) => {
-  const { publicKey, urlEndpoint, authenticationEndpoint, ...rest } = props;
-  // @ts-ignore - The library's component passes unrecognized props, so we manually pass only the valid ones.
-  return <IKUpload {...rest} ref={ref} publicKey={publicKey} urlEndpoint={urlEndpoint} authenticationEndpoint={authenticationEndpoint} />;
+  const { publicKey, urlEndpoint, authenticationEndpoint, inputRef, ...rest } = props;
+  // This component will be called by IKUpload internally. We intercept and remove
+  // props that should not be passed to the underlying DOM element.
+  // @ts-ignore
+  return <IKUpload {...rest} ref={ref} />;
 });
 CleanIKUpload.displayName = 'CleanIKUpload';
 
