@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
@@ -86,8 +86,6 @@ export default function ProfilePage() {
     );
   }
 
-  // If user is not logged in after loading, redirect is handled by useEffect.
-  // We can return a loading state or null while redirect happens.
   if (!user) {
     return (
        <div className="flex items-center justify-center min-h-[60vh]">
@@ -112,7 +110,7 @@ export default function ProfilePage() {
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto mb-8">
             <TabsTrigger value="profile">Profile Details</TabsTrigger>
-            <TabsTrigger value="properties">My Properties</TabsTrigger>
+            <TabsTrigger value="listings">My Listings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile">
@@ -193,7 +191,7 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
 
-         <TabsContent value="properties">
+         <TabsContent value="listings">
             <MyPropertiesTab />
           </TabsContent>
         </Tabs>

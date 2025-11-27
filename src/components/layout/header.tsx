@@ -24,7 +24,8 @@ import {
   X,
   LogIn,
   Search,
-  MapPin
+  MapPin,
+  Heart
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -40,6 +41,7 @@ const navLinks = [
   { href: "/professionals", label: "Professionals" },
   { href: "/services", label: "Services" },
   { href: "/contact", label: "Contact" },
+  { href: "/profile", label: "My Listings", userOnly: true },
 ];
 
 const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -95,6 +97,8 @@ export default function Header() {
   const { isScrolled } = useOnScroll('offers'); 
 
   const isHomePage = pathname === '/';
+  
+  const visibleNavLinks = navLinks.filter(link => !link.userOnly || user);
 
   return (
     <header className={cn(
@@ -120,7 +124,7 @@ export default function Header() {
               </div>
               <Separator />
               <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
-                {navLinks.map((link) => (
+                {visibleNavLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -163,7 +167,7 @@ export default function Header() {
                     </Button>
                   </SheetTrigger>
                   <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {navLinks.slice(1,3).map((link) => (
+                    {visibleNavLinks.filter(l => !l.userOnly).slice(1,3).map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
@@ -185,7 +189,7 @@ export default function Header() {
               </div>
               <div className="flex items-center gap-2 justify-end">
                 <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {navLinks.slice(3).map((link) => (
+                    {visibleNavLinks.filter(l => !l.userOnly).slice(3).map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
@@ -200,11 +204,32 @@ export default function Header() {
                         {link.label}
                       </Link>
                     ))}
+                     {user && (
+                      <Link
+                        href="/profile#listings"
+                        className={cn(
+                          "px-4 py-1.5 rounded-full transition-colors",
+                          "text-muted-foreground hover:text-foreground",
+                           pathname === "/profile"
+                            ? "bg-primary/10 text-primary font-semibold"
+                            : ""
+                        )}
+                      >
+                        My Listings
+                      </Link>
+                    )}
                   </nav>
                   {isUserLoading ? (
                     <Skeleton className="h-10 w-10 rounded-full" />
                   ) : user ? (
-                    <UserNav />
+                    <>
+                      <Button asChild variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Link href="/wishlist">
+                          <Heart />
+                        </Link>
+                      </Button>
+                      <UserNav />
+                    </>
                   ) : (
                     <Button asChild variant="ghost" size="icon" className="rounded-full">
                       <Link href="/login">
