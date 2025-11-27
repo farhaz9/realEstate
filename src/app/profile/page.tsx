@@ -15,9 +15,9 @@ import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
-
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -44,7 +44,6 @@ export default function ProfilePage() {
     }
   }, [user, isUserLoading, router, toast]);
 
-  
   const handleSignOut = async () => {
     if (!auth) return;
     await signOut(auth);
@@ -54,45 +53,6 @@ export default function ProfilePage() {
       variant: 'destructive',
     });
   };
-
-  const renderLoading = () => (
-    <div className="flex items-center justify-center py-16">
-      <Loader2 className="h-8 w-8 animate-spin" />
-    </div>
-  );
-
-  if (isUserLoading || isProfileLoading) {
-    return (
-      <>
-        <div className="bg-muted">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold">My Profile</h1>
-                <p className="text-muted-foreground">Manage your account details and listings.</p>
-            </div>
-        </div>
-        <div className="container mx-auto px-4 py-16">
-            {renderLoading()}
-        </div>
-      </>
-    );
-  }
-
-  if (!user || !userProfile) {
-     return (
-      <>
-        <div className="bg-muted">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold">My Profile</h1>
-                <p className="text-muted-foreground">Manage your account details and listings.</p>
-            </div>
-        </div>
-        <div className="container mx-auto px-4 py-16 text-center">
-            <p>Could not load user profile. Please try again.</p>
-             {profileError && <p className="text-sm text-destructive">{profileError.message}</p>}
-        </div>
-      </>
-    );
-  }
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -109,8 +69,35 @@ export default function ProfilePage() {
   };
   
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
+  
+  if (isUserLoading) {
+    return (
+      <>
+        <div className="bg-muted">
+            <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold">My Profile</h1>
+                <p className="text-muted-foreground">Manage your account details and listings.</p>
+            </div>
+        </div>
+        <div className="container mx-auto px-4 py-16 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </>
+    );
+  }
 
-  const displayAvatar = userProfile.photoURL;
+  // If user is not logged in after loading, redirect is handled by useEffect.
+  // We can return a loading state or null while redirect happens.
+  if (!user) {
+    return (
+       <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+    );
+  }
+
+  const displayAvatar = userProfile?.photoURL ?? user.photoURL;
+  const displayName = userProfile?.fullName ?? user.displayName;
 
   return (
     <>
@@ -133,16 +120,30 @@ export default function ProfilePage() {
                <CardHeader className="items-center text-center p-6 bg-muted/30">
                 <div className="relative">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-                    <AvatarImage src={displayAvatar ?? ''} alt={userProfile.fullName ?? ''} />
+                    <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
                     <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
-                        {userProfile.fullName ? getInitials(userProfile.fullName) : <User className="h-16 w-16" />}
+                        {displayName ? getInitials(displayName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                <CardTitle className="mt-4 text-3xl">{userProfile.fullName}</CardTitle>
+                <CardTitle className="mt-4 text-3xl">{displayName ?? 'User'}</CardTitle>
                 <CardDescription>Welcome back to your dashboard!</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
+                {isProfileLoading ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                  </div>
+                ) : profileError || !userProfile ? (
+                  <div className="text-center text-destructive-foreground bg-destructive/80 p-4 rounded-md">
+                      <p className="font-semibold">Could not load user profile.</p>
+                      <p className="text-sm">Please try again later or contact support.</p>
+                      {profileError && <p className="text-xs mt-2">Error: {profileError.message}</p>}
+                  </div>
+                ) : (
                   <div className="space-y-4">
                       <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
                         <User className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
@@ -173,6 +174,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                   </div>
+                )}
               </CardContent>
               <CardFooter className="p-6 flex flex-col gap-2">
                 {isAuthorizedAdmin && (
