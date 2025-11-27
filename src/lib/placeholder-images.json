@@ -241,6 +241,12 @@
       "imageHint": "construction site"
     },
     {
+      "id": "default-property-listing",
+      "description": "Default placeholder image for a property listing",
+      "imageUrl": "https://images-r-eal-estae.vercel.app/default%20imagy%20(1)%20(1).png",
+      "imageHint": "house exterior"
+    },
+    {
       "id": "default-property",
       "description": "Default placeholder image for a property",
       "imageUrl": "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg",

@@ -143,7 +143,7 @@ export function MyPropertiesTab() {
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      imageUrls: [], // ensure it's at least an empty array
+      imageUrls: data.imageUrls && data.imageUrls.length > 0 ? data.imageUrls : ['default-property-listing'],
     };
 
     if (!data.overlooking) delete propertyData.overlooking;
@@ -551,3 +551,5 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
+
+    
