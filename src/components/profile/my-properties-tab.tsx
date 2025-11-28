@@ -120,9 +120,11 @@ export function MyPropertiesTab() {
       bedrooms: 0,
       bathrooms: 0,
       squareYards: 0,
-      amenities: '',
+      images: undefined,
+      furnishing: 'unfurnished',
       overlooking: '',
       ageOfConstruction: '',
+      amenities: '',
     },
   });
 
@@ -214,20 +216,6 @@ export function MyPropertiesTab() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Property Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="images"
               render={({ field }) => (
                 <FormItem>
@@ -238,6 +226,20 @@ export function MyPropertiesTab() {
                   <FormDescription>
                     Upload one or more images for your property. This is a placeholder and does not upload files yet.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -570,3 +572,5 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
+
+    
