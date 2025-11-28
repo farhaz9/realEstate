@@ -64,7 +64,7 @@ const propertyTypes = [
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
-  images: z.any().optional(),
+  images: z.any().optional().nullable(),
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
   location: z.object({
@@ -120,7 +120,7 @@ export function MyPropertiesTab() {
       bedrooms: 0,
       bathrooms: 0,
       squareYards: 0,
-      images: undefined,
+      images: null,
       furnishing: 'unfurnished',
       overlooking: '',
       ageOfConstruction: '',
@@ -134,21 +134,17 @@ export function MyPropertiesTab() {
       return;
     }
     
-    // NOTE: In a real app, you would first upload the images from data.images
-    // to a service like ImageKit, get the URLs back, and then save those URLs
-    // in the imageUrls field. For now, we will use an empty array.
-
     const propertiesCollection = collection(firestore, 'properties');
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
 
     const propertyData: Omit<Property, 'id'> & { dateListed: any } = {
       ...data,
+      imageUrls: [],
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      imageUrls: [], // Using empty array instead of placeholder
     };
 
     if (!data.overlooking) delete (propertyData as Partial<typeof propertyData>).overlooking;
