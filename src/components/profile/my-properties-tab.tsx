@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, Loader2, Plus, Star } from 'lucide-react';
+import { Banknote, Loader2, Plus, Star, X } from 'lucide-react';
 import type { Property } from '@/types';
 import {
   AlertDialog,
@@ -45,6 +45,8 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PropertyCard } from '@/components/property-card';
 import Link from 'next/link';
+import React, { useState } from 'react';
+import Image from 'next/image';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
@@ -93,7 +95,8 @@ export function MyPropertiesTab() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
-
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
@@ -107,7 +110,6 @@ export function MyPropertiesTab() {
     defaultValues: {
       title: '',
       description: '',
-      images: null,
       price: 0,
       listingType: 'sale',
       location: {
@@ -125,8 +127,30 @@ export function MyPropertiesTab() {
       overlooking: '',
       ageOfConstruction: '',
       amenities: '',
+      images: null,
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newPreviews = Array.from(files).map(file => URL.createObjectURL(file));
+      setImagePreviews(prev => [...prev, ...newPreviews]);
+      // Set the files to the form state
+      form.setValue('images', files);
+    }
+  };
+
+  const removeImagePreview = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    const currentFiles = form.getValues('images');
+    if (currentFiles) {
+        const newFiles = Array.from(currentFiles).filter((_, i) => i !== index);
+        const dataTransfer = new DataTransfer();
+        newFiles.forEach(file => dataTransfer.items.add(file));
+        form.setValue('images', dataTransfer.files);
+    }
+  };
 
   function onSubmit(data: PropertyFormValues) {
     if (!user || !firestore) {
@@ -134,15 +158,19 @@ export function MyPropertiesTab() {
       return;
     }
     
-    const propertiesCollection = collection(firestore, 'properties');
+    // NOTE: This is where you would handle the actual image uploads to a service like ImageKit.
+    // For now, we are saving an empty array for imageUrls.
+    // 1. Upload `data.images` to ImageKit.
+    // 2. Get the returned URLs.
+    // 3. Add those URLs to the propertyData object below.
     
+    const propertiesCollection = collection(firestore, 'properties');
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
+    const { images, ...restOfData } = data; // Exclude images from the data to be saved to Firestore.
 
-    const { images, ...restOfData } = data;
-
-    const propertyData: Omit<Property, 'id' | 'imageUrls'> & { dateListed: any; imageUrls: string[] } = {
+    const propertyData = {
       ...restOfData,
-      imageUrls: [],
+      imageUrls: [], // This should be replaced with actual URLs from your upload service
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
@@ -161,6 +189,7 @@ export function MyPropertiesTab() {
     });
 
     form.reset();
+    setImagePreviews([]);
   }
 
   const renderSubscriptionCard = () => (
@@ -222,12 +251,12 @@ export function MyPropertiesTab() {
                     <Input 
                       type="file" 
                       multiple
-                      onChange={(e) => {
-                        onChange(e.target.files);
-                      }}
+                      accept="image/*"
+                      onChange={handleImageChange}
                       onBlur={onBlur}
                       name={name}
                       ref={ref}
+                      className="h-auto"
                     />
                   </FormControl>
                   <FormDescription>
@@ -237,6 +266,32 @@ export function MyPropertiesTab() {
                 </FormItem>
               )}
             />
+            
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {imagePreviews.map((src, index) => (
+                  <div key={index} className="relative group">
+                    <Image
+                      src={src}
+                      alt={`Preview ${index + 1}`}
+                      width={150}
+                      height={150}
+                      className="w-full h-auto object-cover rounded-md aspect-square"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-1 right-1 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => removeImagePreview(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
 
             <FormField
               control={form.control}
@@ -521,6 +576,7 @@ export function MyPropertiesTab() {
             
             <div className="flex justify-end">
               <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {form.formState.isSubmitting ? 'Submitting...' : 'List My Property'}
               </Button>
             </div>
