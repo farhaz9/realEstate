@@ -81,9 +81,9 @@ const propertyFormSchema = z.object({
   furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
     required_error: 'Please select a furnishing status.',
   }),
-  overlooking: z.string().optional().default(''),
-  ageOfConstruction: z.string().optional().default(''),
-  amenities: z.string().optional().default(''),
+  overlooking: z.string().optional(),
+  ageOfConstruction: z.string().optional(),
+  amenities: z.string().optional(),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -214,7 +214,7 @@ export function MyPropertiesTab() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-             <FormField
+            <FormField
               control={form.control}
               name="images"
               render={({ field }) => (
@@ -452,7 +452,7 @@ export function MyPropertiesTab() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Furnishing</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValuechange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select furnishing status" />
@@ -572,3 +572,5 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
+
+    
