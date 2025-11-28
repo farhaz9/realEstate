@@ -452,7 +452,7 @@ export function MyPropertiesTab() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Furnishing</FormLabel>
-                    <Select onValuechange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select furnishing status" />
@@ -572,5 +572,3 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
-
-    
