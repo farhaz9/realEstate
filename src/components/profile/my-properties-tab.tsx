@@ -81,9 +81,9 @@ const propertyFormSchema = z.object({
   furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
     required_error: 'Please select a furnishing status.',
   }),
-  overlooking: z.string().optional(),
-  ageOfConstruction: z.string().optional(),
-  amenities: z.string().optional(),
+  overlooking: z.string().optional().default(''),
+  ageOfConstruction: z.string().optional().default(''),
+  amenities: z.string().optional().default(''),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -136,23 +136,23 @@ export function MyPropertiesTab() {
     
     // NOTE: In a real app, you would first upload the images from data.images
     // to a service like ImageKit, get the URLs back, and then save those URLs
-    // in the imageUrls field. For now, we will use a placeholder.
+    // in the imageUrls field. For now, we will use an empty array.
 
     const propertiesCollection = collection(firestore, 'properties');
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
 
-    const propertyData: Omit<Property, 'id' | 'imageUrls'> & { imageUrls?: string[], dateListed: any } = {
+    const propertyData: Omit<Property, 'id'> & { dateListed: any } = {
       ...data,
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      imageUrls: ['default-property-listing'],
+      imageUrls: [], // Using empty array instead of placeholder
     };
 
-    if (!data.overlooking) delete propertyData.overlooking;
-    if (!data.ageOfConstruction) delete propertyData.ageOfConstruction;
+    if (!data.overlooking) delete (propertyData as Partial<typeof propertyData>).overlooking;
+    if (!data.ageOfConstruction) delete (propertyData as Partial<typeof propertyData>).ageOfConstruction;
 
     addDocumentNonBlocking(propertiesCollection, propertyData);
 
@@ -214,7 +214,7 @@ export function MyPropertiesTab() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
+             <FormField
               control={form.control}
               name="images"
               render={({ field }) => (
@@ -572,5 +572,3 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
-
-    
