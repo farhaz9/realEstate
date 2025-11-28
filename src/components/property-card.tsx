@@ -49,7 +49,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   const { data: userProfile } = useDoc<User>(userDocRef);
 
   const isOwner = user && user.uid === property.userId;
-  const showDeleteButton = isOwner && (pathname === '/my-properties' || pathname === '/profile' || pathname === '/wishlist');
+  const showDeleteButton = isOwner && (pathname === '/profile' || pathname === '/wishlist');
 
   const rating = 4.5 + (property.title.length % 5) / 10;
 
