@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -6,7 +7,6 @@ import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limi
 import type { Property, User } from '@/types';
 import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator } from 'lucide-react';
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { PopularPropertyCard } from '@/components/shared/popular-property-card';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -136,8 +137,10 @@ export default function PropertyDetailPage() {
     );
   }
 
-  const hasImages = property.imageUrls && property.imageUrls.length > 0;
-  const mainImage = PlaceHolderImages.find(p => p.id === (hasImages ? property.imageUrls![0] : 'default-property'));
+  const hasImages = property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0];
+  const mainImage = hasImages 
+    ? property.imageUrls[0]
+    : PlaceHolderImages.find(p => p.id === 'default-property')?.imageUrl;
 
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
@@ -170,7 +173,7 @@ export default function PropertyDetailPage() {
               <CardContent className="p-0">
                 <div className="relative h-96 w-full">
                   {mainImage && (
-                    <Image src={mainImage.imageUrl} alt={property.title} data-ai-hint={mainImage.imageHint} fill className="object-cover rounded-t-lg" priority />
+                    <Image src={mainImage} alt={property.title} data-ai-hint="property image" fill className="object-cover rounded-t-lg" priority />
                   )}
                   <div className="absolute top-4 left-4">
                      <Button asChild variant="secondary" size="sm">

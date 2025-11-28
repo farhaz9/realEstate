@@ -12,8 +12,11 @@ interface PopularPropertyCardProps {
 }
 
 export function PopularPropertyCard({ property, className }: PopularPropertyCardProps) {
-  const hasImages = property.imageUrls && property.imageUrls.length > 0;
-  const propertyImage = PlaceHolderImages.find((p) => p.id === (hasImages ? property.imageUrls![0] : 'default-property'));
+  const hasImages = property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0];
+  const imageUrl = hasImages
+    ? property.imageUrls[0]
+    : PlaceHolderImages.find((p) => p.id === 'default-property')?.imageUrl;
+
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
@@ -21,11 +24,11 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
     <Link href={`/properties/${property.id}`} className="block group h-full">
         <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md h-full flex flex-col">
             <div className="relative h-40">
-                {propertyImage && (
+                {imageUrl && (
                     <Image
-                        src={propertyImage.imageUrl}
+                        src={imageUrl}
                         alt={property.title}
-                        data-ai-hint={propertyImage.imageHint}
+                        data-ai-hint="property image"
                         fill
                         className="object-cover"
                     />
@@ -50,5 +53,3 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
     </Link>
   );
 }
-
-    
