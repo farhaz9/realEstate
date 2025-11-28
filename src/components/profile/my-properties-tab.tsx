@@ -107,7 +107,7 @@ export function MyPropertiesTab() {
     defaultValues: {
       title: '',
       description: '',
-      images: undefined,
+      images: null,
       price: 0,
       listingType: 'sale',
       location: {
@@ -138,8 +138,10 @@ export function MyPropertiesTab() {
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
 
-    const propertyData: Omit<Property, 'id'> & { dateListed: any } = {
-      ...data,
+    const { images, ...restOfData } = data;
+
+    const propertyData: Omit<Property, 'id' | 'imageUrls'> & { dateListed: any; imageUrls: string[] } = {
+      ...restOfData,
       imageUrls: [],
       amenities: amenitiesArray,
       userId: user.uid,
@@ -210,7 +212,7 @@ export function MyPropertiesTab() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-             <FormField
+            <FormField
               control={form.control}
               name="images"
               render={({ field: { onChange, onBlur, name, ref } }) => (
@@ -219,8 +221,10 @@ export function MyPropertiesTab() {
                   <FormControl>
                     <Input 
                       type="file" 
-                      multiple 
-                      onChange={(e) => onChange(e.target.files)} 
+                      multiple
+                      onChange={(e) => {
+                        onChange(e.target.files);
+                      }}
                       onBlur={onBlur}
                       name={name}
                       ref={ref}
@@ -575,3 +579,5 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
+
+    
