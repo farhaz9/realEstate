@@ -228,20 +228,6 @@ export function MyPropertiesTab() {
 
             <FormField
               control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Describe your property in detail..." rows={5} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
               name="images"
               render={({ field }) => (
                 <FormItem>
@@ -252,6 +238,20 @@ export function MyPropertiesTab() {
                   <FormDescription>
                     Upload one or more images for your property. This is a placeholder and does not upload files yet.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Describe your property in detail..." rows={5} {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
