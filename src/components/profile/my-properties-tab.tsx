@@ -64,7 +64,7 @@ const propertyTypes = [
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
-  images: z.any().optional().nullable(),
+  images: z.any().optional(),
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
   location: z.object({
@@ -107,6 +107,7 @@ export function MyPropertiesTab() {
     defaultValues: {
       title: '',
       description: '',
+      images: undefined,
       price: 0,
       listingType: 'sale',
       location: {
@@ -120,7 +121,6 @@ export function MyPropertiesTab() {
       bedrooms: 0,
       bathrooms: 0,
       squareYards: 0,
-      images: null,
       furnishing: 'unfurnished',
       overlooking: '',
       ageOfConstruction: '',
@@ -210,14 +210,21 @@ export function MyPropertiesTab() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
+             <FormField
               control={form.control}
               name="images"
-              render={({ field }) => (
+              render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
                   <FormLabel>Property Images (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="file" multiple {...field} />
+                    <Input 
+                      type="file" 
+                      multiple 
+                      onChange={(e) => onChange(e.target.files)} 
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                    />
                   </FormControl>
                   <FormDescription>
                     Upload one or more images for your property. This is a placeholder and does not upload files yet.
