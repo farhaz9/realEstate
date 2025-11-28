@@ -109,7 +109,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
 
   return (
     <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
-      <div className="block">
+      <Link href={`/properties/${property.id}`} className="block">
         <CardHeader className="p-0 relative h-56 flex-shrink-0">
           {propertyImage && (
             <Image
@@ -151,7 +151,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             </div>
           </div>
         </CardContent>
-      </div>
+      </Link>
       <CardFooter className="p-6 pt-0 mt-auto flex items-center gap-2">
           <Button asChild className="w-full">
             <Link href={`/properties/${property.id}`}>
