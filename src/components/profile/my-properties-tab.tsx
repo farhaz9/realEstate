@@ -84,6 +84,7 @@ const propertyFormSchema = z.object({
   overlooking: z.string().optional(),
   ageOfConstruction: z.string().optional(),
   amenities: z.string().optional(),
+  images: z.any().optional(),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -372,6 +373,24 @@ export function MyPropertiesTab() {
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property Images</FormLabel>
+                  <FormControl>
+                    <Input type="file" multiple {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Upload one or more images for your property.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <div className="grid md:grid-cols-2 gap-8">
                <FormField
@@ -551,5 +570,3 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
-
-    
