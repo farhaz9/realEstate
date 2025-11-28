@@ -64,6 +64,7 @@ const propertyTypes = [
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
+  images: z.any().optional(),
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
   location: z.object({
@@ -83,7 +84,6 @@ const propertyFormSchema = z.object({
   overlooking: z.string().optional(),
   ageOfConstruction: z.string().optional(),
   amenities: z.string().optional(),
-  images: z.any().optional(),
 });
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -240,6 +240,23 @@ export function MyPropertiesTab() {
               )}
             />
             
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property Images (Optional)</FormLabel>
+                  <FormControl>
+                    <Input type="file" multiple {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Upload one or more images for your property. This is a placeholder and does not upload files yet.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
             <div className="grid md:grid-cols-3 gap-8">
               <FormField
                   control={form.control}
@@ -308,92 +325,7 @@ export function MyPropertiesTab() {
                   )}
                 />
             </div>
-             <div className="grid md:grid-cols-3 gap-8">
-               <FormField
-                control={form.control}
-                name="furnishing"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Furnishing</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select furnishing status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="unfurnished">Unfurnished</SelectItem>
-                        <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
-                        <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="overlooking"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Overlooking (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Park, Main Road" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ageOfConstruction"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Age of Construction (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., 1-5 years" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="amenities"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amenities (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Enter a comma-separated list of amenities.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             
-            <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Property Images</FormLabel>
-                  <FormControl>
-                    <Input type="file" multiple {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Upload one or more images for your property. This is a placeholder and does not upload files yet.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-
             <div className="grid md:grid-cols-2 gap-8">
                <FormField
                   control={form.control}
@@ -505,6 +437,72 @@ export function MyPropertiesTab() {
                     <FormLabel>Area (sq. yards)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 250" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+             <div className="grid md:grid-cols-2 gap-8">
+               <FormField
+                control={form.control}
+                name="furnishing"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Furnishing</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select furnishing status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="unfurnished">Unfurnished</SelectItem>
+                        <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
+                        <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="amenities"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amenities (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter a comma-separated list of amenities.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="overlooking"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Overlooking (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Park, Main Road" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="ageOfConstruction"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Age of Construction (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., 1-5 years" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
