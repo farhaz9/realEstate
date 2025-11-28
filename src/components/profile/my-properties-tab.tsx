@@ -77,7 +77,6 @@ const propertyFormSchema = z.object({
   bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
   squareYards: z.coerce.number().positive({ message: 'Square yards must be a positive number.' }),
-  imageUrls: z.array(z.string()).optional(),
   furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
     required_error: 'Please select a furnishing status.',
   }),
@@ -121,7 +120,6 @@ export function MyPropertiesTab() {
       bedrooms: 0,
       bathrooms: 0,
       squareYards: 0,
-      imageUrls: [],
       amenities: '',
       overlooking: '',
       ageOfConstruction: '',
@@ -133,18 +131,22 @@ export function MyPropertiesTab() {
       toast({ title: 'Error', description: 'User or database not available.', variant: 'destructive' });
       return;
     }
+    
+    // NOTE: In a real app, you would first upload the images from data.images
+    // to a service like ImageKit, get the URLs back, and then save those URLs
+    // in the imageUrls field. For now, we will use a placeholder.
 
     const propertiesCollection = collection(firestore, 'properties');
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
 
-    const propertyData: Partial<Property> = {
+    const propertyData: Omit<Property, 'id' | 'imageUrls'> & { imageUrls?: string[], dateListed: any } = {
       ...data,
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
       isFeatured: false,
-      imageUrls: data.imageUrls && data.imageUrls.length > 0 ? data.imageUrls : ['default-property-listing'],
+      imageUrls: ['default-property-listing'],
     };
 
     if (!data.overlooking) delete propertyData.overlooking;
@@ -384,7 +386,7 @@ export function MyPropertiesTab() {
                     <Input type="file" multiple {...field} />
                   </FormControl>
                   <FormDescription>
-                    Upload one or more images for your property.
+                    Upload one or more images for your property. This is a placeholder and does not upload files yet.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

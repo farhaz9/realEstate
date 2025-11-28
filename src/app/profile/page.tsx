@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useRef } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
@@ -27,6 +27,7 @@ function ProfilePageContent() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get('tab') || 'profile';
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   const userDocRef = useMemoFirebase(() => {
@@ -64,6 +65,23 @@ function ProfilePageContent() {
     }
     return name.substring(0, 2).toUpperCase();
   }
+  
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // NOTE: Here you would implement the upload logic to a service like ImageKit
+      // and get a URL back. For now, we'll just show a toast.
+      toast({
+        title: "Image Selected",
+        description: `${file.name} is ready to be uploaded.`,
+      });
+    }
+  };
+
 
   const categoryDisplay: Record<string, string> = {
     'listing-property': 'Property Owner',
@@ -119,13 +137,23 @@ function ProfilePageContent() {
           <TabsContent value="profile">
             <Card className="max-w-2xl mx-auto">
                <CardHeader className="items-center text-center p-6 bg-muted/30">
-                <div className="relative">
+                <div className="relative group">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-md">
                     <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
                     <AvatarFallback className="text-5xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                         {displayName ? getInitials(displayName) : <User className="h-16 w-16" />}
                     </AvatarFallback>
                   </Avatar>
+                  <button onClick={handleAvatarClick} className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Camera className="h-8 w-8 text-white" />
+                  </button>
+                   <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
                 </div>
                 <CardTitle className="mt-4 text-3xl">{displayName ?? 'User'}</CardTitle>
                 <CardDescription>Welcome back to your dashboard!</CardDescription>
