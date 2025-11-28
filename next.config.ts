@@ -47,6 +47,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
       ? 'https://delhi-estate-luxe-416104.web.app' // Replace with your production URL
       : 'http://localhost:9002',
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
   },
 };
 

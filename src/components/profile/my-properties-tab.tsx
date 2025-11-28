@@ -47,6 +47,7 @@ import { PropertyCard } from '@/components/property-card';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import ImageKit from 'imagekit-javascript';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
@@ -96,6 +97,7 @@ export function MyPropertiesTab() {
   const router = useRouter();
   const { toast } = useToast();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -137,7 +139,11 @@ export function MyPropertiesTab() {
       const newPreviews = Array.from(files).map(file => URL.createObjectURL(file));
       setImagePreviews(prev => [...prev, ...newPreviews]);
       // Set the files to the form state
-      form.setValue('images', files);
+      const currentFiles = form.getValues('images') || [];
+      const combinedFiles = [...Array.from(currentFiles), ...Array.from(files)];
+      const dataTransfer = new DataTransfer();
+      combinedFiles.forEach(file => dataTransfer.items.add(file));
+      form.setValue('images', dataTransfer.files);
     }
   };
 
@@ -152,17 +158,50 @@ export function MyPropertiesTab() {
     }
   };
 
-  function onSubmit(data: PropertyFormValues) {
+  async function onSubmit(data: PropertyFormValues) {
     if (!user || !firestore) {
       toast({ title: 'Error', description: 'User or database not available.', variant: 'destructive' });
       return;
     }
     
-    // NOTE: This is where you would handle the actual image uploads to a service like ImageKit.
-    // For now, we are saving an empty array for imageUrls.
-    // 1. Upload `data.images` to ImageKit.
-    // 2. Get the returned URLs.
-    // 3. Add those URLs to the propertyData object below.
+    setIsUploading(true);
+
+    let uploadedImageUrls: string[] = [];
+    const files = data.images as FileList | null;
+
+    if (files && files.length > 0) {
+      try {
+        const authRes = await fetch('/api/imagekit/auth');
+        const auth = await authRes.json();
+
+        const imagekit = new ImageKit({
+            publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "",
+            urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "",
+        });
+
+        const uploadPromises = Array.from(files).map(file => {
+          return imagekit.upload({
+            file,
+            fileName: file.name,
+            ...auth,
+            folder: "/delhi-estate-luxe",
+          });
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+        uploadedImageUrls = uploadResults.map(result => result.url);
+
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        toast({
+          title: "Image Upload Failed",
+          description: "There was a problem uploading your images. Please try again.",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+        return;
+      }
+    }
     
     const propertiesCollection = collection(firestore, 'properties');
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
@@ -170,7 +209,7 @@ export function MyPropertiesTab() {
 
     const propertyData = {
       ...restOfData,
-      imageUrls: [], // This should be replaced with actual URLs from your upload service
+      imageUrls: uploadedImageUrls,
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
@@ -181,6 +220,8 @@ export function MyPropertiesTab() {
     if (!data.ageOfConstruction) delete (propertyData as Partial<typeof propertyData>).ageOfConstruction;
 
     addDocumentNonBlocking(propertiesCollection, propertyData);
+    
+    setIsUploading(false);
 
     toast({
       title: 'Property Listed!',
@@ -246,7 +287,7 @@ export function MyPropertiesTab() {
               name="images"
               render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
-                  <FormLabel>Property Images (Optional)</FormLabel>
+                  <FormLabel>Property Images</FormLabel>
                   <FormControl>
                     <Input 
                       type="file" 
@@ -257,10 +298,11 @@ export function MyPropertiesTab() {
                       name={name}
                       ref={ref}
                       className="h-auto"
+                      disabled={isUploading}
                     />
                   </FormControl>
                   <FormDescription>
-                    Upload one or more images for your property. This is a placeholder and does not upload files yet.
+                    Upload one or more images for your property.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -284,6 +326,7 @@ export function MyPropertiesTab() {
                       size="icon"
                       className="absolute top-1 right-1 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => removeImagePreview(index)}
+                      disabled={isUploading}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -300,7 +343,7 @@ export function MyPropertiesTab() {
                 <FormItem>
                   <FormLabel>Property Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} />
+                    <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} disabled={isUploading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -314,7 +357,7 @@ export function MyPropertiesTab() {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Describe your property in detail..." rows={5} {...field} />
+                    <Textarea placeholder="Describe your property in detail..." rows={5} {...field} disabled={isUploading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -329,7 +372,7 @@ export function MyPropertiesTab() {
                     <FormItem className="md:col-span-3">
                       <FormLabel>Full Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} />
+                        <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} disabled={isUploading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -342,7 +385,7 @@ export function MyPropertiesTab() {
                     <FormItem>
                       <FormLabel>Pincode</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 110017" {...field} />
+                        <Input placeholder="e.g., 110017" {...field} disabled={isUploading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -354,7 +397,7 @@ export function MyPropertiesTab() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>State</FormLabel>
-                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                       <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isUploading}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a state" />
@@ -374,7 +417,7 @@ export function MyPropertiesTab() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Property Type</FormLabel>
-                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                       <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isUploading}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a property type" />
@@ -398,7 +441,7 @@ export function MyPropertiesTab() {
                     <FormItem>
                       <FormLabel>Contact Number</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="e.g., 9876543210" {...field} />
+                        <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isUploading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -411,7 +454,7 @@ export function MyPropertiesTab() {
                     <FormItem>
                       <FormLabel>WhatsApp Number</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="e.g., 9876543210" {...field} />
+                        <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isUploading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -427,7 +470,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Price (in INR)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter amount" {...field} />
+                      <Input type="number" placeholder="Enter amount" {...field} disabled={isUploading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -445,6 +488,7 @@ export function MyPropertiesTab() {
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex items-center space-x-4"
+                        disabled={isUploading}
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
@@ -474,7 +518,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Bedrooms</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" {...field} />
+                      <Input type="number" min="0" {...field} disabled={isUploading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -487,7 +531,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Bathrooms</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" {...field} />
+                      <Input type="number" min="0" {...field} disabled={isUploading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -500,7 +544,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Area (sq. yards)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 250" {...field} />
+                      <Input type="number" placeholder="e.g., 250" {...field} disabled={isUploading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -514,7 +558,7 @@ export function MyPropertiesTab() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Furnishing</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isUploading}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select furnishing status" />
@@ -537,7 +581,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Amenities (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} />
+                      <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} disabled={isUploading} />
                     </FormControl>
                     <FormDescription>
                       Enter a comma-separated list of amenities.
@@ -553,7 +597,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Overlooking (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Park, Main Road" {...field} />
+                      <Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} disabled={isUploading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -566,7 +610,7 @@ export function MyPropertiesTab() {
                   <FormItem>
                     <FormLabel>Age of Construction (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 1-5 years" {...field} />
+                      <Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} disabled={isUploading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -575,9 +619,9 @@ export function MyPropertiesTab() {
             </div>
             
             <div className="flex justify-end">
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {form.formState.isSubmitting ? 'Submitting...' : 'List My Property'}
+              <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
+                {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {isUploading ? 'Uploading Images...' : (form.formState.isSubmitting ? 'Submitting...' : 'List My Property')}
               </Button>
             </div>
           </form>
@@ -635,5 +679,3 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
-
-    
