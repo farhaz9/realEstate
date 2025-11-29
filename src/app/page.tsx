@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
+import { Button as MovingBorderButton } from "@/components/ui/moving-border";
 
 const faqs = [
   {
@@ -160,11 +161,11 @@ export default function HomePage() {
                 </div>
                 <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
                 <p className="text-muted-foreground text-sm flex-grow">{service.description}</p>
-                <Button asChild variant="link" className="mt-4">
+                <UIButton asChild variant="link" className="mt-4">
                   <Link href={service.href}>
                     Learn More <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
-                </Button>
+                </UIButton>
               </Card>
             ))}
           </div>
@@ -203,13 +204,23 @@ export default function HomePage() {
                   <Textarea id="message" placeholder="Your Message" rows={5} />
                 </div>
                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button type="submit" className="w-full">Send Message</Button>
-                    <Button className="w-full bg-[#25D366] text-white hover:bg-[#1DAE52]" asChild>
-                      <Link href="https://wa.me/919953414336" target="_blank">
-                        <WhatsAppIcon className="h-6 w-6 mr-2 fill-white" />
+                   <MovingBorderButton
+                      borderRadius="1.75rem"
+                      className="w-full bg-slate-900 text-white dark:bg-slate-900 border-neutral-200 dark:border-slate-800"
+                    >
+                      Send Message
+                    </MovingBorderButton>
+                    <MovingBorderButton
+                      as="link"
+                      href="https://wa.me/919953414336"
+                      target="_blank"
+                      borderRadius="1.75rem"
+                      className="w-full bg-slate-900 text-white dark:bg-slate-900 border-neutral-200 dark:border-slate-800"
+                      containerClassName="w-full"
+                    >
+                      <WhatsAppIcon className="h-6 w-6 mr-2 fill-white" />
                         Message on WhatsApp
-                      </Link>
-                    </Button>
+                    </MovingBorderButton>
                 </div>
               </form>
             </CardContent>
