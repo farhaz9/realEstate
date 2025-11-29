@@ -47,10 +47,18 @@ export type User = {
   fullName: string;
   email: string;
   phone: string;
-  category: 'listing-property' | 'real-estate-agent' | 'interior-designer';
+  category: 'buyer-tenant' | 'listing-property' | 'real-estate-agent' | 'interior-designer';
   dateJoined: Date | any;
   photoURL?: string;
   wishlist?: string[];
+}
+
+export type Requirement = {
+    id: string;
+    userId: string;
+    text: string;
+    createdAt: Date | any;
+    user?: User; // Optional: To denormalize user data for display
 }
 
     

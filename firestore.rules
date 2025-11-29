@@ -8,9 +8,17 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    // Helper function to check if a user is a professional or lister.
+    function isProfessional() {
+      // Professionals can be agents, designers, or property listers.
+      let professionalRoles = ['real-estate-agent', 'interior-designer', 'listing-property'];
+      // Check if the user's category is one of the professional roles.
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.category in professionalRoles;
+    }
+
     // Rules for the 'users' collection
     match /users/{userId} {
-      // Anyone can read user profiles (e.g., to see property owner details).
+      // Anyone can read user profiles (e.g., to see property owner details or professional profiles).
       allow read: if true;
       // Only the authenticated owner of the profile can write (create, update, delete).
       allow write: if isOwner(userId);
@@ -19,7 +27,6 @@ service cloud.firestore {
     // Rules for the 'properties' collection
     match /properties/{propertyId} {
       // Allow anyone to read any property listing.
-      // This covers both getting a single document and listing the collection.
       allow read: if true;
       
       // Allow any authenticated user to create a new property.
@@ -28,5 +35,20 @@ service cloud.firestore {
       // Only allow the user who owns the property to update or delete it.
       allow update, delete: if isOwner(resource.data.userId);
     }
+
+    // Rules for the 'requirements' collection
+    match /requirements/{requirementId} {
+      // Professionals and property listers can read all requirements.
+      // A user can read their own requirement.
+      allow read: if isProfessional() || isOwner(resource.data.userId);
+
+      // A user can create a requirement for themselves.
+      allow create: if isOwner(request.resource.data.userId);
+      
+      // Only the owner can update or delete their own requirement.
+      allow update, delete: if isOwner(resource.data.userId);
+    }
   }
 }
+
+    

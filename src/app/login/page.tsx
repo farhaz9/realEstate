@@ -201,7 +201,7 @@ export default function LoginPage() {
           fullName: user.displayName,
           email: user.email,
           phone: user.phoneNumber || '', // Phone number might not be available from Google
-          category: 'listing-property', // Default category
+          category: 'buyer-tenant', // Default category for Google Sign-in
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || '',
         });
@@ -388,6 +388,7 @@ export default function LoginPage() {
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="buyer-tenant">Buyer / Tenant</SelectItem>
                                 <SelectItem value="listing-property">Property Owner / Lister</SelectItem>
                                 <SelectItem value="real-estate-agent">Real Estate Agent</SelectItem>
                                 <SelectItem value="interior-designer">Interior Designer</SelectItem>
@@ -428,3 +429,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    

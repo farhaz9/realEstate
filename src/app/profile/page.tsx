@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
+import { MyRequirementsTab } from '@/components/profile/my-requirements-tab';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -84,14 +85,16 @@ function ProfilePageContent() {
 
 
   const categoryDisplay: Record<string, string> = {
+    'buyer-tenant': 'Buyer / Tenant',
     'listing-property': 'Property Owner',
     'real-estate-agent': 'Real Estate Agent',
     'interior-designer': 'Interior Designer'
   };
   
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
+  const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer'].includes(userProfile.category);
   
-  if (isUserLoading) {
+  if (isUserLoading || isProfileLoading) {
     return (
       <>
         <div className="bg-muted">
@@ -129,9 +132,16 @@ function ProfilePageContent() {
       
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-lg mx-auto mb-8">
-            <TabsTrigger value="profile">Profile Details</TabsTrigger>
-            <TabsTrigger value="listings">My Listings</TabsTrigger>
+          <TabsList className={`grid w-full max-w-lg mx-auto mb-8 ${isProfessional ? 'grid-cols-2' : 'grid-cols-3'}`}>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            {isProfessional ? (
+                <TabsTrigger value="listings">My Listings</TabsTrigger>
+            ) : (
+                <>
+                    <TabsTrigger value="requirements">My Requirements</TabsTrigger>
+                    <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
+                </>
+            )}
           </TabsList>
           
           <TabsContent value="profile">
@@ -221,10 +231,26 @@ function ProfilePageContent() {
               </CardFooter>
             </Card>
           </TabsContent>
+          
+          {isProfessional ? (
+              <TabsContent value="listings">
+                <MyPropertiesTab />
+              </TabsContent>
+          ) : (
+            <>
+              <TabsContent value="requirements">
+                <MyRequirementsTab />
+              </TabsContent>
+              <TabsContent value="wishlist">
+                 {/* This should be a link to the wishlist page */}
+                <div className="text-center">
+                    <p>Redirecting you to your wishlist...</p>
+                    <Button onClick={() => router.push('/wishlist')}>Go to Wishlist</Button>
+                </div>
+              </TabsContent>
+            </>
+          )}
 
-         <TabsContent value="listings">
-            <MyPropertiesTab />
-          </TabsContent>
         </Tabs>
       </div>
     </>
@@ -238,3 +264,5 @@ export default function ProfilePage() {
     </Suspense>
   )
 }
+
+    

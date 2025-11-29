@@ -25,7 +25,8 @@ import {
   LogIn,
   Search,
   MapPin,
-  Heart
+  Heart,
+  ClipboardList
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -33,15 +34,21 @@ import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { useOnScroll } from "@/hooks/use-on-scroll";
 import { Input } from "../ui/input";
+import { useDoc, useMemoFirebase } from '@/firebase';
+import type { User as UserType } from '@/types';
+import { doc } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/properties", label: "Properties" },
   { href: "/interiors", label: "Interiors" },
   { href: "/professionals", label: "Professionals" },
+  { href: "/requirements", label: "Requirements", professionalOnly: true },
   { href: "/services", label: "Services" },
   { href: "/contact", label: "Contact" },
-  { href: "/profile", label: "My Listings", userOnly: true },
+  { href: "/profile", label: "My Listings", userOnly: true, professionalOnly: true },
 ];
 
 const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -95,10 +102,24 @@ export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user, isUserLoading } = useUser();
   const { isScrolled } = useOnScroll('offers'); 
+  const firestore = useFirestore();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+  
+  const { data: userProfile } = useDoc<UserType>(userDocRef);
+
+  const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer'].includes(userProfile.category);
 
   const isHomePage = pathname === '/';
   
-  const visibleNavLinks = navLinks.filter(link => !link.userOnly || user);
+  const visibleNavLinks = navLinks.filter(link => {
+    if (link.professionalOnly && !isProfessional) return false;
+    if (link.userOnly && !user) return false;
+    return true;
+  });
 
   return (
     <header className={cn(
@@ -167,7 +188,7 @@ export default function Header() {
                     </Button>
                   </SheetTrigger>
                   <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {visibleNavLinks.filter(l => !l.userOnly).slice(1,3).map((link) => (
+                    {visibleNavLinks.filter(l => !l.userOnly && !l.professionalOnly).slice(1,3).map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
@@ -204,7 +225,7 @@ export default function Header() {
                         {link.label}
                       </Link>
                     ))}
-                     {user && (
+                     {user && isProfessional && (
                       <Link
                         href="/profile#listings"
                         className={cn(
@@ -246,3 +267,5 @@ export default function Header() {
     </header>
   );
 }
+
+    
