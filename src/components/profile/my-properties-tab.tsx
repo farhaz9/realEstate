@@ -172,6 +172,10 @@ export function MyPropertiesTab() {
     if (files && files.length > 0) {
       try {
         const authRes = await fetch('/api/imagekit/auth');
+        if (!authRes.ok) {
+            const errorBody = await authRes.json();
+            throw new Error(errorBody.error || `Authentication failed with status: ${authRes.status}`);
+        }
         const auth = await authRes.json();
 
         const imagekit = new ImageKit({
@@ -191,11 +195,11 @@ export function MyPropertiesTab() {
         const uploadResults = await Promise.all(uploadPromises);
         uploadedImageUrls = uploadResults.map(result => result.url);
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Image upload failed:", error);
         toast({
           title: "Image Upload Failed",
-          description: "There was a problem uploading your images. Please try again.",
+          description: error.message || "There was a problem uploading your images. Please try again.",
           variant: "destructive",
         });
         setIsUploading(false);
