@@ -33,9 +33,9 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
   const imageUrl =
-    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string' && property.imageUrls[0]
+    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string'
       ? property.imageUrls[0]
-      : "https://ik.imagekit.io/ei1qzvmub/default-property_Uj8gI7k3p.jpg";
+      : null;
     
   const { user } = useUser();
   const firestore = useFirestore();
@@ -114,14 +114,16 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   return (
      <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
         <Link href={`/properties/${property.id}`} className="block">
-            <div className="relative h-56 flex-shrink-0">
-                <Image
-                    src={imageUrl}
-                    alt={property.title}
-                    data-ai-hint="property image"
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+            <div className="relative h-56 flex-shrink-0 bg-muted">
+                {imageUrl && (
+                    <Image
+                        src={imageUrl}
+                        alt={property.title}
+                        data-ai-hint="property image"
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                )}
                 <div className="absolute top-4 right-4 flex gap-2">
                     <div className="flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs">
                         <Star className="h-3 w-3 fill-current" />

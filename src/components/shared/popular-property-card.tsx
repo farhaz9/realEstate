@@ -12,9 +12,9 @@ interface PopularPropertyCardProps {
 
 export function PopularPropertyCard({ property, className }: PopularPropertyCardProps) {
   const imageUrl =
-    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string' && property.imageUrls[0]
+    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string'
       ? property.imageUrls[0]
-      : "https://ik.imagekit.io/ei1qzvmub/default-property_Uj8gI7k3p.jpg";
+      : null;
 
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
@@ -22,7 +22,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
   return (
     <Link href={`/properties/${property.id}`} className="block group h-full">
         <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md h-full flex flex-col">
-            <div className="relative h-40">
+            <div className="relative h-40 bg-muted">
                 {imageUrl && (
                     <Image
                         src={imageUrl}

@@ -137,9 +137,9 @@ export default function PropertyDetailPage() {
   }
 
   const mainImage =
-    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string' && property.imageUrls[0]
+    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string'
       ? property.imageUrls[0]
-      : "https://ik.imagekit.io/ei1qzvmub/default-property_Uj8gI7k3p.jpg";
+      : null;
 
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
@@ -170,7 +170,7 @@ export default function PropertyDetailPage() {
           <div className="lg:col-span-2 space-y-8">
             <Card>
               <CardContent className="p-0">
-                <div className="relative h-96 w-full">
+                <div className="relative h-96 w-full bg-muted">
                   {mainImage && (
                     <Image src={mainImage} alt={property.title} data-ai-hint="property image" fill className="object-cover rounded-t-lg" priority />
                   )}
