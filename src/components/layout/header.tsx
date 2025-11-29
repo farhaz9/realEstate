@@ -131,12 +131,6 @@ export default function Header() {
                <div className="flex justify-center py-8">
                 <Logo />
               </div>
-              <SheetClose asChild>
-                <Button variant="ghost" size="icon" className="md:hidden rounded-full absolute top-4 right-4">
-                  <X className="h-6 w-6" />
-                  <span className="sr-only">Close navigation menu</span>
-                </Button>
-              </SheetClose>
             </SheetHeader>
             
             <div className="flex flex-col h-full">
