@@ -88,7 +88,10 @@ export default function PropertiesPage() {
   const filteredProperties = useMemo(() => {
     if (!properties) return [];
     
-    return properties.filter(p => {
+    // Filter out properties that have invalid imageUrls
+    const validProperties = properties.filter(p => Array.isArray(p.imageUrls));
+
+    return validProperties.filter(p => {
       let tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
@@ -290,6 +293,8 @@ export default function PropertiesPage() {
     </div>
   );
 }
+
+    
 
     
 
