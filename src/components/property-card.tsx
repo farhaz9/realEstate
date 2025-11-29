@@ -25,6 +25,7 @@ import { usePathname } from "next/navigation";
 import { WhatsAppIcon } from "./icons/whatsapp-icon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 interface PropertyCardProps {
   property: Property;
@@ -32,17 +33,26 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
-  const imageUrl =
-    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string'
-      ? property.imageUrls[0]
-      : null;
-    
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const pathname = usePathname();
   const router = useRouter();
 
+  const getImageUrl = () => {
+    const firstImage = property.imageUrls && property.imageUrls.length > 0 ? property.imageUrls[0] : null;
+    if (!firstImage) return null;
+
+    if (firstImage.startsWith('http')) {
+      return firstImage;
+    }
+
+    const placeholder = PlaceHolderImages.find(p => p.id === firstImage);
+    return placeholder ? placeholder.imageUrl : null;
+  }
+
+  const imageUrl = getImageUrl();
+    
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);

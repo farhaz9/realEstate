@@ -4,6 +4,7 @@ import type { Property } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { Camera, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 interface PopularPropertyCardProps {
   property: Property;
@@ -11,11 +12,19 @@ interface PopularPropertyCardProps {
 }
 
 export function PopularPropertyCard({ property, className }: PopularPropertyCardProps) {
-  const imageUrl =
-    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string'
-      ? property.imageUrls[0]
-      : null;
+    const getImageUrl = () => {
+    const firstImage = property.imageUrls && property.imageUrls.length > 0 ? property.imageUrls[0] : null;
+    if (!firstImage) return null;
 
+    if (firstImage.startsWith('http')) {
+      return firstImage;
+    }
+
+    const placeholder = PlaceHolderImages.find(p => p.id === firstImage);
+    return placeholder ? placeholder.imageUrl : null;
+  }
+
+  const imageUrl = getImageUrl();
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 

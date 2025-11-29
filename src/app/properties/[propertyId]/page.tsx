@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { PopularPropertyCard } from '@/components/shared/popular-property-card';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -136,11 +137,16 @@ export default function PropertyDetailPage() {
     );
   }
 
-  const mainImage =
-    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string'
-      ? property.imageUrls[0]
-      : null;
+  const getImageUrl = (imgIdentifier: string | null) => {
+    if (!imgIdentifier) return null;
+    if (imgIdentifier.startsWith('http')) {
+      return imgIdentifier;
+    }
+    const placeholder = PlaceHolderImages.find(p => p.id === imgIdentifier);
+    return placeholder ? placeholder.imageUrl : null;
+  }
 
+  const mainImage = getImageUrl(property.imageUrls && property.imageUrls.length > 0 ? property.imageUrls[0] : null);
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
