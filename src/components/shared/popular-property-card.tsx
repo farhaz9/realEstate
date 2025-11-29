@@ -14,7 +14,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
   const imageUrl =
     property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0]
       ? property.imageUrls[0]
-      : "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg";
+      : "https://ik.imagekit.io/ei1qzvmub/default-property_Uj8gI7k3p.jpg";
 
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
