@@ -4,7 +4,7 @@ import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
@@ -26,6 +26,13 @@ import { WhatsAppIcon } from "./icons/whatsapp-icon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface PropertyCardProps {
   property: Property;
@@ -40,15 +47,14 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   const router = useRouter();
 
   const getImageUrl = () => {
-    const firstImage = property.imageUrls && property.imageUrls.length > 0 ? property.imageUrls[0] : null;
-    if (!firstImage) return null;
-
-    if (firstImage.startsWith('http')) {
-      return firstImage;
+    if (property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0]) {
+      if (property.imageUrls[0].startsWith('http')) {
+        return property.imageUrls[0];
+      }
+      const placeholder = PlaceHolderImages.find(p => p.id === property.imageUrls[0]);
+      return placeholder?.imageUrl;
     }
-
-    const placeholder = PlaceHolderImages.find(p => p.id === firstImage);
-    return placeholder ? placeholder.imageUrl : null;
+    return null;
   }
 
   const imageUrl = getImageUrl();
@@ -80,7 +86,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     });
   };
 
-  const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleWishlistToggle = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -107,13 +113,13 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     });
   };
   
-  const handlePhoneClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePhoneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
     window.location.href = `tel:${property.contactNumber}`;
   };
 
-  const handleWhatsAppClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleWhatsAppClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
     window.open(`https://wa.me/${property.whatsappNumber}`, '_blank');
@@ -123,7 +129,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
 
   return (
      <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
-        <Link href={`/properties/${property.id}`} className="block">
+        <Link href={`/properties/${property.id}`} className="block flex flex-col flex-grow">
             <div className="relative h-56 flex-shrink-0 bg-muted">
                 {imageUrl ? (
                     <Image
@@ -173,36 +179,53 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
               View Details <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button size="icon" variant="outline" onClick={handlePhoneClick}>
-            <Phone />
-          </Button>
-          <Button size="icon" variant="outline" onClick={handleWhatsAppClick}>
-            <WhatsAppIcon className="h-6 w-6 text-green-600" />
-          </Button>
-           <Button size="icon" variant="ghost" className="rounded-full h-9 w-9" onClick={handleWishlistToggle}>
-            <Heart className={cn("h-5 w-5", isInWishlist ? 'text-red-500 fill-red-500' : 'text-muted-foreground')} />
-          </Button>
-          {showDeleteButton && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                 <Button variant="outline" size="icon" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                  <Trash2 className="text-destructive"/>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your property listing from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handlePhoneClick}>
+                <Phone className="mr-2 h-4 w-4" />
+                <span>Call Agent</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleWhatsAppClick}>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                <span>WhatsApp</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleWishlistToggle}>
+                <Heart className={cn("mr-2 h-4 w-4", isInWishlist ? "text-red-500 fill-red-500" : "")} />
+                <span>{isInWishlist ? 'Remove from' : 'Add to'} Wishlist</span>
+              </DropdownMenuItem>
+              {showDeleteButton && (
+                <>
+                  <DropdownMenuSeparator />
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        <span>Delete</span>
+                      </DropdownMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete your property listing from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </CardFooter>
     </Card>
   );
