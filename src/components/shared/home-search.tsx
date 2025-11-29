@@ -48,7 +48,7 @@ export function HomeSearch() {
             </div>
         </form>
 
-        <div className="flex justify-between items-center border-b mt-4">
+        <div className="mt-4">
             <div className="flex items-center space-x-6">
               {searchTabs.map(tab => (
                 <button
