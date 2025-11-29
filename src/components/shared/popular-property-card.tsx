@@ -1,7 +1,6 @@
 
 import Image from "next/image";
 import type { Property } from "@/types";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { formatPrice } from "@/lib/utils";
 import { Camera, MapPin } from 'lucide-react';
 import Link from 'next/link';
@@ -15,7 +14,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
   const imageUrl =
     property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0]
       ? property.imageUrls[0]
-      : PlaceHolderImages.find((p) => p.id === "default-property")?.imageUrl || "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg";
+      : "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg";
 
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
