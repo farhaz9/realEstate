@@ -33,7 +33,7 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
   const imageUrl =
-    property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0]
+    property.imageUrls && property.imageUrls.length > 0 && typeof property.imageUrls[0] === 'string' && property.imageUrls[0]
       ? property.imageUrls[0]
       : "https://ik.imagekit.io/ei1qzvmub/default-property_Uj8gI7k3p.jpg";
     
