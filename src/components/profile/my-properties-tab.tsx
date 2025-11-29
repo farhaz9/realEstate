@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, Loader2, Plus, Star, X } from 'lucide-react';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X } from 'lucide-react';
 import type { Property } from '@/types';
 import {
   AlertDialog,
@@ -44,9 +44,10 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PropertyCard } from '@/components/property-card';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
@@ -97,6 +98,7 @@ export function MyPropertiesTab() {
   const { toast } = useToast();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -135,11 +137,20 @@ export function MyPropertiesTab() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const newPreviews = Array.from(files).map(file => URL.createObjectURL(file));
+      const validFiles = Array.from(files).filter(file => file.size <= 2 * 1024 * 1024);
+      if (validFiles.length < files.length) {
+        toast({
+          title: "File Size Limit Exceeded",
+          description: "Some images were not selected because they exceed the 2MB size limit.",
+          variant: "destructive",
+        })
+      }
+
+      const newPreviews = validFiles.map(file => URL.createObjectURL(file));
       setImagePreviews(prev => [...prev, ...newPreviews]);
-      // Set the files to the form state
+
       const currentFiles = form.getValues('images') || [];
-      const combinedFiles = [...Array.from(currentFiles), ...Array.from(files)];
+      const combinedFiles = [...Array.from(currentFiles), ...validFiles];
       const dataTransfer = new DataTransfer();
       combinedFiles.forEach(file => dataTransfer.items.add(file));
       form.setValue('images', dataTransfer.files);
@@ -289,24 +300,59 @@ export function MyPropertiesTab() {
             <FormField
               control={form.control}
               name="images"
-              render={({ field: { onChange, onBlur, name, ref } }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Property Images</FormLabel>
+                   <Dialog>
+                      <DialogTrigger asChild>
+                         <Button variant="outline" className="w-full">
+                           <ImageUp className="mr-2 h-4 w-4" />
+                           Upload Images
+                         </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Image Upload Instructions</DialogTitle>
+                          <DialogDescription>
+                            For the best results, please follow these guidelines when uploading your property images.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                           <Alert>
+                              <AlertTitle>File Size Limit: 2MB</AlertTitle>
+                              <AlertDescription>
+                                Each image must be under 2MB. Large images may fail to upload.
+                              </AlertDescription>
+                            </Alert>
+                             <p className="text-sm text-muted-foreground">
+                                If your images are too large, you can use a free online tool to compress them before uploading.
+                              </p>
+                              <Button variant="secondary" asChild>
+                                <Link href="https://www.iloveimg.com/" target="_blank">
+                                  Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
+                                </Link>
+                              </Button>
+                        </div>
+                        <DialogFooter>
+                           <Button onClick={() => fileInputRef.current?.click()}>
+                              Select Files
+                           </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   <FormControl>
                     <Input 
                       type="file" 
                       multiple
-                      accept="image/*"
+                      accept="image/*,video/*"
+                      ref={fileInputRef}
                       onChange={handleImageChange}
-                      onBlur={onBlur}
-                      name={name}
-                      ref={ref}
-                      className="h-auto"
+                      className="hidden"
                       disabled={isUploading}
                     />
                   </FormControl>
                   <FormDescription>
-                    Upload one or more images for your property.
+                    Upload one or more images (max 2MB each).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
