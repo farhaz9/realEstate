@@ -172,22 +172,22 @@ export function MyPropertiesTab() {
     if (files && files.length > 0) {
       try {
         const authRes = await fetch('/api/imagekit/auth');
-        if (!authRes.ok) {
-            const errorBody = await authRes.json();
-            throw new Error(errorBody.error || `Authentication failed with status: ${authRes.status}`);
-        }
-        const auth = await authRes.json();
+        const authBody = await authRes.json();
 
+        if (!authRes.ok) {
+            throw new Error(authBody.message || `Authentication failed with status: ${authRes.status}`);
+        }
+        
         const imagekit = new ImageKit({
-            publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "",
-            urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "",
+            publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
+            urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
         });
 
         const uploadPromises = Array.from(files).map(file => {
           return imagekit.upload({
             file,
             fileName: file.name,
-            ...auth,
+            ...authBody,
             folder: "/delhi-estate-luxe",
           });
         });

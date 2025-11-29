@@ -11,17 +11,28 @@ import ImageKit from 'imagekit';
 export async function GET(request: Request) {
   // Do not expose your private key to the client-side.
   // This endpoint should be the ONLY place your private key is used.
-  if (!process.env.IMAGEKIT_PUBLIC_KEY || !process.env.IMAGEKIT_PRIVATE_KEY || !process.env.IMAGEKIT_URL_ENDPOINT) {
+  const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;
+  const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+  const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
+
+  if (!publicKey || !privateKey || !urlEndpoint) {
+    const missingKeys = [
+        !publicKey && "NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY",
+        !privateKey && "IMAGEKIT_PRIVATE_KEY",
+        !urlEndpoint && "NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT"
+    ].filter(Boolean).join(', ');
+
+    console.error(`ImageKit environment variables are not configured. Missing: ${missingKeys}`);
     return NextResponse.json(
-        { error: 'ImageKit environment variables are not configured.' },
+        { message: `ImageKit server configuration error. The following environment variables are missing: ${missingKeys}` },
         { status: 500 }
     );
   }
 
   const imagekit = new ImageKit({
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+    publicKey,
+    privateKey,
+    urlEndpoint,
   });
 
   try {
@@ -30,7 +41,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error generating ImageKit authentication parameters:', error);
     return NextResponse.json(
-        { error: 'Failed to generate authentication signature.' },
+        { message: 'Failed to generate authentication signature.' },
         { status: 500 }
     );
   }
