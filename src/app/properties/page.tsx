@@ -51,7 +51,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const { location: userLocation, error: locationError, isLoading: isLocationLoading } = useGeolocation();
+  const { location: userLocation, error: locationError, isLoading: isLocationLoading, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -321,5 +321,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
-    
