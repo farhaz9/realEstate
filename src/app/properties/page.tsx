@@ -156,14 +156,10 @@ export default function PropertiesPage() {
                 <Input
                     id="search"
                     placeholder={placeholder}
-                    className="pl-10 pr-36 text-foreground h-12 rounded-full"
+                    className="pl-10 pr-14 text-foreground h-12 rounded-full"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                 <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                    <Sparkles className="h-3 w-3 text-primary" />
-                    <span className="font-semibold">Powered by Gemini</span>
-                  </div>
                  <Button type="submit" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full" disabled={isAiSearchPending}>
                     {isAiSearchPending ? <ArrowUpDown className="h-5 w-5 animate-bounce" /> : <Search className="h-5 w-5" />}
                 </Button>
@@ -293,9 +289,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
-    
-
-    
-
-    
