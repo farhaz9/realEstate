@@ -244,7 +244,7 @@ export default function Header() {
                   ) : user ? (
                     <>
                       <Button asChild variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Link href="/wishlist">
+                        <Link href="/profile?tab=wishlist">
                           <Heart />
                         </Link>
                       </Button>

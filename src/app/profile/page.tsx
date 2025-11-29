@@ -14,6 +14,7 @@ import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera } from 'l
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
+import { WishlistTab } from '@/components/profile/wishlist-tab';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -119,6 +120,7 @@ function ProfilePageContent() {
 
   const displayAvatar = userProfile?.photoURL ?? user.photoURL;
   const displayName = userProfile?.fullName ?? user.displayName;
+  const tabsToShow = isProfessional ? 2 : 3;
 
   return (
     <>
@@ -131,12 +133,14 @@ function ProfilePageContent() {
       
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue={defaultTab} className="w-full">
-           <TabsList className={`grid w-full max-w-lg mx-auto mb-8 grid-cols-2`}>
+           <TabsList className={`grid w-full max-w-lg mx-auto mb-8 grid-cols-${tabsToShow}`}>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             {isProfessional ? (
                 <TabsTrigger value="listings">My Listings</TabsTrigger>
             ) : (
-                <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
+                <>
+                  <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
+                </>
             )}
           </TabsList>
           
@@ -233,13 +237,9 @@ function ProfilePageContent() {
                 <MyPropertiesTab />
               </TabsContent>
           ) : (
-              <TabsContent value="wishlist">
-                 {/* This should be a link to the wishlist page */}
-                <div className="text-center">
-                    <p>Redirecting you to your wishlist...</p>
-                    <Button onClick={() => router.push('/wishlist')}>Go to Wishlist</Button>
-                </div>
-              </TabsContent>
+            <TabsContent value="wishlist">
+                <WishlistTab />
+            </TabsContent>
           )}
 
         </Tabs>

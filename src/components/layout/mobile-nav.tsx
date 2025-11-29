@@ -15,7 +15,7 @@ export default function MobileNav() {
     { href: "/properties", label: "Properties", icon: Building },
     { href: "/interiors", label: "Interiors", icon: Palette },
     { href: "/", label: "Home", icon: Home },
-    { href: "/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/profile?tab=wishlist", label: "Wishlist", icon: Heart },
     user
       ? { href: "/profile", label: "Profile", icon: User }
       : { href: "/contact", label: "Contact", icon: MessageCircle },
