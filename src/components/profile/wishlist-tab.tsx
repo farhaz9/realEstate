@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
-import { collection, query, where, documentId } from 'firebase/firestore';
+import { collection, query, where, documentId, doc } from 'firebase/firestore';
 import { useMemo } from 'react';
 import type { Property, User } from '@/types';
 import { Loader2, HeartCrack } from 'lucide-react';
