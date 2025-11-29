@@ -25,6 +25,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
+import { useGeolocation } from '@/hooks/use-geolocation';
 
 const searchSuggestions = [
   'Search property in South Delhi',
@@ -37,6 +38,7 @@ const searchSuggestions = [
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
+  const { location: userLocation, error: locationError } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -48,6 +50,12 @@ export default function PropertiesPage() {
   const [placeholder, setPlaceholder] = useState(searchSuggestions[0]);
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
+
+  useEffect(() => {
+    if (userLocation?.state && location === 'all') {
+      setLocation(userLocation.state);
+    }
+  }, [userLocation, location]);
 
 
   useEffect(() => {
@@ -289,3 +297,5 @@ export default function PropertiesPage() {
     </div>
   );
 }
+
+    
