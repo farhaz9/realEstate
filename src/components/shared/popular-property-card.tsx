@@ -2,7 +2,7 @@
 import Image from "next/image";
 import type { Property } from "@/types";
 import { formatPrice } from "@/lib/utils";
-import { Camera, MapPin } from 'lucide-react';
+import { Camera, MapPin, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
@@ -32,7 +32,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
     <Link href={`/properties/${property.id}`} className="block group h-full">
         <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md h-full flex flex-col">
             <div className="relative h-40 bg-muted">
-                {imageUrl && (
+                {imageUrl ? (
                     <Image
                         src={imageUrl}
                         alt={property.title}
@@ -40,6 +40,10 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
                         fill
                         className="object-cover"
                     />
+                ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-muted">
+                      <ImageIcon className="h-10 w-10 text-gray-400" />
+                    </div>
                 )}
                 {imageCount > 0 && (
                      <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/60 text-white rounded-sm px-2 py-1 text-xs">

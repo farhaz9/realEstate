@@ -4,7 +4,7 @@ import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
@@ -125,7 +125,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
      <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
         <Link href={`/properties/${property.id}`} className="block">
             <div className="relative h-56 flex-shrink-0 bg-muted">
-                {imageUrl && (
+                {imageUrl ? (
                     <Image
                         src={imageUrl}
                         alt={property.title}
@@ -133,6 +133,10 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-muted">
+                    <ImageIcon className="h-12 w-12 text-gray-400" />
+                  </div>
                 )}
                 <div className="absolute top-4 right-4 flex gap-2">
                     <div className="flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs">

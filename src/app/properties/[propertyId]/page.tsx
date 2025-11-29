@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection } from '@/firebase';
 import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
-import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator } from 'lucide-react';
+import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -177,8 +177,12 @@ export default function PropertyDetailPage() {
             <Card>
               <CardContent className="p-0">
                 <div className="relative h-96 w-full bg-muted">
-                  {mainImage && (
+                  {mainImage ? (
                     <Image src={mainImage} alt={property.title} data-ai-hint="property image" fill className="object-cover rounded-t-lg" priority />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-muted rounded-t-lg">
+                      <ImageIcon className="h-24 w-24 text-gray-400" />
+                    </div>
                   )}
                   <div className="absolute top-4 left-4">
                      <Button asChild variant="secondary" size="sm">
