@@ -120,7 +120,7 @@ function ProfilePageContent() {
 
   const displayAvatar = userProfile?.photoURL ?? user.photoURL;
   const displayName = userProfile?.fullName ?? user.displayName;
-  const tabsToShow = isProfessional ? 2 : 3;
+  const tabsToShow = isProfessional ? 3 : 2;
 
   return (
     <>
@@ -135,13 +135,10 @@ function ProfilePageContent() {
         <Tabs defaultValue={defaultTab} className="w-full">
            <TabsList className={`grid w-full max-w-lg mx-auto mb-8 grid-cols-${tabsToShow}`}>
             <TabsTrigger value="profile">Profile</TabsTrigger>
-            {isProfessional ? (
-                <TabsTrigger value="listings">My Listings</TabsTrigger>
-            ) : (
-                <>
-                  <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
-                </>
+            {isProfessional && (
+              <TabsTrigger value="listings">My Listings</TabsTrigger>
             )}
+            <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile">
@@ -232,15 +229,15 @@ function ProfilePageContent() {
             </Card>
           </TabsContent>
           
-          {isProfessional ? (
-              <TabsContent value="listings">
-                <MyPropertiesTab />
-              </TabsContent>
-          ) : (
-            <TabsContent value="wishlist">
-                <WishlistTab />
+          {isProfessional && (
+            <TabsContent value="listings">
+              <MyPropertiesTab />
             </TabsContent>
           )}
+
+          <TabsContent value="wishlist">
+            <WishlistTab />
+          </TabsContent>
 
         </Tabs>
       </div>
