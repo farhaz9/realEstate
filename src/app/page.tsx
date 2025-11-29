@@ -206,19 +206,19 @@ export default function HomePage() {
                  <div className="flex flex-col sm:flex-row gap-4">
                    <MovingBorderButton
                       borderRadius="1.75rem"
-                      className="w-full bg-slate-900 text-white dark:bg-slate-900 border-neutral-200 dark:border-slate-800"
+                      className="w-full bg-background dark:bg-slate-900 text-foreground dark:text-white border-neutral-200 dark:border-slate-800"
                     >
                       Send Message
                     </MovingBorderButton>
                     <MovingBorderButton
-                      as="link"
+                      as={Link}
                       href="https://wa.me/919953414336"
                       target="_blank"
                       borderRadius="1.75rem"
-                      className="w-full bg-slate-900 text-white dark:bg-slate-900 border-neutral-200 dark:border-slate-800"
+                      className="w-full bg-background dark:bg-slate-900 text-foreground dark:text-white border-neutral-200 dark:border-slate-800"
                       containerClassName="w-full"
                     >
-                      <WhatsAppIcon className="h-6 w-6 mr-2 fill-white" />
+                      <WhatsAppIcon className="h-6 w-6 mr-2 fill-current" />
                         Message on WhatsApp
                     </MovingBorderButton>
                 </div>
