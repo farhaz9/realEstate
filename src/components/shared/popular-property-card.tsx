@@ -12,10 +12,10 @@ interface PopularPropertyCardProps {
 }
 
 export function PopularPropertyCard({ property, className }: PopularPropertyCardProps) {
-  const hasImages = property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0];
-  const imageUrl = hasImages
-    ? property.imageUrls[0]
-    : PlaceHolderImages.find((p) => p.id === 'default-property')?.imageUrl;
+  const imageUrl =
+    property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0]
+      ? property.imageUrls[0]
+      : PlaceHolderImages.find((p) => p.id === "default-property")?.imageUrl || "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg";
 
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
