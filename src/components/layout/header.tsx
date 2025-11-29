@@ -45,7 +45,6 @@ const navLinks = [
   { href: "/properties", label: "Properties" },
   { href: "/interiors", label: "Interiors" },
   { href: "/professionals", label: "Professionals" },
-  { href: "/requirements", label: "Requirements", professionalOnly: true },
   { href: "/services", label: "Services" },
   { href: "/contact", label: "Contact" },
   { href: "/profile", label: "My Listings", userOnly: true, professionalOnly: true },
@@ -267,5 +266,3 @@ export default function Header() {
     </header>
   );
 }
-
-    

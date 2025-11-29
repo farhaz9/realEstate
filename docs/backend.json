@@ -190,19 +190,6 @@
         "squareYards",
         "dateListed"
       ]
-    },
-    "Requirement": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Requirement",
-      "type": "object",
-      "description": "Represents a user's posted property requirement.",
-      "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "text": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["id", "userId", "text", "createdAt"]
     }
   },
   "auth": {
@@ -233,17 +220,7 @@
             },
             "description": "Public collection of all property listings."
         }
-      },
-      {
-        "path": "/requirements/{requirementId}",
-        "definition": {
-          "entityName": "Requirement",
-          "schema": { "$ref": "#/entities/Requirement" },
-          "description": "Stores user property requirements."
-        }
       }
     ]
   }
 }
-
-    

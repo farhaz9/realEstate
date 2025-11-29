@@ -52,13 +52,3 @@ export type User = {
   photoURL?: string;
   wishlist?: string[];
 }
-
-export type Requirement = {
-    id: string;
-    userId: string;
-    text: string;
-    createdAt: Date | any;
-    user?: User; // Optional: To denormalize user data for display
-}
-
-    

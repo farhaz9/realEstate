@@ -16,7 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MyRequirementsTab } from '@/components/profile/my-requirements-tab';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -132,15 +131,12 @@ function ProfilePageContent() {
       
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className={`grid w-full max-w-lg mx-auto mb-8 ${isProfessional ? 'grid-cols-2' : 'grid-cols-3'}`}>
+           <TabsList className={`grid w-full max-w-lg mx-auto mb-8 grid-cols-2`}>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             {isProfessional ? (
                 <TabsTrigger value="listings">My Listings</TabsTrigger>
             ) : (
-                <>
-                    <TabsTrigger value="requirements">My Requirements</TabsTrigger>
-                    <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
-                </>
+                <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
             )}
           </TabsList>
           
@@ -237,10 +233,6 @@ function ProfilePageContent() {
                 <MyPropertiesTab />
               </TabsContent>
           ) : (
-            <>
-              <TabsContent value="requirements">
-                <MyRequirementsTab />
-              </TabsContent>
               <TabsContent value="wishlist">
                  {/* This should be a link to the wishlist page */}
                 <div className="text-center">
@@ -248,7 +240,6 @@ function ProfilePageContent() {
                     <Button onClick={() => router.push('/wishlist')}>Go to Wishlist</Button>
                 </div>
               </TabsContent>
-            </>
           )}
 
         </Tabs>

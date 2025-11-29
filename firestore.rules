@@ -35,20 +35,5 @@ service cloud.firestore {
       // Only allow the user who owns the property to update or delete it.
       allow update, delete: if isOwner(resource.data.userId);
     }
-
-    // Rules for the 'requirements' collection
-    match /requirements/{requirementId} {
-      // Professionals and property listers can read all requirements.
-      // A user can read their own requirement.
-      allow read: if isProfessional() || isOwner(resource.data.userId);
-
-      // A user can create a requirement for themselves.
-      allow create: if isOwner(request.resource.data.userId);
-      
-      // Only the owner can update or delete their own requirement.
-      allow update, delete: if isOwner(resource.data.userId);
-    }
   }
 }
-
-    
