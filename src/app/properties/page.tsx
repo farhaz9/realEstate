@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ListFilter, Search, ArrowUpDown, Sparkles } from 'lucide-react';
+import { ListFilter, Search, ArrowUpDown } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -104,19 +104,24 @@ export default function PropertiesPage() {
   const filteredProperties = useMemo(() => {
     if (!properties) return [];
     
-    let processedProperties = properties.filter(p => p.location?.latitude && p.location?.longitude);
+    let processedProperties = [...properties];
     
     // Calculate distances if user location is available
     if (userLocation) {
-        processedProperties = processedProperties.map(p => ({
-            ...p,
-            distance: getDistance(userLocation.latitude, userLocation.longitude, p.location.latitude!, p.location.longitude!)
-        }));
+        processedProperties = processedProperties.map(p => {
+          if (p.location?.latitude && p.location?.longitude) {
+            return {
+              ...p,
+              distance: getDistance(userLocation.latitude, userLocation.longitude, p.location.latitude, p.location.longitude)
+            };
+          }
+          return { ...p, distance: Infinity }; // Assign infinite distance if no coords
+        });
     }
 
     // Apply sorting
     if (sortBy === 'nearby' && userLocation) {
-      processedProperties.sort((a, b) => (a as any).distance - (b as any).distance);
+      processedProperties.sort((a, b) => ((a as any).distance || Infinity) - ((b as any).distance || Infinity));
     }
 
     return processedProperties.filter(p => {
