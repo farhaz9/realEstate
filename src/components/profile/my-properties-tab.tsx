@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -137,11 +138,11 @@ export function MyPropertiesTab() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const validFiles = Array.from(files).filter(file => file.size <= 2 * 1024 * 1024);
+      const validFiles = Array.from(files).filter(file => file.size <= 1 * 1024 * 1024);
       if (validFiles.length < files.length) {
         toast({
           title: "File Size Limit Exceeded",
-          description: "Some images were not selected because they exceed the 2MB size limit.",
+          description: "Some images were not selected because they exceed the 1MB size limit.",
           variant: "destructive",
         })
       }
@@ -319,9 +320,9 @@ export function MyPropertiesTab() {
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                            <Alert>
-                              <AlertTitle>File Size Limit: 2MB</AlertTitle>
+                              <AlertTitle>File Size Limit: 1MB</AlertTitle>
                               <AlertDescription>
-                                Each image must be under 2MB. Large images may fail to upload.
+                                Each image must be under 1MB. Large images may fail to upload.
                               </AlertDescription>
                             </Alert>
                              <p className="text-sm text-muted-foreground">
@@ -352,7 +353,7 @@ export function MyPropertiesTab() {
                     />
                   </FormControl>
                   <FormDescription>
-                    Upload one or more images (max 2MB each).
+                    Upload one or more images (max 1MB each).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -729,3 +730,5 @@ export function MyPropertiesTab() {
   // If the user has never listed a property, show the form.
   return renderAddPropertyForm();
 }
+
+    
