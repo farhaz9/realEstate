@@ -121,7 +121,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <HomeSearch />
+      <section className="-mt-16 relative z-20 container mx-auto">
+        <HomeSearch />
+      </section>
 
       <section className="py-12 bg-background">
         <div className="container mx-auto px-0 sm:px-4 text-center">
@@ -134,8 +136,10 @@ export default function HomePage() {
              <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar px-4">
               {quickServices.map((service) => (
                 <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-24">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary group-hover:scale-105 group-hover:shadow-lg">
-                    <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                  <div className="relative p-1 rounded-full bg-gradient-to-br from-primary via-accent to-purple-500 group-hover:scale-105 transition-transform duration-300">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary">
+                      <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                    </div>
                   </div>
                   <p className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
                 </Link>

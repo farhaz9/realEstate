@@ -30,9 +30,25 @@ export function HomeSearch() {
   };
 
   return (
-    <section className="bg-background/95 border-b py-6 -mt-16 relative z-20 container mx-auto rounded-lg shadow-lg">
+    <div className="bg-background/95 border py-6 rounded-lg shadow-lg">
       <div className="px-4">
-        <div className="flex justify-between items-center border-b mb-4">
+        <form onSubmit={handleSearch}>
+            <div className="relative">
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+                id="search-city"
+                placeholder="Search by location or project"
+                className="pl-12 pr-14 h-12 text-base rounded-full"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Button type="submit" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full">
+                <Search className="h-5 w-5" />
+            </Button>
+            </div>
+        </form>
+
+        <div className="flex justify-between items-center border-b mt-4">
             <div className="flex items-center space-x-6">
               {searchTabs.map(tab => (
                 <button
@@ -56,22 +72,7 @@ export function HomeSearch() {
             </Link>
         </div>
         
-        <form onSubmit={handleSearch}>
-            <div className="relative mt-4">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-                id="search-city"
-                placeholder="Search by location or project"
-                className="pl-12 pr-14 h-12 text-base rounded-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button type="submit" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full">
-                <Search className="h-5 w-5" />
-            </Button>
-            </div>
-        </form>
       </div>
-    </section>
+    </div>
   );
 }
