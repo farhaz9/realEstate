@@ -10,13 +10,30 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: [
-        'placehold.co', 
-        'images.unsplash.com', 
-        'picsum.photos', 
-        'images-r-eal-estae.vercel.app', 
-        'ik.imagekit.io'
-    ],
+    remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'ik.imagekit.io',
+          port: '',
+          pathname: '/ei1qzvmub/**',
+        },
+        {
+            protocol: 'https',
+            hostname: 'placehold.co',
+        },
+        {
+            protocol: 'https',
+            hostname: 'images.unsplash.com',
+        },
+        {
+            protocol: 'https',
+            hostname: 'picsum.photos',
+        },
+        {
+            protocol: 'https',
+            hostname: 'images-r-eal-estae.vercel.app',
+        }
+    ]
   },
   env: {
     NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
@@ -24,7 +41,7 @@ const nextConfig: NextConfig = {
       : 'http://localhost:9002',
     NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: 'public_hBq3v8n2BN4aIy1pS0N5s5b5k4Q=',
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: 'https://ik.imagekit.io/ei1qzvmub',
-    IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY || 'private_pDCW2c6Ydn5d12aW+E424TT8plA=',
+    IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
   },
 };
 
