@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ListFilter, Search, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -199,7 +199,7 @@ export default function PropertiesPage() {
             <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon" className="h-12 w-12 rounded-full flex-shrink-0 shadow-sm">
-                        <ListFilter className="h-5 w-5" />
+                        <SlidersHorizontal className="h-5 w-5" />
                     </Button>
                 </SheetTrigger>
                 <SheetContent>
