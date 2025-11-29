@@ -224,13 +224,13 @@ export default function PropertiesPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Locality</Label>
+                            <Label>State</Label>
                             <Select value={location} onValueChange={setLocation}>
                                 <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
-                                <SelectValue placeholder="All Localities" />
+                                <SelectValue placeholder="All States" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                <SelectItem value="all">All Localities</SelectItem>
+                                <SelectItem value="all">All States</SelectItem>
                                 {uniqueLocations.map((loc, index) => <SelectItem key={`${loc}-${index}`} value={loc}>{loc}</SelectItem>)}
                                 </SelectContent>
                             </Select>
