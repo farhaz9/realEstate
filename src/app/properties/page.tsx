@@ -35,10 +35,23 @@ const searchSuggestions = [
   'Penthouse with city view',
 ];
 
+// Haversine formula to calculate distance between two points
+const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in km
+};
+
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const { location: userLocation, error: locationError } = useGeolocation();
+  const { location: userLocation, error: locationError, isLoading: isLocationLoading } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -50,13 +63,6 @@ export default function PropertiesPage() {
   const [placeholder, setPlaceholder] = useState(searchSuggestions[0]);
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
-
-  useEffect(() => {
-    if (userLocation?.state && location === 'all') {
-      setLocation(userLocation.state);
-    }
-  }, [userLocation, location]);
-
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -86,8 +92,10 @@ export default function PropertiesPage() {
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     let q: Query = collection(firestore, 'properties');
-    const [sortField, sortDirection] = sortBy.split('-');
-    q = query(q, orderBy(sortField, sortDirection as 'asc' | 'desc'));
+    if (sortBy !== 'nearby') {
+      const [sortField, sortDirection] = sortBy.split('-');
+      q = query(q, orderBy(sortField, sortDirection as 'asc' | 'desc'));
+    }
     return q;
   }, [firestore, sortBy]);
 
@@ -96,16 +104,27 @@ export default function PropertiesPage() {
   const filteredProperties = useMemo(() => {
     if (!properties) return [];
     
-    // Filter out properties that have invalid imageUrls
-    const validProperties = properties.filter(p => Array.isArray(p.imageUrls));
+    let processedProperties = properties.filter(p => p.location?.latitude && p.location?.longitude);
+    
+    // Calculate distances if user location is available
+    if (userLocation) {
+        processedProperties = processedProperties.map(p => ({
+            ...p,
+            distance: getDistance(userLocation.latitude, userLocation.longitude, p.location.latitude!, p.location.longitude!)
+        }));
+    }
 
-    return validProperties.filter(p => {
+    // Apply sorting
+    if (sortBy === 'nearby' && userLocation) {
+      processedProperties.sort((a, b) => (a as any).distance - (b as any).distance);
+    }
+
+    return processedProperties.filter(p => {
       let tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
                        (activeTab === 'pg' && p.propertyType?.toLowerCase().includes('pg'));
 
-      // AI-driven search logic
       if (aiAnalysis && searchTerm) {
         if (aiAnalysis.listingType) {
           tabMatch = p.listingType === aiAnalysis.listingType;
@@ -118,7 +137,6 @@ export default function PropertiesPage() {
         return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
       }
       
-      // Fallback to manual filtering if no AI analysis
       const searchTermMatch = !searchTerm || (p.title && p.title.toLowerCase().includes(searchTerm.toLowerCase())) || 
                               (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
                               (p.location?.address && p.location.address.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -129,7 +147,7 @@ export default function PropertiesPage() {
       
       return tabMatch && searchTermMatch && locationMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange, aiAnalysis]);
+  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -164,7 +182,7 @@ export default function PropertiesPage() {
                 <Input
                     id="search"
                     placeholder={placeholder}
-                    className="pl-10 pr-14 text-foreground h-12 rounded-full"
+                    className="pl-10 text-foreground h-12 rounded-full"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -248,6 +266,7 @@ export default function PropertiesPage() {
                             <SelectItem value="dateListed-asc">Oldest First</SelectItem>
                             <SelectItem value="price-desc">Price: High to Low</SelectItem>
                             <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                             {userLocation && <SelectItem value="nearby">Nearby</SelectItem>}
                         </SelectContent>
                     </Select>
                 </div>
@@ -256,7 +275,7 @@ export default function PropertiesPage() {
       </section>
       
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        {isLoading || isAiSearchPending ? (
+        {isLoading || isAiSearchPending || isLocationLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex flex-col h-full overflow-hidden border rounded-lg">

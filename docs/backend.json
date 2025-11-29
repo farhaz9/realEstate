@@ -88,7 +88,7 @@
         },
         "location": {
           "type": "object",
-          "description": "The structured address of the property.",
+          "description": "The structured address and coordinates of the property.",
           "properties": {
             "address": {
               "type": "string",
@@ -101,9 +101,17 @@
             "state": {
               "type": "string",
               "description": "State or province."
+            },
+            "latitude": {
+              "type": "number",
+              "description": "The latitude of the property."
+            },
+            "longitude": {
+              "type": "number",
+              "description": "The longitude of the property."
             }
           },
-          "required": ["address", "pincode", "state"]
+          "required": ["address", "pincode", "state", "latitude", "longitude"]
         },
          "contactNumber": {
           "type": "string",

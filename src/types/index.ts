@@ -10,6 +10,8 @@ export type Property = {
     address: string;
     pincode: string;
     state: string;
+    latitude?: number;
+    longitude?: number;
   };
   contactNumber: string;
   whatsappNumber: string;

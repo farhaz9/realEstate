@@ -92,6 +92,29 @@ const propertyFormSchema = z.object({
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
+async function getCoordinatesForAddress(address: string) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error('Geocoding API request failed:', response.statusText);
+      return null;
+    }
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return {
+        latitude: parseFloat(data[0].lat),
+        longitude: parseFloat(data[0].lon),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching coordinates:', error);
+    return null;
+  }
+}
+
 export function MyPropertiesTab() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -176,6 +199,20 @@ export function MyPropertiesTab() {
     }
     
     setIsUploading(true);
+    
+    // Geocode address
+    const fullAddress = `${data.location.address}, ${data.location.state}, ${data.location.pincode}`;
+    const coordinates = await getCoordinatesForAddress(fullAddress);
+    
+    if (!coordinates) {
+       toast({
+        title: "Location Not Found",
+        description: "Could not find coordinates for the address. Please provide a more specific address.",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+      return;
+    }
 
     let uploadedImageUrls: string[] = [];
     const files = data.images as FileList | null;
@@ -221,10 +258,14 @@ export function MyPropertiesTab() {
     
     const propertiesCollection = collection(firestore, 'properties');
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
-    const { images, ...restOfData } = data; // Exclude images from the data to be saved to Firestore.
+    const { images, ...restOfData } = data;
 
     const propertyData = {
       ...restOfData,
+      location: {
+        ...restOfData.location,
+        ...coordinates,
+      },
       imageUrls: uploadedImageUrls,
       amenities: amenitiesArray,
       userId: user.uid,
@@ -672,7 +713,7 @@ export function MyPropertiesTab() {
             <div className="flex justify-end">
               <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
                 {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {isUploading ? 'Uploading Images...' : (form.formState.isSubmitting ? 'Submitting...' : 'List My Property')}
+                {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : 'List My Property')}
               </Button>
             </div>
           </form>
