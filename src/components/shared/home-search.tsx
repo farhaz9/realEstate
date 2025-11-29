@@ -30,8 +30,8 @@ export function HomeSearch() {
   };
 
   return (
-    <div className="bg-background/95 border py-6 rounded-lg shadow-lg">
-      <div className="px-4">
+    <div className="bg-background/95 border-b py-6 rounded-lg shadow-lg">
+      <div className="px-4 container mx-auto">
         <form onSubmit={handleSearch}>
             <div className="relative">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -65,10 +65,16 @@ export function HomeSearch() {
                   )}
                 </button>
               ))}
-               <Link href="/profile?tab=listings" className="text-sm font-semibold text-muted-foreground hover:text-primary relative pb-2">
-                Post Ad
-                <span className="ml-1 bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-sm">FREE</span>
-              </Link>
+               <button
+                  onClick={() => router.push('/profile?tab=listings')}
+                  className={cn(
+                    'py-2 text-sm md:text-base font-semibold transition-colors relative',
+                    'text-muted-foreground hover:text-primary'
+                  )}
+                >
+                  Post Ad
+                  <span className="ml-1 bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-sm">FREE</span>
+                </button>
             </div>
         </div>
         
