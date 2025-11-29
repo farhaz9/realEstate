@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: 'public_5T1+usknB76IO4KQynGBNsYlHMs=',
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: 'https://ik.imagekit.io/ei1qzvmub',
     IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+    NEXT_PUBLIC_ADMIN_EMAIL: process.env.ADMIN_EMAIL,
   },
 };
 

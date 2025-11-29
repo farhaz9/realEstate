@@ -17,7 +17,7 @@ import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ADMIN_EMAIL = 'thegreatfarhaz07@gmail.com';
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 function ProfilePageContent() {
   const { user, isUserLoading } = useUser();
@@ -54,8 +54,8 @@ function ProfilePageContent() {
     toast({
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
-      variant: 'destructive',
     });
+    router.push('/');
   };
 
   const getInitials = (name: string) => {
