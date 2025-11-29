@@ -127,6 +127,7 @@ export default function Header() {
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent side="left">
             <SheetHeader>
+               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                <div className="flex justify-center py-8">
                 <Logo />
               </div>
