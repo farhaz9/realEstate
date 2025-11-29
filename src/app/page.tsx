@@ -121,7 +121,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="-mt-16 relative z-20 container mx-auto">
+      <section className="-mt-16 relative z-20">
         <HomeSearch />
       </section>
 
