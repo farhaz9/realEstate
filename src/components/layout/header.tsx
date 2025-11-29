@@ -126,38 +126,35 @@ export default function Header() {
     )}>
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent side="left">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Mobile Menu</SheetTitle>
-              <SheetDescription>Site navigation</SheetDescription>
-            </SheetHeader>
-            
-            <SheetClose asChild>
-              <Button variant="default" size="icon" className="md:hidden rounded-full absolute top-3 left-3 transition-all duration-300 ease-in-out transform hover:rotate-90">
-                <X className="h-6 w-6" />
-                <span className="sr-only">Close navigation menu</span>
-              </Button>
-            </SheetClose>
-            
-            <div className="flex flex-col h-full">
-              <div className="flex justify-center mt-12">
+            <SheetHeader>
+               <div className="flex justify-center py-8">
                 <Logo />
               </div>
-              <Separator />
-              <nav className="mt-4 flex-1 flex flex-col items-center justify-center">
+              <SheetClose asChild>
+                <Button variant="ghost" size="icon" className="md:hidden rounded-full absolute top-4 right-4">
+                  <X className="h-6 w-6" />
+                  <span className="sr-only">Close navigation menu</span>
+                </Button>
+              </SheetClose>
+            </SheetHeader>
+            
+            <div className="flex flex-col h-full">
+              <nav className="mt-4 flex-1 flex flex-col items-center justify-start gap-2">
                 {visibleNavLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsSheetOpen(false)}
-                    className={cn(
-                      "uppercase rounded-lg px-3 py-3 text-4xl font-medium text-muted-foreground transition-all hover:text-primary"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
+                  <SheetClose asChild key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "text-lg rounded-md px-4 py-2 w-full text-center font-medium text-muted-foreground transition-all hover:bg-muted hover:text-primary",
+                         pathname === link.href && "bg-primary/10 text-primary"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  </SheetClose>
                 ))}
               </nav>
-              <SheetFooter>
+              <SheetFooter className="py-6">
                 <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
                   <div className="flex space-x-4">
                     <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
