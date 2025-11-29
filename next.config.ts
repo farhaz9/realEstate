@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
           protocol: 'https',
           hostname: 'ik.imagekit.io',
           port: '',
-          pathname: '/ei1qzvmub/**',
+          pathname: '/**', // Allow all paths from this hostname
         },
         {
             protocol: 'https',
