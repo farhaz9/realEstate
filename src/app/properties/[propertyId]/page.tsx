@@ -167,6 +167,7 @@ export default function PropertyDetailPage() {
       { label: 'Age of Construction', value: property.ageOfConstruction || 'N/A' },
     ];
 
+  const listingDate = property.dateListed?.toDate ? property.dateListed.toDate() : (property.dateListed ? new Date(property.dateListed) : null);
 
   return (
     <div className="bg-muted/40">
@@ -280,17 +281,24 @@ export default function PropertyDetailPage() {
                </CardHeader>
                <CardContent className="p-4 md:p-6">
                 {owner && (
-                  <div className="flex items-center gap-4 mb-4">
-                    <Avatar className="h-16 w-16 border">
-                      <AvatarImage src={owner.photoURL} alt={owner.fullName} />
-                       <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
-                        {owner.fullName.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-bold text-lg">{owner.fullName}</h3>
-                      <p className="text-sm text-muted-foreground">{owner.category === 'real-estate-agent' ? 'Real Estate Agent' : 'Owner'}</p>
+                  <div className="flex flex-col items-start gap-4 mb-4">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-16 w-16 border">
+                        <AvatarImage src={owner.photoURL} alt={owner.fullName} />
+                         <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                          {owner.fullName.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-bold text-lg">{owner.fullName}</h3>
+                        <p className="text-sm text-muted-foreground">{owner.category === 'real-estate-agent' ? 'Real Estate Agent' : 'Owner'}</p>
+                      </div>
                     </div>
+                     {listingDate && (
+                      <p className="text-xs text-muted-foreground text-center w-full">
+                        Posted on {listingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      </p>
+                    )}
                   </div>
                 )}
                  <div className="flex gap-2">
@@ -302,9 +310,6 @@ export default function PropertyDetailPage() {
                     </Button>
                  </div>
                </CardContent>
-                 <CardFooter className="p-2 bg-muted/50 justify-center">
-                    <p className="text-xs text-muted-foreground text-center">Posted on {new Date(property.dateListed?.seconds * 1000).toLocaleDateString()}</p>
-                </CardFooter>
             </Card>
           </div>
         </div>
@@ -334,3 +339,5 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
+
+    
