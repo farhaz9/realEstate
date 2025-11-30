@@ -134,44 +134,35 @@ export default function AdminPage() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-                <div className="grid gap-4 md:grid-cols-2">
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-                            <Building className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
-                        </CardContent>
-                    </Card>
-                     <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Properties for Sale</CardTitle>
-                            <Banknote className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Properties for Rent</CardTitle>
-                            <Tag className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
-                        </CardContent>
-                    </Card>
-                </div>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Platform Metrics</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                       <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
+                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                <Building className="h-8 w-8 text-primary mb-2" />
+                                <p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                <p className="text-sm text-muted-foreground">Total Properties</p>
+                            </div>
+                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                <Users className="h-8 w-8 text-blue-500 mb-2" />
+                                <p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                <p className="text-sm text-muted-foreground">Total Users</p>
+                            </div>
+                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                <Banknote className="h-8 w-8 text-green-500 mb-2" />
+                                <p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                <p className="text-sm text-muted-foreground">For Sale</p>
+                            </div>
+                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                <Tag className="h-8 w-8 text-orange-500 mb-2" />
+                                <p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                <p className="text-sm text-muted-foreground">For Rent</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
                 
                 <Card>
                     <CardHeader>
@@ -284,5 +275,3 @@ export default function AdminPage() {
     </>
   );
 }
-
-    
