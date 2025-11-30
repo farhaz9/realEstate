@@ -48,6 +48,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useRouter } from 'next/navigation';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
@@ -122,6 +123,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -767,7 +769,12 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
               />
             </div>
             
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              {isEditing && (
+                <Button type="button" variant="outline" onClick={() => router.back()} disabled={isUploading || form.formState.isSubmitting}>
+                  Cancel
+                </Button>
+              )}
               <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
                 {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : (isEditing ? 'Update Property' : 'List My Property'))}
