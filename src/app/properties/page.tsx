@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown, MapPin, Loader2 } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -26,11 +26,10 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
 import { useGeolocation } from '@/hooks/use-geolocation';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LocationDisplay } from '@/components/shared/location-display';
 import Fuse from 'fuse.js';
 
-const searchSuggestions = [
+const staticSearchSuggestions = [
   'Search property in South Delhi',
   'Rent house in Chattarpur',
   'Find a 3BHK apartment',
@@ -54,7 +53,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const { location: userLocation, canAskPermission } = useGeolocation();
+  const { location: userLocation, city, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -63,9 +62,21 @@ export default function PropertiesPage() {
   const [bathrooms, setBathrooms] = useState(0);
   const [priceRange, setPriceRange] = useState([0, 20]); // In Crores
   const [sortBy, setSortBy] = useState('dateListed-desc');
-  const [placeholder, setPlaceholder] = useState(searchSuggestions[0]);
+  const [placeholder, setPlaceholder] = useState(staticSearchSuggestions[0]);
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
+
+  const searchSuggestions = useMemo(() => {
+    if (city) {
+      return [
+        `Search for properties in ${city}`,
+        `Find 2BHK apartments in ${city}`,
+        `Luxury villas for sale near ${city}`,
+        `Rent a house in ${city}`,
+      ];
+    }
+    return staticSearchSuggestions;
+  }, [city]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -77,7 +88,7 @@ export default function PropertiesPage() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [searchSuggestions]);
   
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -348,3 +359,5 @@ export default function PropertiesPage() {
     </div>
   );
 }
+
+    
