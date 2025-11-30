@@ -170,6 +170,8 @@ export default function LoginPage() {
             category: category,
             dateJoined: serverTimestamp(),
             photoURL: user.photoURL || '',
+            subscriptionStatus: 'free',
+            wishlist: [],
         });
         
         toast({
@@ -204,6 +206,8 @@ export default function LoginPage() {
           category: 'buyer-tenant', // Default category for Google Sign-in
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || '',
+          subscriptionStatus: 'free',
+          wishlist: [],
         });
       }
       
@@ -429,5 +433,7 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
 
     
