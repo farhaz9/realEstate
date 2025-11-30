@@ -28,6 +28,7 @@ import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-sea
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LocationDisplay } from '@/components/shared/location-display';
+import Fuse from 'fuse.js';
 
 const searchSuggestions = [
   'Search property in South Delhi',
@@ -103,10 +104,33 @@ export default function PropertiesPage() {
 
   const { data: properties, isLoading, error } = useCollection<Property>(propertiesQuery);
 
+  const fuse = useMemo(() => {
+    if (!properties) return null;
+    const options = {
+      keys: ['title', 'description', 'location.address', 'propertyType'],
+      includeScore: true,
+      threshold: 0.4,
+    };
+    return new Fuse(properties, options);
+  }, [properties]);
+
   const filteredProperties = useMemo(() => {
     if (!properties) return [];
     
-    let processedProperties = [...properties];
+    let baseProperties = properties;
+
+    if (searchTerm && fuse) {
+        if (aiAnalysis) {
+            // AI-driven search takes priority if analysis is available
+            const aiResults = fuse.search(searchTerm);
+            baseProperties = aiResults.map(result => result.item);
+        } else {
+            const fuseResults = fuse.search(searchTerm);
+            baseProperties = fuseResults.map(result => result.item);
+        }
+    }
+    
+    let processedProperties = [...baseProperties];
     
     // Calculate distances if user location is available
     if (userLocation) {
@@ -141,21 +165,18 @@ export default function PropertiesPage() {
         const aiLocationMatch = !aiAnalysis.location || p.location?.address?.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location?.state?.toLowerCase().includes(aiAnalysis.location.toLowerCase());
         const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType?.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
         const aiBedroomsMatch = !aiAnalysis.bedrooms || p.bedrooms >= aiAnalysis.bedrooms;
-
+        
         return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
       }
       
-      const searchTermMatch = !searchTerm || (p.title && p.title.toLowerCase().includes(searchTerm.toLowerCase())) || 
-                              (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                              (p.location?.address && p.location.address.toLowerCase().includes(searchTerm.toLowerCase()));
       const locationMatch = location === 'all' || p.location?.state === location || p.location?.pincode === location;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
       const priceMatch = p.price >= priceRange[0] * 10000000 && p.price <= priceRange[1] * 10000000;
       
-      return tabMatch && searchTermMatch && locationMatch && bedroomsMatch && bathroomsMatch && priceMatch;
+      return tabMatch && locationMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation]);
+  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation, fuse]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
