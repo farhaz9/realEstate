@@ -37,9 +37,10 @@ import {
 interface PropertyCardProps {
   property: Property;
   className?: string;
+  isAdmin?: boolean;
 }
 
-export function PropertyCard({ property, className }: PropertyCardProps) {
+export function PropertyCard({ property, className, isAdmin = false }: PropertyCardProps) {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -67,7 +68,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   const { data: userProfile } = useDoc<User>(userDocRef);
 
   const isOwner = user && user.uid === property.userId;
-  const showDeleteButton = isOwner && (pathname === '/profile' || pathname === '/wishlist');
+  const showDeleteButton = isAdmin || (isOwner && (pathname === '/profile' || pathname === '/wishlist'));
 
   const rating = 4.5 + (property.title.length % 5) / 10;
 
@@ -81,7 +82,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
     deleteDocumentNonBlocking(propertyRef);
     toast({
       title: "Property Deleted",
-      description: "Your property listing has been successfully removed.",
+      description: "The property listing has been successfully removed.",
       variant: "destructive",
     });
   };
@@ -213,7 +214,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete your property listing from our servers.
+                          This action cannot be undone. This will permanently delete this property listing from our servers.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
