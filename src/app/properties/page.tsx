@@ -107,7 +107,7 @@ export default function PropertiesPage() {
   const fuse = useMemo(() => {
     if (!properties) return null;
     const options = {
-      keys: ['title', 'description', 'location.address', 'propertyType'],
+      keys: ['title', 'description', 'location.address', 'propertyType', 'location.pincode'],
       includeScore: true,
       threshold: 0.4,
     };
