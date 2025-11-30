@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2 } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -345,10 +345,15 @@ export default function AdminPage() {
 
   return (
     <>
-      <div className="bg-muted/40">
+      <div className="bg-gradient-to-br from-primary via-purple-600 to-accent text-primary-foreground">
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage users and property listings.</p>
+            <div className="flex items-center gap-4">
+                <LayoutDashboard className="h-10 w-10" />
+                <div>
+                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                    <p className="text-primary-foreground/80">Manage users and property listings.</p>
+                </div>
+            </div>
         </div>
       </div>
       <div className="container mx-auto px-4 py-8">
