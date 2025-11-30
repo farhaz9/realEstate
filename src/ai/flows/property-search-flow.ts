@@ -29,6 +29,7 @@ const propertySearchPrompt = ai.definePrompt({
   name: 'propertySearchPrompt',
   input: { schema: SearchQueryInputSchema },
   output: { schema: SearchAnalysisSchema },
+  model: 'googleai/gemini-2.5-flash',
   prompt: `You are an expert real estate search assistant. Analyze the user's search query and extract structured information.
 
 User Query: {{{query}}}
