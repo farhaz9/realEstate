@@ -20,6 +20,9 @@ interface GeolocationResult {
 const getCityFromCoordinates = async (latitude: number, longitude: number): Promise<string | null> => {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+        if (!response.ok) {
+          throw new Error(`Reverse geocoding failed with status: ${response.status}`);
+        }
         const data = await response.json();
         if (data && data.address) {
             return data.address.city || data.address.town || data.address.village || data.address.state;
@@ -39,24 +42,33 @@ export function useGeolocation(): GeolocationResult {
   const [canAskPermission, setCanAskPermission] = useState<boolean>(false);
 
   const getGeolocation = useCallback(() => {
-    if (!navigator.geolocation) {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
       setError('Geolocation is not supported by your browser.');
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
+    setError(null);
 
     const handleSuccess = async (position: GeolocationPosition) => {
       const { latitude, longitude } = position.coords;
       const locationData: LocationData = { latitude, longitude };
       
       setLocation(locationData);
-      const fetchedCity = await getCityFromCoordinates(latitude, longitude);
-      setCity(fetchedCity);
-
-      setError(null);
-      setIsLoading(false);
+      try {
+        const fetchedCity = await getCityFromCoordinates(latitude, longitude);
+        if (fetchedCity) {
+            setCity(fetchedCity);
+            setError(null);
+        } else {
+            setError("Could not determine city name.");
+        }
+      } catch (e) {
+         setError("Failed to fetch city.");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     const handleError = (error: GeolocationPositionError) => {
@@ -84,46 +96,47 @@ export function useGeolocation(): GeolocationResult {
   }, []);
 
   const requestPermission = useCallback(() => {
-    getGeolocation();
-  }, [getGeolocation]);
+    if (canAskPermission) {
+        getGeolocation();
+    }
+  }, [getGeolocation, canAskPermission]);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (typeof navigator !== 'undefined' && 'permissions' in navigator) {
       navigator.permissions.query({ name: 'geolocation' }).then((permissionStatus) => {
-        setCanAskPermission(permissionStatus.state !== 'denied');
-
-        if (permissionStatus.state === 'granted') {
-          getGeolocation();
-        } else {
-          setIsLoading(false); // Not granted, so stop loading
-          if (permissionStatus.state === 'denied') {
-             setError('Location permission has been denied.');
-          }
+        if (!isMounted) return;
+        
+        const updateState = () => {
+            setCanAskPermission(permissionStatus.state !== 'denied');
+            
+            if (permissionStatus.state === 'granted') {
+              getGeolocation();
+            } else {
+              setIsLoading(false); 
+              if (permissionStatus.state === 'denied') {
+                 setError('Location permission is denied.');
+                 setLocation(null);
+                 setCity(null);
+              } else { // 'prompt'
+                 setError(null);
+                 setLocation(null);
+                 setCity(null);
+              }
+            }
         }
 
-        permissionStatus.onchange = () => {
-          setCanAskPermission(permissionStatus.state !== 'denied');
-          if (permissionStatus.state === 'granted') {
-            getGeolocation();
-          } else {
-             setIsLoading(false);
-             if (permissionStatus.state === 'denied') {
-                setError('Location permission has been denied.');
-                setLocation(null);
-                setCity(null);
-             } else {
-                // state is 'prompt'
-                setError(null);
-                setLocation(null);
-                setCity(null);
-             }
-          }
-        };
+        updateState();
+        permissionStatus.onchange = updateState;
       });
     } else {
-      // Fallback for browsers without Permissions API
       setIsLoading(false);
-      setError('Permissions API not supported.');
+      setError('Permissions API is not supported.');
+    }
+
+    return () => {
+        isMounted = false;
     }
   }, [getGeolocation]);
 

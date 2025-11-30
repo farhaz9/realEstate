@@ -136,6 +136,10 @@ export default function Header() {
             
             <div className="flex flex-col h-full">
               <nav className="mt-4 flex-1 flex flex-col items-center justify-start gap-2">
+                <div className='pb-4 w-full'>
+                    <LocationDisplay />
+                </div>
+                <Separator />
                 {visibleNavLinks.map((link) => (
                   <SheetClose asChild key={link.href}>
                     <Link
