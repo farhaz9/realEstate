@@ -16,6 +16,7 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
 import { Button as MovingBorderButton } from "@/components/ui/moving-border";
+import { NewProjects } from "@/components/shared/new-projects";
 
 const faqs = [
   {
@@ -175,6 +176,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <NewProjects />
       
       <PopularProperties />
 
