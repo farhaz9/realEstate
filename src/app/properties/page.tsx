@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown, MapPin, Loader2 } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Property } from '@/types';
 import { collection, query, orderBy, Query } from 'firebase/firestore';
@@ -22,10 +22,11 @@ import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const searchSuggestions = [
   'Search property in South Delhi',
@@ -51,7 +52,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const { location: userLocation, error: locationError, isLoading: isLocationLoading, canAskPermission } = useGeolocation();
+  const { location: userLocation, city, error: locationError, isLoading: isLocationLoading, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -160,6 +161,33 @@ export default function PropertiesPage() {
       const states = [...new Set(properties.map(p => p.location?.state).filter(Boolean) as string[])];
       return states;
   }, [properties]);
+
+  const renderLocationStatus = () => {
+    if (isLocationLoading) {
+      return (
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Fetching location...
+        </div>
+      );
+    }
+    if (locationError) {
+      return (
+        <Alert variant="destructive" className="p-2 text-xs">
+          <AlertDescription>{locationError}</AlertDescription>
+        </Alert>
+      );
+    }
+    if (city) {
+      return (
+        <div className="flex items-center text-sm text-muted-foreground font-medium">
+          <MapPin className="mr-2 h-4 w-4 text-primary" />
+          Showing properties near {city}
+        </div>
+      );
+    }
+    return null;
+  }
 
 
   return (
@@ -278,6 +306,9 @@ export default function PropertiesPage() {
                 </SheetContent>
             </Sheet>
            </form>
+           <div className="h-6 flex items-center justify-center -mt-2">
+              {renderLocationStatus()}
+            </div>
         </div>
       </section>
       
@@ -323,3 +354,5 @@ export default function PropertiesPage() {
     </div>
   );
 }
+
+    
