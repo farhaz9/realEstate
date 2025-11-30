@@ -181,6 +181,8 @@ export default function HomePage() {
 
       <FeaturedProfessionals />
 
+      <RecentSearches />
+
       <FeaturedProperties />
 
       <section id="contact-form" className="py-16 md:py-24 bg-secondary/30">
@@ -258,8 +260,6 @@ export default function HomePage() {
           </Card>
         </div>
       </section>
-
-      <RecentSearches />
 
       <section id="faq" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
