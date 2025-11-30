@@ -46,16 +46,20 @@ const propertySearchFlow = ai.defineFlow(
   {
     name: 'propertySearchFlow',
     inputSchema: SearchQueryInputSchema,
-    outputSchema: SearchAnalysisSchema,
+    outputSchema: z.nullable(SearchAnalysisSchema),
   },
   async (input) => {
-    const { output } = await propertySearchPrompt(input);
-    return output!;
+    try {
+      const { output } = await propertySearchPrompt(input);
+      return output!;
+    } catch (e) {
+      console.error("AI search analysis failed:", e);
+      // Return null on error to allow graceful fallback to standard search
+      return null;
+    }
   }
 );
 
-export async function analyzeSearchQuery(input: SearchQueryInput): Promise<SearchAnalysis> {
+export async function analyzeSearchQuery(input: SearchQueryInput): Promise<SearchAnalysis | null> {
   return propertySearchFlow(input);
 }
-
-    
