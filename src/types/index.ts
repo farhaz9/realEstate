@@ -23,6 +23,8 @@ export type Property = {
   imageUrls: string[];
   isFeatured: boolean;
   dateListed: Date | any;
+  listingTier: 'free' | 'premium';
+  expiresAt: Date | any;
   furnishing?: 'unfurnished' | 'semi-furnished' | 'fully-furnished';
   overlooking?: string;
   ageOfConstruction?: string;
@@ -51,4 +53,5 @@ export type User = {
   dateJoined: Date | any;
   photoURL?: string;
   wishlist?: string[];
+  subscriptionStatus?: 'free' | 'premium';
 }

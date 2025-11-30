@@ -44,6 +44,12 @@
         "photoURL": {
             "type": "string",
             "description": "URL of the user's profile picture."
+        },
+        "subscriptionStatus": {
+            "type": "string",
+            "description": "The user's subscription status.",
+            "enum": ["free", "premium"],
+            "default": "free"
         }
       },
       "required": [
@@ -160,6 +166,16 @@
           "description": "The date the property was listed.",
           "format": "date-time"
         },
+        "expiresAt": {
+          "type": "string",
+          "description": "The date and time when the listing will automatically be removed.",
+          "format": "date-time"
+        },
+        "listingTier": {
+            "type": "string",
+            "description": "The tier of the listing, determining its visibility and duration.",
+            "enum": ["free", "premium"]
+        },
         "furnishing": {
             "type": "string",
             "description": "The furnishing status of the property.",
@@ -188,7 +204,9 @@
         "bedrooms",
         "bathrooms",
         "squareYards",
-        "dateListed"
+        "dateListed",
+        "expiresAt",
+        "listingTier"
       ]
     }
   },

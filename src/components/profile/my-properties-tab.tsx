@@ -18,8 +18,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, serverTimestamp, query, where } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase, useDoc } from '@/firebase';
+import { collection, serverTimestamp, query, where, doc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -29,8 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X } from 'lucide-react';
-import type { Property } from '@/types';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap } from 'lucide-react';
+import type { Property, User } from '@/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -118,12 +118,18 @@ async function getCoordinatesForAddress(address: string) {
 export function MyPropertiesTab() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const router = useRouter();
   const { toast } = useToast();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc<User>(userDocRef);
+
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
@@ -131,6 +137,7 @@ export function MyPropertiesTab() {
 
   const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
   const hasListedProperty = properties && properties.length > 0;
+  const isPremiumUser = userProfile?.subscriptionStatus === 'premium';
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
@@ -200,7 +207,6 @@ export function MyPropertiesTab() {
     
     setIsUploading(true);
     
-    // Geocode address
     const fullAddress = `${data.location.address}, ${data.location.state}, ${data.location.pincode}`;
     const coordinates = await getCoordinatesForAddress(fullAddress);
     
@@ -259,6 +265,13 @@ export function MyPropertiesTab() {
     const propertiesCollection = collection(firestore, 'properties');
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
     const { images, ...restOfData } = data;
+    
+    const isPremium = isPremiumUser;
+    const tier = isPremium ? 'premium' : 'free';
+    const expirationDays = isPremium ? 30 : 90;
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + expirationDays);
+
 
     const propertyData = {
       ...restOfData,
@@ -270,7 +283,9 @@ export function MyPropertiesTab() {
       amenities: amenitiesArray,
       userId: user.uid,
       dateListed: serverTimestamp(),
-      isFeatured: false,
+      isFeatured: isPremium, // Premium listings are featured
+      listingTier: tier,
+      expiresAt: expirationDate,
     };
 
     if (!data.overlooking) delete (propertyData as Partial<typeof propertyData>).overlooking;
@@ -282,7 +297,7 @@ export function MyPropertiesTab() {
 
     toast({
       title: 'Property Listed!',
-      description: 'Your property has been successfully listed.',
+      description: `Your ${tier} property has been successfully listed.`,
       variant: 'success',
     });
 
@@ -293,32 +308,40 @@ export function MyPropertiesTab() {
   const renderSubscriptionCard = () => (
     <Card className="max-w-lg mx-auto text-center">
       <CardHeader>
-        <CardTitle>Unlock Unlimited Listings</CardTitle>
-        <CardDescription>You've used your one free property listing.</CardDescription>
+        <CardTitle>Unlock Premium Listings</CardTitle>
+        <CardDescription>Supercharge your property's visibility.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Star className="h-12 w-12 text-yellow-400 mx-auto fill-yellow-400" />
-        <p className="mt-4 text-muted-foreground">To continue listing more properties and gain premium features, please subscribe to our unlimited plan.</p>
+        <Zap className="h-12 w-12 text-yellow-400 mx-auto fill-yellow-400" />
+        <p className="mt-4 text-muted-foreground">
+          Upgrade to a Premium subscription to get your listings featured at the top, auto-renewed, and SEO-optimized for maximum reach.
+        </p>
       </CardContent>
       <CardFooter className="flex-col gap-2">
          <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button className="w-full">Subscribe for ₹99</Button>
+            <Button className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:opacity-90">Subscribe for ₹99/month</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Premium Subscription</AlertDialogTitle>
+              <AlertDialogTitle>Premium Subscription Benefits</AlertDialogTitle>
               <AlertDialogDescription>
-                Gain lifetime access to unlimited property listings and premium support for a one-time payment.
+                Join our premium plan for a one-time payment of ₹99 and enjoy lifetime benefits for all your listings.
               </AlertDialogDescription>
             </AlertDialogHeader>
              <Alert>
                 <Banknote className="h-4 w-4" />
                 <AlertTitle>One-Time Payment: ₹99</AlertTitle>
                 <AlertDescription>
-                 This is a single payment for lifetime access to unlimited listings. No recurring fees.
+                 This is a single payment for a lifetime premium status. All your listings will be treated as premium, with 30-day auto-renewal cycles.
                 </AlertDescription>
               </Alert>
+              <ul className="text-sm text-muted-foreground space-y-2 my-4 list-disc pl-5">
+                  <li>Listings appear at the top of search results.</li>
+                  <li>Featured in "Popular" and "Featured" sections.</li>
+                  <li>Advanced SEO optimization.</li>
+                  <li>30-day auto-renewal with payment integration.</li>
+              </ul>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction disabled>Proceed to Payment</AlertDialogAction>
@@ -333,7 +356,7 @@ export function MyPropertiesTab() {
   const renderAddPropertyForm = () => (
     <Card className="max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>Your First Listing is Free!</CardTitle>
+        <CardTitle>{!hasListedProperty ? "Your First Listing is Free!" : (isPremiumUser ? "Add a Premium Listing" : "Add a New Listing")}</CardTitle>
         <CardDescription>Fill in the details below to add your property to our listings.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -753,11 +776,8 @@ export function MyPropertiesTab() {
     );
   }
 
-  if (hasListedProperty) {
-    // If the user has listed at least one property, show their properties and the "Add More" card.
-    // The "Add More" card, when clicked, should reveal the form again or navigate,
-    // but for now, we show the subscription card if they have one property.
-    // The logic is: 1 free, then subscribe.
+  // If user has a free listing, show the subscription card.
+  if (hasListedProperty && !isPremiumUser) {
     return (
       <div className="space-y-8">
         {renderMyProperties()}
@@ -768,8 +788,6 @@ export function MyPropertiesTab() {
     );
   }
 
-  // If the user has never listed a property, show the form.
+  // If user is premium, or has no listings, show the form.
   return renderAddPropertyForm();
 }
-
-    
