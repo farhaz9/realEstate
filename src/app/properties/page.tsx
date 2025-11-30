@@ -98,9 +98,28 @@ export default function PropertiesPage() {
       return;
     }
 
+    if (typeof window !== 'undefined') {
+        const recentSearchesRaw = localStorage.getItem('recentSearches');
+        let recentSearches: string[] = recentSearchesRaw ? JSON.parse(recentSearchesRaw) : [];
+        
+        recentSearches = recentSearches.filter((s) => s.toLowerCase() !== searchTerm.toLowerCase());
+        
+        recentSearches.unshift(searchTerm);
+        
+        recentSearches = recentSearches.slice(0, 5);
+        
+        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }
+
+
     startAiSearchTransition(async () => {
-      const analysis = await analyzeSearchQuery({ query: searchTerm });
-      setAiAnalysis(analysis);
+      try {
+        const analysis = await analyzeSearchQuery({ query: searchTerm });
+        setAiAnalysis(analysis);
+      } catch (error) {
+        console.error('AI search failed:', error);
+        setAiAnalysis(null);
+      }
     });
   }
 

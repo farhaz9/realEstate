@@ -16,6 +16,7 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
 import { Button as MovingBorderButton } from "@/components/ui/moving-border";
+import { RecentSearches } from "@/components/shared/recent-searches";
 
 const faqs = [
   {
@@ -257,6 +258,8 @@ export default function HomePage() {
           </Card>
         </div>
       </section>
+
+      <RecentSearches />
 
       <section id="faq" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
