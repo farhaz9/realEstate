@@ -18,9 +18,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase, useDoc } from '@/firebase';
+import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp, query, where, doc } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -45,7 +44,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PropertyCard } from '@/components/property-card';
 import Link from 'next/link';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -63,7 +62,6 @@ const indianStates = [
 const propertyTypes = [
   "Apartment", "Villa", "Independent House", "Plot", "PG / Co-living", "Commercial"
 ];
-
 
 const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
@@ -92,6 +90,11 @@ const propertyFormSchema = z.object({
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
+interface MyPropertiesTabProps {
+  propertyToEdit?: Property | null;
+  onSuccess?: () => void;
+}
+
 async function getCoordinatesForAddress(address: string) {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
 
@@ -115,7 +118,7 @@ async function getCoordinatesForAddress(address: string) {
   }
 }
 
-export function MyPropertiesTab() {
+export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabProps) {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -131,13 +134,14 @@ export function MyPropertiesTab() {
   const { data: userProfile } = useDoc<User>(userDocRef);
 
   const userPropertiesQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
+    if (!firestore || !user || propertyToEdit) return null; // Don't fetch user properties in edit mode
     return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
-  }, [firestore, user]);
+  }, [firestore, user, propertyToEdit]);
 
   const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
   const hasListedProperty = properties && properties.length > 0;
   const isPremiumUser = userProfile?.subscriptionStatus === 'premium';
+  const isEditing = !!propertyToEdit;
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
@@ -146,11 +150,7 @@ export function MyPropertiesTab() {
       description: '',
       price: 0,
       listingType: 'sale',
-      location: {
-        address: '',
-        pincode: '',
-        state: '',
-      },
+      location: { address: '', pincode: '', state: '' },
       contactNumber: '',
       whatsappNumber: '',
       propertyType: '',
@@ -164,6 +164,34 @@ export function MyPropertiesTab() {
       images: null,
     },
   });
+
+  useEffect(() => {
+    if (isEditing && propertyToEdit) {
+      form.reset({
+        title: propertyToEdit.title,
+        description: propertyToEdit.description,
+        price: propertyToEdit.price,
+        listingType: propertyToEdit.listingType,
+        location: {
+          address: propertyToEdit.location.address,
+          pincode: propertyToEdit.location.pincode,
+          state: propertyToEdit.location.state,
+        },
+        contactNumber: propertyToEdit.contactNumber,
+        whatsappNumber: propertyToEdit.whatsappNumber,
+        propertyType: propertyToEdit.propertyType,
+        bedrooms: propertyToEdit.bedrooms,
+        bathrooms: propertyToEdit.bathrooms,
+        squareYards: propertyToEdit.squareYards,
+        furnishing: propertyToEdit.furnishing || 'unfurnished',
+        overlooking: propertyToEdit.overlooking || '',
+        ageOfConstruction: propertyToEdit.ageOfConstruction || '',
+        amenities: propertyToEdit.amenities?.join(', ') || '',
+      });
+      setImagePreviews(propertyToEdit.imageUrls || []);
+    }
+  }, [isEditing, propertyToEdit, form]);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -200,7 +228,7 @@ export function MyPropertiesTab() {
   };
 
   async function onSubmit(data: PropertyFormValues) {
-    if (!user || !firestore) {
+    if ((!user && !isEditing) || !firestore) {
       toast({ title: 'Error', description: 'User or database not available.', variant: 'destructive' });
       return;
     }
@@ -220,10 +248,11 @@ export function MyPropertiesTab() {
       return;
     }
 
-    let uploadedImageUrls: string[] = [];
+    let uploadedImageUrls: string[] = isEditing ? imagePreviews.filter(url => url.startsWith('http')) : [];
     const files = data.images as FileList | null;
+    const newFilesToUpload = files ? Array.from(files) : [];
 
-    if (files && files.length > 0) {
+    if (newFilesToUpload.length > 0) {
       try {
         const authRes = await fetch('/api/imagekit/auth');
         const authBody = await authRes.json();
@@ -238,7 +267,7 @@ export function MyPropertiesTab() {
             authenticationEndpoint: `${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit/auth`
         });
 
-        const uploadPromises = Array.from(files).map(file => {
+        const uploadPromises = newFilesToUpload.map(file => {
           return imagekit.upload({
             file,
             fileName: file.name,
@@ -248,7 +277,7 @@ export function MyPropertiesTab() {
         });
 
         const uploadResults = await Promise.all(uploadPromises);
-        uploadedImageUrls = uploadResults.map(result => result.url);
+        uploadedImageUrls = [...uploadedImageUrls, ...uploadResults.map(result => result.url)];
 
       } catch (error: any) {
         console.error("Image upload failed:", error);
@@ -262,47 +291,52 @@ export function MyPropertiesTab() {
       }
     }
     
-    const propertiesCollection = collection(firestore, 'properties');
+    
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
     const { images, ...restOfData } = data;
     
-    const isPremium = isPremiumUser;
-    const tier = isPremium ? 'premium' : 'free';
-    const expirationDays = isPremium ? 30 : 90;
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + expirationDays);
-
-
     const propertyData = {
       ...restOfData,
-      location: {
-        ...restOfData.location,
-        ...coordinates,
-      },
+      location: { ...restOfData.location, ...coordinates },
       imageUrls: uploadedImageUrls,
       amenities: amenitiesArray,
-      userId: user.uid,
-      dateListed: serverTimestamp(),
-      isFeatured: isPremium, // Premium listings are featured
-      listingTier: tier,
-      expiresAt: expirationDate,
     };
-
+    
     if (!data.overlooking) delete (propertyData as Partial<typeof propertyData>).overlooking;
     if (!data.ageOfConstruction) delete (propertyData as Partial<typeof propertyData>).ageOfConstruction;
 
-    addDocumentNonBlocking(propertiesCollection, propertyData);
-    
+    if (isEditing && propertyToEdit) {
+      const propertyRef = doc(firestore, 'properties', propertyToEdit.id);
+      updateDocumentNonBlocking(propertyRef, propertyData);
+      toast({ title: 'Property Updated!', description: 'Your property has been successfully updated.', variant: 'success' });
+    } else if(user) {
+      const propertiesCollection = collection(firestore, 'properties');
+      const isPremium = isPremiumUser;
+      const tier = isPremium ? 'premium' : 'free';
+      const expirationDays = isPremium ? 30 : 90;
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + expirationDays);
+
+      const newPropertyData = {
+        ...propertyData,
+        userId: user.uid,
+        dateListed: serverTimestamp(),
+        isFeatured: isPremium,
+        listingTier: tier,
+        expiresAt: expirationDate,
+      };
+      
+      addDocumentNonBlocking(propertiesCollection, newPropertyData);
+      toast({ title: 'Property Listed!', description: `Your ${tier} property has been successfully listed.`, variant: 'success' });
+    }
+
     setIsUploading(false);
-
-    toast({
-      title: 'Property Listed!',
-      description: `Your ${tier} property has been successfully listed.`,
-      variant: 'success',
-    });
-
-    form.reset();
-    setImagePreviews([]);
+    if(onSuccess) {
+      onSuccess();
+    } else {
+      form.reset();
+      setImagePreviews([]);
+    }
   }
 
   const renderSubscriptionCard = () => (
@@ -356,8 +390,8 @@ export function MyPropertiesTab() {
   const renderAddPropertyForm = () => (
     <Card className="max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>{!hasListedProperty ? "Your First Listing is Free!" : (isPremiumUser ? "Add a Premium Listing" : "Add a New Listing")}</CardTitle>
-        <CardDescription>Fill in the details below to add your property to our listings.</CardDescription>
+        <CardTitle>{isEditing ? "Edit Property" : (!hasListedProperty ? "Your First Listing is Free!" : (isPremiumUser ? "Add a Premium Listing" : "Add a New Listing"))}</CardTitle>
+        <CardDescription>Fill in the details below to {isEditing ? 'update your property' : 'add your property to our listings'}.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -409,7 +443,7 @@ export function MyPropertiesTab() {
                     <Input 
                       type="file" 
                       multiple
-                      accept="image/*,video/*"
+                      accept="image/*"
                       ref={fileInputRef}
                       onChange={handleImageChange}
                       className="hidden"
@@ -417,7 +451,7 @@ export function MyPropertiesTab() {
                     />
                   </FormControl>
                   <FormDescription>
-                    Upload one or more images (max 1MB each).
+                    Upload one or more images (max 1MB each). Previously uploaded images are shown.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -512,7 +546,7 @@ export function MyPropertiesTab() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>State</FormLabel>
-                       <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isUploading}>
+                       <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a state" />
@@ -532,7 +566,7 @@ export function MyPropertiesTab() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Property Type</FormLabel>
-                       <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isUploading}>
+                       <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a property type" />
@@ -736,7 +770,7 @@ export function MyPropertiesTab() {
             <div className="flex justify-end">
               <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
                 {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : 'List My Property')}
+                {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : (isEditing ? 'Update Property' : 'List My Property'))}
               </Button>
             </div>
           </form>
@@ -767,6 +801,10 @@ export function MyPropertiesTab() {
       </div>
     </>
   );
+  
+  if (isEditing) {
+    return renderAddPropertyForm();
+  }
 
   if (isUserLoading || arePropertiesLoading) {
     return (

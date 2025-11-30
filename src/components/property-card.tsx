@@ -4,7 +4,7 @@ import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { usePathname } from "next/navigation";
-import { WhatsAppIcon } from "./icons/whatsapp-icon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -68,7 +67,7 @@ export function PropertyCard({ property, className, isAdmin = false }: PropertyC
   const { data: userProfile } = useDoc<User>(userDocRef);
 
   const isOwner = user && user.uid === property.userId;
-  const showDeleteButton = isAdmin || (isOwner && (pathname === '/profile' || pathname === '/wishlist'));
+  const showManagementControls = isAdmin || isOwner;
 
   const rating = 4.5 + (property.title.length % 5) / 10;
 
@@ -114,6 +113,12 @@ export function PropertyCard({ property, className, isAdmin = false }: PropertyC
     });
   };
   
+  const handleEdit = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    router.push(`/admin/edit/${property.id}`);
+  };
+
   const handlePhoneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -200,9 +205,15 @@ export function PropertyCard({ property, className, isAdmin = false }: PropertyC
                 <Heart className={cn("mr-2 h-4 w-4", isInWishlist ? "text-red-500 fill-red-500" : "")} />
                 <span>{isInWishlist ? 'Remove from' : 'Add to'} Wishlist</span>
               </DropdownMenuItem>
-              {showDeleteButton && (
+              {showManagementControls && (
                 <>
                   <DropdownMenuSeparator />
+                  {isAdmin && (
+                     <DropdownMenuItem onSelect={handleEdit}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        <span>Edit</span>
+                    </DropdownMenuItem>
+                  )}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">

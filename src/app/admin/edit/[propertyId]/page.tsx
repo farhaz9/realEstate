@@ -1,0 +1,62 @@
+
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
+import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { Property } from '@/types';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+export default function EditPropertyPage() {
+  const params = useParams();
+  const router = useRouter();
+  const propertyId = params.propertyId as string;
+  const firestore = useFirestore();
+
+  const propertyRef = useMemoFirebase(() => {
+    if (!firestore || !propertyId) return null;
+    return doc(firestore, 'properties', propertyId);
+  }, [firestore, propertyId]);
+
+  const { data: property, isLoading, error } = useDoc<Property>(propertyRef);
+  
+  const handleSuccess = () => {
+    router.push('/admin');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !property) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center text-center">
+        <h2 className="text-2xl font-bold">Property Not Found</h2>
+        <p className="text-muted-foreground">We couldn't find the property you were looking for.</p>
+        {error && <p className="text-destructive text-sm mt-2">{error.message}</p>}
+        <Button asChild className="mt-4">
+          <Link href="/admin">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Admin Dashboard
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-12">
+        <MyPropertiesTab 
+            propertyToEdit={property} 
+            onSuccess={handleSuccess}
+        />
+    </div>
+  );
+}
