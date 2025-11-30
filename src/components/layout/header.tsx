@@ -38,6 +38,7 @@ import { useDoc, useMemoFirebase } from '@/firebase';
 import type { User as UserType } from '@/types';
 import { doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
+import { LocationDisplay } from "@/components/shared/location-display";
 
 
 const navLinks = [
@@ -178,6 +179,10 @@ export default function Header() {
                       <span className="sr-only">Toggle navigation menu</span>
                     </Button>
                   </SheetTrigger>
+                   <div className="hidden md:flex items-center gap-2">
+                    <LocationDisplay />
+                    <Separator orientation="vertical" className="h-6" />
+                   </div>
                   <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
                     {visibleNavLinks.filter(l => !l.userOnly && !l.professionalOnly).slice(1,3).map((link) => (
                       <Link
