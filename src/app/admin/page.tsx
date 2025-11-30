@@ -1,19 +1,53 @@
+
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, Query } from 'firebase/firestore';
+import { collection, query, orderBy, Query, where } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect } from 'react';
-import type { Property } from '@/types';
-import { PageHero } from '@/components/shared/page-hero';
-import { Loader2 } from 'lucide-react';
-import { PropertyCard } from '@/components/property-card';
+import { useEffect, useMemo, useState } from 'react';
+import type { Property, User } from '@/types';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ShieldAlert } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { doc } from 'firebase/firestore';
+
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+const categoryDisplay: Record<string, string> = {
+    'buyer-tenant': 'Buyer / Tenant',
+    'listing-property': 'Property Owner',
+    'real-estate-agent': 'Real Estate Agent',
+    'interior-designer': 'Interior Designer'
+};
+
+const getInitials = (name: string) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+}
+
 
 export default function AdminPage() {
   const { user, isUserLoading } = useUser();
@@ -21,19 +55,38 @@ export default function AdminPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
+  const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
+
   const allPropertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    let q: Query = collection(firestore, 'properties');
-    q = query(q, orderBy('dateListed', 'desc'));
-    return q;
-  }, [firestore]);
+    return query(collection(firestore, 'properties'), orderBy(propertySort.key, propertySort.direction as 'asc' | 'desc'));
+  }, [firestore, propertySort]);
 
-  const { data: properties, isLoading, error } = useCollection<Property>(allPropertiesQuery);
+  const allUsersQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'users'), orderBy(userSort.key, userSort.direction as 'asc' | 'desc'));
+  }, [firestore, userSort]);
+
+  const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(allPropertiesQuery);
+  const { data: users, isLoading: isLoadingUsers } = useCollection<User>(allUsersQuery);
   
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
+  
+  const stats = useMemo(() => {
+    if (!properties || !users) return null;
+    const propertiesForSale = properties.filter(p => p.listingType === 'sale').length;
+    const propertiesForRent = properties.filter(p => p.listingType === 'rent').length;
+    return {
+      totalProperties: properties.length,
+      totalUsers: users.length,
+      propertiesForSale,
+      propertiesForRent,
+    };
+  }, [properties, users]);
 
   useEffect(() => {
-    if (isUserLoading) return; // Wait until user status is resolved
+    if (isUserLoading) return;
 
     if (!user) {
       toast({
@@ -51,69 +104,240 @@ export default function AdminPage() {
       router.push('/');
     }
   }, [user, isUserLoading, router, toast, isAuthorizedAdmin]);
+  
+  const handlePropertyDelete = (propertyId: string) => {
+    if (!firestore) return;
+    const propertyRef = doc(firestore, "properties", propertyId);
+    deleteDocumentNonBlocking(propertyRef);
+    toast({
+      title: "Property Deleted",
+      description: "The property listing has been successfully removed.",
+      variant: "destructive",
+    });
+  };
 
+  const handlePropertySort = (key: string) => {
+    setPropertySort(prev => ({
+        key,
+        direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  }
+
+  const handleUserSort = (key: string) => {
+    setUserSort(prev => ({
+        key,
+        direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  }
 
   const renderContent = () => {
-    if (isLoading || isUserLoading) {
+    if (isUserLoading || isLoadingProperties || isLoadingUsers) {
       return (
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
         </div>
       );
     }
     
-    // This check is important. Only proceed if authorization is confirmed.
     if (!isAuthorizedAdmin) {
-        return (
-            <div className="container mx-auto px-4 py-16">
-                <Card className="max-w-md mx-auto">
-                    <CardHeader>
-                        <CardTitle>Access Denied</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Alert variant="destructive">
-                            <ShieldAlert className="h-4 w-4" />
-                            <AlertTitle>Not Authorized</AlertTitle>
-                            <AlertDescription>
-                                You do not have permission to access this page. Redirecting...
-                            </AlertDescription>
-                        </Alert>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
-    
-    if (error) {
-        return <div className="text-center text-destructive py-16">Error: {error.message}</div>;
-    }
-
-    if (properties && properties.length > 0) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} isAdmin={isAuthorizedAdmin} />
-          ))}
-        </div>
+        <Card className="max-w-md mx-auto">
+          <CardHeader>
+            <CardTitle>Access Denied</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Alert variant="destructive">
+              <ShieldAlert className="h-4 w-4" />
+              <AlertTitle>Not Authorized</AlertTitle>
+              <AlertDescription>You do not have permission to access this page.</AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
       );
     }
 
     return (
-        <div className="text-center py-16 border-2 border-dashed rounded-lg">
-            <h3 className="text-2xl font-semibold">No properties have been listed yet.</h3>
-        </div>
+        <>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                        <Building className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Properties for Sale</CardTitle>
+                        <Banknote className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Properties for Rent</CardTitle>
+                        <Tag className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-6 w-6 animate-spin" />}</div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Tabs defaultValue="properties" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="properties">All Properties ({properties?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="users">All Users ({users?.length || 0})</TabsTrigger>
+                </TabsList>
+                <TabsContent value="properties">
+                    <Card>
+                        <CardContent className="p-0">
+                           <div className="overflow-x-auto">
+                             <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Property</TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handlePropertySort('dateListed')}>
+                                            <div className="flex items-center gap-2">
+                                                Date Listed <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
+                                        <TableHead>Owner</TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handlePropertySort('listingType')}>
+                                            <div className="flex items-center gap-2">
+                                                Type <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {properties?.map(property => {
+                                        const owner = users?.find(u => u.id === property.userId);
+                                        return (
+                                            <TableRow key={property.id}>
+                                                <TableCell className="font-medium">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar className="h-10 w-10 rounded-md">
+                                                            <AvatarImage src={property.imageUrls?.[0]} alt={property.title} />
+                                                            <AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="truncate">
+                                                           <p className="font-semibold truncate">{property.title}</p>
+                                                           <p className="text-xs text-muted-foreground truncate">{property.location.address}</p>
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}
+                                                </TableCell>
+                                                <TableCell>{owner?.fullName || 'Unknown'}</TableCell>
+                                                <TableCell className="capitalize">{property.listingType}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button variant="ghost" size="icon" onClick={() => router.push(`/admin/edit/${property.id}`)}>
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger asChild>
+                                                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                                            <Trash2 className="h-4 w-4" />
+                                                          </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                          <AlertDialogHeader>
+                                                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription>This will permanently delete the property "{property.title}".</AlertDialogDescription>
+                                                          </AlertDialogHeader>
+                                                          <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handlePropertyDelete(property.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                                          </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                      </AlertDialog>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                                </TableBody>
+                            </Table>
+                           </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="users">
+                    <Card>
+                        <CardContent className="p-0">
+                           <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>User</TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handleUserSort('category')}>
+                                            <div className="flex items-center gap-2">
+                                                Role <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handleUserSort('dateJoined')}>
+                                            <div className="flex items-center gap-2">
+                                                Joined On <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
+                                        <TableHead>Contact</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {users?.map(user => (
+                                        <TableRow key={user.id}>
+                                            <TableCell>
+                                                 <div className="flex items-center gap-3">
+                                                    <Avatar>
+                                                        <AvatarImage src={user.photoURL} alt={user.fullName} />
+                                                        <AvatarFallback>{getInitials(user.fullName)}</AvatarFallback>
+                                                    </Avatar>
+                                                    <div>
+                                                        <p className="font-medium">{user.fullName}</p>
+                                                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>{categoryDisplay[user.category] || user.category}</TableCell>
+                                            <TableCell>{user.dateJoined?.toDate ? format(user.dateJoined.toDate(), 'PPP') : 'N/A'}</TableCell>
+                                            <TableCell>{user.phone}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                           </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+        </>
     );
   };
 
   return (
     <>
-      <PageHero
-        title="Admin Dashboard"
-        subtitle="Manage all property listings on the platform."
-        image={{ id: 'contact-hero', imageHint: 'office desk' }}
-      />
-      <div className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold mb-8">All Properties ({properties?.length || 0})</h2>
+      <div className="bg-muted/40">
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage users and property listings.</p>
+        </div>
+      </div>
+      <div className="container mx-auto px-4 py-8">
         {renderContent()}
       </div>
     </>
