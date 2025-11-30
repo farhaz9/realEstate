@@ -177,11 +177,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <NewProjects />
-      
       <PopularProperties />
 
       <FeaturedProfessionals />
+      
+      <NewProjects />
 
       <FeaturedProperties />
 
