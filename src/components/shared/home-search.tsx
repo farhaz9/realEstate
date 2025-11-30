@@ -49,7 +49,7 @@ export function HomeSearch() {
             </div>
         </form>
 
-        <div className="h-8 flex items-center justify-center mt-2">
+        <div className="h-8 flex items-center justify-start mt-2">
             <LocationDisplay />
         </div>
 
