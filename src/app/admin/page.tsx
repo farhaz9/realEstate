@@ -132,131 +132,133 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Platform Metrics</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                       <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
-                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
-                                <Building className="h-8 w-8 text-primary mb-2" />
-                                <p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
-                                <p className="text-sm text-muted-foreground">Total Properties</p>
+        <div className="space-y-8">
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-1">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>User Distribution</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {users ? (
+                                <UserDistributionChart users={users} />
+                            ) : (
+                                <div className="h-[300px] flex items-center justify-center">
+                                    <Loader2 className="h-8 w-8 animate-spin" />
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Platform Metrics</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                        <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
+                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                    <Building className="h-8 w-8 text-primary mb-2" />
+                                    <p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                    <p className="text-sm text-muted-foreground">Total Properties</p>
+                                </div>
+                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                    <Users className="h-8 w-8 text-blue-500 mb-2" />
+                                    <p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                    <p className="text-sm text-muted-foreground">Total Users</p>
+                                </div>
+                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                    <Banknote className="h-8 w-8 text-green-500 mb-2" />
+                                    <p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                    <p className="text-sm text-muted-foreground">For Sale</p>
+                                </div>
+                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
+                                    <Tag className="h-8 w-8 text-orange-500 mb-2" />
+                                    <p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
+                                    <p className="text-sm text-muted-foreground">For Rent</p>
+                                </div>
                             </div>
-                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
-                                <Users className="h-8 w-8 text-blue-500 mb-2" />
-                                <p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
-                                <p className="text-sm text-muted-foreground">Total Users</p>
-                            </div>
-                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
-                                <Banknote className="h-8 w-8 text-green-500 mb-2" />
-                                <p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
-                                <p className="text-sm text-muted-foreground">For Sale</p>
-                            </div>
-                            <div className="flex flex-col items-center p-4 rounded-lg bg-secondary">
-                                <Tag className="h-8 w-8 text-orange-500 mb-2" />
-                                <p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p>
-                                <p className="text-sm text-muted-foreground">For Rent</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                
-                <Card>
-                    <CardHeader>
-                        <CardTitle>All Properties ({properties?.length || 0})</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                            <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Property</TableHead>
-                                    <TableHead className="cursor-pointer" onClick={() => handlePropertySort('dateListed')}>
-                                        <div className="flex items-center gap-2">
-                                            Date Listed <ArrowUpDown className="h-4 w-4" />
-                                        </div>
-                                    </TableHead>
-                                    <TableHead>Owner</TableHead>
-                                    <TableHead className="cursor-pointer" onClick={() => handlePropertySort('listingType')}>
-                                        <div className="flex items-center gap-2">
-                                            Type <ArrowUpDown className="h-4 w-4" />
-                                        </div>
-                                    </TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {properties?.map(property => {
-                                    const owner = users?.find(u => u.id === property.userId);
-                                    return (
-                                        <TableRow key={property.id}>
-                                            <TableCell className="font-medium">
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar className="h-10 w-10 rounded-md">
-                                                        <AvatarImage src={property.imageUrls?.[0]} alt={property.title} />
-                                                        <AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="truncate">
-                                                        <p className="font-semibold truncate">{property.title}</p>
-                                                        <p className="text-xs text-muted-foreground truncate">{property.location.address}</p>
-                                                    </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>All Properties ({properties?.length || 0})</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Property</TableHead>
+                                <TableHead className="cursor-pointer" onClick={() => handlePropertySort('dateListed')}>
+                                    <div className="flex items-center gap-2">
+                                        Date Listed <ArrowUpDown className="h-4 w-4" />
+                                    </div>
+                                </TableHead>
+                                <TableHead>Owner</TableHead>
+                                <TableHead className="cursor-pointer" onClick={() => handlePropertySort('listingType')}>
+                                    <div className="flex items-center gap-2">
+                                        Type <ArrowUpDown className="h-4 w-4" />
+                                    </div>
+                                </TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {properties?.map(property => {
+                                const owner = users?.find(u => u.id === property.userId);
+                                return (
+                                    <TableRow key={property.id}>
+                                        <TableCell className="font-medium">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-10 w-10 rounded-md">
+                                                    <AvatarImage src={property.imageUrls?.[0]} alt={property.title} />
+                                                    <AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="truncate">
+                                                    <p className="font-semibold truncate">{property.title}</p>
+                                                    <p className="text-xs text-muted-foreground truncate">{property.location.address}</p>
                                                 </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}
-                                            </TableCell>
-                                            <TableCell>{owner?.fullName || 'Unknown'}</TableCell>
-                                            <TableCell className="capitalize">{property.listingType}</TableCell>
-                                            <TableCell className="text-right">
-                                                <Button variant="ghost" size="icon" onClick={() => router.push(`/admin/edit/${property.id}`)}>
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                                        <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                                        <AlertDialogDescription>This will permanently delete the property "{property.title}".</AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => handlePropertyDelete(property.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                    </AlertDialog>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-            <div className="lg:col-span-1">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>User Distribution</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {users ? (
-                            <UserDistributionChart users={users} />
-                        ) : (
-                            <div className="h-[300px] flex items-center justify-center">
-                                <Loader2 className="h-8 w-8 animate-spin" />
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            {property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}
+                                        </TableCell>
+                                        <TableCell>{owner?.fullName || 'Unknown'}</TableCell>
+                                        <TableCell className="capitalize">{property.listingType}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="ghost" size="icon" onClick={() => router.push(`/admin/edit/${property.id}`)}>
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                                    <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                    <AlertDialogDescription>This will permanently delete the property "{property.title}".</AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction onClick={() => handlePropertyDelete(property.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                                </AlertDialog>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
   };
