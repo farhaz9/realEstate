@@ -8,6 +8,7 @@ import { MapPin, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { LocationDisplay } from './location-display';
 
 const searchTabs = [
   { id: 'buy', label: 'Buy' },
@@ -48,8 +49,12 @@ export function HomeSearch() {
             </div>
         </form>
 
+        <div className="h-8 flex items-center justify-center mt-2">
+            <LocationDisplay />
+        </div>
+
         <div className="mt-4">
-            <div className="flex items-center space-x-6">
+             <div className="flex items-center space-x-6">
               {searchTabs.map(tab => (
                 <button
                   key={tab.id}

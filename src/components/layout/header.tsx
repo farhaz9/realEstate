@@ -184,7 +184,6 @@ export default function Header() {
                     </Button>
                   </SheetTrigger>
                    <div className="hidden md:flex items-center gap-2">
-                    <LocationDisplay />
                     <Separator orientation="vertical" className="h-6" />
                    </div>
                   <nav className="hidden items-center gap-1 text-sm font-medium md:flex">

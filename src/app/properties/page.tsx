@@ -27,6 +27,7 @@ import Link from 'next/link';
 import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { LocationDisplay } from '@/components/shared/location-display';
 
 const searchSuggestions = [
   'Search property in South Delhi',
@@ -52,7 +53,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const { location: userLocation, city, error: locationError, isLoading: isLocationLoading, canAskPermission } = useGeolocation();
+  const { location: userLocation, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -161,33 +162,6 @@ export default function PropertiesPage() {
       const states = [...new Set(properties.map(p => p.location?.state).filter(Boolean) as string[])];
       return states;
   }, [properties]);
-
-  const renderLocationStatus = () => {
-    if (isLocationLoading) {
-      return (
-        <div className="flex items-center text-sm text-muted-foreground">
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Fetching location...
-        </div>
-      );
-    }
-    if (locationError) {
-      return (
-        <Alert variant="destructive" className="p-2 text-xs">
-          <AlertDescription>{locationError}</AlertDescription>
-        </Alert>
-      );
-    }
-    if (city) {
-      return (
-        <div className="flex items-center text-sm text-muted-foreground font-medium">
-          <MapPin className="mr-2 h-4 w-4 text-primary" />
-          Showing properties near {city}
-        </div>
-      );
-    }
-    return null;
-  }
 
 
   return (
@@ -307,13 +281,13 @@ export default function PropertiesPage() {
             </Sheet>
            </form>
            <div className="h-6 flex items-center justify-center -mt-2">
-              {renderLocationStatus()}
+              <LocationDisplay />
             </div>
         </div>
       </section>
       
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        {isLoading || isAiSearchPending || isLocationLoading ? (
+        {isLoading || isAiSearchPending ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex flex-col h-full overflow-hidden border rounded-lg">
@@ -354,5 +328,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
-    
