@@ -58,6 +58,7 @@ export default function PropertiesPage() {
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [location, setLocation] = useState('all');
+  const [pincode, setPincode] = useState('');
   const [bedrooms, setBedrooms] = useState(0);
   const [bathrooms, setBathrooms] = useState(0);
   const [priceRange, setPriceRange] = useState([0, 20]); // In Crores
@@ -180,14 +181,15 @@ export default function PropertiesPage() {
         return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
       }
       
-      const locationMatch = location === 'all' || p.location?.state === location || p.location?.pincode === location;
+      const locationMatch = location === 'all' || p.location?.state === location;
+      const pincodeMatch = !pincode || p.location?.pincode === pincode;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
       const priceMatch = p.price >= priceRange[0] * 10000000 && p.price <= priceRange[1] * 10000000;
       
-      return tabMatch && locationMatch && bedroomsMatch && bathroomsMatch && priceMatch;
+      return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation, fuse]);
+  }, [properties, activeTab, searchTerm, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation, fuse]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -255,18 +257,29 @@ export default function PropertiesPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label>State</Label>
-                            <Select value={location} onValueChange={setLocation}>
-                                <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
-                                <SelectValue placeholder="All States" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                <SelectItem value="all">All States</SelectItem>
-                                {uniqueLocations.map((loc, index) => <SelectItem key={`${loc}-${index}`} value={loc}>{loc}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>State</Label>
+                                <Select value={location} onValueChange={setLocation}>
+                                    <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
+                                    <SelectValue placeholder="All States" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                    <SelectItem value="all">All States</SelectItem>
+                                    {uniqueLocations.map((loc, index) => <SelectItem key={`${loc}-${index}`} value={loc}>{loc}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="pincode">Pincode</Label>
+                                <Input 
+                                  id="pincode"
+                                  placeholder="e.g. 110085"
+                                  value={pincode}
+                                  onChange={(e) => setPincode(e.target.value)}
+                                  className="bg-background text-foreground h-9 shadow-sm"
+                                />
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -359,5 +372,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
-    
