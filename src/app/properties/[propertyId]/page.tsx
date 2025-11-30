@@ -296,7 +296,7 @@ export default function PropertyDetailPage() {
                     </div>
                      {listingDate && (
                       <p className="text-xs text-muted-foreground text-center w-full">
-                        Posted on {listingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        Posted on {listingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     )}
                   </div>
