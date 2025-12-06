@@ -198,14 +198,39 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const validFiles = Array.from(files).filter(file => file.size <= 1 * 1024 * 1024);
-      if (validFiles.length < files.length) {
+      const currentImageCount = imagePreviews.length;
+      const availableSlots = 3 - currentImageCount;
+
+      if (availableSlots <= 0) {
+        toast({
+          title: "Image limit reached",
+          description: "You can upload a maximum of 3 images.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const filesToProcess = Array.from(files).slice(0, availableSlots);
+
+      const validFiles = filesToProcess.filter(file => file.size <= 1 * 1024 * 1024);
+      
+      if (validFiles.length < filesToProcess.length) {
         toast({
           title: "File Size Limit Exceeded",
           description: "Some images were not selected because they exceed the 1MB size limit.",
           variant: "destructive",
         })
       }
+      
+      if (files.length > availableSlots) {
+        toast({
+          title: "Image limit exceeded",
+          description: `You can only add ${availableSlots} more image(s).`,
+          variant: "destructive",
+        });
+      }
+
+      if (validFiles.length === 0) return;
 
       const newPreviews = validFiles.map(file => URL.createObjectURL(file));
       setImagePreviews(prev => [...prev, ...newPreviews]);
@@ -214,7 +239,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       const combinedFiles = [...Array.from(currentFiles), ...validFiles];
       const dataTransfer = new DataTransfer();
       combinedFiles.forEach(file => dataTransfer.items.add(file));
-      form.setValue('images', dataTransfer.files);
+      form.setValue('images', dataTransfer.files, { shouldValidate: true });
     }
   };
 
@@ -403,7 +428,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
               name="images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Property Images</FormLabel>
+                  <FormLabel>Property Images (up to 3)</FormLabel>
                    <Dialog>
                       <DialogTrigger asChild>
                          <Button variant="outline" className="w-full">
@@ -449,11 +474,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                       ref={fileInputRef}
                       onChange={handleImageChange}
                       className="hidden"
-                      disabled={isUploading}
+                      disabled={isUploading || imagePreviews.length >= 3}
                     />
                   </FormControl>
                   <FormDescription>
-                    Upload one or more images (max 1MB each). Previously uploaded images are shown.
+                    Upload up to 3 images (max 1MB each). {imagePreviews.length} / 3 uploaded.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -836,3 +861,5 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   // If user is premium, or has no listings, show the form.
   return renderAddPropertyForm();
 }
+
+    
