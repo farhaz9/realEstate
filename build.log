@@ -1,0 +1,52 @@
+
+> nextn@0.1.0 build
+> NODE_ENV=production next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+   ▲ Next.js 15.3.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 20.0s
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/17) ...
+   Generating static pages (4/17) 
+   Generating static pages (8/17) 
+   Generating static pages (12/17) 
+ ✓ Generating static pages (17/17)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    48.1 kB         360 kB
+├ ○ /_not-found                            986 B         102 kB
+├ ○ /admin                                112 kB         379 kB
+├ ƒ /admin/edit/[propertyId]               914 B         344 kB
+├ ƒ /api/imagekit/auth                     142 B         101 kB
+├ ○ /builders                             4.5 kB         271 kB
+├ ○ /contact                               188 B         110 kB
+├ ○ /interiors                             177 B         107 kB
+├ ○ /login                               7.95 kB         298 kB
+├ ○ /professionals                       5.52 kB         272 kB
+├ ƒ /professionals/[professionalId]      4.66 kB         267 kB
+├ ○ /profile                             5.55 kB         349 kB
+├ ○ /properties                          17.3 kB         328 kB
+├ ƒ /properties/[propertyId]               10 kB         280 kB
+├ ○ /robots.txt                            142 B         101 kB
+├ ○ /services                              188 B         110 kB
+└ ○ /sitemap.xml                           142 B         101 kB
++ First Load JS shared by all             101 kB
+  ├ chunks/4bd1b696-b226f7bc8e505d51.js  53.2 kB
+  ├ chunks/684-364925621004e741.js         46 kB
+  └ other shared chunks (total)          1.97 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
