@@ -43,7 +43,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-primary-foreground/20 text-center text-sm text-primary-foreground/80">
-          <p>&copy; {new Date().getFullYear()} Farhaz Homes. All rights reserved.</p>
+          <p>&copy; 2026 Farhaz Homes. All rights reserved.</p>
         </div>
       </div>
     </footer>
