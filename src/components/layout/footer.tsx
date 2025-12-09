@@ -32,13 +32,13 @@ export default function Footer() {
                 <li><Link href="/contact" className="text-primary-foreground/90 hover:text-white">Contact</Link></li>
               </ul>
             </div>
-            <div>
-              <h3 className="font-semibold tracking-wider uppercase text-primary-foreground/80">Connect</h3>
-              <div className="flex mt-4 space-x-4">
-                <Link href="#" className="text-primary-foreground/90 hover:text-white"><Twitter className="h-5 w-5" /></Link>
-                <Link href="#" className="text-primary-foreground/90 hover:text-white"><Linkedin className="h-5 w-5" /></Link>
-                <Link href="#" className="text-primary-foreground/90 hover:text-white"><Github className="h-5 w-5" /></Link>
-              </div>
+             <div>
+              <h3 className="font-semibold tracking-wider uppercase text-primary-foreground/80">Legal</h3>
+              <ul className="mt-4 space-y-2 text-sm">
+                <li><Link href="/privacy-policy" className="text-primary-foreground/90 hover:text-white">Privacy Policy</Link></li>
+                <li><Link href="/terms-and-conditions" className="text-primary-foreground/90 hover:text-white">Terms &amp; Conditions</Link></li>
+                <li><Link href="/refund-policy" className="text-primary-foreground/90 hover:text-white">Refund Policy</Link></li>
+              </ul>
             </div>
           </div>
         </div>
