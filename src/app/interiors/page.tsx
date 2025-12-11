@@ -11,6 +11,9 @@ import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function InteriorsPage() {
   const firestore = useFirestore();
@@ -107,6 +110,57 @@ export default function InteriorsPage() {
           )}
         </div>
       </section>
+
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+           <div className="flex justify-between items-center mb-8">
+             <h2 className="text-3xl md:text-4xl font-bold">Interior Designers Near You</h2>
+             <Link href="/professionals" className="flex items-center text-sm font-semibold text-primary hover:underline">
+                View All <ArrowRight className="ml-1 h-4 w-4" />
+             </Link>
+           </div>
+           <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                <h3 className="text-xl font-semibold">Feature Coming Soon</h3>
+                <p className="text-muted-foreground mt-2">We are working on a feature to show you designers based on your location.</p>
+            </div>
+        </div>
+      </section>
+      
+      <section className="py-16 md:py-24 bg-primary/5">
+        <div className="container mx-auto px-4">
+           <div className="flex justify-between items-center mb-8">
+             <h2 className="text-3xl md:text-4xl font-bold">Top Interior Designers</h2>
+             <Link href="/professionals" className="flex items-center text-sm font-semibold text-primary hover:underline">
+                View All <ArrowRight className="ml-1 h-4 w-4" />
+             </Link>
+           </div>
+           {isLoading ? (
+             <div className="flex items-center justify-center py-16"><Loader2 className="h-8 w-8 animate-spin" /></div>
+           ) : (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {(designers || []).slice(0,3).map((designer) => (
+                <ProfessionalCard key={designer.id} professional={designer} />
+              ))}
+            </div>
+           )}
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+           <div className="flex justify-between items-center mb-8">
+             <h2 className="text-3xl md:text-4xl font-bold">Top Interior Design Companies</h2>
+              <Link href="/professionals" className="flex items-center text-sm font-semibold text-primary hover:underline">
+                View All <ArrowRight className="ml-1 h-4 w-4" />
+             </Link>
+           </div>
+           <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                <h3 className="text-xl font-semibold">Coming Soon</h3>
+                <p className="text-muted-foreground mt-2">A curated list of top interior design firms will be available here.</p>
+            </div>
+        </div>
+      </section>
+
     </div>
   );
 }
