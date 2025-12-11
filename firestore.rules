@@ -7,6 +7,12 @@ service cloud.firestore {
     function isOwner(userId) {
       return request.auth != null && request.auth.uid == userId;
     }
+    
+    // Helper function to check if the requesting user is the admin.
+    // Ensure NEXT_PUBLIC_ADMIN_EMAIL is set in your environment.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == "thegreatfarhaz07@gmail.com";
+    }
 
     // Helper function to check if a user is a professional or lister.
     function isProfessional() {
@@ -20,8 +26,8 @@ service cloud.firestore {
     match /users/{userId} {
       // Anyone can read user profiles (e.g., to see property owner details or professional profiles).
       allow read: if true;
-      // Only the authenticated owner of the profile can write (create, update, delete).
-      allow write: if isOwner(userId);
+      // Allow write if the user is the owner OR if the user is an admin.
+      allow write: if isOwner(userId) || isAdmin();
     }
 
     // Rules for the 'properties' collection
@@ -32,8 +38,8 @@ service cloud.firestore {
       // Allow any authenticated user to create a new property.
       allow create: if request.auth != null;
       
-      // Only allow the user who owns the property to update or delete it.
-      allow update, delete: if isOwner(resource.data.userId);
+      // Only allow the user who owns the property or an admin to update or delete it.
+      allow update, delete: if isOwner(resource.data.userId) || isAdmin();
     }
   }
 }
