@@ -37,7 +37,7 @@ export function LocationDisplay() {
                 <TooltipTrigger asChild>
                     <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm text-destructive h-auto p-1">
                         <AlertTriangle className="mr-2 h-4 w-4" />
-                        Location Error
+                        Location Denied
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
