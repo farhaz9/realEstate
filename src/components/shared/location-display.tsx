@@ -30,19 +30,44 @@ export function LocationDisplay() {
       );
     }
 
+    if (error === 'Location permission denied.') {
+       return (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <div 
+                      onClick={handleClick} 
+                      className="flex items-center gap-2 text-sm text-destructive h-auto p-1 cursor-pointer rounded-md hover:bg-destructive/10"
+                    >
+                        <AlertTriangle className="mr-1 h-4 w-4" />
+                        Location Denied
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p className="max-w-xs">
+                      Location access is blocked. To enable it, go to your browser's site settings for this page and change the location permission to "Allow".
+                    </p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+       )
+    }
+    
     if (error) {
        return (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm text-destructive h-auto p-1">
-                        <AlertTriangle className="mr-2 h-4 w-4" />
-                        Location Denied
-                    </Button>
+                     <div 
+                      onClick={handleClick}
+                      className="flex items-center gap-2 text-sm text-destructive h-auto p-1 cursor-pointer rounded-md hover:bg-destructive/10"
+                    >
+                        <AlertTriangle className="mr-1 h-4 w-4" />
+                        Location Error
+                    </div>
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>{error}</p>
-                    {canAskPermission && <p>Click to try again.</p>}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
@@ -85,18 +110,18 @@ export function LocationDisplay() {
         )
     }
     
-    // If permission is permanently denied and there's no city.
+    // Fallback for any other unhandled case, though it's unlikely to be reached.
     return (
        <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <div className="flex items-center gap-2 text-muted-foreground/60 px-3 py-1.5 cursor-help">
                         <HelpCircle className="h-4 w-4" />
-                        <span className="text-sm">Location Denied</span>
+                        <span className="text-sm">Location Unavailable</span>
                     </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Location access is blocked. Please enable it in your browser settings to see nearby properties.</p>
+                    <p>Could not determine your location.</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
