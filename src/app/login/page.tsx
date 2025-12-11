@@ -73,7 +73,7 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('user');
   const [resetEmail, setResetEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -203,7 +203,7 @@ export default function LoginPage() {
           fullName: user.displayName,
           email: user.email,
           phone: user.phoneNumber || '', // Phone number might not be available from Google
-          category: 'buyer-tenant', // Default category for Google Sign-in
+          category: 'user', // Default category for Google Sign-in
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || '',
           subscriptionStatus: 'free',
@@ -392,7 +392,7 @@ export default function LoginPage() {
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="buyer-tenant">Buyer / Tenant</SelectItem>
+                                <SelectItem value="user">User</SelectItem>
                                 <SelectItem value="listing-property">Property Owner / Lister</SelectItem>
                                 <SelectItem value="real-estate-agent">Real Estate Agent</SelectItem>
                                 <SelectItem value="interior-designer">Interior Designer</SelectItem>

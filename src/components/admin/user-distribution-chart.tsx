@@ -13,7 +13,7 @@ interface UserDistributionChartProps {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#00C49F'];
 
 const categoryDisplay: Record<string, string> = {
-  'buyer-tenant': 'Buyers / Tenants',
+  'user': 'Users',
   'listing-property': 'Property Owners',
   'real-estate-agent': 'Real Estate Agents',
   'interior-designer': 'Interior Designers',

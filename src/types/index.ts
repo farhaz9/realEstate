@@ -49,7 +49,7 @@ export type User = {
   fullName: string;
   email: string;
   phone: string;
-  category: 'buyer-tenant' | 'listing-property' | 'real-estate-agent' | 'interior-designer';
+  category: 'user' | 'listing-property' | 'real-estate-agent' | 'interior-designer';
   dateJoined: Date | any;
   photoURL?: string;
   wishlist?: string[];

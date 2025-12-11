@@ -116,7 +116,7 @@ export default function AdminPage() {
   }
   
   const categoryDisplay: Record<string, string> = {
-    'buyer-tenant': 'Buyer / Tenant',
+    'user': 'User',
     'listing-property': 'Property Owner',
     'real-estate-agent': 'Real Estate Agent',
     'interior-designer': 'Interior Designer'

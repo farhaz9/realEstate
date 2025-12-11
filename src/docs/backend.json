@@ -1,0 +1,244 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user account in the Delhi Estate Luxe application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the user.",
+          "enum": ["user", "listing-property", "real-estate-agent", "interior-designer"]
+        },
+        "dateJoined": {
+          "type": "string",
+          "description": "The date and time the user joined the platform.",
+          "format": "date-time"
+        },
+        "wishlist": {
+          "type": "array",
+          "description": "A list of property IDs that the user has added to their wishlist.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "photoURL": {
+            "type": "string",
+            "description": "URL of the user's profile picture."
+        },
+        "subscriptionStatus": {
+            "type": "string",
+            "description": "The user's subscription status.",
+            "enum": ["free", "premium"],
+            "default": "free"
+        }
+      },
+      "required": [
+        "id",
+        "fullName",
+        "email",
+        "phone",
+        "category",
+        "dateJoined"
+      ]
+    },
+    "Property": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Property",
+      "type": "object",
+      "description": "Represents a property listed on the Delhi Estate Luxe application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the property entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Property)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the property listing."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the property."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the property."
+        },
+        "listingType": {
+          "type": "string",
+          "description": "Whether the property is for sale or for rent.",
+          "enum": ["sale", "rent"]
+        },
+        "location": {
+          "type": "object",
+          "description": "The structured address and coordinates of the property.",
+          "properties": {
+            "address": {
+              "type": "string",
+              "description": "Street address."
+            },
+            "pincode": {
+              "type": "string",
+              "description": "Postal code."
+            },
+            "state": {
+              "type": "string",
+              "description": "State or province."
+            },
+            "latitude": {
+              "type": "number",
+              "description": "The latitude of the property."
+            },
+            "longitude": {
+              "type": "number",
+              "description": "The longitude of the property."
+            }
+          },
+          "required": ["address", "pincode", "state", "latitude", "longitude"]
+        },
+         "contactNumber": {
+          "type": "string",
+          "description": "The contact phone number for the listing."
+        },
+        "whatsappNumber": {
+          "type": "string",
+          "description": "The WhatsApp number for the listing."
+        },
+        "propertyType": {
+          "type": "string",
+          "description": "The type of property (e.g., apartment, house, villa)."
+        },
+        "bedrooms": {
+          "type": "number",
+          "description": "The number of bedrooms in the property."
+        },
+        "bathrooms": {
+          "type": "number",
+          "description": "The number of bathrooms in the property."
+        },
+        "squareYards": {
+          "type": "number",
+          "description": "The area of the property in square yards."
+        },
+        "amenities": {
+          "type": "array",
+          "description": "A list of amenities offered by the property.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "A list of URLs pointing to images of the property.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Indicates whether the property is featured."
+        },
+        "dateListed": {
+          "type": "string",
+          "description": "The date the property was listed.",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "The date and time when the listing will automatically be removed.",
+          "format": "date-time"
+        },
+        "listingTier": {
+            "type": "string",
+            "description": "The tier of the listing, determining its visibility and duration.",
+            "enum": ["free", "premium"]
+        },
+        "furnishing": {
+            "type": "string",
+            "description": "The furnishing status of the property.",
+            "enum": ["unfurnished", "semi-furnished", "fully-furnished"]
+        },
+        "overlooking": {
+            "type": "string",
+            "description": "What the property overlooks (e.g., Pool, Garden, Main Road)."
+        },
+        "ageOfConstruction": {
+            "type": "string",
+            "description": "The age of the property's construction (e.g., 0-1 year, 1-5 years)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "title",
+        "description",
+        "price",
+        "listingType",
+        "location",
+        "contactNumber",
+        "whatsappNumber",
+        "propertyType",
+        "bedrooms",
+        "bathrooms",
+        "squareYards",
+        "dateListed",
+        "expiresAt",
+        "listingTier"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous",
+      "google.com"
+    ]
+  },
+  "firestore": {
+     "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/entities/User"
+          },
+          "description": "Stores user profiles."
+        }
+      },
+      {
+        "path": "/properties/{propertyId}",
+        "definition": {
+            "entityName": "Property",
+            "schema": {
+                "$ref": "#/entities/Property"
+            },
+            "description": "Public collection of all property listings."
+        }
+      }
+    ]
+  }
+}
