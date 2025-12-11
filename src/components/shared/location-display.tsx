@@ -15,7 +15,7 @@ export function LocationDisplay() {
   const { city, error, isLoading, canAskPermission, requestPermission } = useGeolocation();
 
   const handleClick = () => {
-    if (canAskPermission) {
+    if (canAskPermission && error !== 'Location permission denied.') {
       requestPermission();
     }
   };
@@ -45,7 +45,7 @@ export function LocationDisplay() {
                 </TooltipTrigger>
                 <TooltipContent>
                     <p className="max-w-xs">
-                      Location access is blocked. To enable it, go to your browser's site settings for this page and change the location permission to "Allow".
+                      Location access is blocked. Go to your browser's site settings for this page to allow it.
                     </p>
                 </TooltipContent>
             </Tooltip>
