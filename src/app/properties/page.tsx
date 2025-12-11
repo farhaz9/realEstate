@@ -53,7 +53,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const { location: userLocation, city, canAskPermission } = useGeolocation();
+  const { location: userLocation, city: detectedCity, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -68,16 +68,16 @@ export default function PropertiesPage() {
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
 
   const searchSuggestions = useMemo(() => {
-    if (city) {
+    if (detectedCity) {
       return [
-        `Search for properties in ${city}`,
-        `Find 2BHK apartments in ${city}`,
-        `Luxury villas for sale near ${city}`,
-        `Rent a house in ${city}`,
+        `Search for properties in ${detectedCity}`,
+        `Find 2BHK apartments in ${detectedCity}`,
+        `Luxury villas for sale near ${detectedCity}`,
+        `Rent a house in ${detectedCity}`,
       ];
     }
     return staticSearchSuggestions;
-  }, [city]);
+  }, [detectedCity]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -138,7 +138,7 @@ export default function PropertiesPage() {
   const fuse = useMemo(() => {
     if (!properties) return null;
     const options = {
-      keys: ['title', 'description', 'location.address', 'propertyType', 'location.pincode'],
+      keys: ['title', 'description', 'location.address', 'propertyType', 'location.pincode', 'location.state'],
       includeScore: true,
       threshold: 0.4,
     };
@@ -200,15 +200,22 @@ export default function PropertiesPage() {
         return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
       }
       
+      const detectedCityMatch = !detectedCity || (p.location?.address?.toLowerCase().includes(detectedCity.toLowerCase())) || (p.location?.state?.toLowerCase().includes(detectedCity.toLowerCase()));
       const locationMatch = location === 'all' || p.location?.state === location;
       const pincodeMatch = !pincode || p.location?.pincode === pincode;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
       const priceMatch = p.price >= priceRange[0] * 10000000 && p.price <= priceRange[1] * 10000000;
       
-      return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
+      const manualFiltersApplied = location !== 'all' || pincode || bedrooms > 0 || bathrooms > 0;
+      
+      if (manualFiltersApplied) {
+        return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
+      }
+
+      return tabMatch && detectedCityMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation, fuse]);
+  }, [properties, activeTab, searchTerm, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation, fuse, detectedCity]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -392,4 +399,3 @@ export default function PropertiesPage() {
   );
 }
 
-    

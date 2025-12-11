@@ -25,7 +25,7 @@ const getCityFromCoordinates = async (latitude: number, longitude: number): Prom
         }
         const data = await response.json();
         if (data && data.address) {
-            return data.address.city || data.address.town || data.address.village || data.address.state;
+            return data.address.city || data.address.town || data.address.village || data.address.state_district || data.address.state;
         }
         return null;
     } catch (error) {
