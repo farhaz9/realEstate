@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -416,7 +415,7 @@ export default function LoginPage() {
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="user">Buyer / Tenant</SelectItem>
                                 <SelectItem value="listing-property">Property Owner / Lister</SelectItem>
                                 <SelectItem value="real-estate-agent">Real Estate Agent</SelectItem>
                                 <SelectItem value="interior-designer">Interior Designer</SelectItem>
