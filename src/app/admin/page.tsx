@@ -1,13 +1,13 @@
 
 'use client';
 
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { collection, query, orderBy, Query, where } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -29,6 +29,7 @@ import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
 import { UserDistributionChart } from '@/components/admin/user-distribution-chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -115,6 +116,18 @@ export default function AdminPage() {
     }));
   }
   
+  const handleSubscriptionToggle = (userId: string, currentStatus: 'free' | 'premium') => {
+    if (!firestore) return;
+    const newStatus = currentStatus === 'premium' ? 'free' : 'premium';
+    const userRef = doc(firestore, 'users', userId);
+    updateDocumentNonBlocking(userRef, { subscriptionStatus: newStatus });
+    toast({
+      title: `Subscription Updated`,
+      description: `User has been set to ${newStatus}.`,
+      variant: 'success'
+    });
+  };
+
   const categoryDisplay: Record<string, string> = {
     'user': 'Buyer / Tenant',
     'listing-property': 'Property Owner',
@@ -308,7 +321,13 @@ export default function AdminPage() {
                                                 Category <ArrowUpDown className="h-4 w-4" />
                                             </div>
                                         </TableHead>
+                                         <TableHead className="cursor-pointer" onClick={() => handleUserSort('subscriptionStatus')}>
+                                            <div className="flex items-center gap-2">
+                                                Subscription <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
                                         <TableHead>Contact</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -330,7 +349,22 @@ export default function AdminPage() {
                                                 {user.dateJoined?.toDate ? format(user.dateJoined.toDate(), 'PPP') : 'N/A'}
                                             </TableCell>
                                             <TableCell>{categoryDisplay[user.category] || user.category}</TableCell>
+                                            <TableCell>
+                                                <Badge variant={user.subscriptionStatus === 'premium' ? 'default' : 'secondary'} className="capitalize">
+                                                    {user.subscriptionStatus === 'premium' && <Crown className="mr-1 h-3 w-3" />}
+                                                    {user.subscriptionStatus || 'free'}
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell>{user.phone || 'Not provided'}</TableCell>
+                                            <TableCell className="text-right">
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    onClick={() => handleSubscriptionToggle(user.id, user.subscriptionStatus || 'free')}
+                                                >
+                                                    {user.subscriptionStatus === 'premium' ? 'Revoke' : 'Grant'} Premium
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -362,3 +396,5 @@ export default function AdminPage() {
     </>
   );
 }
+
+    
