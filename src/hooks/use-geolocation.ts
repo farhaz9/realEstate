@@ -113,17 +113,14 @@ export function useGeolocation(): GeolocationResult {
             
             if (permissionStatus.state === 'granted') {
               getGeolocation();
-            } else {
+            } else if (permissionStatus.state === 'prompt') {
+              // Automatically request permission if it's the first time
+              getGeolocation();
+            } else { // 'denied'
               setIsLoading(false); 
-              if (permissionStatus.state === 'denied') {
-                 setError('Location permission is denied.');
-                 setLocation(null);
-                 setCity(null);
-              } else { // 'prompt'
-                 setError(null);
-                 setLocation(null);
-                 setCity(null);
-              }
+              setError('Location permission is denied.');
+              setLocation(null);
+              setCity(null);
             }
         }
 

@@ -3,7 +3,7 @@
 
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { Button } from '@/components/ui/button';
-import { MapPin, Loader2, AlertTriangle } from 'lucide-react';
+import { MapPin, Loader2, AlertTriangle, HelpCircle } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -25,7 +25,7 @@ export function LocationDisplay() {
       return (
         <div className="flex items-center gap-2 text-muted-foreground animate-pulse">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm">Fetching...</span>
+          <span className="text-sm">Detecting location...</span>
         </div>
       );
     }
@@ -35,9 +35,9 @@ export function LocationDisplay() {
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm text-destructive">
-                        <AlertTriangle className="mr-2" />
-                        Error
+                    <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm text-destructive h-auto p-1">
+                        <AlertTriangle className="mr-2 h-4 w-4" />
+                        Location Error
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -54,7 +54,7 @@ export function LocationDisplay() {
          <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-sm text-primary font-semibold">
+                    <Button variant="ghost" size="sm" className="text-sm text-primary font-semibold h-auto p-1">
                         <MapPin className="mr-2" />
                         {city}
                     </Button>
@@ -72,7 +72,7 @@ export function LocationDisplay() {
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm">
+                        <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm h-auto p-1">
                             <MapPin className="mr-2" />
                             Detect Location
                         </Button>
@@ -85,24 +85,23 @@ export function LocationDisplay() {
         )
     }
     
-    // If permission is permanently denied (canAskPermission is false) and there's no city,
-    // we show a disabled-like state.
+    // If permission is permanently denied and there's no city.
     return (
        <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <div className="flex items-center gap-2 text-muted-foreground/60 px-3 py-1.5">
-                        <MapPin className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-muted-foreground/60 px-3 py-1.5 cursor-help">
+                        <HelpCircle className="h-4 w-4" />
                         <span className="text-sm">Location Denied</span>
                     </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Location access is blocked. Please enable it in your browser settings.</p>
+                    <p>Location access is blocked. Please enable it in your browser settings to see nearby properties.</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
     );
   };
 
-  return <div className="flex items-center">{renderContent()}</div>;
+  return <div className="flex items-center h-full">{renderContent()}</div>;
 }
