@@ -1,22 +1,33 @@
-
 'use client';
 
 import { useEffect, Suspense, useRef } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
-import { doc } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { signOut, deleteUser } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2 } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import { WishlistTab } from '@/components/profile/wishlist-tab';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -59,6 +70,38 @@ function ProfilePageContent() {
     router.push('/');
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user || !auth || !userDocRef) {
+        toast({ title: 'Error', description: 'Could not delete account.', variant: 'destructive' });
+        return;
+    }
+
+    try {
+        // Delete Firestore document first
+        await deleteDoc(userDocRef);
+
+        // Then delete the auth user
+        await deleteUser(user);
+
+        toast({
+            title: 'Account Deleted',
+            description: 'Your account has been permanently deleted.',
+        });
+        router.push('/');
+    } catch (error: any) {
+        console.error("Account deletion error:", error);
+        toast({
+            title: 'Deletion Failed',
+            description: error.message || 'An error occurred while deleting your account. You may need to log in again to complete this action.',
+            variant: 'destructive',
+        });
+        // If re-authentication is required, it's often best to sign the user out
+        // so they can log back in.
+        signOut(auth);
+        router.push('/login');
+    }
+  };
+
   const getInitials = (name: string) => {
     const names = name.split(' ');
     if (names.length > 1) {
@@ -85,7 +128,7 @@ function ProfilePageContent() {
 
 
   const categoryDisplay: Record<string, string> = {
-    'user': 'User',
+    'user': 'Buyer / Tenant',
     'listing-property': 'Property Owner',
     'real-estate-agent': 'Real Estate Agent',
     'interior-designer': 'Interior Designer'
@@ -228,10 +271,33 @@ function ProfilePageContent() {
                     </Link>
                   </Button>
                 )}
-                 <Button onClick={handleSignOut} variant="destructive" className="w-full">
+                 <Button onClick={handleSignOut} variant="secondary" className="w-full">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log Out
                 </Button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-full">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Account
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your account,
+                            your profile, and all associated listings from our servers.
+                        </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                            Yes, delete my account
+                        </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
               </CardFooter>
             </Card>
           </TabsContent>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -13,7 +12,7 @@ interface UserDistributionChartProps {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#00C49F'];
 
 const categoryDisplay: Record<string, string> = {
-  'user': 'Users',
+  'user': 'Buyers / Tenants',
   'listing-property': 'Property Owners',
   'real-estate-agent': 'Real Estate Agents',
   'interior-designer': 'Interior Designers',
@@ -85,5 +84,3 @@ export function UserDistributionChart({ users }: UserDistributionChartProps) {
     </div>
   );
 }
-
-    

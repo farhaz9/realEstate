@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -796,7 +795,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
             
             <div className="flex justify-end gap-2">
               {isEditing && (
-                <Button type="button" variant="outline" onClick={() => router.back()} disabled={isUploading || form.formState.isSubmitting}>
+                <Button type="button" variant="outline" onClick={() => onSuccess ? onSuccess() : router.back()} disabled={isUploading || form.formState.isSubmitting}>
                   Cancel
                 </Button>
               )}
@@ -861,5 +860,3 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   // If user is premium, or has no listings, show the form.
   return renderAddPropertyForm();
 }
-
-    
