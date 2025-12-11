@@ -27,8 +27,9 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
   }
 
   // Placeholder data as it's not in the User model
+  const companyName = "B S Associates";
+  const reraId = "PRM/KA/RERA/121/309/AG/210107/0021";
   const operatingSince = 2010 + (professional.fullName.length % 10);
-  const buyersServed = 1000 + (professional.fullName.length * 50);
   const propertiesForSale = 10 + (professional.fullName.length % 15);
   const propertiesForRent = 5 + (professional.fullName.length % 20);
 
@@ -48,14 +49,14 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                             <Badge variant="secondary">{categoryDisplay[professional.category] || professional.category}</Badge>
                             <h3 className="font-bold text-xl mt-1">{professional.fullName}</h3>
                         </div>
-                        <Image src="https://placehold.co/80x30/png?text=Badge" alt="Preferred Agent" width={60} height={22} className="opacity-70" />
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">B S Associates</p>
+                    <p className="text-sm text-muted-foreground mt-1">{companyName}</p>
+                    <p className="text-xs text-muted-foreground truncate">RERA ID: {reraId}</p>
                 </div>
             </div>
 
             <div className="mt-4 text-xs text-muted-foreground">
-                <span>Operating Since {operatingSince}</span> | <span>{buyersServed}+ Buyers Served</span>
+                <span>Operating Since {operatingSince}</span>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-4 text-center">

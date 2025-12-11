@@ -429,12 +429,12 @@ export default function LoginPage() {
                         <Input
                           id="username"
                           type="text"
-                          placeholder="e.g., johndoe-realty"
+                          placeholder="e.g., johndoe_realty"
                           required={isProfessional}
                           value={username}
                           onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                         />
-                         <p className="text-xs text-muted-foreground">URL-friendly, no spaces or special characters.</p>
+                         <p className="text-xs text-muted-foreground">URL-friendly, lowercase letters, numbers, and hyphens only.</p>
                       </div>
                     )}
                 </>
