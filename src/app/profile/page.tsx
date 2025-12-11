@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
@@ -186,6 +186,13 @@ function ProfilePageContent() {
                         <div className="flex-grow">
                           <p className="text-xs text-muted-foreground">Full Name</p>
                           <p className="text-sm font-medium">{userProfile.fullName}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                        <AtSign className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                        <div className="flex-grow">
+                          <p className="text-xs text-muted-foreground">Username</p>
+                          <p className="text-sm font-medium">{userProfile.username || 'Not set'}</p>
                         </div>
                       </div>
                        <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">

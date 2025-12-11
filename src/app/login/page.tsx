@@ -72,6 +72,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('user');
   const [resetEmail, setResetEmail] = useState('');
@@ -90,6 +91,15 @@ export default function LoginPage() {
     setPassword('');
     setConfirmPassword('');
   }
+  
+  const isProfessional = ['listing-property', 'real-estate-agent', 'interior-designer'].includes(category);
+
+  const generateUsername = (name: string, email: string) => {
+    const namePart = name.toLowerCase().replace(/\s+/g, '').substring(0, 8);
+    const emailPart = email.split('@')[0].toLowerCase().substring(0, 4);
+    const randomPart = Math.floor(100 + Math.random() * 900);
+    return `${namePart}${emailPart}${randomPart}`;
+  };
 
   const handleAuthError = (error: unknown) => {
     console.error(error);
@@ -153,6 +163,14 @@ export default function LoginPage() {
         });
         return;
       }
+      if (isProfessional && !username) {
+        toast({
+            variant: 'destructive',
+            title: 'Username Required',
+            description: 'Please enter a username.',
+        });
+        return;
+      }
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -162,9 +180,13 @@ export default function LoginPage() {
 
         // Create user document in Firestore
         const userDocRef = doc(firestore, 'users', user.uid);
+        
+        const finalUsername = isProfessional ? username : generateUsername(fullName, user.email || '');
+
         await setDoc(userDocRef, {
             id: user.uid,
             fullName: fullName,
+            username: finalUsername,
             email: user.email,
             phone: phone,
             category: category,
@@ -198,9 +220,11 @@ export default function LoginPage() {
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
+        const generatedUsername = generateUsername(user.displayName || '', user.email || '');
         await setDoc(userDocRef, {
           id: user.uid,
           fullName: user.displayName,
+          username: generatedUsername,
           email: user.email,
           phone: user.phoneNumber || '', // Phone number might not be available from Google
           category: 'user', // Default category for Google Sign-in
@@ -399,6 +423,20 @@ export default function LoginPage() {
                             </SelectContent>
                         </Select>
                     </div>
+                     {isProfessional && (
+                      <div className="space-y-2">
+                        <Label htmlFor="username">Username</Label>
+                        <Input
+                          id="username"
+                          type="text"
+                          placeholder="e.g., johndoe-realty"
+                          required={isProfessional}
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                        />
+                         <p className="text-xs text-muted-foreground">URL-friendly, no spaces or special characters.</p>
+                      </div>
+                    )}
                 </>
               )}
               <Button type="submit" className="w-full">
@@ -433,7 +471,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
-
-    

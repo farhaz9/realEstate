@@ -25,9 +25,13 @@ export default function ProfessionalsPage() {
 
   const { data: professionals, isLoading, error } = useCollection<User>(professionalsQuery);
 
-  const filteredProfessionals = professionals?.filter(p => 
-    p.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProfessionals = professionals?.filter(p => {
+    const lowerCaseSearch = searchTerm.toLowerCase();
+    return (
+        p.fullName.toLowerCase().includes(lowerCaseSearch) ||
+        (p.username && p.username.toLowerCase().includes(lowerCaseSearch))
+    );
+  });
   
   const realEstateAgents = filteredProfessionals?.filter(p => p.category === 'real-estate-agent');
   const interiorDesigners = filteredProfessionals?.filter(p => p.category === 'interior-designer');
@@ -80,7 +84,7 @@ export default function ProfessionalsPage() {
             </TabsList>
             <div className="w-full sm:w-auto sm:max-w-xs">
               <Input 
-                placeholder="Search by name..."
+                placeholder="Search by name or username..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

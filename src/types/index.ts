@@ -47,6 +47,7 @@ export type InteriorProject = {
 export type User = {
   id: string;
   fullName: string;
+  username?: string;
   email: string;
   phone: string;
   category: 'user' | 'listing-property' | 'real-estate-agent' | 'interior-designer';
