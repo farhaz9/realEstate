@@ -91,15 +91,13 @@ export default function ProfessionalsPage() {
         title="Find the Best Professionals for Your Home"
         subtitle="Connect with top-rated agents and interior designers to bring your vision to life."
         imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
-        className="pb-32 md:pb-32"
+        className="pb-32 md:pb-40"
         titleClassName="text-4xl md:text-5xl lg:text-6xl"
       >
-        <div className="absolute top-full -translate-y-1/2 w-full px-4">
+         <div className="absolute top-full -translate-y-1/2 w-full px-4">
             <div className="container mx-auto">
-                <div className="max-w-3xl mx-auto relative">
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">TRUSTED BY 50,000+ HOMEOWNERS</Badge>
-                  </div>
+                <div className="max-w-3xl mx-auto flex flex-col items-center">
+                  <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm mb-4">TRUSTED BY 50,000+ HOMEOWNERS</Badge>
                    <form 
                       className="relative flex w-full items-center" 
                       onSubmit={(e) => e.preventDefault()}
@@ -117,7 +115,7 @@ export default function ProfessionalsPage() {
             </div>
         </div>
       </PageHero>
-      <div className="container mx-auto px-4 py-16 mt-12 md:mt-0">
+      <div className="container mx-auto px-4 py-16 mt-12 md:mt-20">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
             <div className="flex flex-wrap items-center gap-2 bg-muted p-1 rounded-lg">
                 {filterTabs.map(tab => (
