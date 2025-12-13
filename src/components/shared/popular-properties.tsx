@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PopularPropertyCard } from './popular-property-card';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 export function PopularProperties() {
   const firestore = useFirestore();
@@ -70,6 +70,10 @@ export function PopularProperties() {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <div className="md:hidden flex justify-center items-center gap-4 mt-8">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
           </Carousel>
         )}
       </div>
