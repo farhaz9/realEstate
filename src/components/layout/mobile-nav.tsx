@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building, Armchair, Heart, MessageSquare, User } from "lucide-react";
+import { Home, Armchair, Heart, MessageSquare, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
 
@@ -12,7 +12,7 @@ export default function MobileNav() {
   const { user } = useUser();
 
   const navLinks = [
-    { href: "/", label: "Home", icon: Building },
+    { href: "/", label: "Home", icon: Home },
     { href: "/interiors", label: "Design", icon: Armchair },
     { href: "/profile?tab=wishlist", label: "Saved", icon: Heart },
     { href: "/contact", label: "Chat", icon: MessageSquare },
