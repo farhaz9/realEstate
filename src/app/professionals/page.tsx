@@ -88,16 +88,30 @@ export default function ProfessionalsPage() {
   return (
     <>
       <PageHero
-        title="Find the Best Professionals for Your Home"
-        subtitle="Connect with top-rated agents and interior designers to bring your vision to life."
+        title={
+          <>
+            Find the Best <br />
+            Professionals for <br />
+            Your Home
+          </>
+        }
+        subtitle=""
         imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
         className="pb-32 md:pb-40"
-        titleClassName="text-4xl md:text-5xl lg:text-6xl"
+        titleClassName="text-4xl md:text-5xl lg:text-6xl !mt-0"
       >
+        <div className="flex flex-col items-center justify-center">
+            <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm mb-4">
+              TRUSTED BY 50,000+ HOMEOWNERS
+            </Badge>
+            <p className="mt-2 text-lg max-w-3xl">
+              Connect with top-rated agents and interior designers to bring your vision to life.
+            </p>
+        </div>
+
          <div className="absolute top-full -translate-y-1/2 w-full px-4">
             <div className="container mx-auto">
                 <div className="max-w-3xl mx-auto flex flex-col items-center">
-                  <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm mb-4">TRUSTED BY 50,000+ HOMEOWNERS</Badge>
                    <form 
                       className="relative flex w-full items-center" 
                       onSubmit={(e) => e.preventDefault()}
