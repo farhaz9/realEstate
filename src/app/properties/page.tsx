@@ -350,7 +350,7 @@ export default function PropertiesPage() {
                 </SheetContent>
             </Sheet>
            </form>
-           <div className="h-6 flex items-center justify-start -mt-2">
+           <div className="h-6 flex items-center justify-start -mt-2 mb-2">
               <LocationDisplay />
             </div>
         </div>
@@ -398,4 +398,3 @@ export default function PropertiesPage() {
     </div>
   );
 }
-
