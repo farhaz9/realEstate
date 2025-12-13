@@ -2,39 +2,18 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth, initiatePasswordReset } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
-import { Logo } from '@/components/shared/logo';
 import Link from 'next/link';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
+import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -63,42 +42,29 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
         />
       </svg>
     );
-  }
+}
+
+const roles = [
+    { id: 'user', name: 'Buyer/Tenant', icon: Home },
+    { id: 'listing-property', name: 'Property Owner', icon: KeyRound },
+    { id: 'real-estate-agent', name: 'Real Estate Agent', icon: Briefcase },
+    { id: 'interior-designer', name: 'Interior Designer', icon: Paintbrush2 },
+];
+
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('user');
-  const [resetEmail, setResetEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [inlineError, setInlineError] = useState('');
-
+  
   const auth = useAuth();
   const firestore = getFirestore();
   const router = useRouter();
   const { toast } = useToast();
-  
-  const handleToggleForm = () => {
-    setIsLogin(!isLogin);
-    setInlineError(''); // Clear error when toggling
-    setPassword('');
-    setConfirmPassword('');
-  }
-  
-  const isProfessional = ['listing-property', 'real-estate-agent', 'interior-designer'].includes(category);
-
-  const generateUsername = (name: string, email: string) => {
-    const namePart = name.toLowerCase().replace(/\s+/g, '').substring(0, 8);
-    const emailPart = email.split('@')[0].toLowerCase().substring(0, 4);
-    const randomPart = Math.floor(100 + Math.random() * 900);
-    return `${namePart}${emailPart}${randomPart}`;
-  };
 
   const handleAuthError = (error: unknown) => {
     console.error(error);
@@ -111,10 +77,8 @@ export default function LoginPage() {
           errorMessage = 'Invalid email or password.';
           break;
         case 'auth/email-already-in-use':
-          // Instead of a toast, switch to login view and show an inline message
-          setIsLogin(true);
-          setInlineError('An account already exists with this email. Please log in.');
-          return; // Skip the toast
+          errorMessage = 'An account already exists with this email.';
+          break;
         case 'auth/weak-password':
           errorMessage = 'Password is too weak. It must be at least 6 characters long.';
           break;
@@ -128,11 +92,17 @@ export default function LoginPage() {
       description: errorMessage,
     });
   };
+  
+  const generateUsername = (name: string, email: string) => {
+    const namePart = name.toLowerCase().replace(/\s+/g, '').substring(0, 8);
+    const emailPart = email.split('@')[0].toLowerCase().substring(0, 4);
+    const randomPart = Math.floor(100 + Math.random() * 900);
+    return `${namePart}${emailPart}${randomPart}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!auth) return;
-    setInlineError(''); // Clear previous errors
 
     if (isLogin) {
       try {
@@ -146,58 +116,37 @@ export default function LoginPage() {
       } catch (error) {
         handleAuthError(error);
       }
-    } else {
-      if (password !== confirmPassword) {
-        toast({
-          variant: 'destructive',
-          title: 'Passwords do not match',
-        });
-        return;
-      }
-      if (!fullName || !phone || !category) {
-        toast({
-            variant: 'destructive',
-            title: 'Missing Information',
-            description: 'Please fill out all fields.',
-        });
-        return;
-      }
-      if (isProfessional && !username) {
-        toast({
-            variant: 'destructive',
-            title: 'Username Required',
-            description: 'Please enter a username.',
-        });
+    } else { // Sign up
+      if (!fullName || !phone) {
+        toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out all fields.' });
         return;
       }
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Update Firebase Auth profile
         await updateProfile(user, { displayName: fullName });
 
-        // Create user document in Firestore
         const userDocRef = doc(firestore, 'users', user.uid);
         
-        const finalUsername = isProfessional ? username : generateUsername(fullName, user.email || '');
+        const username = generateUsername(fullName, user.email || '');
 
         await setDoc(userDocRef, {
             id: user.uid,
             fullName: fullName,
-            username: finalUsername,
+            username: username,
             email: user.email,
             phone: phone,
             category: category,
             dateJoined: serverTimestamp(),
-            photoURL: user.photoURL || '',
+            photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
             subscriptionStatus: 'free',
             wishlist: [],
         });
         
         toast({
           title: 'Sign Up Successful!',
-          description: 'Welcome to Delhi Estate Luxe!',
+          description: 'Welcome to Estately!',
           variant: 'success',
         });
         router.push('/');
@@ -214,21 +163,20 @@ export default function LoginPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if user document exists, if not, create it
       const userDocRef = doc(firestore, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        const generatedUsername = generateUsername(user.displayName || '', user.email || '');
+        const username = generateUsername(user.displayName || '', user.email || '');
         await setDoc(userDocRef, {
           id: user.uid,
           fullName: user.displayName,
-          username: generatedUsername,
+          username: username,
           email: user.email,
-          phone: user.phoneNumber || '', // Phone number might not be available from Google
-          category: 'user', // Default category for Google Sign-in
+          phone: user.phoneNumber || '',
+          category: 'user',
           dateJoined: serverTimestamp(),
-          photoURL: user.photoURL || '',
+          photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
           subscriptionStatus: 'free',
           wishlist: [],
         });
@@ -245,228 +193,144 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordReset = async () => {
-    if (!auth || !resetEmail) return;
-
-    try {
-        await initiatePasswordReset(auth, resetEmail);
-        toast({
-            title: 'Password Reset Email Sent',
-            description: 'Please check your inbox for instructions to reset your password.',
-        });
-    } catch (error: unknown) {
-        console.error(error);
-        let errorMessage = "Could not send password reset email. Please try again.";
-        if (error instanceof FirebaseError) {
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
-                errorMessage = "No user found with this email address.";
-            }
-        }
-        toast({
-            variant: 'destructive',
-            title: 'Reset Failed',
-            description: errorMessage,
-        });
-    }
-  };
-
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-                <Logo />
+    <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white h-screen w-full flex overflow-hidden">
+      <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end p-12">
+        <Image 
+          src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Modern minimalist living room"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20"></div>
+
+        <div className="relative z-10 text-white max-w-lg">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="size-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl flex items-center justify-center text-white shadow-lg">
+              <Building2 className="text-3xl" />
             </div>
-          <CardTitle className="text-2xl">{isLogin ? 'Welcome Back' : 'Create an Account'}</CardTitle>
-          <CardDescription>
-            {isLogin
-              ? "Enter your credentials to access your account."
-              : 'Fill in the details below to create a new account.'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-             {inlineError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{inlineError}</AlertDescription>
-              </Alert>
-            )}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow-md">Estately</h1>
+          </div>
+          <p className="text-5xl font-bold leading-tight mb-6 drop-shadow-lg">Discover a place you'll love to live.</p>
+          <p className="text-lg text-gray-100 font-light leading-relaxed max-w-md drop-shadow-md">Join our community of homeowners and interior design enthusiasts. Find your dream home or the inspiration to build it.</p>
+        </div>
+      </div>
+
+      <div className="w-full lg:w-1/2 h-full flex flex-col overflow-y-auto bg-white dark:bg-background-dark relative">
+        <div className="lg:hidden p-6 flex items-center gap-2">
+          <Building2 className="text-primary text-3xl" />
+          <span className="text-xl font-bold">Estately</span>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-6 sm:p-12 md:p-16">
+          <div className="w-full max-w-[480px] flex flex-col gap-6">
+            <div className="flex flex-col gap-2 text-center sm:text-left">
+              <h2 className="text-3xl font-bold tracking-tight text-[#111418] dark:text-white">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+              <p className="text-[#617589] dark:text-gray-400 text-base">{isLogin ? 'Enter your credentials to access your account' : 'Choose your role and enter your details to join.'}</p>
+            </div>
+            <div className="w-full bg-[#f3f4f6] dark:bg-gray-800 p-1.5 rounded-xl flex">
+              <button onClick={() => setIsLogin(true)} className={cn("flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all text-center", isLogin ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-[#6b7280] dark:text-gray-400 hover:text-[#111418] dark:hover:text-white")}>
+                Sign In
+              </button>
+              <button onClick={() => setIsLogin(false)} className={cn("flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all text-center", !isLogin ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-[#6b7280] dark:text-gray-400 hover:text-[#111418] dark:hover:text-white")}>
+                Sign Up
+              </button>
+            </div>
+            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
               {!isLogin && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="e.g., John Doe"
-                      required
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                    />
-                  </div>
-                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="e.g., 9999988888"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-                </>
+                <div className="grid grid-cols-2 gap-3">
+                  {roles.map((role) => (
+                    <label key={role.id} className="cursor-pointer relative group">
+                      <input 
+                        className="peer sr-only" 
+                        name="role" 
+                        type="radio" 
+                        value={role.id}
+                        checked={category === role.id}
+                        onChange={(e) => setCategory(e.target.value)}
+                      />
+                      <div className="h-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200">
+                        <role.icon className="text-2xl group-hover:scale-110 transition-transform" />
+                        <span className="text-xs font-semibold">{role.name}</span>
+                      </div>
+                      <div className="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity duration-200 scale-0 peer-checked:scale-100">
+                        <CheckCircle2 className="text-lg" />
+                      </div>
+                    </label>
+                  ))}
+                </div>
               )}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                     {isLogin && (
-                       <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                           <Button variant="link" type="button" className="p-0 h-auto text-xs">Forgot Password?</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                            <AlertDialogTitle>Reset Your Password</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                Enter your email address and we'll send you a link to reset your password.
-                            </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <div className="space-y-2">
-                                <Label htmlFor="reset-email">Email</Label>
-                                <Input
-                                    id="reset-email"
-                                    type="email"
-                                    placeholder="m@example.com"
-                                    value={resetEmail}
-                                    onChange={(e) => setResetEmail(e.target.value)}
-                                />
-                            </div>
-                            <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                        </AlertDialog>
-                    )}
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-              {!isLogin && (
+               {!isLogin && (
                 <>
-                    <div className="space-y-2">
-                        <Label htmlFor="confirm-password">Confirm Password</Label>
-                        <div className="relative">
-                          <Input
-                              id="confirm-password"
-                              type={showConfirmPassword ? 'text' : 'password'}
-                              required
-                              value={confirmPassword}
-                              onChange={(e) => setConfirmPassword(e.target.value)}
-                              className="pr-10"
-                          />
-                           <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            >
-                              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </Button>
+                <div className="flex flex-col gap-1.5">
+                    <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="name">Full Name</Label>
+                    <div className="relative group">
+                    <Input value={fullName} onChange={(e) => setFullName(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="name" placeholder="John Doe" type="text"/>
+                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
+                        <User className="h-[22px] w-[22px]" />
+                    </div>
+                    </div>
+                </div>
+                 <div className="flex flex-col gap-1.5">
+                    <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="phone">Phone Number</Label>
+                    <div className="relative group">
+                        <Input value={phone} onChange={(e) => setPhone(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="phone" placeholder="9876543210" type="tel"/>
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
+                            <User className="h-[22px] w-[22px]" />
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="category">You are a...</Label>
-                        <Select onValueChange={setCategory} value={category}>
-                            <SelectTrigger id="category">
-                                <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="user">Buyer / Tenant</SelectItem>
-                                <SelectItem value="listing-property">Property Owner / Lister</SelectItem>
-                                <SelectItem value="real-estate-agent">Real Estate Agent</SelectItem>
-                                <SelectItem value="interior-designer">Interior Designer</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                     {isProfessional && (
-                      <div className="space-y-2">
-                        <Label htmlFor="username">Username</Label>
-                        <Input
-                          id="username"
-                          type="text"
-                          placeholder="e.g., johndoe_realty"
-                          required={isProfessional}
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                        />
-                         <p className="text-xs text-muted-foreground">URL-friendly, lowercase letters, numbers, and hyphens only.</p>
-                      </div>
-                    )}
+                </div>
                 </>
               )}
-              <Button type="submit" className="w-full">
-                {isLogin ? 'Login' : 'Sign Up'}
+
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="email">Email Address</Label>
+                <div className="relative group">
+                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="email" placeholder="name@example.com" type="email"/>
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
+                    <Mail className="h-[22px] w-[22px]" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="password">Password</Label>
+                <div className="relative group">
+                  <Input value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="password" placeholder={isLogin ? "Enter your password" : "Create a password"} type={showPassword ? 'text' : 'password'}/>
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
+                    <Lock className="h-[22px] w-[22px]" />
+                  </div>
+                  <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#111418] dark:hover:text-white transition-colors" type="button">
+                    {showPassword ? <EyeOff className="h-[22px] w-[22px]" /> : <Eye className="h-[22px] w-[22px]" />}
+                  </button>
+                </div>
+              </div>
+
+              <Button className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 mt-2" type="submit">
+                {isLogin ? 'Sign In' : 'Sign Up'}
               </Button>
             </form>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or
-                </span>
-              </div>
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-[#e5e7eb] dark:border-gray-700"></div>
+              <span className="flex-shrink mx-4 text-gray-400 text-sm font-medium">Or</span>
+              <div className="flex-grow border-t border-[#e5e7eb] dark:border-gray-700"></div>
             </div>
-            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-                <GoogleIcon className="mr-2 h-4 w-4" />
-                Continue with Google
+            <Button onClick={handleGoogleSignIn} className="w-full h-12 bg-white dark:bg-gray-800 border border-[#e5e7eb] dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 text-[#374151] dark:text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-sm hover:shadow-md" type="button">
+              <GoogleIcon className="w-5 h-5" />
+              {isLogin ? 'Sign in with Google' : 'Sign up with Google'}
             </Button>
+            <p className="text-xs text-gray-500 dark:text-gray-500 text-center mt-2 leading-relaxed px-4">
+              By clicking "{isLogin ? 'Sign In' : 'Sign Up'}" or "{isLogin ? 'Sign in with Google' : 'Sign up with Google'}", you agree to our 
+              <a className="text-primary hover:text-primary-dark hover:underline font-medium transition-colors" href="#"> Terms of Service</a> and 
+              <a className="text-primary hover:text-primary-dark hover:underline font-medium transition-colors" href="#"> Privacy Policy</a>.
+            </p>
           </div>
-        </CardContent>
-        <CardFooter className="flex-col gap-4">
-          <Button variant="link" onClick={handleToggleForm}>
-            {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
-          </Button>
-            <Button variant="link" asChild className="text-sm text-muted-foreground">
-                <Link href="/">Back to Home</Link>
-            </Button>
-        </CardFooter>
-      </Card>
+        </div>
+        <div className="p-6 text-center text-xs text-gray-400 dark:text-gray-600">
+            © 2024 Falcon Homes. All rights reserved.
+        </div>
+      </div>
     </div>
   );
 }
