@@ -11,29 +11,29 @@ import { Label } from "@/components/ui/label";
 import { FeaturedProperties } from "@/components/shared/nearby-properties";
 import { PopularProperties } from "@/components/shared/popular-properties";
 import { HomeSearch } from "@/components/shared/home-search";
-import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
-import { Button as MovingBorderButton } from "@/components/ui/moving-border";
 import { NewProjects } from "@/components/shared/new-projects";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 const faqs = [
   {
-    question: "What makes you the best real estate company in Delhi?",
-    answer: "As the best real_estate company in Delhi, we provide unparalleled access to exclusive luxury properties, expert market insights, and a seamless client experience from start to finish."
+    question: "How do I schedule a viewing?",
+    answer: "You can schedule a viewing directly through the property page by clicking 'Request a Tour' or by contacting the listed agent directly."
   },
   {
-    question: "Do you offer interior design services in Delhi?",
-    answer: "Yes, we are a leading interior design company in Delhi, offering bespoke design solutions that transform spaces into personalized, luxurious homes."
+    question: "Are your interior designers certified?",
+    answer: "Yes, all of our interior designers are certified professionals with extensive experience in creating beautiful and functional spaces. We ensure they are equipped with the latest industry knowledge."
   },
   {
-    question: "What services do you offer besides property sales and interior design?",
-    answer: "We provide comprehensive solutions, including end-to-end construction management, architectural design, property consultancy, and custom furniture to ensure a complete luxury experience."
+    question: "What fees does Falcon Homes charge?",
+    answer: "Our fees vary depending on the service. For property sales, we charge a standard commission. For interior design, we offer project-based pricing. Please contact us for a detailed quote."
   },
   {
-    question: "Which areas in Delhi do you specialize in?",
-    answer: "We specialize in high-end properties across Delhi's most prestigious neighborhoods, including South Delhi, Central Delhi, Lutyens' Delhi, and other prime locations."
+    question: "Can I list my property myself?",
+    answer: "Absolutely! We provide a user-friendly platform for property owners to list their properties for free. We also offer premium listing services for enhanced visibility."
   }
 ];
 
@@ -184,53 +184,70 @@ export default function HomePage() {
 
       <FeaturedProperties />
 
-      <section id="contact-form" className="py-16 md:py-24 bg-secondary/30">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl md:text-4xl font-bold">Contact Us</CardTitle>
-              <p className="mt-2 text-muted-foreground">Begin your journey with us. We're here to assist you.</p>
-            </CardHeader>
-            <CardContent className="p-6">
-              <form className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Your Name <span className="text-destructive">*</span></Label>
-                  <Input id="name" placeholder="Your Name" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Your Email <span className="text-destructive">*</span></Label>
-                  <Input id="email" type="email" placeholder="Your Email" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Your Phone Number <span className="text-destructive">*</span></Label>
-                  <Input id="phone" type="tel" placeholder="Your Phone Number" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message">Your Message</Label>
-                  <Textarea id="message" placeholder="Your Message" rows={5} />
-                </div>
-                 <div className="flex flex-col sm:flex-row gap-4">
-                   <MovingBorderButton
-                      borderRadius="1.75rem"
-                      className="w-full bg-background dark:bg-slate-900 text-foreground dark:text-white border-neutral-200 dark:border-slate-800"
-                    >
-                      Send Message
-                    </MovingBorderButton>
-                    <MovingBorderButton
-                      as={Link}
-                      href="https://wa.me/919953414336"
-                      target="_blank"
-                      borderRadius="1.75rem"
-                      className="w-full bg-background dark:bg-slate-900 text-foreground dark:text-white border-neutral-200 dark:border-slate-800"
-                      containerClassName="w-full"
-                    >
-                      <WhatsAppIcon className="h-6 w-6 mr-2 fill-current" />
-                        Message on WhatsApp
-                    </MovingBorderButton>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+       <section id="contact-faq" className="py-16 md:py-24 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            <div className="lg:col-span-1">
+              <Card className="p-6 sm:p-8">
+                <CardHeader className="p-0 mb-6">
+                  <CardTitle className="text-3xl font-bold">Get in Touch</CardTitle>
+                  <p className="text-muted-foreground">Interested in a property? Send us a message.</p>
+                </CardHeader>
+                <CardContent className="p-0">
+                   <form className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="first-name">First Name</Label>
+                        <Input id="first-name" placeholder="John" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="last-name">Last Name</Label>
+                        <Input id="last-name" placeholder="Doe" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input id="email" type="email" placeholder="john.doe@example.com" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="interest">I'm interested in...</Label>
+                        <Select>
+                            <SelectTrigger id="interest">
+                                <SelectValue placeholder="Buying a Property" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="buy">Buying a Property</SelectItem>
+                                <SelectItem value="rent">Renting a Property</SelectItem>
+                                <SelectItem value="design">Interior Design Services</SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="message">Message</Label>
+                      <Textarea id="message" placeholder="Tell us how we can help..." rows={4} />
+                    </div>
+                    <UIButton type="submit" className="w-full !mt-6">Send Inquiry</UIButton>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="lg:col-span-1">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8">Frequently Asked Questions</h2>
+              <Accordion type="single" collapsible className="w-full space-y-4">
+                {faqs.map((faq, index) => (
+                  <AccordionItem value={`item-${index}`} key={index} className="bg-background rounded-lg shadow-sm border">
+                    <AccordionTrigger className="text-base font-semibold text-left px-6 py-4 hover:no-underline data-[state=open]:text-primary">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 text-muted-foreground">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -260,26 +277,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="faq" className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
-            <p className="mt-2 text-muted-foreground">
-              Your questions about the best real estate and interior design company in Delhi, answered.
-            </p>
-          </div>
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem value={`item-${index}`} key={index}>
-                <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
     </div>
   );
 }
