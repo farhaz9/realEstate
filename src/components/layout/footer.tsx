@@ -15,43 +15,7 @@ export default function Footer() {
   return (
     <footer className="bg-background dark:bg-card border-t border-border pt-16 pb-8 text-foreground">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-muted/30 dark:bg-white/5 p-8 mb-12">
-          <div className="flex flex-col lg:flex-row gap-10 justify-between items-start lg:items-center">
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 w-full lg:w-auto">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 text-primary">
-                  <MapPin />
-                </div>
-                <div className="flex flex-col">
-                  <h4 className="text-foreground text-sm font-bold">Visit Us</h4>
-                  <p className="text-muted-foreground text-sm">123 Design Avenue,<br/>Creative City, NY 10012</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="mt-1 text-primary">
-                  <Mail />
-                </div>
-                <div className="flex flex-col">
-                  <h4 className="text-foreground text-sm font-bold">Contact</h4>
-                  <a className="text-muted-foreground text-sm hover:text-primary transition-colors" href="mailto:hello@estately.com">hello@estately.com</a>
-                  <a className="text-muted-foreground text-sm hover:text-primary transition-colors" href="tel:+15551234567">+1 (555) 123-4567</a>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full lg:max-w-md">
-              <h4 className="text-foreground text-sm font-bold mb-2">Subscribe to our newsletter</h4>
-              <div className="flex w-full items-stretch rounded-lg h-12">
-                <Input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-foreground focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-background dark:bg-card placeholder:text-muted-foreground px-4 text-sm" placeholder="Email address"/>
-                <Button className="cursor-pointer items-center justify-center overflow-hidden rounded-r-lg px-6 bg-primary hover:bg-primary/90 transition-colors text-primary-foreground text-sm font-bold tracking-[0.015em]">
-                    Subscribe
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">Latest market trends sent directly to your inbox.</p>
-            </div>
-          </div>
-        </div>
-
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div className="flex flex-col gap-4">
@@ -101,6 +65,43 @@ export default function Footer() {
           </div>
         </div>
 
+        <div className="rounded-2xl bg-muted/30 dark:bg-white/5 p-8 mb-12">
+          <div className="flex flex-col lg:flex-row gap-10 justify-between items-start lg:items-center">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 w-full lg:w-auto">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 text-primary">
+                  <MapPin />
+                </div>
+                <div className="flex flex-col">
+                  <h4 className="text-foreground text-sm font-bold">Visit Us</h4>
+                  <p className="text-muted-foreground text-sm">123 Design Avenue,<br/>Creative City, NY 10012</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="mt-1 text-primary">
+                  <Mail />
+                </div>
+                <div className="flex flex-col">
+                  <h4 className="text-foreground text-sm font-bold">Contact</h4>
+                  <a className="text-muted-foreground text-sm hover:text-primary transition-colors" href="mailto:hello@estately.com">hello@estately.com</a>
+                  <a className="text-muted-foreground text-sm hover:text-primary transition-colors" href="tel:+15551234567">+1 (555) 123-4567</a>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full lg:max-w-md">
+              <h4 className="text-foreground text-sm font-bold mb-2">Subscribe to our newsletter</h4>
+              <div className="flex w-full items-stretch rounded-lg h-12">
+                <Input className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-foreground focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-background dark:bg-card placeholder:text-muted-foreground px-4 text-sm" placeholder="Email address"/>
+                <Button className="cursor-pointer items-center justify-center overflow-hidden rounded-r-lg px-6 bg-primary hover:bg-primary/90 transition-colors text-primary-foreground text-sm font-bold tracking-[0.015em]">
+                    Subscribe
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Latest market trends sent directly to your inbox.</p>
+            </div>
+          </div>
+        </div>
+
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className="text-muted-foreground text-sm font-normal">
               © 2024 Estately. All rights reserved.
@@ -116,5 +117,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-    
