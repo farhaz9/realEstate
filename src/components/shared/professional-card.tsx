@@ -1,10 +1,11 @@
 
+'use client';
+
 import type { User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
 import { User as UserIcon, Star, Briefcase, MapPin, CheckCircle, PencilRuler } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

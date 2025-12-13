@@ -7,7 +7,7 @@ import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { PageHero } from '@/components/shared/page-hero';
 import { Loader2 } from 'lucide-react';
-import { ProfessionalCard } from '@/components/professional-card';
+import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from '@/components/ui/input';
 
