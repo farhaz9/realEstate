@@ -91,7 +91,7 @@ export default function ProfessionalsPage() {
         title="Find the Best Professionals for Your Home"
         subtitle="Connect with top-rated agents and interior designers to bring your vision to life."
         imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
-        className="pb-24 md:pb-32"
+        className="pb-32 md:pb-32"
         titleClassName="text-4xl md:text-5xl lg:text-6xl"
       >
         <div className="absolute top-full -translate-y-1/2 w-full px-4">
@@ -116,7 +116,7 @@ export default function ProfessionalsPage() {
             </div>
         </div>
       </PageHero>
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 mt-12 md:mt-0">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
             <div className="flex flex-wrap items-center gap-2 bg-muted p-1 rounded-lg">
                 {filterTabs.map(tab => (
