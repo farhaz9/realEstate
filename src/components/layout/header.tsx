@@ -51,7 +51,6 @@ const navLinks = [
 ];
 
 const secondaryLinks = [
-    { href: "/settings", label: "Settings", icon: Settings },
     { href: "/contact", label: "Support", icon: HelpCircle },
 ];
 
@@ -309,5 +308,3 @@ export default function Header() {
     </header>
   );
 }
-
-    

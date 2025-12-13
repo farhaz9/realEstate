@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, Suspense, useRef } from 'react';
@@ -9,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2 } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2, Settings } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
@@ -271,6 +272,12 @@ function ProfilePageContent() {
                     </Link>
                   </Button>
                 )}
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
+                </Button>
                  <Button onClick={handleSignOut} variant="secondary" className="w-full">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log Out
