@@ -1,7 +1,7 @@
 
 
 import Link from "next/link";
-import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -28,7 +28,7 @@ const faqs = [
     answer: "Yes, all of our interior designers are certified professionals with extensive experience in creating beautiful and functional spaces. We ensure they are equipped with the latest industry knowledge."
   },
   {
-    question: "What fees does Falcon Homes charge?",
+    question: "What fees does Estately charge?",
     answer: "Our fees vary depending on the service. For property sales, we charge a standard commission. For interior design, we offer project-based pricing. Please contact us for a detailed quote."
   },
   {
@@ -69,22 +69,28 @@ const quickServices = [
 
 const whyChooseUsPoints = [
   {
-    icon: Building,
-    title: "Curated Properties",
-    description: "Access to Delhi’s most sought-after luxury homes, vetted for quality and value.",
+    icon: Verified,
+    title: "Verified Listings",
+    description: "Every property is physically verified by our team to ensure authenticity.",
   },
   {
-    icon: Sparkles,
-    title: "Expert Guidance",
-    description: "Personalized consultancy and end-to-end support from our experienced team.",
+    icon: Headset,
+    title: "Expert Support",
+    description: "24/7 dedicated support from certified real estate professionals.",
   },
   {
-    icon: Handshake,
-    title: "Trusted Partnerships",
-    description: "Strong collaborations with top builders, ensuring premium quality and craftsmanship.",
+    icon: Wallet,
+    title: "Transparent Pricing",
+    description: "No hidden fees or surprise charges. What you see is what you pay.",
   },
 ];
 
+const whyChooseUsImages = [
+  { id: 'why-us-1', hint: 'modern building facade' },
+  { id: 'why-us-2', hint: 'business handshake' },
+  { id: 'why-us-3', hint: 'person reviewing blueprints' },
+  { id: 'why-us-4', hint: 'living room furniture' }
+];
 
 export default function HomePage() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
@@ -243,27 +249,46 @@ export default function HomePage() {
 
       <section id="why-us" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose Delhi's Best Real Estate Company?</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              We provide a seamless, end-to-end experience, grounded in trust, transparency, and a commitment to quality.
-            </p>
-          </div>
-          <Card className="max-w-4xl mx-auto p-6 md:p-10 shadow-lg">
-            <div className="space-y-8">
-              {whyChooseUsPoints.map((point, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-                  <div className="bg-primary/10 p-4 rounded-full text-primary shrink-0">
-                    <point.icon className="h-8 w-8" />
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold">Why Choose Falcon Homes?</h2>
+              <p className="mt-4 text-muted-foreground max-w-xl">
+                We are redefining the real estate experience by combining technology with human expertise.
+              </p>
+              <div className="mt-8 space-y-6">
+                {whyChooseUsPoints.map((point) => (
+                  <div key={point.title} className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary flex-shrink-0">
+                      <point.icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold">{point.title}</h3>
+                      <p className="mt-1 text-muted-foreground">{point.description}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold">{point.title}</h3>
-                    <p className="text-muted-foreground mt-1">{point.description}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </Card>
+            <div className="grid grid-cols-2 gap-4">
+                {whyChooseUsImages.map((img, index) => {
+                    const image = PlaceHolderImages.find(p => p.id === img.id);
+                    return (
+                        <div key={img.id} className={`rounded-xl overflow-hidden ${index === 0 ? 'row-span-1' : ''} ${index === 1 ? 'row-span-2' : ''} ${index === 2 ? 'row-span-2' : ''} ${index === 3 ? 'row-span-1' : ''}`}>
+                             {image && (
+                                <Image
+                                    src={image.imageUrl}
+                                    alt={image.description}
+                                    data-ai-hint={image.imageHint}
+                                    width={400}
+                                    height={400}
+                                    className="object-cover w-full h-full"
+                                />
+                             )}
+                        </div>
+                    )
+                })}
+            </div>
+          </div>
         </div>
       </section>
 

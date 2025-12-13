@@ -251,6 +251,30 @@
       "description": "Default placeholder image for a property",
       "imageUrl": "https://ik.imagekit.io/farhaz/default-property_Uj8gI7k3p.jpg",
       "imageHint": "modern house"
+    },
+    {
+      "id": "why-us-1",
+      "description": "Exterior of a modern building with a wooden facade.",
+      "imageUrl": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2792&auto=format&fit=crop",
+      "imageHint": "modern building"
+    },
+    {
+      "id": "why-us-2",
+      "description": "Illustration of a handshake.",
+      "imageUrl": "https://images.unsplash.com/photo-1542382257-80dedb0e7399?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "business handshake"
+    },
+    {
+      "id": "why-us-3",
+      "description": "Illustration of a person looking at blueprints.",
+      "imageUrl": "https://images.unsplash.com/photo-1616590204928-a83d3550868f?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "blueprints design"
+    },
+    {
+      "id": "why-us-4",
+      "description": "Interior of a modern room with a wooden sideboard and a plant.",
+      "imageUrl": "https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=2864&auto=format&fit=crop",
+      "imageHint": "room interior"
     }
   ]
 }
