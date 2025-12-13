@@ -19,7 +19,7 @@ export default function MobileNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16">
-      <div className="relative h-full bg-background/95 backdrop-blur-sm border-t">
+      <div className="relative h-full bg-background/95 backdrop-blur-sm">
         <div className="grid h-full grid-cols-5 items-center">
           {navLinks.slice(0, 2).map((link) => {
             const isActive =
