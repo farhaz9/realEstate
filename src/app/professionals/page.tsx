@@ -97,39 +97,31 @@ export default function ProfessionalsPage() {
         }
         subtitle=""
         imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
-        className="pb-32 md:pb-40"
         titleClassName="text-4xl md:text-5xl lg:text-6xl !mt-0"
       >
-        <div className="flex flex-col items-center justify-center">
-            <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm mb-4">
-              TRUSTED BY 50,000+ HOMEOWNERS
-            </Badge>
-            <p className="mt-2 text-lg max-w-3xl">
-              Connect with top-rated agents and interior designers to bring your vision to life.
-            </p>
-        </div>
-
-         <div className="absolute top-full -translate-y-1/2 w-full px-4">
-            <div className="container mx-auto">
-                <div className="max-w-3xl mx-auto flex flex-col items-center">
-                   <form 
-                      className="relative flex w-full items-center" 
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <Search className="absolute left-4 h-5 w-5 text-muted-foreground z-10" />
-                      <Input 
-                          placeholder="Search by name, city, or zip code..."
-                          className="pl-12 pr-28 h-14 text-base rounded-full bg-background/80 backdrop-blur-sm focus-visible:ring-offset-0 border-white/20 shadow-lg"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                      <Button size="lg" className="absolute right-2 h-11 rounded-full px-8 text-base">Search</Button>
-                  </form>
-                </div>
-            </div>
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
+            TRUSTED BY 50,000+ HOMEOWNERS
+          </Badge>
+          <p className="mt-2 text-lg max-w-3xl">
+            Connect with top-rated agents and interior designers to bring your vision to life.
+          </p>
+          <form 
+              className="relative flex w-full items-center max-w-xl" 
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <Search className="absolute left-4 h-5 w-5 text-muted-foreground z-10" />
+              <Input 
+                  placeholder="Search by name, city, or zip code..."
+                  className="pl-12 pr-28 h-14 text-base rounded-full bg-background/80 backdrop-blur-sm focus-visible:ring-offset-0 border-white/20 shadow-lg"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button size="lg" className="absolute right-2 h-11 rounded-full px-8 text-base">Search</Button>
+          </form>
         </div>
       </PageHero>
-      <div className="container mx-auto px-4 py-16 mt-12 md:mt-20">
+      <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
             <div className="flex flex-wrap items-center gap-2 bg-muted p-1 rounded-lg">
                 {filterTabs.map(tab => (
