@@ -28,8 +28,10 @@ export default function MobileNav() {
         {navLinks.map((link) => {
           if (!link) return null;
           
-          // Custom logic for active state to handle the "Design" tab specifically
-          const isActive = link.href === '/interiors' ? isInteriorsActive : pathname === link.href;
+          const isActive = (
+            link.href === '/' ? pathname === '/' : pathname.startsWith(link.href.split('?')[0])
+          ) && (link.href.includes('?') ? pathname.includes(link.href.split('?')[1]) : true);
+          
 
           return (
             <Link
@@ -40,7 +42,7 @@ export default function MobileNav() {
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              <link.icon className={cn("h-6 w-6")} />
+              <link.icon className={cn("h-6 w-6", isActive && link.icon === Heart && "fill-current")} />
               <span>{link.label}</span>
             </Link>
           );
