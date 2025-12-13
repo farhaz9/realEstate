@@ -1,4 +1,3 @@
-
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -129,6 +128,14 @@ export default {
             transform: "scale(0.9)",
           },
         },
+        'fade-spin': {
+          '0%': {
+            opacity: '0.15',
+          },
+          '100%': {
+            opacity: '1',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -138,6 +145,7 @@ export default {
         'carousel-nudge': 'carousel-nudge 5s ease-in-out',
         "zoom-in-90": "zoom-in-90 0.3s ease-in-out",
         "zoom-out-90": "zoom-out-90 0.3s ease-in-out",
+        'fade-spin': 'fade-spin 1.2s linear infinite',
       },
     },
   },
