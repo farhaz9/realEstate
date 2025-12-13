@@ -2,9 +2,10 @@
 import Image from "next/image";
 import type { Property } from "@/types";
 import { formatPrice } from "@/lib/utils";
-import { Camera, MapPin, Image as ImageIcon } from 'lucide-react';
+import { Camera, MapPin, Image as ImageIcon, BedDouble, Bath, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Badge } from "@/components/ui/badge";
 
 interface PopularPropertyCardProps {
   property: Property;
@@ -30,8 +31,8 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
 
   return (
     <Link href={`/properties/${property.id}`} className="block group h-full">
-        <div className="border rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-md h-full flex flex-col">
-            <div className="relative h-40 bg-muted">
+        <div className="border bg-card text-card-foreground rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
+            <div className="relative h-48 bg-muted">
                 {imageUrl ? (
                     <Image
                         src={imageUrl}
@@ -45,21 +46,42 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
                       <ImageIcon className="h-10 w-10 text-gray-400" />
                     </div>
                 )}
-                {imageCount > 0 && (
-                     <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/60 text-white rounded-sm px-2 py-1 text-xs">
+                 <div className="absolute top-3 left-3">
+                    <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'} className="uppercase">
+                        {property.listingType}
+                    </Badge>
+                 </div>
+                {imageCount > 1 && (
+                     <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 text-white rounded-md px-2 py-1 text-xs">
                         <Camera className="h-3 w-3" />
                         <span>{imageCount}</span>
                     </div>
                 )}
             </div>
-            <div className="p-4 bg-card flex-grow flex flex-col">
-                <p className="font-semibold truncate">{`${property.bedrooms} BHK ${property.propertyType}`}</p>
-                <p className="font-bold text-lg text-primary">{formatPrice(property.price)} {squareFeet ? `|` : ''} <span className="text-base font-medium text-muted-foreground">{squareFeet ? `${squareFeet.toLocaleString()} sqft` : ''}</span></p>
-                <div className="flex items-start gap-2 mt-2 text-sm text-muted-foreground flex-grow">
-                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <p className="truncate">{property.location.address}</p>
+            <div className="p-4 flex-grow flex flex-col">
+                <div className="flex justify-between items-start">
+                    <p className="font-bold text-lg text-primary">{formatPrice(property.price)}{property.listingType === 'rent' ? '/mo' : ''}</p>
+                    <Badge variant="outline" className="capitalize text-primary border-primary/50">{property.propertyType}</Badge>
                 </div>
-                <p className="text-sm font-medium mt-2">Ready to Move</p>
+                <p className="font-semibold truncate mt-1">{property.title}</p>
+                <p className="text-sm text-muted-foreground truncate">{property.location.address}, {property.location.state}</p>
+                
+                <div className="mt-4 pt-4 border-t flex items-center space-x-4 text-muted-foreground text-sm">
+                    <div className="flex items-center gap-2">
+                        <BedDouble className="h-4 w-4" />
+                        <span>{property.bedrooms ?? 0} Beds</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Bath className="h-4 w-4" />
+                        <span>{property.bathrooms ?? 0} Baths</span>
+                    </div>
+                    {squareFeet > 0 && (
+                        <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4" />
+                            <span>{squareFeet.toLocaleString()} sqft</span>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     </Link>

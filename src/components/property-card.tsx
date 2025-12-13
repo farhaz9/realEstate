@@ -36,15 +36,15 @@ import {
 interface PropertyCardProps {
   property: Property;
   className?: string;
-  isAdmin?: boolean;
 }
 
-export function PropertyCard({ property, className, isAdmin = false }: PropertyCardProps) {
+export function PropertyCard({ property, className }: PropertyCardProps) {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const pathname = usePathname();
   const router = useRouter();
+  const isAdmin = pathname.startsWith('/admin');
 
   const getImageUrl = () => {
     if (property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0]) {
@@ -208,12 +208,10 @@ export function PropertyCard({ property, className, isAdmin = false }: PropertyC
               {showManagementControls && (
                 <>
                   <DropdownMenuSeparator />
-                  {isAdmin && (
-                     <DropdownMenuItem onSelect={handleEdit}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem onSelect={handleEdit}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      <span>Edit</span>
+                  </DropdownMenuItem>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">

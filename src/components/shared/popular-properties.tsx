@@ -15,8 +15,7 @@ export function PopularProperties() {
 
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    // For now, "popular" is just the 4 most recent listings.
-    // This could be changed to a `isPopular` flag or based on views.
+    // For now, "popular" is just the 8 most recent listings.
     return query(collection(firestore, 'properties'), limit(8));
   }, [firestore]);
 
@@ -46,11 +45,11 @@ export function PopularProperties() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="flex flex-col space-y-3">
-                  <Skeleton className="h-[125px] w-full rounded-xl" />
+                  <Skeleton className="h-40 w-full rounded-xl" />
                   <div className="space-y-2">
-                    <Skeleton className="h-4 w-[150px]" />
-                    <Skeleton className="h-4 w-[200px]" />
-                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/3" />
                   </div>
               </div>
             ))}

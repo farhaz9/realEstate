@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { ProfessionalCard } from '@/components/shared/professional-card';
+import { Card, CardContent } from '@/components/ui/card';
 
 export function FeaturedProfessionals() {
   const firestore = useFirestore();
@@ -47,13 +48,13 @@ export function FeaturedProfessionals() {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex flex-col space-y-3">
-                  <Skeleton className="h-[125px] w-full rounded-xl" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-[150px]" />
-                    <Skeleton className="h-4 w-[200px]" />
-                  </div>
-              </div>
+              <Card key={i}>
+                <Skeleton className="h-48 w-full" />
+                <CardContent className="p-4">
+                    <Skeleton className="h-5 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
+                </CardContent>
+              </Card>
             ))}
           </div>
         ) : (
