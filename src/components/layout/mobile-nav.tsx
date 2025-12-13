@@ -3,19 +3,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, MessageSquare, User, Plus, Building } from "lucide-react";
+import { Home, Heart, User, Plus, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useUser } from "@/firebase";
 import { Button } from "@/components/ui/button";
 
 export default function MobileNav() {
   const pathname = usePathname();
-  const { user } = useUser();
 
   const navLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/profile?tab=wishlist", label: "Saved", icon: Heart },
-    { href: "/contact", label: "Inbox", icon: MessageSquare },
+    { href: "/interiors", label: "Interiors", icon: Palette },
     { href: "/profile", label: "Profile", icon: User },
   ];
 
@@ -37,9 +35,8 @@ export default function MobileNav() {
                 )}
               >
                 <link.icon
-                  className={cn("h-6 w-6")}
-                  strokeWidth={isActive ? 2 : 1.5}
-                  fill={isActive ? "currentColor" : "none"}
+                  className={cn("h-6 w-6", isActive ? 'fill-current' : 'fill-muted-foreground/50')}
+                  strokeWidth={0}
                 />
                 <span>{link.label}</span>
               </Link>
@@ -60,9 +57,8 @@ export default function MobileNav() {
                 )}
               >
                 <link.icon
-                  className={cn("h-6 w-6")}
-                  strokeWidth={isActive ? 2 : 1.5}
-                  fill={isActive ? "currentColor" : "none"}
+                  className={cn("h-6 w-6", isActive ? 'fill-current' : 'fill-muted-foreground/50')}
+                  strokeWidth={0}
                 />
                 <span>{link.label}</span>
               </Link>
