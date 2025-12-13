@@ -121,11 +121,9 @@ export default function HomePage() {
 
       <section className="py-12 bg-background">
         <div className="container mx-auto px-0 sm:px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase px-4">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent bg-[200%_auto] animate-gradient-pan">
-              Best Real Estate and Interior Design Company
-            </span>
-          </h2>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
+            Quick Actions
+          </p>
            <div className="mt-8 relative">
              <div className="flex justify-center overflow-x-auto space-x-4 sm:space-x-8 pb-4 hide-scrollbar px-4">
               {quickServices.map((service) => (
