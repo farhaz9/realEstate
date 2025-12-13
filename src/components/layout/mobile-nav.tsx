@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, User, Plus, Palette } from "lucide-react";
+import { Home, Heart, User, Plus, Armchair } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -13,7 +13,7 @@ export default function MobileNav() {
   const navLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/profile?tab=wishlist", label: "Saved", icon: Heart },
-    { href: "/interiors", label: "Interiors", icon: Palette },
+    { href: "/interiors", label: "Interiors", icon: Armchair },
     { href: "/profile", label: "Profile", icon: User },
   ];
 
