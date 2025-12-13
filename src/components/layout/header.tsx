@@ -26,6 +26,9 @@ import {
   Briefcase,
   HelpCircle,
   Plus,
+  Settings,
+  X,
+  User as UserIcon
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -126,39 +129,51 @@ export default function Header() {
       "sticky top-0 z-50 w-full transition-all duration-300",
     )}>
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent side="left" className="p-0">
-             <div className="flex h-full flex-col">
-                <SheetHeader className="p-6">
-                    <SheetTitle className="sr-only">Menu</SheetTitle>
-                    {isUserLoading ? (
-                        <div className="flex items-center gap-4">
-                            <Skeleton className="h-16 w-16 rounded-full" />
-                            <div className="space-y-2">
-                                <Skeleton className="h-4 w-[150px]" />
-                                <Skeleton className="h-4 w-[100px]" />
-                            </div>
+          <SheetContent side="left" className="p-0 flex flex-col">
+             <SheetHeader className="p-6 pb-4">
+                <SheetTitle className="text-left text-lg font-semibold">Menu</SheetTitle>
+                <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                  <X className="h-5 w-5" />
+                  <span className="sr-only">Close</span>
+                </SheetClose>
+             </SheetHeader>
+             
+              {isUserLoading ? (
+                  <div className="flex items-center gap-4 px-6 py-4 border-b">
+                      <Skeleton className="h-16 w-16 rounded-full" />
+                      <div className="space-y-2">
+                          <Skeleton className="h-4 w-[120px]" />
+                          <Skeleton className="h-4 w-[80px]" />
+                      </div>
+                  </div>
+              ) : user ? (
+                  <div className="px-6 py-4 border-b">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-16 w-16">
+                            <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                            <AvatarFallback className="text-xl bg-primary/10 text-primary font-semibold">
+                                {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p className="text-sm font-semibold text-muted-foreground">Welcome back,</p>
+                            <p className="text-xl font-bold">{user.displayName?.split(' ')[0] || 'User'}</p>
                         </div>
-                    ) : user ? (
-                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="h-16 w-16">
-                                    <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                                    <AvatarFallback className="text-xl">
-                                        {user.displayName?.split(' ').map(n => n[0]).join('') || 'U'}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <p className="text-lg font-semibold">Welcome back,</p>
-                                    <p className="text-2xl font-bold">{user.displayName?.split(' ')[0] || 'User'}</p>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <Logo />
-                    )}
-                </SheetHeader>
+                    </div>
+                    <SheetClose asChild>
+                      <Button variant="link" asChild className="p-0 h-auto mt-2 text-primary">
+                        <Link href="/profile">View Profile</Link>
+                      </Button>
+                    </SheetClose>
+                  </div>
+              ) : (
+                  <div className="px-6 py-4 border-b">
+                    <Logo />
+                  </div>
+              )}
+
                 <div className="flex-1 space-y-2 p-4">
-                    <nav className="flex flex-col gap-2">
+                    <nav className="flex flex-col gap-1">
                       {visibleNavLinks.map((link) => {
                           const isActive = pathname === link.href;
                           return(
@@ -166,13 +181,13 @@ export default function Header() {
                               <Link
                                 href={link.href}
                                 className={cn(
-                                  "flex items-center gap-3 rounded-lg px-4 py-3 text-lg font-medium transition-all",
+                                  "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-all",
                                   isActive
                                     ? "bg-primary/10 text-primary"
-                                    : "text-muted-foreground hover:bg-muted"
+                                    : "text-foreground hover:bg-muted"
                                 )}
                               >
-                                <link.icon className="h-6 w-6" />
+                                <link.icon className="h-5 w-5" />
                                 <span className="flex-1">{link.label}</span>
                                 {isActive && <div className="h-2 w-2 rounded-full bg-primary" />}
                               </Link>
@@ -181,27 +196,27 @@ export default function Header() {
                         })}
                     </nav>
                      <Separator className="my-4" />
-                     <nav className="flex flex-col gap-2">
+                     <nav className="flex flex-col gap-1">
                       {secondaryLinks.map((link) => (
                         <SheetClose asChild key={link.href}>
-                            <Link href={link.href} className="flex items-center gap-3 rounded-lg px-4 py-3 text-lg font-medium text-muted-foreground transition-all hover:bg-muted">
-                                <link.icon className="h-6 w-6" />
+                            <Link href={link.href} className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold text-foreground transition-all hover:bg-muted">
+                                <link.icon className="h-5 w-5" />
                                 <span>{link.label}</span>
                             </Link>
                         </SheetClose>
                       ))}
                     </nav>
                 </div>
-                 <SheetFooter className="p-4 mt-auto">
-                    <Button asChild variant="outline" className="w-full h-12 text-base">
-                        <Link href="/profile?tab=listings">
-                            <Plus className="mr-2 h-5 w-5" />
-                            Post a Listing
-                        </Link>
-                    </Button>
-                     <p className="text-xs text-muted-foreground text-center pt-2">Version 2.4.0</p>
+                 <SheetFooter className="p-4 mt-auto border-t">
+                    <SheetClose asChild>
+                        <Button asChild variant="default" className="w-full h-12 text-base">
+                            <Link href="/profile?tab=listings">
+                                <Plus className="mr-2 h-5 w-5" />
+                                Post Property
+                            </Link>
+                        </Button>
+                    </SheetClose>
                 </SheetFooter>
-             </div>
           </SheetContent>
 
         {isHomePage && isScrolled ? (

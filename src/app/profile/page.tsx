@@ -272,12 +272,6 @@ function ProfilePageContent() {
                     </Link>
                   </Button>
                 )}
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
-                </Button>
                  <Button onClick={handleSignOut} variant="secondary" className="w-full">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log Out
