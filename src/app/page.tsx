@@ -97,10 +97,10 @@ const whyChooseUsPoints = [
 
 
 export default function HomePage() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
+  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative w-full h-[60vh] text-white overflow-hidden">
+      <section className="relative w-full h-[80vh] md:h-[90vh] text-white overflow-hidden">
         {heroImage && (
            <Image
             src={heroImage.imageUrl}
@@ -111,19 +111,18 @@ export default function HomePage() {
             priority
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-primary/30 to-transparent" />
-        <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 md:pb-24 text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Find Your Dream Home
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
-            Your trusted partner in luxury properties, bespoke interiors, and end-to-end real estate solutions in Delhi.
-          </p>
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+                Find your place in the world
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
+                The most comprehensive database of properties, exclusive listings, and top-rated agents in your area.
+            </p>
+            <div className="w-full max-w-2xl mt-8">
+                 <HomeSearch />
+            </div>
         </div>
-      </section>
-
-      <section className="-mt-16 relative z-20">
-        <HomeSearch />
       </section>
 
       <section className="py-12 bg-background">

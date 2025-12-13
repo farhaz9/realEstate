@@ -4,85 +4,58 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MapPin, Search } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { Search, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { LocationDisplay } from './location-display';
 
-const searchTabs = [
-  { id: 'buy', label: 'Buy' },
-  { id: 'rent', label: 'Rent' },
-  { id: 'pg', label: 'PG / Co-living' },
+const stats = [
+  { label: '1M+ Listings' },
+  { label: 'Top Agents' },
+  { label: 'Verified Photos' },
 ];
 
 export function HomeSearch() {
-  const [activeTab, setActiveTab] = useState('buy');
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const query = new URLSearchParams({
-      type: activeTab,
       q: searchTerm,
     }).toString();
     router.push(`/properties?${query}`);
   };
 
   return (
-    <div className="bg-background/95 border-b py-6 rounded-lg shadow-lg">
-      <div className="px-4 container mx-auto">
-        <form onSubmit={handleSearch}>
-            <div className="relative">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-                id="search-city"
-                placeholder="Search by location or project"
-                className="pl-12 pr-14 h-12 text-base rounded-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button type="submit" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full">
-                <Search className="h-5 w-5" />
-            </Button>
-            </div>
-        </form>
-
-        <div className="h-8 flex items-center justify-start mt-2">
-            <LocationDisplay />
+    <div className="w-full max-w-xl mx-auto">
+      <form
+        onSubmit={handleSearch}
+        className="flex w-full items-center rounded-full bg-white p-2 shadow-lg"
+      >
+        <div className="relative flex-grow">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Input
+            id="search-city"
+            placeholder="Enter an address, neighborhood, city, or ZIP code"
+            className="pl-12 pr-4 h-12 text-base rounded-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-
-        <div className="mt-4">
-             <div className="flex items-center space-x-6">
-              {searchTabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={cn(
-                    'py-2 text-sm md:text-base font-semibold transition-colors relative',
-                    activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-primary'
-                  )}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <span className="absolute -bottom-px left-0 w-full h-0.5 bg-primary rounded-full" />
-                  )}
-                </button>
-              ))}
-               <button
-                  onClick={() => router.push('/profile?tab=listings')}
-                  className={cn(
-                    'py-2 text-sm md:text-base font-semibold transition-colors relative',
-                    'text-muted-foreground hover:text-primary'
-                  )}
-                >
-                  Post Ad
-                  <span className="ml-1 bg-yellow-400 text-yellow-900 text-xs font-bold px-1.5 py-0.5 rounded-sm">FREE</span>
-                </button>
-            </div>
-        </div>
-        
+        <Button
+          type="submit"
+          size="lg"
+          className="rounded-full px-8 text-base h-12"
+        >
+          Search
+        </Button>
+      </form>
+      <div className="mt-4 flex items-center justify-center gap-x-6 text-sm text-white">
+        {stats.map((stat) => (
+          <div key={stat.label} className="flex items-center gap-2">
+            <CheckCircle className="h-4 w-4 text-white" />
+            <span>{stat.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
