@@ -6,22 +6,35 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { PageHero } from '@/components/shared/page-hero';
-import { Loader2 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Search, SlidersHorizontal, List, Building, Brush } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ProfessionalCard } from '@/components/shared/professional-card';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+
+const filterTabs = [
+  { id: 'all', label: 'All Professionals', icon: List },
+  { id: 'real-estate-agent', label: 'Real Estate Agents', icon: Building },
+  { id: 'interior-designer', label: 'Interior Designers', icon: Brush },
+];
 
 export default function ProfessionalsPage() {
   const firestore = useFirestore();
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
 
   const professionalsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(
-      collection(firestore, 'users'), 
-      where('category', 'in', ['real-estate-agent', 'interior-designer'])
-    );
-  }, [firestore]);
+    let q = collection(firestore, 'users');
+
+    const professionalCategories = ['real-estate-agent', 'interior-designer'];
+    if (activeTab !== 'all' && professionalCategories.includes(activeTab)) {
+      return query(q, where('category', '==', activeTab));
+    }
+    return query(q, where('category', 'in', professionalCategories));
+  }, [firestore, activeTab]);
 
   const { data: professionals, isLoading, error } = useCollection<User>(professionalsQuery);
 
@@ -32,15 +45,20 @@ export default function ProfessionalsPage() {
         (p.username && p.username.toLowerCase().includes(lowerCaseSearch))
     );
   });
-  
-  const realEstateAgents = filteredProfessionals?.filter(p => p.category === 'real-estate-agent');
-  const interiorDesigners = filteredProfessionals?.filter(p => p.category === 'interior-designer');
 
-  const renderContent = (data: User[] | undefined) => {
+  const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {[...Array(8)].map((_, i) => (
+             <div key={i} className="flex flex-col space-y-3">
+                <div className="relative aspect-square bg-muted rounded-xl animate-pulse" />
+                <div className="space-y-2 p-2">
+                    <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                </div>
+            </div>
+          ))}
         </div>
       );
     }
@@ -49,10 +67,10 @@ export default function ProfessionalsPage() {
       return <div className="text-center text-destructive py-16">Error: {error.message}</div>;
     }
 
-    if (data && data.length > 0) {
+    if (filteredProfessionals && filteredProfessionals.length > 0) {
       return (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.map((professional) => (
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {filteredProfessionals.map((professional) => (
             <ProfessionalCard key={professional.id} professional={professional} />
           ))}
         </div>
@@ -60,9 +78,9 @@ export default function ProfessionalsPage() {
     }
 
     return (
-      <div className="text-center py-16 border-2 border-dashed rounded-lg">
+      <div className="text-center py-16 border-2 border-dashed rounded-lg col-span-full">
         <h3 className="text-xl font-semibold">No professionals found.</h3>
-        <p className="text-muted-foreground mt-2">Try adjusting your search or check back later.</p>
+        <p className="text-muted-foreground mt-2">Try adjusting your search or filters.</p>
       </div>
     );
   };
@@ -70,36 +88,78 @@ export default function ProfessionalsPage() {
   return (
     <>
       <PageHero
-        title="Find a Professional"
-        subtitle="Connect with top-rated real estate agents and interior designers in Delhi."
-        image={{ id: 'contact-hero', imageHint: 'business meeting' }}
-      />
-      <div className="container mx-auto px-4 py-16">
-        <Tabs defaultValue="all" className="w-full">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-            <TabsList className="grid w-full sm:w-auto grid-cols-3">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="agents">Agents</TabsTrigger>
-              <TabsTrigger value="designers">Designers</TabsTrigger>
-            </TabsList>
-            <div className="w-full sm:w-auto sm:max-w-xs">
-              <Input 
-                placeholder="Search by name or username..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+        title="Find the Best Professionals for Your Home"
+        subtitle="Connect with top-rated agents and interior designers to bring your vision to life."
+        image={{ id: 'interiors-hero', imageHint: 'modern living room interior' }}
+        className="pb-24 md:pb-32"
+        titleClassName="text-4xl md:text-5xl lg:text-6xl"
+      >
+        <div className="absolute top-full -translate-y-1/2 w-full px-4">
+            <div className="container mx-auto">
+                <div className="max-w-3xl mx-auto bg-background rounded-2xl p-4 shadow-2xl shadow-primary/10 border">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                    <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">TRUSTED BY 50,000+ HOMEOWNERS</Badge>
+                  </div>
+                   <form className="flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
+                      <div className="relative flex-grow">
+                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input 
+                              placeholder="Search by name, city, or zip code..."
+                              className="pl-12 h-14 text-lg rounded-xl focus-visible:ring-offset-0"
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                      </div>
+                      <Button size="lg" className="h-14 rounded-xl px-8 text-base">Search</Button>
+                  </form>
+                </div>
             </div>
-          </div>
-          <TabsContent value="all">
-            {renderContent(filteredProfessionals)}
-          </TabsContent>
-          <TabsContent value="agents">
-            {renderContent(realEstateAgents)}
-          </TabsContent>
-          <TabsContent value="designers">
-            {renderContent(interiorDesigners)}
-          </TabsContent>
-        </Tabs>
+        </div>
+      </PageHero>
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div className="flex flex-wrap items-center gap-2 bg-muted p-1 rounded-lg">
+                {filterTabs.map(tab => (
+                    <Button 
+                        key={tab.id}
+                        variant="ghost"
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                            "flex-1 md:flex-none rounded-md px-4 py-2 text-sm font-semibold transition-all h-auto",
+                            activeTab === tab.id 
+                                ? 'bg-background shadow-sm text-primary' 
+                                : 'text-muted-foreground hover:bg-background/50 hover:text-foreground'
+                        )}
+                    >
+                        <tab.icon className="mr-2 h-4 w-4" />
+                        {tab.label}
+                    </Button>
+                ))}
+            </div>
+
+            <div className="flex items-center gap-4 w-full md:w-auto">
+                <p className="text-sm text-muted-foreground whitespace-nowrap">
+                  Showing {filteredProfessionals?.length || 0} results
+                </p>
+                <Select defaultValue="recommended">
+                    <SelectTrigger className="w-full md:w-[180px]">
+                        <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="recommended">Recommended</SelectItem>
+                        <SelectItem value="rating">Rating</SelectItem>
+                        <SelectItem value="newest">Newest</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+        </div>
+
+        {renderContent()}
+
+        <div className="mt-16 text-center">
+            <Button variant="outline" size="lg">Load More Professionals</Button>
+        </div>
+
       </div>
     </>
   );
