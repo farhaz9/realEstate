@@ -39,7 +39,7 @@ export default function MobileNav() {
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              <link.icon className={cn("h-6 w-6", isActive && "fill-current")} />
+              <link.icon className={cn("h-6 w-6", isActive ? "fill-current" : "fill-gray-300 dark:fill-gray-600")} />
               <span>{link.label}</span>
             </Link>
           );
