@@ -5,27 +5,29 @@ import { cn } from "@/lib/utils";
 interface PageHeroProps {
   title: string;
   subtitle: string;
-  image: {
+  image?: { // Made optional
     id: string;
     imageHint: string;
   };
+  imageUrl?: string; // Added direct image url prop
   children?: React.ReactNode;
   className?: string;
   titleClassName?: string;
   subtitleClassName?: string;
 }
 
-export function PageHero({ title, subtitle, image, children, className, titleClassName, subtitleClassName }: PageHeroProps) {
-  const heroImage = PlaceHolderImages.find((p) => p.id === image.id);
+export function PageHero({ title, subtitle, image, imageUrl, children, className, titleClassName, subtitleClassName }: PageHeroProps) {
+  const heroImage = image ? PlaceHolderImages.find((p) => p.id === image.id) : null;
+  const finalImageUrl = imageUrl || heroImage?.imageUrl;
 
   return (
     <section className={cn("relative w-full h-auto overflow-hidden", className)}>
       <div className="relative w-full h-80 md:h-96">
-        {heroImage && (
+        {finalImageUrl && (
           <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            data-ai-hint={image.imageHint}
+            src={finalImageUrl}
+            alt={title}
+            data-ai-hint={image?.imageHint || 'hero image'}
             fill
             className="object-cover"
             priority

@@ -90,7 +90,7 @@ export default function ProfessionalsPage() {
       <PageHero
         title="Find the Best Professionals for Your Home"
         subtitle="Connect with top-rated agents and interior designers to bring your vision to life."
-        image={{ id: 'properties-hero', imageHint: 'business meeting' }}
+        imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
         className="pb-24 md:pb-32"
         titleClassName="text-4xl md:text-5xl lg:text-6xl"
       >
