@@ -36,7 +36,7 @@ export function HomeSearch() {
           <Input
             id="search-city"
             placeholder="Enter an address, neighborhood, city, or ZIP code"
-            className="pl-12 pr-4 h-12 text-base rounded-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="pl-12 pr-4 h-12 text-base rounded-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
