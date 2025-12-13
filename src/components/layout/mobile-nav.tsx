@@ -19,9 +19,6 @@ export default function MobileNav() {
     { href: "/profile", label: "Profile", icon: User },
   ];
   
-  // A simple check for the base path without query params
-  const isInteriorsActive = pathname === '/interiors';
-
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
       <div className="grid h-full grid-cols-5 items-center">
@@ -42,7 +39,7 @@ export default function MobileNav() {
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              <link.icon className={cn("h-6 w-6", isActive && link.icon === Heart && "fill-current")} />
+              <link.icon className={cn("h-6 w-6", isActive && "fill-current")} />
               <span>{link.label}</span>
             </Link>
           );
