@@ -1,7 +1,7 @@
 
 
 import Link from "next/link";
-import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -59,12 +59,10 @@ const coreServices = [
 ];
 
 const quickServices = [
-    { href: "/properties", label: "Properties", icon: Building2 },
-    { href: "/properties?type=rent", label: "Rent", icon: KeyRound },
-    { href: "/interiors", label: "Interiors", icon: Palette },
-    { href: "/professionals", label: "Agents", icon: Briefcase },
-    { href: "/services", label: "Construction", icon: Construction },
-    { href: "/contact", label: "Consultancy", icon: ConciergeBell },
+    { href: "/properties?type=buy", label: "Buy", icon: Building2, iconColor: "text-green-600", bgColor: "bg-green-100/60" },
+    { href: "/properties?type=rent", label: "Rent", icon: KeyRound, iconColor: "text-blue-600", bgColor: "bg-blue-100/60" },
+    { href: "/properties?type=sell", label: "Sell", icon: Tag, iconColor: "text-orange-600", bgColor: "bg-orange-100/60" },
+    { href: "/interiors", label: "Interiors", icon: Palette, iconColor: "text-purple-600", bgColor: "bg-purple-100/60" },
   ];
 
 const whyChooseUsPoints = [
@@ -129,15 +127,13 @@ export default function HomePage() {
             </span>
           </h2>
            <div className="mt-8 relative">
-             <div className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 hide-scrollbar px-4">
+             <div className="flex justify-center overflow-x-auto space-x-4 sm:space-x-8 pb-4 hide-scrollbar px-4">
               {quickServices.map((service) => (
-                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-2 text-center group flex-shrink-0 w-20 sm:w-24">
-                  <div className="relative p-1 rounded-full bg-gradient-to-br from-primary via-accent to-purple-500 group-hover:scale-105 transition-transform duration-300">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary transition-all duration-300 group-hover:bg-primary">
-                      <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-3 text-center group flex-shrink-0 w-20 sm:w-24">
+                   <div className={`flex h-20 w-20 items-center justify-center rounded-full ${service.bgColor} group-hover:scale-105 transition-all duration-300`}>
+                      <service.icon className={`h-10 w-10 ${service.iconColor} transition-colors`} />
                     </div>
-                  </div>
-                  <p className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
+                  <p className="text-sm font-semibold text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
                 </Link>
               ))}
             </div>
