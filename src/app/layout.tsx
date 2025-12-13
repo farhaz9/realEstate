@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
 import { FirebaseClientProvider } from "@/firebase";
-import { ScrollProgress } from "@/components/layout/scroll-progress";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const poppins = Poppins({
@@ -75,7 +74,6 @@ export default function RootLayout({
           <ErrorBoundary>
             <AppProviders>{children}</AppProviders>
           </ErrorBoundary>
-          <ScrollProgress />
         </FirebaseClientProvider>
       </body>
     </html>
