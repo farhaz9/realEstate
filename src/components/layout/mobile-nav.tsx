@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -39,7 +38,7 @@ export default function MobileNav() {
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              <link.icon className={cn("h-6 w-6", isActive ? "fill-current" : "fill-gray-300 dark:fill-gray-600")} />
+              <link.icon className={cn("h-6 w-6", isActive ? "fill-primary" : "fill-current")} strokeWidth={0} />
               <span>{link.label}</span>
             </Link>
           );
