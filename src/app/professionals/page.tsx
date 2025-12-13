@@ -96,21 +96,22 @@ export default function ProfessionalsPage() {
       >
         <div className="absolute top-full -translate-y-1/2 w-full px-4">
             <div className="container mx-auto">
-                <div className="max-w-3xl mx-auto bg-background rounded-2xl p-4 shadow-2xl shadow-primary/10 border">
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                <div className="max-w-3xl mx-auto relative">
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2">
                     <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">TRUSTED BY 50,000+ HOMEOWNERS</Badge>
                   </div>
-                   <form className="flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
-                      <div className="relative flex-grow">
-                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input 
-                              placeholder="Search by name, city, or zip code..."
-                              className="pl-12 h-14 text-lg rounded-xl focus-visible:ring-offset-0"
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                          />
-                      </div>
-                      <Button size="lg" className="h-14 rounded-xl px-8 text-base">Search</Button>
+                   <form 
+                      className="relative flex w-full items-center" 
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <Search className="absolute left-4 h-5 w-5 text-muted-foreground z-10" />
+                      <Input 
+                          placeholder="Search by name, city, or zip code..."
+                          className="pl-12 pr-28 h-14 text-base rounded-full bg-background/80 backdrop-blur-sm focus-visible:ring-offset-0 border-white/20 shadow-lg"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <Button size="lg" className="absolute right-2 h-11 rounded-full px-8 text-base">Search</Button>
                   </form>
                 </div>
             </div>
