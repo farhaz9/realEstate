@@ -18,15 +18,17 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import {
-  Github,
-  Twitter,
-  Linkedin,
-  X,
   LogIn,
   Search,
   MapPin,
   Heart,
-  ClipboardList
+  Home,
+  Building,
+  Armchair,
+  Briefcase,
+  Settings,
+  HelpCircle,
+  Plus,
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -38,17 +40,19 @@ import { useDoc, useMemoFirebase } from '@/firebase';
 import type { User as UserType } from '@/types';
 import { doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
-import { LocationDisplay } from "@/components/shared/location-display";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/properties", label: "Properties" },
-  { href: "/interiors", label: "Interiors" },
-  { href: "/professionals", label: "Professionals" },
-  { href: "/services", label: "Services" },
-  { href: "/contact", label: "Contact" },
-  { href: "/profile", label: "My Listings", userOnly: true, professionalOnly: true },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/properties", label: "Properties", icon: Building },
+  { href: "/interiors", label: "Interiors", icon: Armchair },
+  { href: "/professionals", label: "Professionals", icon: Briefcase },
+];
+
+const secondaryLinks = [
+    { href: "/settings", label: "Settings", icon: Settings },
+    { href: "/contact", label: "Support", icon: HelpCircle },
 ];
 
 const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -116,8 +120,8 @@ export default function Header() {
   const isHomePage = pathname === '/';
   
   const visibleNavLinks = navLinks.filter(link => {
-    if (link.professionalOnly && !isProfessional) return false;
-    if (link.userOnly && !user) return false;
+    if (link.label === "My Listings" && !isProfessional) return false;
+    if (link.label === "My Listings" && !user) return false;
     return true;
   });
 
@@ -126,41 +130,84 @@ export default function Header() {
       "sticky top-0 z-50 w-full transition-all duration-300",
     )}>
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent side="left">
-            <SheetHeader>
-               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-               <div className="flex justify-center py-8">
-                <Logo />
-              </div>
-            </SheetHeader>
-            
-            <div className="flex flex-col h-full">
-              <nav className="mt-4 flex-1 flex flex-col items-center justify-start gap-2">
-                {visibleNavLinks.map((link) => (
-                  <SheetClose asChild key={link.href}>
-                    <Link
-                      href={link.href}
-                      className={cn(
-                        "text-lg rounded-md px-4 py-2 w-full text-center font-medium text-muted-foreground transition-all hover:bg-muted hover:text-primary",
-                         pathname === link.href && "bg-primary/10 text-primary"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  </SheetClose>
-                ))}
-              </nav>
-              <SheetFooter className="py-6">
-                <div className="flex flex-col items-center w-full gap-4 pt-4 border-t">
-                  <div className="flex space-x-4">
-                    <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
-                    <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
-                    <Link href="#" className="text-muted-foreground hover:text-primary"><Github className="h-5 w-5" /></Link>
-                  </div>
-                  <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Farhaz Homes</p>
+          <SheetContent side="left" className="p-0">
+             <div className="flex h-full flex-col">
+                <SheetHeader className="p-6">
+                    <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        <span className="sr-only">Close</span>
+                    </SheetClose>
+                    <SheetTitle className="sr-only">Menu</SheetTitle>
+                    {isUserLoading ? (
+                        <div className="flex items-center gap-4">
+                            <Skeleton className="h-16 w-16 rounded-full" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-[150px]" />
+                                <Skeleton className="h-4 w-[100px]" />
+                            </div>
+                        </div>
+                    ) : user ? (
+                        <div className="flex items-center gap-4">
+                            <Avatar className="h-16 w-16">
+                                <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                                <AvatarFallback className="text-xl">
+                                    {user.displayName?.split(' ').map(n => n[0]).join('') || 'U'}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="text-lg font-semibold">Welcome back,</p>
+                                <p className="text-2xl font-bold">{user.displayName?.split(' ')[0] || 'User'}</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <Logo />
+                    )}
+                </SheetHeader>
+                <div className="flex-1 space-y-2 p-4">
+                    <nav className="flex flex-col gap-2">
+                      {visibleNavLinks.map((link) => {
+                          const isActive = pathname === link.href;
+                          return(
+                            <SheetClose asChild key={link.href}>
+                              <Link
+                                href={link.href}
+                                className={cn(
+                                  "flex items-center gap-3 rounded-lg px-4 py-3 text-lg font-medium transition-all",
+                                  isActive
+                                    ? "bg-primary/10 text-primary"
+                                    : "text-muted-foreground hover:bg-muted"
+                                )}
+                              >
+                                <link.icon className="h-6 w-6" />
+                                <span className="flex-1">{link.label}</span>
+                                {isActive && <div className="h-2 w-2 rounded-full bg-primary" />}
+                              </Link>
+                            </SheetClose>
+                          )
+                        })}
+                    </nav>
+                     <Separator className="my-4" />
+                     <nav className="flex flex-col gap-2">
+                      {secondaryLinks.map((link) => (
+                        <SheetClose asChild key={link.href}>
+                            <Link href={link.href} className="flex items-center gap-3 rounded-lg px-4 py-3 text-lg font-medium text-muted-foreground transition-all hover:bg-muted">
+                                <link.icon className="h-6 w-6" />
+                                <span>{link.label}</span>
+                            </Link>
+                        </SheetClose>
+                      ))}
+                    </nav>
                 </div>
-              </SheetFooter>
-            </div>
+                 <SheetFooter className="p-4 mt-auto">
+                    <Button asChild variant="outline" className="w-full h-12 text-base">
+                        <Link href="/profile?tab=listings">
+                            <Plus className="mr-2 h-5 w-5" />
+                            Post a Listing
+                        </Link>
+                    </Button>
+                     <p className="text-xs text-muted-foreground text-center pt-2">Version 2.4.0</p>
+                </SheetFooter>
+             </div>
           </SheetContent>
 
         {isHomePage && isScrolled ? (
@@ -183,7 +230,7 @@ export default function Header() {
                     <Separator orientation="vertical" className="h-6" />
                    </div>
                   <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {visibleNavLinks.filter(l => !l.userOnly && !l.professionalOnly).slice(1,3).map((link) => (
+                    {visibleNavLinks.slice(1,3).map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
@@ -205,7 +252,7 @@ export default function Header() {
               </div>
               <div className="flex items-center gap-2 justify-end">
                 <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {visibleNavLinks.filter(l => !l.userOnly).slice(3).map((link) => (
+                    {navLinks.filter(l => l.label !== 'Home' && l.label !== 'Properties' && l.label !== 'Interiors').map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
@@ -262,3 +309,5 @@ export default function Header() {
     </header>
   );
 }
+
+    
