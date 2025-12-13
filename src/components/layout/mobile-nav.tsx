@@ -1,8 +1,9 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Armchair, Heart, MessageSquare, User } from "lucide-react";
+import { Building, Armchair, Heart, MessageSquare, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
 
@@ -11,7 +12,7 @@ export default function MobileNav() {
   const { user } = useUser();
 
   const navLinks = [
-    { href: "/", label: "Home", icon: Home },
+    { href: "/", label: "Home", icon: Building },
     { href: "/interiors", label: "Design", icon: Armchair },
     { href: "/profile?tab=wishlist", label: "Saved", icon: Heart },
     { href: "/contact", label: "Chat", icon: MessageSquare },
@@ -38,7 +39,7 @@ export default function MobileNav() {
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              <link.icon className={cn("h-6 w-6", isActive ? "fill-primary" : "fill-current")} strokeWidth={0} />
+              <link.icon className={cn("h-6 w-6", isActive ? "fill-primary" : "fill-muted-foreground/50")} strokeWidth={0} />
               <span>{link.label}</span>
             </Link>
           );
