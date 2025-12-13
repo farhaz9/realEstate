@@ -1,21 +1,13 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { Building2 } from 'lucide-react';
 
 export function Logo() {
   return (
-    <Link
-      href="/"
-      className="flex items-center gap-2"
-      aria-label="Farhaz Homes Home"
-    >
-      <Image
-        src="https://images-r-eal-estae.vercel.app/farhaz%20homes%20widtyh.png"
-        alt="Farhaz Homes Logo"
-        width={200}
-        height={53}
-        className="object-contain"
-        priority
-      />
+    <Link href="/" className="flex items-center gap-2 w-fit">
+      <div className="flex items-center justify-center size-10 rounded-full bg-primary/10 text-primary">
+          <Building2 className="h-6 w-6"/>
+      </div>
+      <h1 className="text-xl font-bold tracking-tight">Estately</h1>
     </Link>
   );
 }
