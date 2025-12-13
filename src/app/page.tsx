@@ -97,7 +97,7 @@ const whyChooseUsPoints = [
 
 
 export default function HomePage() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
+  const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
   return (
     <div className="flex flex-col min-h-screen">
       <section className="relative w-full h-[80vh] md:h-[90vh] text-white overflow-hidden">
