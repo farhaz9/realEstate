@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Star, Briefcase, MapPin, CheckCircle, PencilRuler } from 'lucide-react';
+import { User as UserIcon, Star, Briefcase, MapPin, BadgeCheck, PencilRuler } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 
@@ -57,10 +57,12 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
        <CardContent className="p-4">
             <div className="flex justify-between items-start">
                 <div>
-                    <h3 className="font-bold text-lg">{professional.fullName}</h3>
+                    <h3 className="font-bold text-lg flex items-center gap-2">
+                      {professional.fullName}
+                      <BadgeCheck className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                    </h3>
                     <p className="text-xs font-semibold uppercase tracking-wider text-primary">{categoryDisplay[professional.category] || professional.category}</p>
                 </div>
-                 <CheckCircle className="h-5 w-5 text-blue-500 fill-current mt-1 flex-shrink-0" />
             </div>
 
              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
