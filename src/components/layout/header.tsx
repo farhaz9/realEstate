@@ -13,20 +13,17 @@ import {
   SheetClose,
   SheetFooter,
   SheetTitle,
-  SheetDescription,
   SheetHeader,
   SheetTrigger,
 } from "../ui/sheet";
 import {
   LogIn,
-  Search,
   MapPin,
   Heart,
   Home,
   Building,
   Armchair,
   Briefcase,
-  Settings,
   HelpCircle,
   Plus,
 } from "lucide-react";
@@ -132,10 +129,6 @@ export default function Header() {
           <SheetContent side="left" className="p-0">
              <div className="flex h-full flex-col">
                 <SheetHeader className="p-6">
-                    <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        <span className="sr-only">Close</span>
-                    </SheetClose>
                     <SheetTitle className="sr-only">Menu</SheetTitle>
                     {isUserLoading ? (
                         <div className="flex items-center gap-4">
@@ -146,16 +139,18 @@ export default function Header() {
                             </div>
                         </div>
                     ) : user ? (
-                        <div className="flex items-center gap-4">
-                            <Avatar className="h-16 w-16">
-                                <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                                <AvatarFallback className="text-xl">
-                                    {user.displayName?.split(' ').map(n => n[0]).join('') || 'U'}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="text-lg font-semibold">Welcome back,</p>
-                                <p className="text-2xl font-bold">{user.displayName?.split(' ')[0] || 'User'}</p>
+                         <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <Avatar className="h-16 w-16">
+                                    <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                                    <AvatarFallback className="text-xl">
+                                        {user.displayName?.split(' ').map(n => n[0]).join('') || 'U'}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="text-lg font-semibold">Welcome back,</p>
+                                    <p className="text-2xl font-bold">{user.displayName?.split(' ')[0] || 'User'}</p>
+                                </div>
                             </div>
                         </div>
                     ) : (
