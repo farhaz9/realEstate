@@ -438,7 +438,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Image Upload Instructions</DialogTitle>
-                          <DialogDescription>
+                           <DialogDescription>
                             For the best results, please follow these guidelines when uploading your property images.
                           </DialogDescription>
                         </DialogHeader>
