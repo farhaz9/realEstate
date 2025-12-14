@@ -125,7 +125,7 @@ export default function HomePage() {
             Quick Actions
           </p>
            <div className="mt-8 relative">
-             <div className="flex justify-center overflow-x-auto space-x-4 sm:space-x-8 pb-4 hide-scrollbar px-4">
+             <div className="flex justify-center overflow-x-auto space-x-4 sm:space-x-8 pb-4 hide-scrollbar px-4 sm:px-0">
               {quickServices.map((service) => (
                 <Link href={service.href} key={service.label} className="flex flex-col items-center gap-3 text-center group flex-shrink-0 w-20 sm:w-24">
                    <div className={`flex h-20 w-20 items-center justify-center rounded-full ${service.bgColor} group-hover:scale-105 transition-all duration-300`}>
