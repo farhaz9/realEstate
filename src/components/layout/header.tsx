@@ -150,6 +150,7 @@ export default function Header() {
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent side="left" className="p-0 flex flex-col">
              <SheetHeader className="p-6 pb-4 border-b">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <SheetClose asChild>
                     <Link href="/settings">
                         <div className="flex items-center gap-4">
