@@ -128,6 +128,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isUpgradeAlertOpen, setIsUpgradeAlertOpen] = useState(false);
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -146,6 +147,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const isEditing = !!propertyToEdit;
   const isPremiumUser = userProfile?.subscriptionStatus === 'premium';
   
+  // Logic for listing limits
+  const hasFreeListing = properties && properties.length > 0;
+  const canAddListing = isPremiumUser || !hasFreeListing;
+
+
   useEffect(() => {
     if(isEditing) {
         setIsFormOpen(true);
@@ -348,9 +354,9 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       toast({ title: 'Property Updated!', description: 'Your property has been successfully updated.', variant: 'success' });
     } else if(user) {
       const propertiesCollection = collection(firestore, 'properties');
-      const isPremium = isPremiumUser;
-      const tier = isPremium ? 'premium' : 'free';
-      const expirationDays = isPremium ? 30 : 90;
+      const tier = isPremiumUser || !hasFreeListing ? 'free' : 'premium'; // Logic might need adjustment for paying
+      const isFeatured = isPremiumUser;
+      const expirationDays = isPremiumUser ? 90 : 30; // Premium listings last longer
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + expirationDays);
 
@@ -358,7 +364,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         ...propertyData,
         userId: user.uid,
         dateListed: serverTimestamp(),
-        isFeatured: isPremium,
+        isFeatured,
         listingTier: tier,
         expiresAt: expirationDate,
       };
@@ -373,6 +379,15 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       onSuccess();
     }
   }
+  
+  const handleAddPropertyClick = () => {
+    if (canAddListing) {
+      setIsFormOpen(true);
+    } else {
+      setIsUpgradeAlertOpen(true);
+    }
+  };
+
 
   const renderAddPropertyForm = () => (
      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -385,65 +400,65 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
-                    control={form.control}
-                    name="images"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Property Images (up to 3)</FormLabel>
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" className="w-full">
-                                <ImageUp className="mr-2 h-4 w-4" />
-                                Upload Images
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Image Upload Instructions</DialogTitle>
-                                    <DialogDescription>
-                                        For the best results, please follow these guidelines when uploading your property images.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4 py-4">
-                                <Alert>
-                                    <AlertTitle>File Size Limit: 1MB</AlertTitle>
-                                    <AlertDescription>
-                                        Each image must be under 1MB. Large images may fail to upload.
-                                    </AlertDescription>
-                                    </Alert>
-                                    <p className="text-sm text-muted-foreground">
-                                        If your images are too large, you can use a free online tool to compress them before uploading.
-                                    </p>
-                                    <Button variant="secondary" asChild>
-                                        <Link href="https://www.iloveimg.com/" target="_blank">
-                                        Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
-                                        </Link>
+                      control={form.control}
+                      name="images"
+                      render={({ field }) => (
+                          <FormItem>
+                          <FormLabel>Property Images (up to 3)</FormLabel>
+                          <Dialog>
+                              <DialogTrigger asChild>
+                                  <Button variant="outline" className="w-full">
+                                  <ImageUp className="mr-2 h-4 w-4" />
+                                  Upload Images
+                                  </Button>
+                              </DialogTrigger>
+                               <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>Image Upload Instructions</DialogTitle>
+                                      <DialogDescription>
+                                          For the best results, please follow these guidelines when uploading your property images.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-4 py-4">
+                                    <Alert>
+                                        <AlertTitle>File Size Limit: 1MB</AlertTitle>
+                                        <AlertDescription>
+                                            Each image must be under 1MB. Large images may fail to upload.
+                                        </AlertDescription>
+                                        </Alert>
+                                        <p className="text-sm text-muted-foreground">
+                                            If your images are too large, you can use a free online tool to compress them before uploading.
+                                        </p>
+                                        <Button variant="secondary" asChild>
+                                            <Link href="https://www.iloveimg.com/" target="_blank">
+                                            Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                    <DialogFooter>
+                                    <Button onClick={() => fileInputRef.current?.click()}>
+                                        Select Files
                                     </Button>
-                                </div>
-                                <DialogFooter>
-                                <Button onClick={() => fileInputRef.current?.click()}>
-                                    Select Files
-                                </Button>
-                                </DialogFooter>
-                            </DialogContent>
+                                    </DialogFooter>
+                                </DialogContent>
                             </Dialog>
-                        <FormControl>
-                            <Input 
-                            type="file" 
-                            multiple
-                            accept="image/*"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            className="hidden"
-                            disabled={isUploading || imagePreviews.length >= 3}
-                            />
-                        </FormControl>
-                        <FormDescription>
-                            {imagePreviews.length} / 3 uploaded.
-                        </FormDescription>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                          <FormControl>
+                              <Input 
+                              type="file" 
+                              multiple
+                              accept="image/*"
+                              ref={fileInputRef}
+                              onChange={handleImageChange}
+                              className="hidden"
+                              disabled={isUploading || imagePreviews.length >= 3}
+                              />
+                          </FormControl>
+                          <FormDescription>
+                              {imagePreviews.length} / 3 uploaded.
+                          </FormDescription>
+                          <FormMessage />
+                          </FormItem>
+                      )}
                     />
                     
                     {imagePreviews.length > 0 && (
@@ -776,12 +791,12 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     <>
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold">Manage Your Listings</h2>
-        <p className="text-muted-foreground mt-2">You have {properties?.length} active propert{properties?.length === 1 ? 'y' : 'ies'}.</p>
+        <p className="text-muted-foreground mt-2">You have {properties?.length || 0} active propert{properties?.length === 1 ? 'y' : 'ies'}.</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <Card 
             className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
-            onClick={() => setIsFormOpen(true)}
+            onClick={handleAddPropertyClick}
         >
             <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -794,6 +809,20 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
           <PropertyCard key={property.id} property={property} showActiveBadge={true} />
         ))}
       </div>
+       <AlertDialog open={isUpgradeAlertOpen} onOpenChange={setIsUpgradeAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Free Listing Limit Reached</AlertDialogTitle>
+            <AlertDialogDescription>
+              You've already used your one free property listing. To list more properties, please purchase a premium listing for ₹99.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => setIsUpgradeAlertOpen(false)}>Upgrade</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
   
@@ -813,7 +842,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     <div className="space-y-8">
         {renderMyProperties()}
         {renderAddPropertyForm()}
-         {!isPremiumUser && (
+         {(!isPremiumUser && hasFreeListing) && (
             <div className="mt-16 max-w-lg mx-auto">
                 <div className="relative rounded-2xl bg-slate-900 p-8 text-white shadow-2xl border border-purple-500/30">
                     <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4">
