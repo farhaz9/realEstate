@@ -72,7 +72,7 @@ function SettingsPageContent() {
     { icon: FileText, title: 'Legal & About', description: 'Terms, privacy policy, and about us', href: '/terms-and-conditions' },
   ];
 
-  if (isUserLoading || isProfileLoading) {
+  if (isUserLoading || (user && isProfileLoading)) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <Spinner size={48} />
@@ -80,13 +80,24 @@ function SettingsPageContent() {
     );
   }
 
-  if (!user || !userProfile) {
-     if (!isUserLoading) {
-        router.push('/login');
-     }
+  if (!user) {
+    // This check now runs only after isUserLoading is false.
+    // If there's still no user, then they are not logged in.
+    if (typeof window !== 'undefined') {
+      router.push('/login');
+    }
     return (
        <div className="flex items-center justify-center min-h-[60vh]">
           <Spinner size={48} />
+        </div>
+    );
+  }
+  
+  if (!userProfile) {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <Spinner size={48} />
+            <p className="text-muted-foreground mt-4">Loading your profile...</p>
         </div>
     );
   }
