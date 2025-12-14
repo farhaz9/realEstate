@@ -44,7 +44,7 @@ export function NewProjectCard({ project }: NewProjectCardProps) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                 <Badge variant="secondary" className="mb-2 bg-white/90 text-primary-foreground backdrop-blur-sm">
+                 <Badge variant="secondary" className="mb-2 bg-white/90 text-foreground backdrop-blur-sm">
                     {getStatus()}
                 </Badge>
                 <h3 className="font-bold text-lg">{project.title}</h3>
