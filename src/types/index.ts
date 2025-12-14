@@ -64,4 +64,5 @@ export type User = {
   servicesProvided?: string[];
   bio?: string;
   orders?: Order[];
+  listingCredits?: number;
 }

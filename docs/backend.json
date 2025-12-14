@@ -76,6 +76,10 @@
             },
             "required": ["paymentId", "amount", "date"]
           }
+        },
+        "listingCredits": {
+          "type": "number",
+          "description": "Number of property listings a user is entitled to post."
         }
       },
       "required": [

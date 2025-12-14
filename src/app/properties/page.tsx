@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
-import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp, increment } from 'firebase/firestore';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
@@ -85,17 +85,16 @@ export default function PropertiesPage() {
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
   const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
-  const [hasPaidForListing, setHasPaidForListing] = useState(false);
-
+  
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc<User>(userDocRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<User>(userDocRef);
 
   const handlePayment = async () => {
-    if (typeof window === 'undefined' || !(window as any).Razorpay) {
+     if (typeof window === 'undefined' || !(window as any).Razorpay) {
       toast({
         title: "Payment Gateway Error",
         description: "Razorpay is not available. Please check your connection and try again.",
@@ -114,7 +113,7 @@ export default function PropertiesPage() {
         handler: function (response: any){
             toast({
                 title: "Payment Successful!",
-                description: "You can now post your property.",
+                description: "You have received 1 listing credit.",
                 variant: "success",
             });
             if(userDocRef) {
@@ -125,9 +124,9 @@ export default function PropertiesPage() {
               };
               updateDocumentNonBlocking(userDocRef, {
                 orders: arrayUnion(newOrder),
+                listingCredits: increment(1)
               });
             }
-            setHasPaidForListing(true);
             setIsPaymentAlertOpen(false);
             router.push('/settings?tab=listings');
         },
@@ -150,7 +149,7 @@ export default function PropertiesPage() {
         return;
     }
     
-    if (hasPaidForListing) {
+    if (userProfile && userProfile.listingCredits && userProfile.listingCredits > 0) {
       router.push('/settings?tab=listings');
     } else {
       setIsPaymentAlertOpen(true);
@@ -444,7 +443,7 @@ export default function PropertiesPage() {
       </section>
       
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        {isLoading || isAiSearchPending || isUserLoading ? (
+        {isLoading || isAiSearchPending || isUserLoading || isProfileLoading ? (
             <div className="flex items-center justify-center min-h-[50vh]">
               <Spinner size={48} />
             </div>

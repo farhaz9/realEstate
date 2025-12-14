@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -191,8 +192,9 @@ export default function LoginPage() {
             category: category,
             dateJoined: serverTimestamp(),
             photoURL: user.photoURL || '',
-            subscriptionStatus: 'free',
             wishlist: [],
+            listingCredits: 0,
+            orders: [],
         });
         
         toast({
@@ -229,8 +231,9 @@ export default function LoginPage() {
           category: 'user', // Default category for Google Sign-in
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || '',
-          subscriptionStatus: 'free',
           wishlist: [],
+          listingCredits: 0,
+          orders: [],
         });
       }
       

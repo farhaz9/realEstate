@@ -19,7 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase, useDoc, updateDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp, query, where, doc, arrayUnion } from 'firebase/firestore';
+import { collection, serverTimestamp, query, where, doc, arrayUnion, increment } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -135,14 +135,13 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
-  const [hasPaidForListing, setHasPaidForListing] = useState(false);
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc<User>(userDocRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<User>(userDocRef);
 
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -152,8 +151,8 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
   
   const isEditing = !!propertyToEdit;
-  
- const handlePayment = async () => {
+
+  const handlePayment = async () => {
     if (typeof window === 'undefined' || !(window as any).Razorpay) {
       toast({
         title: "Payment Gateway Error",
@@ -165,15 +164,15 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
 
     const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: "9900", // amount in the smallest currency unit
+        amount: "9900",
         currency: "INR",
         name: "Estately Property Listing",
         description: "One-time fee for one property listing.",
-        image: "https://example.com/your_logo.jpg", // Optional
+        image: "https://example.com/your_logo.jpg",
         handler: function (response: any){
             toast({
                 title: "Payment Successful!",
-                description: "You can now post your property.",
+                description: "You have received 1 listing credit.",
                 variant: "success",
             });
             if(userDocRef) {
@@ -184,9 +183,9 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
               };
               updateDocumentNonBlocking(userDocRef, {
                 orders: arrayUnion(newOrder),
+                listingCredits: increment(1)
               });
             }
-            setHasPaidForListing(true);
             setIsPaymentAlertOpen(false);
             setIsFormOpen(true); 
         },
@@ -256,7 +255,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         amenities: propertyToEdit.amenities?.join(', ') || '',
       });
       setImagePreviews(propertyToEdit.imageUrls?.map(url => ({ url, name: 'Uploaded Image', size: 0 })) || []);
-    } else if (isFormOpen) { // Reset form only when opening for a new entry
+    } else if (isFormOpen) { 
         form.reset();
         setImagePreviews([]);
     }
@@ -418,7 +417,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       const propertyRef = doc(firestore, 'properties', propertyToEdit.id);
       updateDocumentNonBlocking(propertyRef, propertyData);
       toast({ title: 'Property Updated!', description: 'Your property has been successfully updated.', variant: 'success' });
-    } else if(user) {
+    } else if(user && userDocRef) {
       const propertiesCollection = collection(firestore, 'properties');
       const tier = 'premium';
       const isFeatured = true;
@@ -436,7 +435,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       };
       
       addDocumentNonBlocking(propertiesCollection, newPropertyData);
-      setHasPaidForListing(false); // Reset payment credit after successful listing
+      updateDocumentNonBlocking(userDocRef, { listingCredits: increment(-1) });
       toast({ title: 'Property Listed!', description: `Your property has been successfully listed.`, variant: 'success' });
     }
 
@@ -448,7 +447,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   }
   
   const handleAddPropertyClick = () => {
-    if (hasPaidForListing) {
+    if (userProfile && userProfile.listingCredits && userProfile.listingCredits > 0) {
       setIsFormOpen(true);
     } else {
       setIsPaymentAlertOpen(true);
@@ -897,6 +896,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     <Plus className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
+                 <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
             </CardContent>
         </Card>
         {properties?.map((property) => (
@@ -924,7 +924,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     return renderAddPropertyForm();
   }
 
-  if (isUserLoading || arePropertiesLoading) {
+  if (isUserLoading || arePropertiesLoading || isProfileLoading) {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-8 w-8 animate-spin" />
