@@ -465,17 +465,41 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                                <DialogContent>
                                     <DialogHeader>
                                       <DialogTitle>Image Upload Instructions</DialogTitle>
-                                      <DialogDescription>
-                                          For the best results, please follow these guidelines when uploading your property images.
-                                      </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-4 py-4">
+                                      <p>
+                                        For the best results, please follow these guidelines when uploading your property images.
+                                      </p>
                                       <Alert>
                                         <AlertTitle>File Size Limit: 1MB</AlertTitle>
                                         <AlertDescription>
                                             Each image must be under 1MB. Large images may fail to upload.
                                         </AlertDescription>
                                       </Alert>
+                                      
+                                      <div className="mt-4">
+                                        <p className="font-semibold text-sm mb-2">Example Preview:</p>
+                                        <Card className="relative group overflow-hidden bg-muted/50">
+                                            <CardContent className="p-3 flex items-start gap-3">
+                                            <Image
+                                                src="https://placehold.co/80x80/60a5fa/ffffff?text=1:1"
+                                                alt="Example Preview"
+                                                width={80}
+                                                height={80}
+                                                className="w-20 h-20 object-cover rounded-md aspect-square bg-muted"
+                                            />
+                                            <div className="flex-1 truncate">
+                                                <p className="text-sm font-semibold truncate" title="property-image.jpg">property-image.jpg</p>
+                                                <p className="text-xs text-muted-foreground">256.8 KB</p>
+                                                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                                                    <CheckCircle2 className="h-3 w-3" />
+                                                    <span>Ready to upload</span>
+                                                </div>
+                                            </div>
+                                            </CardContent>
+                                        </Card>
+                                      </div>
+
                                       <p className="text-sm text-muted-foreground">
                                           If your images are too large, you can use a free online tool to compress them before uploading.
                                       </p>
@@ -833,7 +857,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                         Cancel
                     </Button>
                     <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
-                        {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        {isUploading || form.formState.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                         {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : (isEditing ? 'Update Property' : 'List My Property'))}
                     </Button>
                     </DialogFooter>
