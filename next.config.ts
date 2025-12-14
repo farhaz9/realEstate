@@ -44,7 +44,6 @@ const nextConfig: NextConfig = {
     IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
     NEXT_PUBLIC_ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
-    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
   },
 };
 
