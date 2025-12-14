@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useUser, useDoc, useMemoFirebase } from '@/firebase';
+import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { User, Order } from '@/types';
 import { Loader2, ShoppingBag } from 'lucide-react';
@@ -14,11 +14,12 @@ import Link from 'next/link';
 
 export function OrdersTab() {
   const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
 
   const userDocRef = useMemoFirebase(() => {
-    if (!user) return null;
-    return doc(user.firestore, 'users', user.uid);
-  }, [user]);
+    if (!user || !firestore) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [user, firestore]);
 
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<User>(userDocRef);
 
