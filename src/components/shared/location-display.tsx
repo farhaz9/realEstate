@@ -3,7 +3,7 @@
 
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { Button } from '@/components/ui/button';
-import { MapPin, Loader2, AlertTriangle, HelpCircle } from 'lucide-react';
+import { MapPin, Loader2, AlertTriangle, HelpCircle, ChevronDown } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -25,7 +25,7 @@ export function LocationDisplay() {
       return (
         <div className="flex items-center gap-2 text-muted-foreground animate-pulse">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm">Detecting location...</span>
+          <span className="text-sm">Detecting...</span>
         </div>
       );
     }
@@ -79,9 +79,10 @@ export function LocationDisplay() {
          <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-sm text-primary font-semibold h-auto p-1">
-                        <MapPin className="mr-2" />
+                    <Button variant="ghost" size="sm" className="text-base text-foreground font-semibold h-auto p-1 flex items-center gap-1">
+                        <MapPin className="h-5 w-5 text-primary" />
                         {city}
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -97,8 +98,8 @@ export function LocationDisplay() {
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm" onClick={handleClick} className="text-sm h-auto p-1">
-                            <MapPin className="mr-2" />
+                        <Button variant="ghost" size="sm" onClick={handleClick} className="text-base h-auto p-1 flex items-center gap-1">
+                            <MapPin className="h-5 w-5 text-primary" />
                             Detect Location
                         </Button>
                     </TooltipTrigger>

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown, Bell } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
 import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp, increment } from 'firebase/firestore';
@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 declare const Razorpay: any;
 
@@ -64,6 +65,15 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in km
 };
+
+const tabOptions = [
+  { value: "all", label: "All" },
+  { value: "buy", label: "Buy" },
+  { value: "rent", label: "Rent" },
+  { value: "pg", label: "PG / Co-living" },
+  { value: "commercial", label: "Commercial" },
+];
+
 
 export default function PropertiesPage() {
   const firestore = useFirestore();
@@ -120,7 +130,7 @@ export default function PropertiesPage() {
               const newOrder = {
                 paymentId: response.razorpay_payment_id,
                 amount: 99,
-                date: serverTimestamp(),
+                date: new Date(),
               };
               updateDocumentNonBlocking(userDocRef, {
                 orders: arrayUnion(newOrder),
@@ -275,7 +285,9 @@ export default function PropertiesPage() {
       let tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
-                       (activeTab === 'pg' && p.propertyType?.toLowerCase().includes('pg'));
+                       (activeTab === 'pg' && p.propertyType?.toLowerCase().includes('pg')) ||
+                       (activeTab === 'commercial' && p.propertyType?.toLowerCase().includes('commercial'));
+
 
       if (aiAnalysis && searchTerm) {
         if (aiAnalysis.listingType) {
@@ -316,36 +328,28 @@ export default function PropertiesPage() {
   return (
     <div>
       <section className="bg-background border-b sticky top-14 z-40">
-        <div className="container mx-auto px-4 pt-4 pb-2">
-          <div className="flex justify-between items-center">
-             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="buy">Buy</TabsTrigger>
-                <TabsTrigger value="rent">Rent</TabsTrigger>
-                <TabsTrigger value="pg">PG / Co-living</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <Button onClick={handlePostAdClick} className="hidden sm:flex ml-4 flex-shrink-0">
-                Post Ad
-            </Button>
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center mb-4">
+             <LocationDisplay />
+             <Button variant="ghost" size="icon" className="relative">
+                <Bell className="h-5 w-5" />
+                <div className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-destructive border-2 border-background" />
+             </Button>
           </div>
-           <form onSubmit={handleSearch} className="flex items-center gap-2 my-4">
+           <form onSubmit={handleSearch} className="flex items-center gap-2">
              <div className="relative flex-grow">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                     id="search"
                     placeholder={placeholder}
-                    className="pl-4 text-foreground h-12 rounded-full pr-12"
+                    className="pl-12 text-foreground h-12 rounded-lg bg-muted border-transparent focus:bg-background focus:border-primary"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                 <Button type="submit" size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full" disabled={isAiSearchPending}>
-                    {isAiSearchPending ? <ArrowUpDown className="h-5 w-5 animate-bounce" /> : <Search className="h-5 w-5" />}
-                </Button>
             </div>
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-12 w-12 rounded-full flex-shrink-0 shadow-sm">
+                    <Button size="icon" className="h-12 w-12 rounded-lg flex-shrink-0 shadow-sm">
                         <SlidersHorizontal className="h-5 w-5" />
                     </Button>
                 </SheetTrigger>
@@ -436,13 +440,40 @@ export default function PropertiesPage() {
                 </SheetContent>
             </Sheet>
            </form>
-           <div className="h-6 flex items-center justify-start -mt-2 mb-2">
-              <LocationDisplay />
+           <div className="flex items-center overflow-x-auto hide-scrollbar mt-4 border-b">
+              {tabOptions.map(tab => (
+                 <button 
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={cn(
+                    "relative py-3 px-4 text-sm font-medium whitespace-nowrap transition-colors text-muted-foreground",
+                    activeTab === tab.value && "text-primary"
+                  )}
+                 >
+                    {tab.label}
+                    {activeTab === tab.value && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
+                 </button>
+              ))}
             </div>
         </div>
       </section>
       
-      <div className="container mx-auto px-4 py-8 sm:py-12">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex justify-between items-center text-sm mb-6">
+           <p className="font-semibold">{filteredProperties.length} Properties found</p>
+           <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-auto h-auto px-3 py-1.5 border-none bg-transparent shadow-none text-sm gap-1">
+                  <span className="text-muted-foreground">Sort by:</span><SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                  <SelectItem value="dateListed-desc">Newest</SelectItem>
+                  <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                  <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                  {userLocation && <SelectItem value="nearby">Nearby</SelectItem>}
+              </SelectContent>
+          </Select>
+        </div>
+
         {isLoading || isAiSearchPending || isUserLoading || isProfileLoading ? (
             <div className="flex items-center justify-center min-h-[50vh]">
               <Spinner size={48} />
