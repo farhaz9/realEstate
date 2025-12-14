@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -135,6 +136,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
+  const [hasPaidForListing, setHasPaidForListing] = useState(false);
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -175,6 +177,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                 description: "You can now post your property.",
                 variant: "success",
             });
+            setHasPaidForListing(true);
             setIsPaymentAlertOpen(false);
             setIsFormOpen(true); 
         },
@@ -424,6 +427,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       };
       
       addDocumentNonBlocking(propertiesCollection, newPropertyData);
+      setHasPaidForListing(false); // Reset payment credit after successful listing
       toast({ title: 'Property Listed!', description: `Your property has been successfully listed.`, variant: 'success' });
     }
 
@@ -435,7 +439,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   }
   
   const handleAddPropertyClick = () => {
-    setIsPaymentAlertOpen(true);
+    if (hasPaidForListing) {
+      setIsFormOpen(true);
+    } else {
+      setIsPaymentAlertOpen(true);
+    }
   };
 
 

@@ -85,6 +85,7 @@ export default function PropertiesPage() {
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
   const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
+  const [hasPaidForListing, setHasPaidForListing] = useState(false);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -116,6 +117,7 @@ export default function PropertiesPage() {
                 description: "You can now post your property.",
                 variant: "success",
             });
+            setHasPaidForListing(true);
             setIsPaymentAlertOpen(false);
             router.push('/settings?tab=listings');
         },
@@ -137,8 +139,12 @@ export default function PropertiesPage() {
         router.push('/login');
         return;
     }
-    // Always prompt for payment for every listing.
-    setIsPaymentAlertOpen(true);
+    
+    if (hasPaidForListing) {
+      router.push('/settings?tab=listings');
+    } else {
+      setIsPaymentAlertOpen(true);
+    }
   };
 
   const searchSuggestions = useMemo(() => {
