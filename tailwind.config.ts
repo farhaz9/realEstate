@@ -150,7 +150,7 @@ export default {
         "zoom-in-90": "zoom-in-90 0.3s ease-in-out",
         "zoom-out-90": "zoom-out-90 0.3s ease-in-out",
         'fade-spin': 'fade-spin 1.2s linear infinite',
-        'bounce': 'bounce 1.4s infinite ease-in-out both',
+        'bounce': 'bounce 2s infinite ease-in-out both',
       },
     },
   },
