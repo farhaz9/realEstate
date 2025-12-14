@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { Resend } from 'resend';
 import ContactFormEmail from '@/emails/contact-form-email';
 import React from 'react';
+import 'dotenv/config';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -25,9 +26,17 @@ export async function sendEmail(
   formData: FormData
 ): Promise<ContactFormState> {
   if (!toEmail) {
+    console.error('Server configuration error: Recipient email (TO_EMAIL) is not set in .env file.');
     return {
       success: false,
-      message: 'Server configuration error: Recipient email is not set.',
+      message: 'The server is not configured to receive messages. Please contact support.',
+    };
+  }
+   if (!process.env.RESEND_API_KEY) {
+    console.error('Server configuration error: Resend API key is not set.');
+    return {
+      success: false,
+      message: 'The email service is not configured correctly. Please contact support.',
     };
   }
 
@@ -39,25 +48,32 @@ export async function sendEmail(
   });
 
   if (!validatedFields.success) {
+    const firstError = Object.values(validatedFields.error.flatten().fieldErrors)[0]?.[0];
     return {
       success: false,
-      message: validatedFields.error.flatten().fieldErrors[Object.keys(validatedFields.error.flatten().fieldErrors)[0]][0] || 'Invalid form data.',
+      message: firstError || 'Invalid form data. Please check your entries.',
     };
   }
 
   const { name, email, subject, message } = validatedFields.data;
 
   try {
-    await resend.emails.send({
+    const data = await resend.emails.send({
       from: 'Contact Form <onboarding@resend.dev>',
       to: [toEmail],
-      subject: `New Message: ${subject}`,
+      subject: `New Message from Delhi Estate Luxe: ${subject}`,
+      reply_to: email,
       react: React.createElement(ContactFormEmail, {
         name,
         email,
         message,
       }),
     });
+
+    if (data.error) {
+       console.error('Resend API error:', data.error);
+       return { success: false, message: 'Failed to send email due to a server error.' };
+    }
 
     return {
       success: true,
