@@ -20,7 +20,7 @@ export function UserNav() {
 
   return (
     <Button asChild variant="ghost" className="relative h-8 w-8 rounded-full">
-      <Link href="/profile">
+      <Link href="/settings">
         <Avatar className="h-8 w-8">
           <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
           <AvatarFallback>

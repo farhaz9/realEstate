@@ -14,7 +14,7 @@ export default function MobileNav() {
     { href: "/interiors", label: "Interiors", icon: Armchair },
     { href: "/", label: "Home", icon: Home },
     { href: "/contact", label: "Contact", icon: Mail },
-    { href: "/profile", label: "Profile", icon: User },
+    { href: "/settings", label: "Profile", icon: User },
   ];
 
   return (

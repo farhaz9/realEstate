@@ -239,7 +239,7 @@ export default function PropertiesPage() {
               </TabsList>
             </Tabs>
             <Button asChild className="hidden sm:flex ml-4 flex-shrink-0">
-                <Link href="/profile?tab=listings">
+                <Link href="/settings?tab=listings">
                     Post Ad
                     <span className="ml-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-sm">FREE</span>
                 </Link>

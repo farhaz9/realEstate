@@ -131,7 +131,7 @@ export default function Header() {
           <SheetContent side="left" className="p-0 flex flex-col">
              <SheetHeader className="p-6 pb-4 border-b">
                 <SheetClose asChild>
-                    <Link href="/profile">
+                    <Link href="/settings">
                         <div className="flex items-center gap-4">
                              {isUserLoading ? (
                                 <>
@@ -150,7 +150,7 @@ export default function Header() {
                                     </Avatar>
                                     <div>
                                         <p className="text-base font-bold text-left">{user.displayName?.split(' ')[0] || 'User'}</p>
-                                        <p className="text-sm text-muted-foreground text-left">View Profile</p>
+                                        <p className="text-sm text-muted-foreground text-left">View Settings</p>
                                     </div>
                                 </>
                              ) : (
@@ -199,7 +199,7 @@ export default function Header() {
                  <SheetFooter className="p-4 mt-auto border-t">
                     <SheetClose asChild>
                         <Button asChild variant="default" className="w-full h-12 text-base">
-                            <Link href="/profile?tab=listings">
+                            <Link href="/settings?tab=listings">
                                 <Plus className="mr-2 h-5 w-5" />
                                 Post Property
                             </Link>
@@ -267,11 +267,11 @@ export default function Header() {
                         ))}
                         {user && isProfessional && (
                         <Link
-                            href="/profile#listings"
+                            href="/settings#listings"
                             className={cn(
                             "px-4 py-1.5 rounded-full transition-colors",
                             "text-muted-foreground hover:text-foreground",
-                            pathname === "/profile"
+                            pathname === "/settings"
                                 ? "bg-primary/10 text-primary font-semibold"
                                 : ""
                             )}
