@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +17,17 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
 import { Logo } from '@/components/shared/logo';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -56,13 +68,14 @@ const roles = [
 
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('user');
   const [showPassword, setShowPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   
   // Vendor specific fields
   const [companyName, setCompanyName] = useState('');
@@ -211,6 +224,31 @@ export default function LoginPage() {
     }
   };
 
+   const handlePasswordReset = async () => {
+    if (!auth || !resetEmail) return;
+
+    try {
+        await initiatePasswordReset(auth, resetEmail);
+        toast({
+            title: 'Password Reset Email Sent',
+            description: 'Please check your inbox for instructions to reset your password.',
+        });
+    } catch (error: unknown) {
+        console.error(error);
+        let errorMessage = "Could not send password reset email. Please try again.";
+        if (error instanceof FirebaseError) {
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+                errorMessage = "No user found with this email address.";
+            }
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Reset Failed',
+            description: errorMessage,
+        });
+    }
+  };
+
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white h-screen w-full flex overflow-hidden">
@@ -327,7 +365,38 @@ export default function LoginPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                    <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="password">Password</Label>
+                    {isLogin && (
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                               <Button variant="link" type="button" className="p-0 h-auto text-xs">Forgot Password?</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Reset Your Password</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Enter your email address and we'll send you a link to reset your password.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <div className="space-y-2">
+                                    <Label htmlFor="reset-email">Email</Label>
+                                    <Input
+                                        id="reset-email"
+                                        type="email"
+                                        placeholder="m@example.com"
+                                        value={resetEmail}
+                                        onChange={(e) => setResetEmail(e.target.value)}
+                                    />
+                                </div>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                </div>
                 <div className="relative group">
                   <Input value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="password" placeholder={isLogin ? "Enter your password" : "Create a password"} type={showPassword ? 'text' : 'password'}/>
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
@@ -366,3 +435,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
