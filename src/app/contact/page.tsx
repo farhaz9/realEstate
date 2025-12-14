@@ -61,8 +61,8 @@ export default function ContactPage() {
         title="Contact Us"
         subtitle="We'd love to hear from you. Let's find your dream home together."
         image={{
-          id: 'contact-hero',
-          imageHint: 'office reception',
+          id: 'services-hero',
+          imageHint: 'construction site',
         }}
       />
 
