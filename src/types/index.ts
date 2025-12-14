@@ -54,7 +54,6 @@ export type User = {
   dateJoined: Date | any;
   photoURL?: string;
   wishlist?: string[];
-  subscriptionStatus?: 'free' | 'premium';
   companyName?: string;
   servicesProvided?: string[];
   bio?: string;

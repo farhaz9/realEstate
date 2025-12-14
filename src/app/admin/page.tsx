@@ -115,18 +115,6 @@ export default function AdminPage() {
         direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc'
     }));
   }
-  
-  const handleSubscriptionToggle = (userId: string, currentStatus: 'free' | 'premium') => {
-    if (!firestore) return;
-    const newStatus = currentStatus === 'premium' ? 'free' : 'premium';
-    const userRef = doc(firestore, 'users', userId);
-    updateDocumentNonBlocking(userRef, { subscriptionStatus: newStatus });
-    toast({
-      title: `Subscription Updated`,
-      description: `User has been set to ${newStatus}.`,
-      variant: 'success'
-    });
-  };
 
   const categoryDisplay: Record<string, string> = {
     'user': 'Buyer / Tenant',
@@ -321,13 +309,7 @@ export default function AdminPage() {
                                                 Category <ArrowUpDown className="h-4 w-4" />
                                             </div>
                                         </TableHead>
-                                         <TableHead className="cursor-pointer" onClick={() => handleUserSort('subscriptionStatus')}>
-                                            <div className="flex items-center gap-2">
-                                                Subscription <ArrowUpDown className="h-4 w-4" />
-                                            </div>
-                                        </TableHead>
                                         <TableHead>Contact</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -349,22 +331,7 @@ export default function AdminPage() {
                                                 {user.dateJoined?.toDate ? format(user.dateJoined.toDate(), 'PPP') : 'N/A'}
                                             </TableCell>
                                             <TableCell>{categoryDisplay[user.category] || user.category}</TableCell>
-                                            <TableCell>
-                                                <Badge variant={user.subscriptionStatus === 'premium' ? 'default' : 'secondary'} className="capitalize">
-                                                    {user.subscriptionStatus === 'premium' && <Crown className="mr-1 h-3 w-3" />}
-                                                    {user.subscriptionStatus || 'free'}
-                                                </Badge>
-                                            </TableCell>
                                             <TableCell>{user.phone || 'Not provided'}</TableCell>
-                                            <TableCell className="text-right">
-                                                <Button 
-                                                    variant="outline" 
-                                                    size="sm" 
-                                                    onClick={() => handleSubscriptionToggle(user.id, user.subscriptionStatus || 'free')}
-                                                >
-                                                    {user.subscriptionStatus === 'premium' ? 'Revoke' : 'Grant'} Premium
-                                                </Button>
-                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

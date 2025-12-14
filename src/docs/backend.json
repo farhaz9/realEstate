@@ -49,12 +49,6 @@
             "type": "string",
             "description": "URL of the user's profile picture."
         },
-        "subscriptionStatus": {
-            "type": "string",
-            "description": "The user's subscription status.",
-            "enum": ["free", "premium"],
-            "default": "free"
-        },
         "companyName": {
             "type": "string",
             "description": "The name of the company for vendors or other professionals."

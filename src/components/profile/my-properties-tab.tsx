@@ -50,6 +50,8 @@ import ImageKit from 'imagekit-javascript';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
 
+declare const Razorpay: any;
+
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
   "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
@@ -119,18 +121,15 @@ async function getCoordinatesForAddress(address: string) {
   }
 }
 
-declare const Razorpay: any;
-
 export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabProps) {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const router = useRouter();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isUpgradeAlertOpen, setIsUpgradeAlertOpen] = useState(false);
+  const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -147,12 +146,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
   
   const isEditing = !!propertyToEdit;
-  const isPremiumUser = userProfile?.subscriptionStatus === 'premium';
   
-  // Logic for listing limits
-  const hasFreeListing = properties && properties.length > 0;
-  const canAddListing = isPremiumUser || !hasFreeListing;
-
   const handlePayment = async () => {
     if (typeof window === 'undefined' || !(window as any).Razorpay) {
       toast({
@@ -167,20 +161,17 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: "9900", // amount in the smallest currency unit
         currency: "INR",
-        name: "Estately Premium Listing",
+        name: "Estately Property Listing",
         description: "One-time fee for one property listing.",
         image: "https://example.com/your_logo.jpg", // Optional
         handler: function (response: any){
-            if (userDocRef) {
-                updateDocumentNonBlocking(userDocRef, { subscriptionStatus: 'premium' });
-                toast({
-                    title: "Payment Successful!",
-                    description: "You now have premium access. You can post unlimited listings.",
-                    variant: "success",
-                });
-                setIsUpgradeAlertOpen(false);
-                setIsFormOpen(true); 
-            }
+            toast({
+                title: "Payment Successful!",
+                description: "You can now post your property.",
+                variant: "success",
+            });
+            setIsPaymentAlertOpen(false);
+            setIsFormOpen(true); 
         },
         prefill: {
             name: userProfile?.fullName,
@@ -398,9 +389,9 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       toast({ title: 'Property Updated!', description: 'Your property has been successfully updated.', variant: 'success' });
     } else if(user) {
       const propertiesCollection = collection(firestore, 'properties');
-      const tier = isPremiumUser || !hasFreeListing ? 'free' : 'premium'; // Logic might need adjustment for paying
-      const isFeatured = isPremiumUser;
-      const expirationDays = isPremiumUser ? 90 : 30; // Premium listings last longer
+      const tier = 'premium';
+      const isFeatured = true;
+      const expirationDays = 90;
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + expirationDays);
 
@@ -414,7 +405,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       };
       
       addDocumentNonBlocking(propertiesCollection, newPropertyData);
-      toast({ title: 'Property Listed!', description: `Your ${tier} property has been successfully listed.`, variant: 'success' });
+      toast({ title: 'Property Listed!', description: `Your property has been successfully listed.`, variant: 'success' });
     }
 
     setIsUploading(false);
@@ -425,11 +416,8 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   }
   
   const handleAddPropertyClick = () => {
-    if (canAddListing) {
-      setIsFormOpen(true);
-    } else {
-      setIsUpgradeAlertOpen(true);
-    }
+    // Always open payment dialog.
+    setIsPaymentAlertOpen(true);
   };
 
 
@@ -848,17 +836,17 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
           <PropertyCard key={property.id} property={property} showActiveBadge={true} />
         ))}
       </div>
-       <AlertDialog open={isUpgradeAlertOpen} onOpenChange={setIsUpgradeAlertOpen}>
+       <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Free Listing Limit Reached</AlertDialogTitle>
+            <AlertDialogTitle>Post a New Property</AlertDialogTitle>
             <AlertDialogDescription>
-              You've already used your one free property listing. To list more properties, please purchase a premium listing for ₹99.
+               A fee of ₹99 is required to post a new property listing. Please proceed to payment.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handlePayment}>Proceed to Pay</AlertDialogAction>
+            <AlertDialogAction onClick={handlePayment}>Pay ₹99</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -881,57 +869,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     <div className="space-y-8">
         {renderMyProperties()}
         {renderAddPropertyForm()}
-         {(!isPremiumUser && hasFreeListing) && (
-            <div className="mt-16 max-w-lg mx-auto">
-                <div className="relative rounded-2xl bg-slate-900 p-8 text-white shadow-2xl border border-purple-500/30">
-                    <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4">
-                        <div className="w-32 h-8 bg-purple-600 text-white text-xs font-bold flex items-center justify-center transform rotate-45">
-                           POPULAR
-                        </div>
-                    </div>
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h3 className="text-2xl font-bold flex items-center gap-2">
-                                Premium <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                            </h3>
-                            <p className="text-sm text-slate-400">Best for active agents</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-4xl font-bold">₹99</p>
-                            <p className="text-sm text-slate-400">/ listing</p>
-                        </div>
-                    </div>
-
-                    <hr className="my-6 border-slate-700" />
-
-                    <ul className="space-y-4">
-                        <li className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                            <span>Unlimited listings & saves</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                            <span className="flex-grow">Feature your listings</span>
-                            <span className="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-sm">TOP</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                            <span>Detailed visitor analytics</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                            <span>Priority email support</span>
-                        </li>
-                    </ul>
-
-                    <Button className="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white font-bold text-base py-6 rounded-lg" onClick={handlePayment}>
-                        Subscribe Now <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-
-                    <p className="text-center text-xs text-slate-500 mt-4">One-time payment per listing.</p>
-                </div>
-            </div>
-         )}
     </div>
   )
 }

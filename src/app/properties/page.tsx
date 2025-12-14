@@ -42,6 +42,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
+declare const Razorpay: any;
+
 const staticSearchSuggestions = [
   'Search property in South Delhi',
   'Rent house in Chattarpur',
@@ -63,8 +65,6 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * c; // Distance in km
 };
 
-declare const Razorpay: any;
-
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
@@ -84,7 +84,7 @@ export default function PropertiesPage() {
   const [placeholder, setPlaceholder] = useState(staticSearchSuggestions[0]);
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
-  const [isUpgradeAlertOpen, setIsUpgradeAlertOpen] = useState(false);
+  const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -93,36 +93,31 @@ export default function PropertiesPage() {
 
   const { data: userProfile } = useDoc<User>(userDocRef);
 
-  const userPropertiesQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
-  }, [firestore, user]);
-
-  const { data: userProperties } = useCollection<Property>(userPropertiesQuery);
-
-  const isPremiumUser = userProfile?.subscriptionStatus === 'premium';
-  const hasFreeListing = userProperties && userProperties.length > 0;
-  const canAddListing = isPremiumUser || !hasFreeListing;
-
   const handlePayment = async () => {
+    if (typeof window === 'undefined' || !(window as any).Razorpay) {
+      toast({
+        title: "Payment Gateway Error",
+        description: "Razorpay is not available. Please check your connection and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: "9900", // amount in the smallest currency unit
         currency: "INR",
-        name: "Estately Premium Listing",
+        name: "Estately Property Listing",
         description: "One-time fee for one property listing.",
         image: "https://example.com/your_logo.jpg", // Optional
         handler: function (response: any){
-            if (userDocRef) {
-                updateDocumentNonBlocking(userDocRef, { subscriptionStatus: 'premium' });
-                toast({
-                    title: "Payment Successful!",
-                    description: "You now have premium access. You can post unlimited listings.",
-                    variant: "success",
-                });
-                setIsUpgradeAlertOpen(false);
-                router.push('/settings?tab=listings');
-            }
+            toast({
+                title: "Payment Successful!",
+                description: "You can now post your property.",
+                variant: "success",
+            });
+            setIsPaymentAlertOpen(false);
+            router.push('/settings?tab=listings');
         },
         prefill: {
             name: userProfile?.fullName,
@@ -142,12 +137,8 @@ export default function PropertiesPage() {
         router.push('/login');
         return;
     }
-
-    if (canAddListing) {
-        router.push('/settings?tab=listings');
-    } else {
-        setIsUpgradeAlertOpen(true);
-    }
+    // Always prompt for payment for every listing.
+    setIsPaymentAlertOpen(true);
   };
 
   const searchSuggestions = useMemo(() => {
@@ -322,7 +313,6 @@ export default function PropertiesPage() {
             </Tabs>
             <Button onClick={handlePostAdClick} className="hidden sm:flex ml-4 flex-shrink-0">
                 Post Ad
-                <span className="ml-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-sm">FREE</span>
             </Button>
           </div>
            <form onSubmit={handleSearch} className="flex items-center gap-2 my-4">
@@ -460,17 +450,17 @@ export default function PropertiesPage() {
         )}
       </div>
 
-       <AlertDialog open={isUpgradeAlertOpen} onOpenChange={setIsUpgradeAlertOpen}>
+       <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Free Listing Limit Reached</AlertDialogTitle>
+            <AlertDialogTitle>Post a New Property</AlertDialogTitle>
             <AlertDialogDescription>
-              You've already used your one free property listing. To list more properties, please purchase a premium listing for ₹99.
+              To post a new property listing, a fee of ₹99 is required. Please proceed to payment.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handlePayment}>Proceed to Pay</AlertDialogAction>
+            <AlertDialogAction onClick={handlePayment}>Proceed to Pay ₹99</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

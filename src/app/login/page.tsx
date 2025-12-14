@@ -151,7 +151,6 @@ export default function LoginPage() {
             category: category,
             dateJoined: serverTimestamp(),
             photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
-            subscriptionStatus: 'free',
             wishlist: [],
         };
         
@@ -196,7 +195,6 @@ export default function LoginPage() {
           category: 'user',
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
-          subscriptionStatus: 'free',
           wishlist: [],
         });
       }
