@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText } from 'lucide-react';
 import type { Property, User } from '@/types';
 import {
   AlertDialog,
@@ -93,6 +92,12 @@ const propertyFormSchema = z.object({
 
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
+interface ImagePreview {
+  url: string;
+  name: string;
+  size: number;
+}
+
 interface MyPropertiesTabProps {
   propertyToEdit?: Property | null;
   onSuccess?: () => void;
@@ -125,7 +130,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -147,7 +152,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   
   const isEditing = !!propertyToEdit;
   
-  const handlePayment = async () => {
+ const handlePayment = async () => {
     if (typeof window === 'undefined' || !(window as any).Razorpay) {
       toast({
         title: "Payment Gateway Error",
@@ -238,7 +243,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         ageOfConstruction: propertyToEdit.ageOfConstruction || '',
         amenities: propertyToEdit.amenities?.join(', ') || '',
       });
-      setImagePreviews(propertyToEdit.imageUrls || []);
+      setImagePreviews(propertyToEdit.imageUrls?.map(url => ({ url, name: 'Uploaded Image', size: 0 })) || []);
     } else if (isFormOpen) { // Reset form only when opening for a new entry
         form.reset();
         setImagePreviews([]);
@@ -283,7 +288,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
 
       if (validFiles.length === 0) return;
 
-      const newPreviews = validFiles.map(file => URL.createObjectURL(file));
+      const newPreviews: ImagePreview[] = validFiles.map(file => ({
+        url: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size,
+      }));
       setImagePreviews(prev => [...prev, ...newPreviews]);
 
       const currentFiles = form.getValues('images') || [];
@@ -326,11 +335,12 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       return;
     }
 
-    let uploadedImageUrls: string[] = isEditing ? imagePreviews.filter(url => url.startsWith('http')) : [];
-    const files = data.images as FileList | null;
-    const newFilesToUpload = files ? Array.from(files) : [];
+    let uploadedImageUrls: string[] = isEditing ? imagePreviews.filter(p => p.url.startsWith('http')).map(p => p.url) : [];
+    
+    const filesToUpload = imagePreviews.filter(p => p.url.startsWith('blob:'));
 
-    if (newFilesToUpload.length > 0) {
+
+    if (filesToUpload.length > 0) {
       try {
         const authRes = await fetch('/api/imagekit/auth');
         const authBody = await authRes.json();
@@ -344,18 +354,27 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
             urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
             authenticationEndpoint: `${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit/auth`
         });
-
-        const uploadPromises = newFilesToUpload.map(file => {
-          return imagekit.upload({
-            file,
-            fileName: file.name,
-            ...authBody,
-            folder: "/delhi-estate-luxe",
-          });
+        
+        const fileList = form.getValues('images') as FileList | null;
+        
+        const uploadPromises = filesToUpload.map(async (preview) => {
+            if (fileList) {
+                const file = Array.from(fileList).find(f => f.name === preview.name && f.size === preview.size);
+                if (file) {
+                    return imagekit.upload({
+                        file,
+                        fileName: file.name,
+                        ...authBody,
+                        folder: "/delhi-estate-luxe",
+                    });
+                }
+            }
+            return null;
         });
 
         const uploadResults = await Promise.all(uploadPromises);
-        uploadedImageUrls = [...uploadedImageUrls, ...uploadResults.map(result => result.url)];
+        const newUrls = uploadResults.filter(r => r).map(result => result!.url);
+        uploadedImageUrls = [...uploadedImageUrls, ...newUrls];
 
       } catch (error: any) {
         console.error("Image upload failed:", error);
@@ -416,7 +435,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   }
   
   const handleAddPropertyClick = () => {
-    // Always open payment dialog.
     setIsPaymentAlertOpen(true);
   };
 
@@ -452,20 +470,20 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                                       </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-4 py-4">
-                                    <Alert>
+                                      <Alert>
                                         <AlertTitle>File Size Limit: 1MB</AlertTitle>
                                         <AlertDescription>
                                             Each image must be under 1MB. Large images may fail to upload.
                                         </AlertDescription>
-                                        </Alert>
-                                        <p className="text-sm text-muted-foreground">
-                                            If your images are too large, you can use a free online tool to compress them before uploading.
-                                        </p>
-                                        <Button variant="secondary" asChild>
-                                            <Link href="https://www.iloveimg.com/" target="_blank">
-                                            Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
-                                            </Link>
-                                        </Button>
+                                      </Alert>
+                                      <p className="text-sm text-muted-foreground">
+                                          If your images are too large, you can use a free online tool to compress them before uploading.
+                                      </p>
+                                      <Button variant="secondary" asChild>
+                                          <Link href="https://www.iloveimg.com/" target="_blank">
+                                          Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
+                                          </Link>
+                                      </Button>
                                     </div>
                                     <DialogFooter>
                                     <Button onClick={() => fileInputRef.current?.click()}>
@@ -493,30 +511,38 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                       )}
                     />
                     
-                    {imagePreviews.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {imagePreviews.map((src, index) => (
-                        <div key={index} className="relative group">
-                            <Image
-                            src={src}
-                            alt={`Preview ${index + 1}`}
-                            width={150}
-                            height={150}
-                            className="w-full h-auto object-cover rounded-md aspect-square"
-                            />
-                            <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-1 right-1 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeImagePreview(index)}
-                            disabled={isUploading}
-                            >
-                            <X className="h-4 w-4" />
-                            </Button>
+                     {imagePreviews.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {imagePreviews.map((preview, index) => (
+                            <Card key={index} className="relative group overflow-hidden">
+                                <CardContent className="p-3 flex items-start gap-3">
+                                <Image
+                                    src={preview.url}
+                                    alt={`Preview ${index + 1}`}
+                                    width={80}
+                                    height={80}
+                                    className="w-20 h-20 object-cover rounded-md aspect-square bg-muted"
+                                />
+                                <div className="flex-1 truncate">
+                                    <p className="text-sm font-semibold truncate" title={preview.name}>{preview.name}</p>
+                                    {preview.size > 0 && (
+                                        <p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>
+                                    )}
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 rounded-full shrink-0"
+                                    onClick={() => removeImagePreview(index)}
+                                    disabled={isUploading}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                                </CardContent>
+                            </Card>
+                            ))}
                         </div>
-                        ))}
-                    </div>
                     )}
 
 
