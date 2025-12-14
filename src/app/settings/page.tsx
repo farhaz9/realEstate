@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -42,6 +42,13 @@ function SettingsPageContent() {
   
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserType>(userDocRef);
 
+  useEffect(() => {
+    // Only redirect if loading is complete and there's no user.
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
+
   const getInitials = (name: string) => {
     if (!name) return '';
     const names = name.split(' ');
@@ -53,22 +60,11 @@ function SettingsPageContent() {
   
   const isLoading = isUserLoading || isProfileLoading;
 
-  if (isLoading) {
+  if (isLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <Spinner size={48} />
       </div>
-    );
-  }
-
-  if (!user) {
-    if (typeof window !== 'undefined') {
-      router.push('/login');
-    }
-    return (
-       <div className="flex items-center justify-center min-h-[60vh]">
-          <Spinner size={48} />
-        </div>
     );
   }
   
