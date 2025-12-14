@@ -119,22 +119,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-12 bg-background overflow-x-hidden">
-        <div className="container mx-auto px-0 sm:px-4 text-center">
+      <section className="py-12 bg-background">
+        <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
             Quick Actions
           </p>
-           <div className="mt-8 relative">
-             <div className="flex justify-center overflow-x-auto space-x-4 sm:space-x-8 pb-4 hide-scrollbar px-4 sm:px-0">
-              {quickServices.map((service) => (
-                <Link href={service.href} key={service.label} className="flex flex-col items-center gap-3 text-center group flex-shrink-0 w-20 sm:w-24">
-                   <div className={`flex h-20 w-20 items-center justify-center rounded-full ${service.bgColor} group-hover:scale-105 transition-all duration-300`}>
+          <div className="relative">
+            <div className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory -mx-4 px-4 sm:justify-center">
+              <div className="flex flex-nowrap sm:justify-center gap-x-4 sm:gap-x-8">
+                {quickServices.map((service) => (
+                  <Link href={service.href} key={service.label} className="flex flex-col items-center gap-3 text-center group flex-shrink-0 w-20 sm:w-24 snap-center">
+                    <div className={`flex h-20 w-20 items-center justify-center rounded-full ${service.bgColor} group-hover:scale-105 transition-all duration-300`}>
                       <service.icon className={`h-10 w-10 ${service.iconColor} transition-colors`} />
                     </div>
-                  <p className="text-sm font-semibold text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
-                </Link>
-              ))}
+                    <p className="text-sm font-semibold text-muted-foreground transition-colors group-hover:text-primary">{service.label}</p>
+                  </Link>
+                ))}
+              </div>
             </div>
+            <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none sm:hidden" />
+            <div className="absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
           </div>
         </div>
       </section>
