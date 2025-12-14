@@ -24,11 +24,19 @@ export default function InteriorsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+  const [heroSearchTerm, setHeroSearchTerm] = useState('');
 
   useEffect(() => {
     // Update search term from URL query parameters
     setSearchTerm(searchParams.get('q') || '');
   }, [searchParams]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(window.location.search);
+    params.set('q', heroSearchTerm);
+    router.replace(`/interiors?${params.toString()}`);
+  };
   
   const designersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -41,7 +49,8 @@ export default function InteriorsPage() {
   const { data: designers, isLoading, error } = useCollection<User>(designersQuery);
 
   const filteredDesigners = designers?.filter(d => 
-    d.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+    d.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (d.companyName && d.companyName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
   
   return (
@@ -53,18 +62,35 @@ export default function InteriorsPage() {
             Interior Designers
           </>
         }
-        subtitle=""
+        subtitle="Connect with top-rated interior designers to bring your vision to life."
         imageUrl="https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=2728&auto=format&fit=crop"
-        titleClassName="text-4xl md:text-5xl lg:text-6xl !mt-0"
+        titleClassName="text-4xl md:text-5xl lg:text-6xl"
+        className="h-[80vh] md:h-[90vh]"
       >
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
-            TRANSFORM YOUR SPACE
-          </Badge>
-          <p className="mt-2 text-lg max-w-3xl">
-            Connect with top-rated interior designers to bring your vision to life.
-          </p>
-        </div>
+        <div className="w-full max-w-xl mx-auto">
+            <form
+              onSubmit={handleSearch}
+              className="flex w-full items-center rounded-full bg-white p-2 shadow-lg"
+            >
+              <div className="relative flex-grow">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  id="search-designer"
+                  placeholder="Search by designer name or firm"
+                  className="pl-12 pr-4 h-12 text-base rounded-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground"
+                  value={heroSearchTerm}
+                  onChange={(e) => setHeroSearchTerm(e.target.value)}
+                />
+              </div>
+              <Button
+                type="submit"
+                size="lg"
+                className="rounded-full px-8 text-base h-12"
+              >
+                Search
+              </Button>
+            </form>
+          </div>
       </PageHero>
       
       <section id="top-designers" className="py-16 md:py-24 bg-background">
