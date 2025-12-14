@@ -71,13 +71,12 @@ const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
+function StickySearchHeader({ onMenuClick, searchAction }: { onMenuClick: () => void, searchAction: (term: string) => void }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/properties?q=${searchTerm}`);
+    searchAction(searchTerm);
   };
   
   return (
@@ -103,7 +102,14 @@ export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user, isUserLoading } = useUser();
-  const { isScrolled } = useOnScroll('offers'); 
+  const router = useRouter();
+  
+  const isHomePage = pathname === '/';
+  const isInteriorsPage = pathname === '/interiors';
+
+  const scrollTriggerId = isHomePage ? 'offers' : (isInteriorsPage ? 'top-designers' : '');
+  const { isScrolled } = useOnScroll(scrollTriggerId); 
+  
   const firestore = useFirestore();
 
   const userDocRef = useMemoFirebase(() => {
@@ -115,7 +121,16 @@ export default function Header() {
 
   const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer'].includes(userProfile.category);
 
-  const isHomePage = pathname === '/';
+  const handleSearch = (searchTerm: string) => {
+    if (isHomePage) {
+      router.push(`/properties?q=${searchTerm}`);
+    } else if (isInteriorsPage) {
+      // For interiors, we might want to just update the query param to filter on the same page
+      const params = new URLSearchParams(window.location.search);
+      params.set('q', searchTerm);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  };
   
   const visibleNavLinks = navLinks.filter(link => {
     if (link.label === "My Listings" && !isProfessional) return false;
@@ -213,8 +228,8 @@ export default function Header() {
                 "h-14 items-center rounded-full p-2 md:px-4",
                 "bg-background shadow-md",
           )}>
-            {isHomePage && isScrolled ? (
-              <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} />
+            {(isHomePage || isInteriorsPage) && isScrolled ? (
+              <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} searchAction={handleSearch}/>
             ) : (
             <div className="grid grid-cols-3 h-full items-center">
                 <div className="flex items-center gap-2">

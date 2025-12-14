@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { interiorProjects } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -17,11 +17,19 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function InteriorsPage() {
   const firestore = useFirestore();
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
 
+  useEffect(() => {
+    // Update search term from URL query parameters
+    setSearchTerm(searchParams.get('q') || '');
+  }, [searchParams]);
+  
   const designersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(
@@ -56,26 +64,10 @@ export default function InteriorsPage() {
           <p className="mt-2 text-lg max-w-3xl">
             Connect with top-rated interior designers to bring your vision to life.
           </p>
-          <form 
-              className="relative flex w-full items-center max-w-xl" 
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Search logic is handled by filtering the list
-              }}
-            >
-              <Search className="absolute left-4 h-5 w-5 text-muted-foreground z-10" />
-              <Input 
-                  placeholder="Search by designer name..."
-                  className="pl-12 pr-28 h-14 text-base rounded-full bg-background/80 backdrop-blur-sm focus-visible:ring-offset-0 border-white/20 shadow-lg"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Button size="lg" type="submit" className="absolute right-2 h-11 rounded-full px-8 text-base">Search</Button>
-          </form>
         </div>
       </PageHero>
       
-      <section className="py-16 md:py-24 bg-background">
+      <section id="top-designers" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
            <div className="flex justify-between items-center mb-8">
              <h2 className="text-3xl md:text-4xl font-bold">Top Interior Designers</h2>
