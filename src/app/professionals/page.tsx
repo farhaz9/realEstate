@@ -6,7 +6,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { PageHero } from '@/components/shared/page-hero';
-import { Loader2, Search, SlidersHorizontal, List, Building, Brush } from 'lucide-react';
+import { Loader2, Search, SlidersHorizontal, List, Building, Brush, Wrench } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ const filterTabs = [
   { id: 'all', label: 'All Professionals', icon: List },
   { id: 'real-estate-agent', label: 'Real Estate Agents', icon: Building },
   { id: 'interior-designer', label: 'Interior Designers', icon: Brush },
+  { id: 'vendor', label: 'Vendors', icon: Wrench },
 ];
 
 export default function ProfessionalsPage() {
@@ -29,7 +30,7 @@ export default function ProfessionalsPage() {
     if (!firestore) return null;
     let q = collection(firestore, 'users');
 
-    const professionalCategories = ['real-estate-agent', 'interior-designer'];
+    const professionalCategories = ['real-estate-agent', 'interior-designer', 'vendor'];
     if (activeTab !== 'all' && professionalCategories.includes(activeTab)) {
       return query(q, where('category', '==', activeTab));
     }
@@ -42,7 +43,8 @@ export default function ProfessionalsPage() {
     const lowerCaseSearch = searchTerm.toLowerCase();
     return (
         p.fullName.toLowerCase().includes(lowerCaseSearch) ||
-        (p.username && p.username.toLowerCase().includes(lowerCaseSearch))
+        (p.username && p.username.toLowerCase().includes(lowerCaseSearch)) ||
+        (p.companyName && p.companyName.toLowerCase().includes(lowerCaseSearch))
     );
   });
 
@@ -104,7 +106,7 @@ export default function ProfessionalsPage() {
             TRUSTED BY 50,000+ HOMEOWNERS
           </Badge>
           <p className="mt-2 text-lg max-w-3xl">
-            Connect with top-rated agents and interior designers to bring your vision to life.
+            Connect with top-rated agents, designers, and vendors to bring your vision to life.
           </p>
           <form 
               className="relative flex w-full items-center max-w-xl" 
@@ -112,7 +114,7 @@ export default function ProfessionalsPage() {
             >
               <Search className="absolute left-4 h-5 w-5 text-muted-foreground z-10" />
               <Input 
-                  placeholder="Search by name, city, or zip code..."
+                  placeholder="Search by name, company, or specialty..."
                   className="pl-12 pr-28 h-14 text-base rounded-full bg-background/80 backdrop-blur-sm focus-visible:ring-offset-0 border-white/20 shadow-lg"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

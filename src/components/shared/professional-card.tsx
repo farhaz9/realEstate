@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Star, Briefcase, MapPin, BadgeCheck, PencilRuler } from 'lucide-react';
+import { User as UserIcon, Star, Briefcase, MapPin, BadgeCheck, PencilRuler, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 
@@ -16,12 +16,14 @@ interface ProfessionalCardProps {
 
 const categoryDisplay: Record<string, string> = {
     'real-estate-agent': 'Real Estate Agent',
-    'interior-designer': 'Interior Designer'
+    'interior-designer': 'Interior Designer',
+    'vendor': 'Vendor / Supplier'
 };
 
 const categoryIcon: Record<string, React.ElementType> = {
     'real-estate-agent': Briefcase,
-    'interior-designer': PencilRuler
+    'interior-designer': PencilRuler,
+    'vendor': Wrench
 };
 
 export function ProfessionalCard({ professional }: ProfessionalCardProps) {
@@ -38,6 +40,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const rating = 4.5 + (professional.fullName.length % 5) / 10;
   
   const CategoryIcon = categoryIcon[professional.category] || Briefcase;
+  const cardTitle = professional.companyName || professional.fullName;
 
   return (
     <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1">
@@ -58,7 +61,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
             <div className="flex justify-between items-start">
                 <div>
                     <h3 className="font-bold text-lg flex items-center gap-2">
-                      {professional.fullName}
+                      {cardTitle}
                       <BadgeCheck className="h-5 w-5 text-blue-500 flex-shrink-0" />
                     </h3>
                     <p className="text-xs font-semibold uppercase tracking-wider text-primary">{categoryDisplay[professional.category] || professional.category}</p>
@@ -66,7 +69,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
             </div>
 
              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                Expert in luxury residential properties with over 10 years of experience.
+                {professional.bio || professional.servicesProvided?.join(', ') || `Expert in luxury residential properties with over ${5 + professional.fullName.length % 10} years of experience.`}
              </p>
              
              <div className="mt-4 pt-4 border-t flex items-center justify-between text-xs text-muted-foreground">

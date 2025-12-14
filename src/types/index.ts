@@ -50,9 +50,12 @@ export type User = {
   username?: string;
   email: string;
   phone: string;
-  category: 'user' | 'listing-property' | 'real-estate-agent' | 'interior-designer';
+  category: 'user' | 'listing-property' | 'real-estate-agent' | 'interior-designer' | 'vendor';
   dateJoined: Date | any;
   photoURL?: string;
   wishlist?: string[];
   subscriptionStatus?: 'free' | 'premium';
+  companyName?: string;
+  servicesProvided?: string[];
+  bio?: string;
 }

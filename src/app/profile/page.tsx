@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2, Settings } from 'lucide-react';
+import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2, Settings, Wrench } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
@@ -132,12 +132,14 @@ function ProfilePageContent() {
     'user': 'Buyer / Tenant',
     'listing-property': 'Property Owner',
     'real-estate-agent': 'Real Estate Agent',
-    'interior-designer': 'Interior Designer'
+    'interior-designer': 'Interior Designer',
+    'vendor': 'Vendor / Supplier'
   };
   
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
-  const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer'].includes(userProfile.category);
-  
+  const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(userProfile.category);
+  const canListProperties = userProfile?.category && ['listing-property', 'real-estate-agent'].includes(userProfile.category);
+
   if (isUserLoading || isProfileLoading) {
     return (
       <>
@@ -164,7 +166,7 @@ function ProfilePageContent() {
 
   const displayAvatar = userProfile?.photoURL ?? user.photoURL;
   const displayName = userProfile?.fullName ?? user.displayName;
-  const tabsToShow = isProfessional ? 3 : 2;
+  const tabsToShow = canListProperties ? 3 : 2;
 
   return (
     <>
@@ -177,9 +179,9 @@ function ProfilePageContent() {
       
       <div className="container mx-auto px-4 py-12">
         <Tabs defaultValue={defaultTab} className="w-full">
-           <TabsList className={`grid w-full max-w-lg mx-auto mb-8 grid-cols-${tabsToShow}`}>
+           <TabsList className={`grid w-full max-w-lg mx-auto grid-cols-${tabsToShow}`}>
             <TabsTrigger value="profile">Profile</TabsTrigger>
-            {isProfessional && (
+            {canListProperties && (
               <TabsTrigger value="listings">My Listings</TabsTrigger>
             )}
             <TabsTrigger value="wishlist">My Wishlist</TabsTrigger>
@@ -260,6 +262,24 @@ function ProfilePageContent() {
                           <p className="text-sm font-medium">{categoryDisplay[userProfile.category] || userProfile.category}</p>
                         </div>
                       </div>
+                      {userProfile.category === 'vendor' && (
+                        <>
+                           <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                                <Briefcase className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                                <div className="flex-grow">
+                                <p className="text-xs text-muted-foreground">Company Name</p>
+                                <p className="text-sm font-medium">{userProfile.companyName || 'Not provided'}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 p-3 rounded-lg border bg-background">
+                                <Wrench className="h-5 w-5 text-muted-foreground flex-shrink-0"/>
+                                <div className="flex-grow">
+                                <p className="text-xs text-muted-foreground">Services Provided</p>
+                                <p className="text-sm font-medium">{userProfile.servicesProvided?.join(', ') || 'Not specified'}</p>
+                                </div>
+                            </div>
+                        </>
+                      )}
                   </div>
                 )}
               </CardContent>
@@ -303,7 +323,7 @@ function ProfilePageContent() {
             </Card>
           </TabsContent>
           
-          {isProfessional && (
+          {canListProperties && (
             <TabsContent value="listings">
               <MyPropertiesTab />
             </TabsContent>

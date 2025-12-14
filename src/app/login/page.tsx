@@ -11,9 +11,10 @@ import { FirebaseError } from 'firebase/app';
 import Link from 'next/link';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2 } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { Textarea } from '@/components/ui/textarea';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -49,6 +50,7 @@ const roles = [
     { id: 'listing-property', name: 'Property Owner', icon: KeyRound },
     { id: 'real-estate-agent', name: 'Real Estate Agent', icon: Briefcase },
     { id: 'interior-designer', name: 'Interior Designer', icon: Paintbrush2 },
+    { id: 'vendor', name: 'Vendor/Supplier', icon: Wrench },
 ];
 
 
@@ -61,6 +63,11 @@ export default function LoginPage() {
   const [category, setCategory] = useState('user');
   const [showPassword, setShowPassword] = useState(false);
   
+  // Vendor specific fields
+  const [companyName, setCompanyName] = useState('');
+  const [servicesProvided, setServicesProvided] = useState('');
+  const [bio, setBio] = useState('');
+
   const auth = useAuth();
   const firestore = getFirestore();
   const router = useRouter();
@@ -118,7 +125,11 @@ export default function LoginPage() {
       }
     } else { // Sign up
       if (!fullName || !phone) {
-        toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out all fields.' });
+        toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out all required fields.' });
+        return;
+      }
+       if (category === 'vendor' && (!companyName || !servicesProvided || !bio)) {
+        toast({ variant: 'destructive', title: 'Missing Vendor Information', description: 'Please fill out all company details.' });
         return;
       }
       try {
@@ -131,7 +142,7 @@ export default function LoginPage() {
         
         const username = generateUsername(fullName, user.email || '');
 
-        await setDoc(userDocRef, {
+        const userData: any = {
             id: user.uid,
             fullName: fullName,
             username: username,
@@ -142,7 +153,15 @@ export default function LoginPage() {
             photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
             subscriptionStatus: 'free',
             wishlist: [],
-        });
+        };
+        
+        if (category === 'vendor') {
+          userData.companyName = companyName;
+          userData.servicesProvided = servicesProvided.split(',').map(s => s.trim()).filter(s => s);
+          userData.bio = bio;
+        }
+
+        await setDoc(userDocRef, userData);
         
         toast({
           title: 'Sign Up Successful!',
@@ -239,7 +258,7 @@ export default function LoginPage() {
             </div>
             <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
               {!isLogin && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {roles.map((role) => (
                     <label key={role.id} className="cursor-pointer relative group">
                       <input 
@@ -250,7 +269,7 @@ export default function LoginPage() {
                         checked={category === role.id}
                         onChange={(e) => setCategory(e.target.value)}
                       />
-                      <div className="h-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200">
+                      <div className="h-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
                         <role.icon className="text-2xl group-hover:scale-110 transition-transform" />
                         <span className="text-xs font-semibold">{role.name}</span>
                       </div>
@@ -281,6 +300,24 @@ export default function LoginPage() {
                         </div>
                     </div>
                 </div>
+                </>
+              )}
+              
+              {!isLogin && category === 'vendor' && (
+                <>
+                    <div className="flex flex-col gap-1.5">
+                        <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="companyName">Company Name</Label>
+                        <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} required className="h-11" id="companyName" placeholder="e.g., ABC Materials Co." type="text"/>
+                    </div>
+                     <div className="flex flex-col gap-1.5">
+                        <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="servicesProvided">Services/Products Provided</Label>
+                        <Input value={servicesProvided} onChange={(e) => setServicesProvided(e.target.value)} required className="h-11" id="servicesProvided" placeholder="e.g., Plumbing, Electrical Supplies, Tiles" type="text"/>
+                        <p className="text-xs text-muted-foreground">Enter a comma-separated list.</p>
+                    </div>
+                     <div className="flex flex-col gap-1.5">
+                        <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="bio">About Your Company</Label>
+                        <Textarea value={bio} onChange={(e) => setBio(e.target.value)} required className="h-24" id="bio" placeholder="Describe your business in a few sentences."/>
+                    </div>
                 </>
               )}
 
