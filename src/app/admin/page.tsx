@@ -102,6 +102,20 @@ export default function AdminPage() {
     });
   };
 
+  const handleUserDelete = (userId: string) => {
+    if (!firestore) return;
+    // Note: This only deletes the Firestore user document.
+    // The user will still exist in Firebase Authentication.
+    // A backend function is required to fully delete the user.
+    const userRef = doc(firestore, "users", userId);
+    deleteDocumentNonBlocking(userRef);
+    toast({
+      title: "User Deleted",
+      description: "The user has been successfully removed from the database.",
+      variant: "destructive",
+    });
+  };
+
   const handlePropertySort = (key: string) => {
     setPropertySort(prev => ({
         key,
@@ -310,28 +324,52 @@ export default function AdminPage() {
                                             </div>
                                         </TableHead>
                                         <TableHead>Contact</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {users?.map(user => (
-                                        <TableRow key={user.id}>
+                                    {users?.map(u => (
+                                        <TableRow key={u.id}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
                                                     <Avatar className="h-10 w-10">
-                                                        <AvatarImage src={user.photoURL} alt={user.fullName} />
-                                                        <AvatarFallback>{user.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                                                        <AvatarImage src={u.photoURL} alt={u.fullName} />
+                                                        <AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                                                     </Avatar>
                                                     <div>
-                                                        <p className="font-semibold">{user.fullName}</p>
-                                                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                                                        <p className="font-semibold">{u.fullName}</p>
+                                                        <p className="text-xs text-muted-foreground">{u.email}</p>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                {user.dateJoined?.toDate ? format(user.dateJoined.toDate(), 'PPP') : 'N/A'}
+                                                {u.dateJoined?.toDate ? format(u.dateJoined.toDate(), 'PPP') : 'N/A'}
                                             </TableCell>
-                                            <TableCell>{categoryDisplay[user.category] || user.category}</TableCell>
-                                            <TableCell>{user.phone || 'Not provided'}</TableCell>
+                                            <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
+                                            <TableCell>{u.phone || 'Not provided'}</TableCell>
+                                            <TableCell className="text-right">
+                                               {u.email !== ADMIN_EMAIL && (
+                                                 <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                This action will permanently delete the user "{u.fullName}" and all associated data. This cannot be undone.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete User</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                               )}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
