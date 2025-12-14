@@ -81,7 +81,7 @@ function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
   };
   
   return (
-    <div className="bg-background text-foreground p-2 flex items-center gap-2 border-b">
+    <div className="bg-background text-foreground p-2 flex items-center gap-2 border-b h-14 rounded-full shadow-md">
       <Button variant="default" size="icon" onClick={onMenuClick} className="rounded-full">
         <TwoStripesIcon className="h-6 w-6" />
       </Button>
@@ -208,96 +208,116 @@ export default function Header() {
                 </SheetFooter>
           </SheetContent>
 
-        {isHomePage && isScrolled ? (
-          <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} />
-        ) : (
-          <div className="container p-2">
+        <div className="container p-2">
+            {isHomePage && isScrolled ? (
             <div className={cn(
-              "h-14 items-center rounded-full p-2 md:px-4",
-              "bg-background shadow-md",
-              "grid grid-cols-3"
+                "h-14 items-center rounded-full p-2 md:px-4",
+                "bg-background shadow-md",
+                "flex items-center gap-2"
             )}>
-              <div className="flex items-center gap-2">
-                  <SheetTrigger asChild>
-                    <Button variant="default" size="icon" className="rounded-full md:hidden">
-                      <TwoStripesIcon className="h-6 w-6" />
-                      <span className="sr-only">Toggle navigation menu</span>
-                    </Button>
-                  </SheetTrigger>
-                   <div className="hidden md:flex items-center gap-2">
-                    <Separator orientation="vertical" className="h-6" />
-                   </div>
-                  <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {visibleNavLinks.slice(1,3).map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className={cn(
-                          "px-4 py-1.5 rounded-full transition-colors",
-                          "text-muted-foreground hover:text-foreground",
-                          pathname === link.href
-                            ? "bg-primary/10 text-primary font-semibold"
-                            : ""
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
-              </div>
-              <div className="flex justify-center">
-                <Logo />
-              </div>
-              <div className="flex items-center gap-2 justify-end">
-                <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                    {navLinks.filter(l => l.label !== 'Home' && l.label !== 'Properties' && l.label !== 'Interiors').map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className={cn(
-                          "px-4 py-1.5 rounded-full transition-colors",
-                          "text-muted-foreground hover:text-foreground",
-                          pathname === link.href
-                            ? "bg-primary/10 text-primary font-semibold"
-                            : ""
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                     {user && isProfessional && (
-                      <Link
-                        href="/profile#listings"
-                        className={cn(
-                          "px-4 py-1.5 rounded-full transition-colors",
-                          "text-muted-foreground hover:text-foreground",
-                           pathname === "/profile"
-                            ? "bg-primary/10 text-primary font-semibold"
-                            : ""
-                        )}
-                      >
-                        My Listings
-                      </Link>
-                    )}
-                  </nav>
-                  {isUserLoading ? (
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                  ) : user ? (
-                    <>
-                      <UserNav />
-                    </>
-                  ) : (
-                    <Button asChild variant="ghost" size="icon" className="rounded-full">
-                      <Link href="/login">
-                        <LogIn />
-                        <span className="sr-only">Login</span>
-                      </Link>
-                    </Button>
-                  )}
-                </div>
+                <Button variant="default" size="icon" onClick={() => setIsSheetOpen(true)} className="rounded-full">
+                    <TwoStripesIcon className="h-6 w-6" />
+                </Button>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    const term = (e.currentTarget.elements.namedItem('search') as HTMLInputElement).value;
+                    router.push(`/properties?q=${term}`);
+                }} className="flex-grow relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                        name="search"
+                        placeholder="Search by City, Locality, Project"
+                        className="bg-muted text-foreground h-10 rounded-full pl-10 border-transparent focus-visible:bg-background focus-visible:border-primary"
+                    />
+                </form>
             </div>
-          </div>
-        )}
+            ) : (
+            <div className={cn(
+                "h-14 items-center rounded-full p-2 md:px-4",
+                "bg-background shadow-md",
+                "grid grid-cols-3"
+            )}>
+                <div className="flex items-center gap-2">
+                    <SheetTrigger asChild>
+                        <Button variant="default" size="icon" className="rounded-full md:hidden">
+                        <TwoStripesIcon className="h-6 w-6" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                        </Button>
+                    </SheetTrigger>
+                    <div className="hidden md:flex items-center gap-2">
+                        <Separator orientation="vertical" className="h-6" />
+                    </div>
+                    <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                        {visibleNavLinks.slice(1,3).map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                            "px-4 py-1.5 rounded-full transition-colors",
+                            "text-muted-foreground hover:text-foreground",
+                            pathname === link.href
+                                ? "bg-primary/10 text-primary font-semibold"
+                                : ""
+                            )}
+                        >
+                            {link.label}
+                        </Link>
+                        ))}
+                    </nav>
+                </div>
+                <div className="flex justify-center">
+                    <Logo />
+                </div>
+                <div className="flex items-center gap-2 justify-end">
+                    <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                        {navLinks.filter(l => l.label !== 'Home' && l.label !== 'Properties' && l.label !== 'Interiors').map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                            "px-4 py-1.5 rounded-full transition-colors",
+                            "text-muted-foreground hover:text-foreground",
+                            pathname === link.href
+                                ? "bg-primary/10 text-primary font-semibold"
+                                : ""
+                            )}
+                        >
+                            {link.label}
+                        </Link>
+                        ))}
+                        {user && isProfessional && (
+                        <Link
+                            href="/profile#listings"
+                            className={cn(
+                            "px-4 py-1.5 rounded-full transition-colors",
+                            "text-muted-foreground hover:text-foreground",
+                            pathname === "/profile"
+                                ? "bg-primary/10 text-primary font-semibold"
+                                : ""
+                            )}
+                        >
+                            My Listings
+                        </Link>
+                        )}
+                    </nav>
+                    {isUserLoading ? (
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                    ) : user ? (
+                        <>
+                        <UserNav />
+                        </>
+                    ) : (
+                        <Button asChild variant="ghost" size="icon" className="rounded-full">
+                        <Link href="/login">
+                            <LogIn />
+                            <span className="sr-only">Login</span>
+                        </Link>
+                        </Button>
+                    )}
+                    </div>
+                </div>
+            )}
+        </div>
       </Sheet>
     </header>
   );
