@@ -392,7 +392,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const renderAddPropertyForm = () => (
      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
+             <DialogHeader>
               <DialogTitle>{isEditing ? "Edit Property" : "Add a New Property"}</DialogTitle>
               <DialogDescription>Fill in the details below to {isEditing ? 'update your property' : 'add your property to our listings'}.</DialogDescription>
             </DialogHeader>
@@ -414,10 +414,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                               </DialogTrigger>
                                <DialogContent>
                                     <DialogHeader>
-                                      <DialogTitle>Image Upload Instructions</DialogTitle>
-                                      <DialogDescription>
-                                          For the best results, please follow these guidelines when uploading your property images.
-                                      </DialogDescription>
+                                        <DialogTitle>Image Upload Instructions</DialogTitle>
+                                        <DialogDescription>
+                                            For the best results, please follow these guidelines when uploading your property images.
+                                        </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-4 py-4">
                                     <Alert>
@@ -911,5 +911,3 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
-
-    

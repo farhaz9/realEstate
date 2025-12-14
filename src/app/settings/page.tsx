@@ -117,22 +117,22 @@ function SettingsPageContent() {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto space-y-8">
             <Card>
-                <CardContent className="p-6">
-                     <div className="flex items-center gap-4">
+                <CardContent className="p-0">
+                    <Link href="/settings/account" className="flex items-center gap-4 p-6 hover:bg-muted/50 transition-colors rounded-lg">
                         <Avatar className="h-16 w-16 border">
                             <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
                             <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                                 {displayName ? getInitials(displayName) : <User className="h-8 w-8" />}
                             </AvatarFallback>
                         </Avatar>
-                        <div>
+                        <div className="flex-1">
                             <h2 className="text-xl font-bold">{displayName}</h2>
                             <p className="text-sm text-muted-foreground">{userProfile.email}</p>
                         </div>
-                         <Button variant="outline" size="icon" className="ml-auto">
+                         <Button variant="outline" size="icon" className="ml-auto flex-shrink-0">
                             <ChevronRight className="h-4 w-4" />
                         </Button>
-                    </div>
+                    </Link>
                 </CardContent>
             </Card>
 
