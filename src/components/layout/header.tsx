@@ -82,15 +82,15 @@ function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
   };
   
   return (
-    <div className="bg-primary text-primary-foreground p-2 flex items-center gap-2">
-      <Button variant="ghost" size="icon" onClick={onMenuClick} className="rounded-full hover:bg-primary/80 focus-visible:bg-primary/80">
+    <div className="bg-background text-foreground p-2 flex items-center gap-2 border-b">
+      <Button variant="ghost" size="icon" onClick={onMenuClick} className="rounded-full hover:bg-muted focus-visible:bg-muted">
         <TwoStripesIcon className="h-6 w-6" />
       </Button>
       <form onSubmit={handleSearch} className="flex-grow relative">
         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           placeholder="Search by City, Locality, Project"
-          className="bg-background text-foreground h-10 rounded-full pl-10"
+          className="bg-muted text-foreground h-10 rounded-full pl-10 border-transparent focus-visible:bg-background focus-visible:border-primary"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -130,47 +130,41 @@ export default function Header() {
     )}>
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent side="left" className="p-0 flex flex-col">
-             <SheetHeader className="p-6 pb-4">
-                <SheetTitle className="text-left text-lg font-semibold">Menu</SheetTitle>
+             <SheetHeader className="p-6 pb-4 border-b">
+                <SheetClose asChild>
+                    <Link href="/profile">
+                        <div className="flex items-center gap-4">
+                             {isUserLoading ? (
+                                <>
+                                    <Skeleton className="h-12 w-12 rounded-full" />
+                                    <div className="space-y-2">
+                                        <Skeleton className="h-4 w-[120px]" />
+                                    </div>
+                                </>
+                             ) : user ? (
+                                <>
+                                    <Avatar className="h-12 w-12">
+                                        <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                                        <AvatarFallback className="text-lg bg-primary/10 text-primary font-semibold">
+                                            {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="text-base font-bold text-left">{user.displayName?.split(' ')[0] || 'User'}</p>
+                                        <p className="text-sm text-muted-foreground text-left">View Profile</p>
+                                    </div>
+                                </>
+                             ) : (
+                                 <Logo />
+                             )}
+                        </div>
+                    </Link>
+                </SheetClose>
                 <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
                   <X className="h-5 w-5" />
                   <span className="sr-only">Close</span>
                 </SheetClose>
              </SheetHeader>
-             
-              {isUserLoading ? (
-                  <div className="flex items-center gap-4 px-6 py-4 border-b">
-                      <Skeleton className="h-16 w-16 rounded-full" />
-                      <div className="space-y-2">
-                          <Skeleton className="h-4 w-[120px]" />
-                          <Skeleton className="h-4 w-[80px]" />
-                      </div>
-                  </div>
-              ) : user ? (
-                  <div className="px-6 py-4 border-b">
-                    <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16">
-                            <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                            <AvatarFallback className="text-xl bg-primary/10 text-primary font-semibold">
-                                {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="text-sm font-semibold text-muted-foreground">Welcome back,</p>
-                            <p className="text-xl font-bold">{user.displayName?.split(' ')[0] || 'User'}</p>
-                        </div>
-                    </div>
-                    <SheetClose asChild>
-                      <Button variant="link" asChild className="p-0 h-auto mt-2 text-primary">
-                        <Link href="/profile">View Profile</Link>
-                      </Button>
-                    </SheetClose>
-                  </div>
-              ) : (
-                  <div className="px-6 py-4 border-b">
-                    <Logo />
-                  </div>
-              )}
 
                 <div className="flex-1 space-y-2 p-4">
                     <nav className="flex flex-col gap-1">
@@ -313,5 +307,3 @@ export default function Header() {
     </header>
   );
 }
-
-    
