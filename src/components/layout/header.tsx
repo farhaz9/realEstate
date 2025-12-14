@@ -83,7 +83,7 @@ function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
   
   return (
     <div className="bg-primary text-primary-foreground p-2 flex items-center gap-2">
-      <Button variant="ghost" size="icon" onClick={onMenuClick} className="hover:bg-primary/80 focus-visible:bg-primary/80">
+      <Button variant="ghost" size="icon" onClick={onMenuClick} className="rounded-full hover:bg-primary/80 focus-visible:bg-primary/80">
         <TwoStripesIcon className="h-6 w-6" />
       </Button>
       <form onSubmit={handleSearch} className="flex-grow relative">
@@ -313,3 +313,5 @@ export default function Header() {
     </header>
   );
 }
+
+    
