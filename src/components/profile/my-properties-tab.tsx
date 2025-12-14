@@ -917,24 +917,9 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                         </li>
                     </ul>
 
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button className="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white font-bold text-base py-6 rounded-lg">
-                                Subscribe Now <ArrowRight className="ml-2 w-5 h-5" />
-                            </Button>
-                        </AlertDialogTrigger>
-                         <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Premium Subscription</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                Payment gateway integration is coming soon. This feature is currently under development.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogAction>Got it!</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+                    <Button className="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white font-bold text-base py-6 rounded-lg" onClick={handlePayment}>
+                        Subscribe Now <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
 
                     <p className="text-center text-xs text-slate-500 mt-4">One-time payment per listing.</p>
                 </div>
