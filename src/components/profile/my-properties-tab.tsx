@@ -119,6 +119,8 @@ async function getCoordinatesForAddress(address: string) {
   }
 }
 
+declare const Razorpay: any;
+
 export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabProps) {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -150,6 +152,41 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   // Logic for listing limits
   const hasFreeListing = properties && properties.length > 0;
   const canAddListing = isPremiumUser || !hasFreeListing;
+
+  const handlePayment = async () => {
+    const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: "9900", // amount in the smallest currency unit
+        currency: "INR",
+        name: "Estately Premium Listing",
+        description: "One-time fee for one property listing.",
+        image: "https://example.com/your_logo.jpg", // Optional
+        handler: function (response: any){
+            // Here you would typically verify the payment on your server
+            // For now, we'll optimistically grant premium access
+            if (userDocRef) {
+                updateDocumentNonBlocking(userDocRef, { subscriptionStatus: 'premium' });
+                toast({
+                    title: "Payment Successful!",
+                    description: "You now have premium access. You can post unlimited listings.",
+                    variant: "success",
+                });
+                setIsUpgradeAlertOpen(false);
+                setIsFormOpen(true); // Open form after successful payment
+            }
+        },
+        prefill: {
+            name: userProfile?.fullName,
+            email: userProfile?.email,
+            contact: userProfile?.phone
+        },
+        theme: {
+            color: "#6D28D9"
+        }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
 
 
   useEffect(() => {
@@ -814,7 +851,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Upgrade</AlertDialogAction>
+            <AlertDialogAction onClick={handlePayment}>Proceed to Pay</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

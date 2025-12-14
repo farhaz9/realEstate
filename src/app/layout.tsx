@@ -7,6 +7,7 @@ import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
 import { FirebaseClientProvider } from "@/firebase";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import Script from "next/script";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -69,6 +70,10 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
+        <Script
+            id="razorpay-checkout-js"
+            src="https://checkout.razorpay.com/v1/checkout.js"
+        />
         <FirebaseClientProvider>
           <Header />
           <ErrorBoundary>
