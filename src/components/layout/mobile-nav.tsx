@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, User, Building, Armchair } from "lucide-react";
+import { Home, Heart, User, Building, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function MobileNav() {
@@ -13,12 +13,13 @@ export default function MobileNav() {
     { href: "/", label: "Home", icon: Home },
     { href: "/properties", label: "Properties", icon: Building },
     { href: "/profile?tab=wishlist", label: "Saved", icon: Heart },
+    { href: "/contact", label: "Contact", icon: Mail },
     { href: "/profile", label: "Profile", icon: User },
   ];
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
-      <div className="grid h-full grid-cols-4 items-center">
+      <div className="grid h-full grid-cols-5 items-center">
         {navLinks.map((link) => {
           const isActive =
             link.href === "/" 
