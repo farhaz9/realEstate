@@ -14,9 +14,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import type { Property } from '@/types';
-import { collection, query, orderBy, Query } from 'firebase/firestore';
+import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
+import type { Property, User } from '@/types';
+import { collection, query, orderBy, Query, where, doc } from 'firebase/firestore';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
@@ -29,6 +29,18 @@ import { useGeolocation } from '@/hooks/use-geolocation';
 import { LocationDisplay } from '@/components/shared/location-display';
 import Fuse from 'fuse.js';
 import { Spinner } from '@/components/ui/spinner-1';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 const staticSearchSuggestions = [
   'Search property in South Delhi',
@@ -51,9 +63,14 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * c; // Distance in km
 };
 
+declare const Razorpay: any;
+
 export default function PropertiesPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { user, isUserLoading } = useUser();
   const { location: userLocation, city: detectedCity, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
@@ -67,6 +84,71 @@ export default function PropertiesPage() {
   const [placeholder, setPlaceholder] = useState(staticSearchSuggestions[0]);
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
+  const [isUpgradeAlertOpen, setIsUpgradeAlertOpen] = useState(false);
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc<User>(userDocRef);
+
+  const userPropertiesQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
+  }, [firestore, user]);
+
+  const { data: userProperties } = useCollection<Property>(userPropertiesQuery);
+
+  const isPremiumUser = userProfile?.subscriptionStatus === 'premium';
+  const hasFreeListing = userProperties && userProperties.length > 0;
+  const canAddListing = isPremiumUser || !hasFreeListing;
+
+  const handlePayment = async () => {
+    const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: "9900", // amount in the smallest currency unit
+        currency: "INR",
+        name: "Estately Premium Listing",
+        description: "One-time fee for one property listing.",
+        image: "https://example.com/your_logo.jpg", // Optional
+        handler: function (response: any){
+            if (userDocRef) {
+                updateDocumentNonBlocking(userDocRef, { subscriptionStatus: 'premium' });
+                toast({
+                    title: "Payment Successful!",
+                    description: "You now have premium access. You can post unlimited listings.",
+                    variant: "success",
+                });
+                setIsUpgradeAlertOpen(false);
+                router.push('/settings?tab=listings');
+            }
+        },
+        prefill: {
+            name: userProfile?.fullName,
+            email: userProfile?.email,
+            contact: userProfile?.phone
+        },
+        theme: {
+            color: "#6D28D9"
+        }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+
+  const handlePostAdClick = () => {
+    if (!user) {
+        router.push('/login');
+        return;
+    }
+
+    if (canAddListing) {
+        router.push('/settings?tab=listings');
+    } else {
+        setIsUpgradeAlertOpen(true);
+    }
+  };
 
   const searchSuggestions = useMemo(() => {
     if (detectedCity) {
@@ -238,11 +320,9 @@ export default function PropertiesPage() {
                 <TabsTrigger value="pg">PG / Co-living</TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button asChild className="hidden sm:flex ml-4 flex-shrink-0">
-                <Link href="/settings?tab=listings">
-                    Post Ad
-                    <span className="ml-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-sm">FREE</span>
-                </Link>
+            <Button onClick={handlePostAdClick} className="hidden sm:flex ml-4 flex-shrink-0">
+                Post Ad
+                <span className="ml-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-sm">FREE</span>
             </Button>
           </div>
            <form onSubmit={handleSearch} className="flex items-center gap-2 my-4">
@@ -358,7 +438,7 @@ export default function PropertiesPage() {
       </section>
       
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        {isLoading || isAiSearchPending ? (
+        {isLoading || isAiSearchPending || isUserLoading ? (
             <div className="flex items-center justify-center min-h-[50vh]">
               <Spinner size={48} />
             </div>
@@ -379,6 +459,21 @@ export default function PropertiesPage() {
             </div>
         )}
       </div>
+
+       <AlertDialog open={isUpgradeAlertOpen} onOpenChange={setIsUpgradeAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Free Listing Limit Reached</AlertDialogTitle>
+            <AlertDialogDescription>
+              You've already used your one free property listing. To list more properties, please purchase a premium listing for ₹99.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handlePayment}>Proceed to Pay</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
