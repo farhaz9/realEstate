@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection } from '@/firebase';
 import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
-import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon } from 'lucide-react';
+import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -170,7 +170,7 @@ export default function PropertyDetailPage() {
   const listingDate = property.dateListed?.toDate ? property.dateListed.toDate() : (property.dateListed ? new Date(property.dateListed) : null);
 
   return (
-    <div className="bg-muted/40">
+    <div className="bg-muted/40 pb-24">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -296,19 +296,11 @@ export default function PropertyDetailPage() {
                     </div>
                      {listingDate && (
                       <p className="text-xs text-muted-foreground text-center w-full">
-                        Posted on {listingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        Posted on {listingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                       </p>
                     )}
                   </div>
                 )}
-                 <div className="flex gap-2">
-                    <Button className="w-full" asChild>
-                      <Link href={`tel:${property.contactNumber}`}><Phone className="mr-2" /> Call</Link>
-                    </Button>
-                    <Button className="w-full bg-green-500 hover:bg-green-600" asChild>
-                      <Link href={`https://wa.me/${property.whatsappNumber}`} target="_blank"><MessageSquare className="mr-2" /> WhatsApp</Link>
-                    </Button>
-                 </div>
                </CardContent>
             </Card>
           </div>
@@ -336,8 +328,21 @@ export default function PropertyDetailPage() {
           </div>
         )}
       </div>
+
+       <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t p-4 z-50">
+        <div className="container mx-auto px-4 flex items-center justify-center gap-4">
+          <Button variant="outline" className="w-full h-12 bg-background/80" asChild>
+            <Link href={`tel:${property.contactNumber}`}>
+              <Phone className="mr-2 h-5 w-5" /> Call Agent
+            </Link>
+          </Button>
+          <Button className="w-full h-12" asChild>
+            <Link href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank">
+              <CalendarDays className="mr-2 h-5 w-5" /> Book Visit
+            </Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
-
-    
