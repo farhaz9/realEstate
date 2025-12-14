@@ -1,21 +1,67 @@
+'use client';
 
-import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { PageHero } from "@/components/shared/page-hero";
+import { useFormState, useFormStatus } from 'react-dom';
+import { Mail, Phone, MapPin, MessageSquare, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { PageHero } from '@/components/shared/page-hero';
+import { sendEmail } from '@/app/actions/send-email';
+import { useEffect, useRef } from 'react';
+import { useToast } from '@/hooks/use-toast';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Sending...
+        </>
+      ) : (
+        'Send Message'
+      )}
+    </Button>
+  );
+}
 
 export default function ContactPage() {
+  const initialState = { success: false, message: '' };
+  const [state, dispatch] = useFormState(sendEmail, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (state.message) {
+      if (state.success) {
+        toast({
+          title: 'Success!',
+          description: state.message,
+          variant: 'success',
+        });
+        formRef.current?.reset();
+      } else {
+        toast({
+          title: 'Error',
+          description: state.message,
+          variant: 'destructive',
+        });
+      }
+    }
+  }, [state, toast]);
+
   return (
     <div>
       <PageHero
         title="Contact Us"
         subtitle="We'd love to hear from you. Let's find your dream home together."
         image={{
-          id: "contact-hero",
-          imageHint: "office reception",
+          id: 'contact-hero',
+          imageHint: 'office reception',
         }}
       />
 
@@ -57,7 +103,9 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">WhatsApp</h3>
-                  <Link href="https://wa.me/919953414336" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">+91 9953414336</Link>
+                  <Link href="https://wa.me/919953414336" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
+                    +91 9953414336
+                  </Link>
                 </div>
               </div>
             </div>
@@ -68,12 +116,12 @@ export default function ContactPage() {
                 <CardTitle>Send us a Message</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="space-y-4">
-                  <Input placeholder="Your Name" />
-                  <Input type="email" placeholder="Your Email" />
-                  <Input placeholder="Subject" />
-                  <Textarea placeholder="Your Message" rows={5} />
-                  <Button type="submit" className="w-full">Send Message</Button>
+                <form ref={formRef} action={dispatch} className="space-y-4">
+                  <Input name="name" placeholder="Your Name" required minLength={2} />
+                  <Input name="email" type="email" placeholder="Your Email" required />
+                  <Input name="subject" placeholder="Subject" required minLength={2} />
+                  <Textarea name="message" placeholder="Your Message" rows={5} required minLength={10} />
+                  <SubmitButton />
                 </form>
               </CardContent>
             </Card>
