@@ -1,24 +1,21 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
-import { PageHero } from '@/components/shared/page-hero';
-import { Loader2, Search, SlidersHorizontal, List, Building, Brush, Wrench } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 const filterTabs = [
-  { id: 'all', label: 'All Professionals', icon: List },
-  { id: 'real-estate-agent', label: 'Real Estate Agents', icon: Building },
-  { id: 'interior-designer', label: 'Interior Designers', icon: Brush },
-  { id: 'vendor', label: 'Vendors', icon: Wrench },
+  { id: 'all', label: 'All' },
+  { id: 'real-estate-agent', label: 'Agents' },
+  { id: 'interior-designer', label: 'Designers' },
+  { id: 'vendor', label: 'Vendors' },
 ];
 
 export default function ProfessionalsPage() {
@@ -51,13 +48,15 @@ export default function ProfessionalsPage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
-             <div key={i} className="flex flex-col space-y-3">
-                <div className="relative aspect-square bg-muted rounded-xl animate-pulse" />
-                <div className="space-y-2 p-2">
+             <div key={i} className="flex flex-col items-center space-y-3 p-4 border rounded-lg">
+                <div className="relative w-24 h-24 bg-muted rounded-full animate-pulse" />
+                <div className="space-y-2 w-full flex flex-col items-center">
                     <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
                     <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-1/4 bg-muted rounded animate-pulse" />
+                    <div className="h-9 w-full bg-muted rounded-lg animate-pulse mt-2" />
                 </div>
             </div>
           ))}
@@ -71,7 +70,7 @@ export default function ProfessionalsPage() {
 
     if (filteredProfessionals && filteredProfessionals.length > 0) {
       return (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProfessionals.map((professional) => (
             <ProfessionalCard key={professional.id} professional={professional} />
           ))}
@@ -88,86 +87,54 @@ export default function ProfessionalsPage() {
   };
 
   return (
-    <>
-      <PageHero
-        title={
-          <>
-            Find the Best <br />
-            Professionals for <br />
-            Your Home
-          </>
-        }
-        subtitle=""
-        imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
-        titleClassName="text-4xl md:text-5xl lg:text-6xl !mt-0"
-      >
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <Badge className="bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
-            TRUSTED BY 50,000+ HOMEOWNERS
-          </Badge>
-          <p className="mt-2 text-lg max-w-3xl">
-            Connect with top-rated agents, designers, and vendors to bring your vision to life.
-          </p>
-          <form 
-              className="relative flex w-full items-center max-w-xl" 
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <Search className="absolute left-4 h-5 w-5 text-muted-foreground z-10" />
-              <Input 
-                  placeholder="Search by name, company, or specialty..."
-                  className="pl-12 pr-28 h-14 text-base rounded-full bg-background/80 backdrop-blur-sm focus-visible:ring-offset-0 border-white/20 shadow-lg"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Button size="lg" className="absolute right-2 h-11 rounded-full px-8 text-base">Search</Button>
-          </form>
+    <div className="bg-muted/30 min-h-screen">
+      <div className="container mx-auto px-4 pt-8 pb-16">
+        <div className="relative h-48 w-full rounded-2xl overflow-hidden mb-6">
+            <Image 
+                src="https://images.unsplash.com/photo-1556742031-c6961e199a9b?q=80&w=2874&auto=format&fit=crop"
+                alt="Living room interior"
+                fill
+                className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="relative z-10 flex items-center justify-center h-full">
+                <h1 className="text-4xl font-bold text-white max-w-xs text-center leading-tight">
+                    Find the right expert for your home
+                </h1>
+            </div>
         </div>
-      </PageHero>
-      <div className="container mx-auto px-4 py-16">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-            <div className="flex flex-wrap items-center gap-2 bg-muted p-1 rounded-lg">
+
+        <form className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+            <Input 
+                placeholder="Search by name or location"
+                className="pl-12 h-12 text-base rounded-lg bg-background shadow-sm border-border"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+        </form>
+
+        <div className="mb-8">
+            <div className="bg-background border rounded-lg p-1 flex items-center gap-1">
                 {filterTabs.map(tab => (
-                    <Button 
+                    <button 
                         key={tab.id}
-                        variant="ghost"
                         onClick={() => setActiveTab(tab.id)}
                         className={cn(
-                            "flex-1 md:flex-none rounded-md px-4 py-2 text-sm font-semibold transition-all h-auto",
+                            "flex-1 rounded-md px-3 py-1.5 text-sm font-semibold transition-all",
                             activeTab === tab.id 
-                                ? 'bg-background shadow-sm text-primary' 
-                                : 'text-muted-foreground hover:bg-background/50 hover:text-foreground'
+                                ? 'bg-primary/10 text-primary' 
+                                : 'text-muted-foreground hover:bg-muted/50'
                         )}
                     >
-                        <tab.icon className="mr-2 h-4 w-4" />
                         {tab.label}
-                    </Button>
+                    </button>
                 ))}
-            </div>
-
-            <div className="flex items-center gap-4 w-full md:w-auto">
-                <p className="text-sm text-muted-foreground whitespace-nowrap">
-                  Showing {filteredProfessionals?.length || 0} results
-                </p>
-                <Select defaultValue="recommended">
-                    <SelectTrigger className="w-full md:w-[180px]">
-                        <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="recommended">Recommended</SelectItem>
-                        <SelectItem value="rating">Rating</SelectItem>
-                        <SelectItem value="newest">Newest</SelectItem>
-                    </SelectContent>
-                </Select>
             </div>
         </div>
 
         {renderContent()}
-
-        <div className="mt-16 text-center">
-            <Button variant="outline" size="lg">Load More Professionals</Button>
-        </div>
-
       </div>
-    </>
+    </div>
   );
 }
