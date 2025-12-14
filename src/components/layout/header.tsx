@@ -295,11 +295,6 @@ export default function Header() {
                     <Skeleton className="h-10 w-10 rounded-full" />
                   ) : user ? (
                     <>
-                      <Button asChild variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Link href="/profile?tab=wishlist">
-                          <Heart />
-                        </Link>
-                      </Button>
                       <UserNav />
                     </>
                   ) : (
