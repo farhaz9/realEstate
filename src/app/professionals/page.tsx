@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
@@ -10,6 +10,7 @@ import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -20,8 +21,13 @@ const filterTabs = [
 
 export default function ProfessionalsPage() {
   const firestore = useFirestore();
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeTab, setActiveTab] = useState('all');
+
+  useEffect(() => {
+    setSearchTerm(searchParams.get('q') || '');
+  }, [searchParams]);
 
   const professionalsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -104,7 +110,7 @@ export default function ProfessionalsPage() {
             </div>
         </div>
 
-        <form className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
+        <form id="professionals-search" className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
             <Input 
                 placeholder="Search by name or location"

@@ -106,8 +106,9 @@ export default function Header() {
   
   const isHomePage = pathname === '/';
   const isInteriorsPage = pathname === '/interiors';
+  const isProfessionalsPage = pathname === '/professionals';
 
-  const scrollTriggerId = isHomePage ? 'offers' : (isInteriorsPage ? 'top-designers' : '');
+  const scrollTriggerId = isHomePage ? 'offers' : (isInteriorsPage ? 'top-designers' : (isProfessionalsPage ? 'professionals-search' : ''));
   const { isScrolled } = useOnScroll(scrollTriggerId); 
   
   const firestore = useFirestore();
@@ -122,13 +123,17 @@ export default function Header() {
   const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer'].includes(userProfile.category);
 
   const handleSearch = (searchTerm: string) => {
-    if (isHomePage) {
-      router.push(`/properties?q=${searchTerm}`);
-    } else if (isInteriorsPage) {
-      // For interiors, we might want to just update the query param to filter on the same page
-      const params = new URLSearchParams(window.location.search);
-      params.set('q', searchTerm);
-      router.replace(`${pathname}?${params.toString()}`);
+    let targetPath = '/properties';
+    if (isInteriorsPage) targetPath = '/interiors';
+    if (isProfessionalsPage) targetPath = '/professionals';
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('q', searchTerm);
+    
+    if (pathname === targetPath) {
+      router.replace(`${targetPath}?${params.toString()}`);
+    } else {
+      router.push(`${targetPath}?${params.toString()}`);
     }
   };
   
@@ -228,7 +233,7 @@ export default function Header() {
                 "h-14 items-center rounded-full p-2 md:px-4",
                 "bg-background shadow-md",
           )}>
-            {(isHomePage || isInteriorsPage) && isScrolled ? (
+            {(isHomePage || isInteriorsPage || isProfessionalsPage) && isScrolled ? (
               <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} searchAction={handleSearch}/>
             ) : (
             <div className="grid grid-cols-3 h-full items-center">
