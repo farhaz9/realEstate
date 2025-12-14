@@ -119,7 +119,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-background overflow-x-hidden">
         <div className="container mx-auto px-0 sm:px-4 text-center">
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
             Quick Actions
