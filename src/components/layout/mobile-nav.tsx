@@ -3,16 +3,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, User, Building, Mail } from "lucide-react";
+import { Home, User, Building, Mail, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function MobileNav() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: "/", label: "Home", icon: Home },
     { href: "/properties", label: "Properties", icon: Building },
-    { href: "/profile?tab=wishlist", label: "Saved", icon: Heart },
+    { href: "/interiors", label: "Interiors", icon: Palette },
+    { href: "/", label: "Home", icon: Home },
     { href: "/contact", label: "Contact", icon: Mail },
     { href: "/profile", label: "Profile", icon: User },
   ];
@@ -36,8 +36,7 @@ export default function MobileNav() {
               )}
             >
               <link.icon
-                className={cn("h-6 w-6", isActive && 'fill-current')}
-                strokeWidth={isActive ? 0 : 2}
+                className={cn("h-6 w-6")}
               />
               <span className={cn(isActive && "font-bold")}>{link.label}</span>
             </Link>
