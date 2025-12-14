@@ -179,7 +179,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
               const newOrder = {
                 paymentId: response.razorpay_payment_id,
                 amount: 99,
-                date: serverTimestamp(),
+                date: new Date(),
               };
               updateDocumentNonBlocking(userDocRef, {
                 orders: arrayUnion(newOrder),
