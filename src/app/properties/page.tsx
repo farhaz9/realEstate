@@ -28,6 +28,7 @@ import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-sea
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { LocationDisplay } from '@/components/shared/location-display';
 import Fuse from 'fuse.js';
+import { Spinner } from '@/components/ui/spinner-1';
 
 const staticSearchSuggestions = [
   'Search property in South Delhi',
@@ -358,25 +359,8 @@ export default function PropertiesPage() {
       
       <div className="container mx-auto px-4 py-8 sm:py-12">
         {isLoading || isAiSearchPending ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(6)].map((_, i) => (
-                    <div key={i} className="flex flex-col h-full overflow-hidden border rounded-lg">
-                        <Skeleton className="h-56 w-full" />
-                        <div className="p-6 flex-grow flex flex-col">
-                            <Skeleton className="h-6 w-1/3" />
-                            <Skeleton className="h-5 w-2/3 mt-2" />
-                            <Skeleton className="h-4 w-1/2 mt-1" />
-                            <div className="mt-4 flex items-center space-x-4 border-t pt-4">
-                                <Skeleton className="h-5 w-1/4" />
-                                <Skeleton className="h-5 w-1/4" />
-                                <Skeleton className="h-5 w-1/4" />
-                            </div>
-                        </div>
-                         <div className="p-6 pt-0 mt-auto">
-                            <Skeleton className="h-10 w-full" />
-                        </div>
-                    </div>
-                ))}
+            <div className="flex items-center justify-center min-h-[50vh]">
+              <Spinner size={48} />
             </div>
         ) : error ? (
             <div className="text-center text-destructive">
