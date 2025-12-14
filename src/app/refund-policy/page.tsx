@@ -1,4 +1,3 @@
-
 import { PageHero } from "@/components/shared/page-hero";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleDollarSign } from "lucide-react";
@@ -27,7 +26,7 @@ export default function RefundPolicyPage() {
             
             <h2>1. General Policy</h2>
             <p>
-              At Farhaz Homes, we strive to provide excellent service. This policy outlines the terms for refunds and cancellations for our premium services, such as featured listings.
+              At Falcon Axe Homes, we strive to provide excellent service. This policy outlines the terms for refunds and cancellations for our premium services, such as featured listings.
             </p>
 
             <h2>2. Premium Listing Fees</h2>
@@ -52,7 +51,7 @@ export default function RefundPolicyPage() {
 
             <h2>6. Contact Us</h2>
             <p>
-              If you have any questions about our Refund Policy, please contact us at contact@delhiestateluxe.com.
+              If you have any questions about our Refund Policy, please contact us at contact@falconaxehomes.com.
             </p>
           </CardContent>
         </Card>

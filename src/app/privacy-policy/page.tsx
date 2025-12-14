@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
           <CardHeader>
             <div className="flex items-center gap-4">
               <ShieldCheck className="h-8 w-8 text-primary" />
-              <CardTitle className="text-3xl">Privacy Policy for Farhaz Homes</CardTitle>
+              <CardTitle className="text-3xl">Privacy Policy for Falcon Axe Homes</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="prose prose-lg max-w-none">
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
 
             <h2>1. Introduction</h2>
             <p>
-              Welcome to Farhaz Homes ("we," "our," "us"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.
+              Welcome to Falcon Axe Homes ("we," "our," "us"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.
             </p>
 
             <h2>2. Information We Collect</h2>
@@ -62,11 +62,8 @@ export default function PrivacyPolicyPage() {
 
             <h2>7. Contact Us</h2>
             <p>
-              If you have any questions or concerns about this Privacy Policy, please contact us at contact@delhiestateluxe.com.
+              If you have any questions or concerns about this Privacy Policy, please contact us at contact@falconaxehomes.com.
             </p>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-}

@@ -15,7 +15,7 @@ const faqs = [
     answer: "Yes, all of our interior designers are certified professionals with extensive experience in creating beautiful and functional spaces. We ensure they are equipped with the latest industry knowledge."
   },
   {
-    question: "What fees does Estately charge?",
+    question: "What fees does Falcon Axe Homes charge?",
     answer: "Our fees vary depending on the service. For property sales, we charge a standard commission. For interior design, we offer project-based pricing. Please contact us for a detailed quote."
   },
   {
@@ -107,10 +107,4 @@ export default function SupportPage() {
                   <span className="font-medium text-destructive">Closed</span>
                 </div>
               </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+            

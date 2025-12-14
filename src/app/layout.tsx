@@ -17,8 +17,8 @@ const poppins = Poppins({
 });
 
 const siteUrl = "https://www.farhazhomes.com";
-const siteTitle = "Farhaz Homes | Best Real Estate and Interior Design Company in Delhi";
-const siteDescription = "Discover Delhi's best real estate and interior design company. Farhaz Homes offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
+const siteTitle = "Falcon Axe Homes | Best Real Estate and Interior Design Company in Delhi";
+const siteDescription = "Discover Delhi's best real estate and interior design company. Falcon Axe Homes offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
 
 
 export const metadata: Metadata = {
@@ -32,13 +32,13 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
     url: siteUrl,
-    siteName: 'Farhaz Homes',
+    siteName: 'Falcon Axe Homes',
     images: [
       {
         url: `${siteUrl}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Luxury real estate and interior design in Delhi by Farhaz Homes',
+        alt: 'Luxury real estate and interior design in Delhi by Falcon Axe Homes',
       },
     ],
     locale: 'en_US',
@@ -64,7 +64,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
       <body
         className={cn(

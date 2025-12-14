@@ -15,6 +15,7 @@ import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
+import { Logo } from '@/components/shared/logo';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -164,7 +165,7 @@ export default function LoginPage() {
         
         toast({
           title: 'Sign Up Successful!',
-          description: 'Welcome to Estately!',
+          description: 'Welcome to Falcon Axe Homes!',
           variant: 'success',
         });
         router.push('/');
@@ -225,10 +226,7 @@ export default function LoginPage() {
 
         <div className="relative z-10 text-white max-w-lg">
           <div className="flex items-center gap-4 mb-8">
-            <div className="size-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl flex items-center justify-center text-white shadow-lg">
-              <Building2 className="text-3xl" />
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow-md">Estately</h1>
+            <Logo />
           </div>
           <p className="text-5xl font-bold leading-tight mb-6 drop-shadow-lg">Discover a place you'll love to live.</p>
           <p className="text-lg text-gray-100 font-light leading-relaxed max-w-md drop-shadow-md">Join our community of homeowners and interior design enthusiasts. Find your dream home or the inspiration to build it.</p>
@@ -237,8 +235,7 @@ export default function LoginPage() {
 
       <div className="w-full lg:w-1/2 h-full flex flex-col overflow-y-auto bg-white dark:bg-background-dark relative">
         <div className="lg:hidden p-6 flex items-center gap-2">
-          <Building2 className="text-primary text-3xl" />
-          <span className="text-xl font-bold">Estately</span>
+          <Logo />
         </div>
         <div className="flex-1 flex items-center justify-center p-6 sm:p-12 md:p-16">
           <div className="w-full max-w-[480px] flex flex-col gap-6">
@@ -363,7 +360,7 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="p-6 text-center text-xs text-gray-400 dark:text-gray-600">
-            © 2024 Falcon Homes. All rights reserved.
+            © 2024 Falcon Axe Homes. All rights reserved.
         </div>
       </div>
     </div>

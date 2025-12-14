@@ -1,5 +1,3 @@
-
-
 import Link from "next/link";
 import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
@@ -28,7 +26,7 @@ const faqs = [
     answer: "Yes, all of our interior designers are certified professionals with extensive experience in creating beautiful and functional spaces. We ensure they are equipped with the latest industry knowledge."
   },
   {
-    question: "What fees does Estately charge?",
+    question: "What fees does Falcon Axe Homes charge?",
     answer: "Our fees vary depending on the service. For property sales, we charge a standard commission. For interior design, we offer project-based pricing. Please contact us for a detailed quote."
   },
   {
@@ -249,7 +247,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold">Why Choose Falcon Homes?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold">Why Choose Falcon Axe Homes?</h2>
               <p className="mt-4 text-muted-foreground max-w-xl">
                 We are redefining the real estate experience by combining technology with human expertise.
               </p>
@@ -293,4 +291,3 @@ export default function HomePage() {
     </div>
   );
 }
-    
