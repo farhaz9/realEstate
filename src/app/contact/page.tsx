@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Mail, Phone, MapPin, MessageSquare, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,7 +32,7 @@ function SubmitButton() {
 
 export default function ContactPage() {
   const initialState = { success: false, message: '' };
-  const [state, dispatch] = useFormState(sendEmail, initialState);
+  const [state, dispatch] = useActionState(sendEmail, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
