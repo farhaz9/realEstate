@@ -50,7 +50,7 @@ const navLinks = [
 ];
 
 const secondaryLinks = [
-    { href: "/contact", label: "Support", icon: HelpCircle },
+    { href: "/support", label: "Support", icon: HelpCircle },
 ];
 
 const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -81,7 +81,7 @@ function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
   };
   
   return (
-    <div className="bg-background text-foreground p-2 flex items-center gap-2 border-b h-14 rounded-full shadow-md">
+    <div className="flex items-center gap-2">
       <Button variant="default" size="icon" onClick={onMenuClick} className="rounded-full">
         <TwoStripesIcon className="h-6 w-6" />
       </Button>
@@ -209,34 +209,14 @@ export default function Header() {
           </SheetContent>
 
         <div className="container p-2">
+          <div className={cn(
+                "h-14 items-center rounded-full p-2 md:px-4",
+                "bg-background shadow-md",
+          )}>
             {isHomePage && isScrolled ? (
-            <div className={cn(
-                "h-14 items-center rounded-full p-2 md:px-4",
-                "bg-background shadow-md",
-                "flex items-center gap-2"
-            )}>
-                <Button variant="default" size="icon" onClick={() => setIsSheetOpen(true)} className="rounded-full">
-                    <TwoStripesIcon className="h-6 w-6" />
-                </Button>
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    const term = (e.currentTarget.elements.namedItem('search') as HTMLInputElement).value;
-                    router.push(`/properties?q=${term}`);
-                }} className="flex-grow relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                        name="search"
-                        placeholder="Search by City, Locality, Project"
-                        className="bg-muted text-foreground h-10 rounded-full pl-10 border-transparent focus-visible:bg-background focus-visible:border-primary"
-                    />
-                </form>
-            </div>
+              <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} />
             ) : (
-            <div className={cn(
-                "h-14 items-center rounded-full p-2 md:px-4",
-                "bg-background shadow-md",
-                "grid grid-cols-3"
-            )}>
+            <div className="grid grid-cols-3 h-full items-center">
                 <div className="flex items-center gap-2">
                     <SheetTrigger asChild>
                         <Button variant="default" size="icon" className="rounded-full md:hidden">
@@ -317,6 +297,7 @@ export default function Header() {
                     </div>
                 </div>
             )}
+          </div>
         </div>
       </Sheet>
     </header>
