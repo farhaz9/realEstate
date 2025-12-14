@@ -19,7 +19,6 @@ import {
 import {
   LogIn,
   MapPin,
-  Heart,
   Home,
   Building,
   Armchair,
@@ -83,7 +82,7 @@ function StickySearchHeader({ onMenuClick }: { onMenuClick: () => void }) {
   
   return (
     <div className="bg-background text-foreground p-2 flex items-center gap-2 border-b">
-      <Button variant="ghost" size="icon" onClick={onMenuClick} className="rounded-full hover:bg-muted focus-visible:bg-muted">
+      <Button variant="default" size="icon" onClick={onMenuClick} className="rounded-full">
         <TwoStripesIcon className="h-6 w-6" />
       </Button>
       <form onSubmit={handleSearch} className="flex-grow relative">
@@ -159,10 +158,6 @@ export default function Header() {
                              )}
                         </div>
                     </Link>
-                </SheetClose>
-                <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-                  <X className="h-5 w-5" />
-                  <span className="sr-only">Close</span>
                 </SheetClose>
              </SheetHeader>
 
