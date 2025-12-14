@@ -154,6 +154,15 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const canAddListing = isPremiumUser || !hasFreeListing;
 
   const handlePayment = async () => {
+    if (typeof window === 'undefined' || !(window as any).Razorpay) {
+      toast({
+        title: "Payment Gateway Error",
+        description: "Razorpay is not available. Please check your connection and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: "9900", // amount in the smallest currency unit
@@ -162,8 +171,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         description: "One-time fee for one property listing.",
         image: "https://example.com/your_logo.jpg", // Optional
         handler: function (response: any){
-            // Here you would typically verify the payment on your server
-            // For now, we'll optimistically grant premium access
             if (userDocRef) {
                 updateDocumentNonBlocking(userDocRef, { subscriptionStatus: 'premium' });
                 toast({
@@ -172,7 +179,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     variant: "success",
                 });
                 setIsUpgradeAlertOpen(false);
-                setIsFormOpen(true); // Open form after successful payment
+                setIsFormOpen(true); 
             }
         },
         prefill: {
