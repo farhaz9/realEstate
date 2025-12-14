@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { SlidersHorizontal, Search, ArrowUpDown } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
-import { collection, query, orderBy, Query, where, doc } from 'firebase/firestore';
+import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp } from 'firebase/firestore';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
@@ -117,6 +117,16 @@ export default function PropertiesPage() {
                 description: "You can now post your property.",
                 variant: "success",
             });
+            if(userDocRef) {
+              const newOrder = {
+                paymentId: response.razorpay_payment_id,
+                amount: 99,
+                date: serverTimestamp(),
+              };
+              updateDocumentNonBlocking(userDocRef, {
+                orders: arrayUnion(newOrder),
+              });
+            }
             setHasPaidForListing(true);
             setIsPaymentAlertOpen(false);
             router.push('/settings?tab=listings');

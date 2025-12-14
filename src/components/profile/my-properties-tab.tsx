@@ -19,7 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase, useDoc, updateDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp, query, where, doc } from 'firebase/firestore';
+import { collection, serverTimestamp, query, where, doc, arrayUnion } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -39,7 +39,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PropertyCard } from '@/components/property-card';
@@ -177,6 +176,16 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                 description: "You can now post your property.",
                 variant: "success",
             });
+            if(userDocRef) {
+              const newOrder = {
+                paymentId: response.razorpay_payment_id,
+                amount: 99,
+                date: serverTimestamp(),
+              };
+              updateDocumentNonBlocking(userDocRef, {
+                orders: arrayUnion(newOrder),
+              });
+            }
             setHasPaidForListing(true);
             setIsPaymentAlertOpen(false);
             setIsFormOpen(true); 

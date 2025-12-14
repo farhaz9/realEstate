@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ArrowLeft, Camera, Edit } from 'lucide-react';
+import { User, Settings, ArrowLeft, Camera, Edit, ShoppingBag } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import { WishlistTab } from '@/components/profile/wishlist-tab';
+import { OrdersTab } from '@/components/profile/orders-tab';
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -113,10 +114,11 @@ function SettingsPageContent() {
       
       <div className="container mx-auto px-4 py-8 -mt-16">
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto h-12">
+            <TabsList className="grid w-full grid-cols-4 max-w-lg mx-auto h-12">
                 <TabsTrigger value="profile" className="h-full">Profile</TabsTrigger>
                 <TabsTrigger value="listings" className="h-full">My Listings</TabsTrigger>
                 <TabsTrigger value="wishlist" className="h-full">Wishlist</TabsTrigger>
+                <TabsTrigger value="orders" className="h-full">Orders</TabsTrigger>
             </TabsList>
             <TabsContent value="profile" className="mt-6">
                 <ProfileDetailsTab userProfile={userProfile} />
@@ -126,6 +128,9 @@ function SettingsPageContent() {
             </TabsContent>
             <TabsContent value="wishlist" className="mt-6">
                 <WishlistTab />
+            </TabsContent>
+            <TabsContent value="orders" className="mt-6">
+              <OrdersTab />
             </TabsContent>
         </Tabs>
       </div>

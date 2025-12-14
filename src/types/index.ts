@@ -44,6 +44,12 @@ export type InteriorProject = {
   images: string[];
 };
 
+export type Order = {
+  paymentId: string;
+  amount: number;
+  date: Date | any;
+}
+
 export type User = {
   id: string;
   fullName: string;
@@ -57,4 +63,5 @@ export type User = {
   companyName?: string;
   servicesProvided?: string[];
   bio?: string;
+  orders?: Order[];
 }

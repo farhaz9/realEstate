@@ -15,6 +15,10 @@
           "type": "string",
           "description": "The user's full name."
         },
+        "username": {
+          "type": "string",
+          "description": "A unique, URL-friendly username for the user, especially for professionals."
+        },
         "email": {
           "type": "string",
           "description": "The user's email address.",
@@ -27,7 +31,7 @@
         "category": {
           "type": "string",
           "description": "The category of the user.",
-          "enum": ["buyer-tenant", "listing-property", "real-estate-agent", "interior-designer"]
+          "enum": ["user", "listing-property", "real-estate-agent", "interior-designer", "vendor"]
         },
         "dateJoined": {
           "type": "string",
@@ -45,11 +49,33 @@
             "type": "string",
             "description": "URL of the user's profile picture."
         },
-        "subscriptionStatus": {
+        "companyName": {
             "type": "string",
-            "description": "The user's subscription status.",
-            "enum": ["free", "premium"],
-            "default": "free"
+            "description": "The name of the company for vendors or other professionals."
+        },
+        "servicesProvided": {
+            "type": "array",
+            "description": "A list of services offered by a vendor.",
+            "items": {
+                "type": "string"
+            }
+        },
+        "bio": {
+            "type": "string",
+            "description": "A short biography for professional users."
+        },
+        "orders": {
+          "type": "array",
+          "description": "A list of orders made by the user.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "paymentId": { "type": "string" },
+              "amount": { "type": "number" },
+              "date": { "type": "string", "format": "date-time" }
+            },
+            "required": ["paymentId", "amount", "date"]
+          }
         }
       },
       "required": [
