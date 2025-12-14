@@ -64,7 +64,7 @@ export function FeaturedProfessionals() {
             }}
             className="w-full"
           >
-            <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselContent>
               {professionals?.map((professional) => (
                 <CarouselItem key={professional.id} className="basis-[90%] sm:basis-1/2 md:basis-1/3 pl-2 md:pl-4">
                    <div className="h-full p-1">

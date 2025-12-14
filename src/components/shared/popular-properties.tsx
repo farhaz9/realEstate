@@ -61,7 +61,7 @@ export function PopularProperties() {
             }}
             className="w-full"
           >
-            <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselContent>
               {properties?.map((property) => (
                 <CarouselItem key={property.id} className="basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-4">
                    <div className="h-full">
