@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
