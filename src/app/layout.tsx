@@ -16,7 +16,7 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const siteUrl = "https://www.farhazhomes.com";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.farhazhomes.com";
 const siteTitle = "Falcon Axe Homes | Best Real Estate and Interior Design Company in Delhi";
 const siteDescription = "Discover Delhi's best real estate and interior design company. Falcon Axe Homes offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
 
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: 'Falcon Axe Homes',
     images: [
       {
-        url: `${siteUrl}/og-image.jpg`,
+        url: `/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: 'Luxury real estate and interior design in Delhi by Falcon Axe Homes',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteTitle,
     description: siteDescription,
-    images: [`${siteUrl}/og-image.jpg`],
+    images: [`/og-image.jpg`],
   },
   icons: {
     icon: "/favicon.ico",
