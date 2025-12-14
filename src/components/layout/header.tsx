@@ -267,7 +267,7 @@ export default function Header() {
                         ))}
                         {user && isProfessional && (
                         <Link
-                            href="/settings#listings"
+                            href="/settings?tab=listings"
                             className={cn(
                             "px-4 py-1.5 rounded-full transition-colors",
                             "text-muted-foreground hover:text-foreground",

@@ -1,25 +1,38 @@
-
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User as UserIcon, Mail, Phone, AtSign, Edit, Save, X, Camera, ArrowLeft } from 'lucide-react';
-import type { User as UserType } from '@/types';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { User, Settings, ArrowLeft, Camera, Edit } from 'lucide-react';
+import type { User as UserType } from '@/types';
+import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner-1';
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
+import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
+import { WishlistTab } from '@/components/profile/wishlist-tab';
 
-function AccountPageContent() {
+const categoryDisplay: Record<string, string> = {
+  'user': 'Buyer / Tenant',
+  'listing-property': 'Property Owner',
+  'real-estate-agent': 'Real Estate Agent',
+  'interior-designer': 'Interior Designer',
+  'vendor': 'Vendor / Supplier'
+};
+
+
+function SettingsPageContent() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'profile';
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -36,18 +49,8 @@ function AccountPageContent() {
     }
     return name.substring(0, 2).toUpperCase();
   }
-
-  const isLoading = isUserLoading || isProfileLoading;
   
-  const renderDetailItem = (Icon: React.ElementType, label: string, value: string | undefined) => (
-    <div className="flex items-start gap-4">
-      <Icon className="h-5 w-5 text-muted-foreground mt-1" />
-      <div className="flex-1">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="font-semibold">{value || 'Not provided'}</p>
-      </div>
-    </div>
-  );
+  const isLoading = isUserLoading || isProfileLoading;
 
   if (isLoading) {
     return (
@@ -57,59 +60,90 @@ function AccountPageContent() {
     );
   }
 
+  if (!user) {
+    if (typeof window !== 'undefined') {
+      router.push('/login');
+    }
+    return (
+       <div className="flex items-center justify-center min-h-[60vh]">
+          <Spinner size={48} />
+        </div>
+    );
+  }
+  
   if (!userProfile) {
-    return <p>User profile not found.</p>;
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <Spinner size={48} />
+            <p className="text-muted-foreground mt-4">Loading your profile...</p>
+        </div>
+    );
   }
 
-  const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
-  const displayName = userProfile?.fullName ?? user?.displayName;
+  const displayAvatar = userProfile?.photoURL ?? user.photoURL;
+  const displayName = userProfile?.fullName ?? user.displayName;
 
   return (
-    <div className="max-w-2xl mx-auto">
-        <Card>
-          <CardHeader className="text-center relative">
-              <Button asChild variant="ghost" size="icon" className="absolute top-4 left-4">
-                  <Link href="/settings"><ArrowLeft /></Link>
-              </Button>
-            <div className="relative w-28 h-28 mx-auto">
-                <Avatar className="w-full h-full text-4xl border-4 border-background">
-                    <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground">
-                        {displayName ? getInitials(displayName) : <UserIcon />}
-                    </AvatarFallback>
-                </Avatar>
-                <Button size="icon" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full border-2 border-background">
-                    <Camera className="h-4 w-4" />
+    <>
+      <div className="bg-muted/40 pb-12">
+        <div className="container mx-auto px-4 py-6">
+            <div className="flex justify-between items-center">
+                 <Button asChild variant="ghost" size="icon">
+                    <Link href="/"><ArrowLeft/></Link>
+                 </Button>
+                <h1 className="text-xl font-bold">Profile</h1>
+                 <Button asChild variant="ghost" size="icon">
+                    <Link href="#"><Settings /></Link>
                 </Button>
             </div>
-            <CardTitle className="mt-4">{displayName}</CardTitle>
-            <CardDescription>@{userProfile.username}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6 pt-6">
-              <div className="space-y-6 border-t pt-6">
-                {renderDetailItem(UserIcon, "Full Name", userProfile.fullName)}
-                {renderDetailItem(AtSign, "Username", userProfile.username)}
-                {renderDetailItem(Mail, "Email", userProfile.email)}
-                {renderDetailItem(Phone, "Phone Number", userProfile.phone)}
-              </div>
-          </CardContent>
-        </Card>
-    </div>
+             <div className="flex flex-col items-center mt-6">
+                <div className="relative">
+                    <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
+                        <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
+                        <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
+                            {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
+                        </AvatarFallback>
+                    </Avatar>
+                     <Button size="icon" variant="default" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full border-2 border-background">
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                </div>
+                <h2 className="mt-4 text-2xl font-bold">{displayName}</h2>
+                <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>
+            </div>
+        </div>
+      </div>
+      
+      <div className="container mx-auto px-4 py-8 -mt-16">
+         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto h-12">
+                <TabsTrigger value="profile" className="h-full">Profile</TabsTrigger>
+                <TabsTrigger value="listings" className="h-full">My Listings</TabsTrigger>
+                <TabsTrigger value="wishlist" className="h-full">Wishlist</TabsTrigger>
+            </TabsList>
+            <TabsContent value="profile" className="mt-6">
+                <ProfileDetailsTab userProfile={userProfile} />
+            </TabsContent>
+            <TabsContent value="listings" className="mt-6">
+                <MyPropertiesTab />
+            </TabsContent>
+            <TabsContent value="wishlist" className="mt-6">
+                <WishlistTab />
+            </TabsContent>
+        </Tabs>
+      </div>
+    </>
   );
 }
 
-export default function AccountPage() {
-    return (
-        <div className="bg-muted/40">
-            <div className="container mx-auto px-4 py-12">
-                 <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-[60vh]">
-                        <Spinner size={48} />
-                    </div>
-                    }>
-                    <AccountPageContent />
-                </Suspense>
-            </div>
-        </div>
-    )
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <Spinner size={48} />
+      </div>
+    }>
+      <SettingsPageContent />
+    </Suspense>
+  )
 }

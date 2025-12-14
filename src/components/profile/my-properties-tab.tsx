@@ -204,7 +204,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         amenities: propertyToEdit.amenities?.join(', ') || '',
       });
       setImagePreviews(propertyToEdit.imageUrls || []);
-    } else {
+    } else if (isFormOpen) { // Reset form only when opening for a new entry
         form.reset();
         setImagePreviews([]);
     }
@@ -392,7 +392,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const renderAddPropertyForm = () => (
      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-             <DialogHeader>
+            <DialogHeader>
               <DialogTitle>{isEditing ? "Edit Property" : "Add a New Property"}</DialogTitle>
               <DialogDescription>Fill in the details below to {isEditing ? 'update your property' : 'add your property to our listings'}.</DialogDescription>
             </DialogHeader>
@@ -414,10 +414,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                               </DialogTrigger>
                                <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>Image Upload Instructions</DialogTitle>
-                                        <DialogDescription>
-                                            For the best results, please follow these guidelines when uploading your property images.
-                                        </DialogDescription>
+                                      <DialogTitle>Image Upload Instructions</DialogTitle>
+                                      <DialogDescription>
+                                          For the best results, please follow these guidelines when uploading your property images.
+                                      </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-4 py-4">
                                     <Alert>
@@ -770,8 +770,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     />
                     </div>
                     
-                    <div className="flex justify-end gap-2 pt-4">
-                    
+                    <DialogFooter className="pt-4">
                     <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)} disabled={isUploading || form.formState.isSubmitting}>
                         Cancel
                     </Button>
@@ -779,7 +778,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                         {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                         {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : (isEditing ? 'Update Property' : 'List My Property'))}
                     </Button>
-                    </div>
+                    </DialogFooter>
                 </form>
                 </Form>
             </div>
@@ -789,10 +788,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
 
   const renderMyProperties = () => (
     <>
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold">Manage Your Listings</h2>
-        <p className="text-muted-foreground mt-2">You have {properties?.length || 0} active propert{properties?.length === 1 ? 'y' : 'ies'}.</p>
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <Card 
             className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
@@ -819,7 +814,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => setIsUpgradeAlertOpen(false)}>Upgrade</AlertDialogAction>
+            <AlertDialogAction>Upgrade</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
