@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,9 +35,10 @@ import {
 interface PropertyCardProps {
   property: Property;
   className?: string;
+  showActiveBadge?: boolean;
 }
 
-export function PropertyCard({ property, className }: PropertyCardProps) {
+export function PropertyCard({ property, className, showActiveBadge = false }: PropertyCardProps) {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -155,8 +155,13 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
                         <Star className="h-3 w-3 fill-current" />
                         <span>{rating.toFixed(1)}</span>
                     </div>
-                    <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'}>{property.listingType}</Badge>
+                    {!showActiveBadge && <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'}>{property.listingType}</Badge>}
                 </div>
+                 {showActiveBadge && (
+                    <div className="absolute top-4 left-4">
+                        <Badge className="bg-green-600 text-white hover:bg-green-700">ACTIVE</Badge>
+                    </div>
+                 )}
             </div>
             <div className="p-6 flex flex-col flex-grow">
                 <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
