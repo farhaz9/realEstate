@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap } from 'lucide-react';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight } from 'lucide-react';
 import type { Property, User } from '@/types';
 import {
   AlertDialog,
@@ -376,399 +377,397 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const renderAddPropertyForm = () => (
      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <Card className="border-0 shadow-none">
-                <CardHeader>
-                    <CardTitle>{isEditing ? "Edit Property" : "Add a New Property"}</CardTitle>
-                    <CardDescription>Fill in the details below to {isEditing ? 'update your property' : 'add your property to our listings'}.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormField
-                        control={form.control}
-                        name="images"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Property Images (up to 3)</FormLabel>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" className="w-full">
-                                    <ImageUp className="mr-2 h-4 w-4" />
-                                    Upload Images
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                     <DialogHeader>
-                                        <DialogTitle>Image Upload Instructions</DialogTitle>
-                                        <DialogDescription>
-                                            For the best results, please follow these guidelines when uploading your property images.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-4 py-4">
-                                    <Alert>
-                                        <AlertTitle>File Size Limit: 1MB</AlertTitle>
-                                        <AlertDescription>
-                                            Each image must be under 1MB. Large images may fail to upload.
-                                        </AlertDescription>
-                                        </Alert>
-                                        <p className="text-sm text-muted-foreground">
-                                            If your images are too large, you can use a free online tool to compress them before uploading.
-                                        </p>
-                                        <Button variant="secondary" asChild>
-                                            <Link href="https://www.iloveimg.com/" target="_blank">
-                                            Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                    <DialogFooter>
-                                    <Button onClick={() => fileInputRef.current?.click()}>
-                                        Select Files
-                                    </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                                </Dialog>
-                            <FormControl>
-                                <Input 
-                                type="file" 
-                                multiple
-                                accept="image/*"
-                                ref={fileInputRef}
-                                onChange={handleImageChange}
-                                className="hidden"
-                                disabled={isUploading || imagePreviews.length >= 3}
-                                />
-                            </FormControl>
-                            <FormDescription>
-                                {imagePreviews.length} / 3 uploaded.
-                            </FormDescription>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        
-                        {imagePreviews.length > 0 && (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                            {imagePreviews.map((src, index) => (
-                            <div key={index} className="relative group">
-                                <Image
-                                src={src}
-                                alt={`Preview ${index + 1}`}
-                                width={150}
-                                height={150}
-                                className="w-full h-auto object-cover rounded-md aspect-square"
-                                />
-                                <Button
-                                type="button"
-                                variant="destructive"
-                                size="icon"
-                                className="absolute top-1 right-1 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => removeImagePreview(index)}
-                                disabled={isUploading}
-                                >
-                                <X className="h-4 w-4" />
+            <DialogHeader>
+              <DialogTitle>{isEditing ? "Edit Property" : "Add a New Property"}</DialogTitle>
+              <DialogDescription>Fill in the details below to {isEditing ? 'update your property' : 'add your property to our listings'}.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <FormField
+                    control={form.control}
+                    name="images"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Property Images (up to 3)</FormLabel>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="w-full">
+                                <ImageUp className="mr-2 h-4 w-4" />
+                                Upload Images
                                 </Button>
-                            </div>
-                            ))}
+                            </DialogTrigger>
+                            <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Image Upload Instructions</DialogTitle>
+                                    <DialogDescription>
+                                        For the best results, please follow these guidelines when uploading your property images.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4 py-4">
+                                <Alert>
+                                    <AlertTitle>File Size Limit: 1MB</AlertTitle>
+                                    <AlertDescription>
+                                        Each image must be under 1MB. Large images may fail to upload.
+                                    </AlertDescription>
+                                    </Alert>
+                                    <p className="text-sm text-muted-foreground">
+                                        If your images are too large, you can use a free online tool to compress them before uploading.
+                                    </p>
+                                    <Button variant="secondary" asChild>
+                                        <Link href="https://www.iloveimg.com/" target="_blank">
+                                        Resize & Compress Images <ExternalLink className="ml-2 h-4 w-4" />
+                                        </Link>
+                                    </Button>
+                                </div>
+                                <DialogFooter>
+                                <Button onClick={() => fileInputRef.current?.click()}>
+                                    Select Files
+                                </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                            </Dialog>
+                        <FormControl>
+                            <Input 
+                            type="file" 
+                            multiple
+                            accept="image/*"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            className="hidden"
+                            disabled={isUploading || imagePreviews.length >= 3}
+                            />
+                        </FormControl>
+                        <FormDescription>
+                            {imagePreviews.length} / 3 uploaded.
+                        </FormDescription>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    
+                    {imagePreviews.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {imagePreviews.map((src, index) => (
+                        <div key={index} className="relative group">
+                            <Image
+                            src={src}
+                            alt={`Preview ${index + 1}`}
+                            width={150}
+                            height={150}
+                            className="w-full h-auto object-cover rounded-md aspect-square"
+                            />
+                            <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeImagePreview(index)}
+                            disabled={isUploading}
+                            >
+                            <X className="h-4 w-4" />
+                            </Button>
                         </div>
-                        )}
+                        ))}
+                    </div>
+                    )}
 
 
-                        <FormField
+                    <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Property Title</FormLabel>
+                        <FormControl>
+                            <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} disabled={isUploading} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+
+                    <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                            <Textarea placeholder="Describe your property in detail..." rows={5} {...field} disabled={isUploading} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    
+                    <div className="grid md:grid-cols-3 gap-8">
+                    <FormField
                         control={form.control}
-                        name="title"
+                        name="location.address"
                         render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Property Title</FormLabel>
+                            <FormItem className="md:col-span-3">
+                            <FormLabel>Full Address</FormLabel>
                             <FormControl>
-                                <Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} disabled={isUploading} />
+                                <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} disabled={isUploading} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
                         />
-
                         <FormField
                         control={form.control}
-                        name="description"
+                        name="location.pincode"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>Pincode</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Describe your property in detail..." rows={5} {...field} disabled={isUploading} />
+                                <Input placeholder="e.g., 110017" {...field} disabled={isUploading} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
                         />
-                        
-                        <div className="grid md:grid-cols-3 gap-8">
                         <FormField
-                            control={form.control}
-                            name="location.address"
-                            render={({ field }) => (
-                                <FormItem className="md:col-span-3">
-                                <FormLabel>Full Address</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                            <FormField
-                            control={form.control}
-                            name="location.pincode"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Pincode</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g., 110017" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                            <FormField
-                            control={form.control}
-                            name="location.state"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>State</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a state" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                    {indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                            <FormField
-                            control={form.control}
-                            name="propertyType"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Property Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
-                                    <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a property type" />
-                                    </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                    {propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                        </div>
-                        
-                        <div className="grid md:grid-cols-2 gap-8">
-                        <FormField
-                            control={form.control}
-                            name="contactNumber"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Contact Number</FormLabel>
-                                <FormControl>
-                                    <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                            <FormField
-                            control={form.control}
-                            name="whatsappNumber"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>WhatsApp Number</FormLabel>
-                                <FormControl>
-                                    <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-8">
-                        <FormField
-                            control={form.control}
-                            name="price"
-                            render={({ field }) => (
+                        control={form.control}
+                        name="location.state"
+                        render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Price (in INR)</FormLabel>
+                            <FormLabel>State</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
                                 <FormControl>
-                                <Input type="number" placeholder="Enter amount" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="listingType"
-                            render={({ field }) => (
-                            <FormItem className="space-y-3">
-                                <FormLabel>Listing For</FormLabel>
-                                <FormControl>
-                                <RadioGroup
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    className="flex items-center space-x-4"
-                                    disabled={isUploading}
-                                >
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                    <FormControl>
-                                        <RadioGroupItem value="sale" />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">Sale</FormLabel>
-                                    </FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                    <FormControl>
-                                        <RadioGroupItem value="rent" />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">Rent</FormLabel>
-                                    </FormItem>
-                                </RadioGroup>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-8">
-                        <FormField
-                            control={form.control}
-                            name="bedrooms"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Bedrooms</FormLabel>
-                                <FormControl>
-                                <Input type="number" min="0" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="bathrooms"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Bathrooms</FormLabel>
-                                <FormControl>
-                                <Input type="number" min="0" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="squareYards"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Area (sq. yards)</FormLabel>
-                                <FormControl>
-                                <Input type="number" placeholder="e.g., 250" {...field} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-8">
-                        <FormField
-                            control={form.control}
-                            name="furnishing"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Furnishing</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value} disabled={isUploading}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                    <SelectValue placeholder="Select furnishing status" />
-                                    </SelectTrigger>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a state" />
+                                </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="unfurnished">Unfurnished</SelectItem>
-                                    <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
-                                    <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
+                                {indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}
                                 </SelectContent>
-                                </Select>
-                                <FormMessage />
+                            </Select>
+                            <FormMessage />
                             </FormItem>
-                            )}
+                        )}
                         />
                         <FormField
-                            control={form.control}
-                            name="amenities"
-                            render={({ field }) => (
+                        control={form.control}
+                        name="propertyType"
+                        render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Amenities (Optional)</FormLabel>
+                            <FormLabel>Property Type</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
                                 <FormControl>
-                                <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} disabled={isUploading} />
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a property type" />
+                                </SelectTrigger>
                                 </FormControl>
-                                <FormDescription>
-                                Enter a comma-separated list of amenities.
-                                </FormDescription>
-                                <FormMessage />
+                                <SelectContent>
+                                {propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
                             </FormItem>
-                            )}
+                        )}
+                        />
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-8">
+                    <FormField
+                        control={form.control}
+                        name="contactNumber"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Contact Number</FormLabel>
+                            <FormControl>
+                                <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
                         />
                         <FormField
-                            control={form.control}
-                            name="overlooking"
-                            render={({ field }) => (
+                        control={form.control}
+                        name="whatsappNumber"
+                        render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Overlooking (Optional)</FormLabel>
-                                <FormControl>
-                                <Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} disabled={isUploading} />
-                                </FormControl>
-                                <FormMessage />
+                            <FormLabel>WhatsApp Number</FormLabel>
+                            <FormControl>
+                                <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
                             </FormItem>
-                            )}
+                        )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="ageOfConstruction"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Age of Construction (Optional)</FormLabel>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                    <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Price (in INR)</FormLabel>
+                            <FormControl>
+                            <Input type="number" placeholder="Enter amount" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="listingType"
+                        render={({ field }) => (
+                        <FormItem className="space-y-3">
+                            <FormLabel>Listing For</FormLabel>
+                            <FormControl>
+                            <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="flex items-center space-x-4"
+                                disabled={isUploading}
+                            >
+                                <FormItem className="flex items-center space-x-3 space-y-0">
                                 <FormControl>
-                                <Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} disabled={isUploading} />
+                                    <RadioGroupItem value="sale" />
                                 </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        </div>
-                        
-                        <div className="flex justify-end gap-2 pt-4">
-                        
-                        <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)} disabled={isUploading || form.formState.isSubmitting}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
-                            {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                            {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : (isEditing ? 'Update Property' : 'List My Property'))}
-                        </Button>
-                        </div>
-                    </form>
-                    </Form>
-                </CardContent>
-            </Card>
+                                <FormLabel className="font-normal">Sale</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                    <RadioGroupItem value="rent" />
+                                </FormControl>
+                                <FormLabel className="font-normal">Rent</FormLabel>
+                                </FormItem>
+                            </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-8">
+                    <FormField
+                        control={form.control}
+                        name="bedrooms"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Bedrooms</FormLabel>
+                            <FormControl>
+                            <Input type="number" min="0" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="bathrooms"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Bathrooms</FormLabel>
+                            <FormControl>
+                            <Input type="number" min="0" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="squareYards"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Area (sq. yards)</FormLabel>
+                            <FormControl>
+                            <Input type="number" placeholder="e.g., 250" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-8">
+                    <FormField
+                        control={form.control}
+                        name="furnishing"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Furnishing</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value} disabled={isUploading}>
+                            <FormControl>
+                                <SelectTrigger>
+                                <SelectValue placeholder="Select furnishing status" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectItem value="unfurnished">Unfurnished</SelectItem>
+                                <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
+                                <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
+                            </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="amenities"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Amenities (Optional)</FormLabel>
+                            <FormControl>
+                            <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} disabled={isUploading} />
+                            </FormControl>
+                            <FormDescription>
+                            Enter a comma-separated list of amenities.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="overlooking"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Overlooking (Optional)</FormLabel>
+                            <FormControl>
+                            <Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="ageOfConstruction"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Age of Construction (Optional)</FormLabel>
+                            <FormControl>
+                            <Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} disabled={isUploading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    </div>
+                    
+                    <div className="flex justify-end gap-2 pt-4">
+                    
+                    <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)} disabled={isUploading || form.formState.isSubmitting}>
+                        Cancel
+                    </Button>
+                    <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
+                        {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        {isUploading ? 'Uploading...' : (form.formState.isSubmitting ? 'Submitting...' : (isEditing ? 'Update Property' : 'List My Property'))}
+                    </Button>
+                    </div>
+                </form>
+                </Form>
+            </div>
         </DialogContent>
      </Dialog>
   );
@@ -815,54 +814,73 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         {renderMyProperties()}
         {renderAddPropertyForm()}
          {!isPremiumUser && (
-            <div className="mt-12 max-w-lg mx-auto">
-                 <Card className="text-center">
-                    <CardHeader>
-                        <CardTitle>Unlock Premium Listings</CardTitle>
-                        <CardDescription>Supercharge your property's visibility.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Zap className="h-12 w-12 text-yellow-400 mx-auto fill-yellow-400" />
-                        <p className="mt-4 text-muted-foreground">
-                        Upgrade to a Premium subscription to get your listings featured at the top and auto-renewed.
-                        </p>
-                    </CardContent>
-                    <CardFooter className="flex-col gap-2">
-                        <AlertDialog>
+            <div className="mt-16 max-w-lg mx-auto">
+                <div className="relative rounded-2xl bg-slate-900 p-8 text-white shadow-2xl border border-purple-500/30">
+                    <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4">
+                        <div className="w-32 h-8 bg-purple-600 text-white text-xs font-bold flex items-center justify-center transform rotate-45">
+                           POPULAR
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="text-2xl font-bold flex items-center gap-2">
+                                Premium <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            </h3>
+                            <p className="text-sm text-slate-400">Best for active agents</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-4xl font-bold">₹99</p>
+                            <p className="text-sm text-slate-400">/ listing</p>
+                        </div>
+                    </div>
+
+                    <hr className="my-6 border-slate-700" />
+
+                    <ul className="space-y-4">
+                        <li className="flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
+                            <span>Unlimited listings & saves</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
+                            <span className="flex-grow">Feature your listings</span>
+                            <span className="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-sm">TOP</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
+                            <span>Detailed visitor analytics</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
+                            <span>Priority email support</span>
+                        </li>
+                    </ul>
+
+                    <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:opacity-90">Subscribe for ₹99/month</Button>
+                            <Button className="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white font-bold text-base py-6 rounded-lg">
+                                Subscribe Now <ArrowRight className="ml-2 w-5 h-5" />
+                            </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
+                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Premium Subscription Benefits</AlertDialogTitle>
+                                <AlertDialogTitle>Premium Subscription</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                Join our premium plan for a one-time payment of ₹99 and enjoy lifetime benefits for all your listings.
+                                Payment gateway integration is coming soon. This feature is currently under development.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
-                            <Alert>
-                                <Banknote className="h-4 w-4" />
-                                <AlertTitle>One-Time Payment: ₹99</AlertTitle>
-                                <AlertDescription>
-                                This is a single payment for a lifetime premium status. All your listings will be treated as premium, with 30-day auto-renewal cycles.
-                                </AlertDescription>
-                            </Alert>
-                            <ul className="text-sm text-muted-foreground space-y-2 my-4 list-disc pl-5">
-                                <li>Listings appear at the top of search results.</li>
-                                <li>Featured in "Popular" and "Featured" sections.</li>
-                                <li>Advanced SEO optimization.</li>
-                                <li>30-day auto-renewal with payment integration.</li>
-                            </ul>
                             <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction disabled>Proceed to Payment</AlertDialogAction>
+                                <AlertDialogAction>Got it!</AlertDialogAction>
                             </AlertDialogFooter>
-                            <p className="text-xs text-muted-foreground mt-2 text-center">Payment gateway integration is coming soon.</p>
                         </AlertDialogContent>
-                        </AlertDialog>
-                    </CardFooter>
-                </Card>
+                    </AlertDialog>
+
+                    <p className="text-center text-xs text-slate-500 mt-4">One-time payment per listing.</p>
+                </div>
             </div>
          )}
     </div>
   )
 }
+
+    
