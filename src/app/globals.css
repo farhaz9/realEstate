@@ -84,4 +84,17 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+
+  @keyframes pulse-loader {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .animate-pulse-loader {
+    animation: pulse-loader 1.5s ease-in-out infinite;
+  }
 }
