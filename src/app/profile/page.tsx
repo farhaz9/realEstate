@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2, Settings, Wrench } from 'lucide-react';
+import { User, Mail, Phone, Briefcase, LogOut, Shield, Camera, AtSign, Trash2, Wrench } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Spinner } from '@/components/ui/spinner-1';
 
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -143,14 +144,14 @@ function ProfilePageContent() {
   if (isUserLoading || isProfileLoading) {
     return (
       <>
-        <div className="bg-muted">
+        <div className="bg-muted/40">
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold">My Profile</h1>
                 <p className="text-muted-foreground">Manage your account details and listings.</p>
             </div>
         </div>
         <div className="container mx-auto px-4 py-16 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <Spinner size={48} />
         </div>
       </>
     );
@@ -159,7 +160,7 @@ function ProfilePageContent() {
   if (!user) {
     return (
        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Spinner size={48} />
         </div>
     );
   }
@@ -341,7 +342,11 @@ function ProfilePageContent() {
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={<Loader2 className="h-8 w-8 animate-spin" />}>
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <Spinner size={48} />
+      </div>
+    }>
       <ProfilePageContent />
     </Suspense>
   )
