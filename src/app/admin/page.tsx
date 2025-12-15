@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -88,8 +88,6 @@ function AppSettingsForm({ settings }: { settings: AppSettings | null }) {
         const settingsRef = doc(firestore, "app_settings", "config");
         
         try {
-            // Using { merge: true } will create the document if it doesn't exist,
-            // or update it if it does. This resolves the initial loading issue.
             await setDoc(settingsRef, data, { merge: true });
             toast({
                 title: "Settings Updated",
@@ -194,16 +192,19 @@ export default function AdminPage() {
   const [orderSort, setOrderSort] = useState({ key: 'date', direction: 'desc' });
   
   const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [propertySearchTerm, setPropertySearchTerm] = useState('');
   const [orderSearchTerm, setOrderSearchTerm] = useState('');
   
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [creditAmount, setCreditAmount] = useState(0);
   const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [propertyToReject, setPropertyToReject] = useState<Property | null>(null);
 
   const allPropertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'properties'), orderBy(propertySort.key, propertySort.direction as 'asc' | 'desc'));
-  }, [firestore, propertySort]);
+    return query(collection(firestore, 'properties'), orderBy('dateListed', 'desc'));
+  }, [firestore]);
 
   const allUsersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -228,7 +229,8 @@ export default function AdminPage() {
             ...order,
             userId: u.id,
             userName: u.fullName,
-            userEmail: u.email
+            userEmail: u.email,
+            description: order.description || 'N/A',
         }))
     );
   }, [users]);
@@ -257,11 +259,19 @@ export default function AdminPage() {
       threshold: 0.3,
     });
   }, [users]);
+
+  const propertyFuse = useMemo(() => {
+    if (!properties) return null;
+    return new Fuse(properties, {
+        keys: ['title', 'location.address', 'id'],
+        threshold: 0.3
+    });
+  }, [properties]);
   
   const orderFuse = useMemo(() => {
     if (allOrders.length === 0) return null;
     return new Fuse(allOrders, {
-        keys: ['userName', 'userEmail', 'paymentId'],
+        keys: ['userName', 'userEmail', 'paymentId', 'description'],
         threshold: 0.3
     });
   }, [allOrders]);
@@ -274,14 +284,14 @@ export default function AdminPage() {
 
     return [...filtered].sort((a, b) => {
         const { key, direction } = userSort;
-        let valA, valB;
+        let valA: any, valB: any;
 
         if (key === 'isVerified') {
             valA = a.verifiedUntil && a.verifiedUntil.toDate() > new Date() ? 1 : 0;
             valB = b.verifiedUntil && b.verifiedUntil.toDate() > new Date() ? 1 : 0;
         } else if (key === 'dateJoined' && a.dateJoined && b.dateJoined) {
-            valA = a.dateJoined?.toDate ? a.dateJoined.toDate() : new Date(0);
-            valB = b.dateJoined?.toDate ? b.dateJoined.toDate() : new Date(0);
+            valA = a.dateJoined?.toDate ? a.dateJoined.toDate().getTime() : 0;
+            valB = b.dateJoined?.toDate ? b.dateJoined.toDate().getTime() : 0;
         } else {
             valA = a[key as keyof User];
             valB = b[key as keyof User];
@@ -294,6 +304,30 @@ export default function AdminPage() {
     });
   }, [users, userSearchTerm, userFuse, userSort]);
 
+  const sortedAndFilteredProperties = useMemo(() => {
+    if (!properties) return [];
+    let filtered = propertySearchTerm && propertyFuse
+        ? propertyFuse.search(propertySearchTerm).map(result => result.item)
+        : properties;
+    
+    return [...filtered].sort((a, b) => {
+        const { key, direction } = propertySort;
+        let valA: any = a[key as keyof Property];
+        let valB: any = b[key as keyof Property];
+
+        if (key === 'dateListed' && a.dateListed && b.dateListed) {
+            valA = a.dateListed?.toDate ? a.dateListed.toDate().getTime() : 0;
+            valB = b.dateListed?.toDate ? b.dateListed.toDate().getTime() : 0;
+        }
+
+        const order = direction === 'asc' ? 1 : -1;
+        if (valA < valB) return -1 * order;
+        if (valA > valB) return 1 * order;
+        return 0;
+    });
+  }, [properties, propertySearchTerm, propertyFuse, propertySort]);
+
+
   const sortedAndFilteredOrders = useMemo(() => {
     let filtered = orderSearchTerm && orderFuse
       ? orderFuse.search(orderSearchTerm).map(result => result.item)
@@ -301,12 +335,12 @@ export default function AdminPage() {
 
     return [...filtered].sort((a, b) => {
         const { key, direction } = orderSort;
-        let valA = a[key as keyof typeof a];
-        let valB = b[key as keyof typeof b];
+        let valA: any = a[key as keyof typeof a];
+        let valB: any = b[key as keyof typeof b];
 
         if (key === 'date') {
-            valA = a.date?.toDate ? a.date.toDate() : new Date(0);
-            valB = b.date?.toDate ? b.date.toDate() : new Date(0);
+            valA = a.date?.toDate ? a.date.toDate().getTime() : 0;
+            valB = b.date?.toDate ? b.date.toDate().getTime() : 0;
         }
         
         const order = direction === 'asc' ? 1 : -1;
@@ -333,6 +367,37 @@ export default function AdminPage() {
     const propertyRef = doc(firestore, "properties", propertyId);
     deleteDocumentNonBlocking(propertyRef);
     toast({ title: "Property Deleted", description: "The property listing has been successfully removed.", variant: "destructive" });
+  };
+  
+  const handlePropertyStatusChange = (propertyId: string, status: 'approved' | 'rejected', reason?: string) => {
+    if (!firestore) return;
+    const propertyRef = doc(firestore, 'properties', propertyId);
+    const updateData: { status: string; rejectionReason?: string } = { status };
+    if (status === 'rejected') {
+        updateData.rejectionReason = reason || 'No reason provided.';
+    } else {
+        updateData.rejectionReason = ''; // Clear reason on approval
+    }
+    updateDocumentNonBlocking(propertyRef, updateData);
+    toast({
+      title: `Property ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+      description: `The property has been successfully ${status}.`,
+      variant: 'success',
+    });
+    if (propertyToReject) {
+        setPropertyToReject(null);
+        setRejectionReason('');
+    }
+  };
+
+  const handleFeatureToggle = (propertyId: string, isFeatured: boolean) => {
+    if (!firestore) return;
+    const propertyRef = doc(firestore, 'properties', propertyId);
+    updateDocumentNonBlocking(propertyRef, { isFeatured: !isFeatured });
+    toast({
+        title: `Property ${!isFeatured ? 'Featured' : 'Unfeatured'}`,
+        variant: 'success'
+    });
   };
 
   const handleUserDelete = (userId: string) => {
@@ -398,182 +463,213 @@ export default function AdminPage() {
       );
     }
     return (
-        <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                <TabsTrigger value="properties">Properties</TabsTrigger>
-                <TabsTrigger value="users">Users</TabsTrigger>
-                <TabsTrigger value="orders">Orders</TabsTrigger>
-                <TabsTrigger value="settings">Settings</TabsTrigger>
-            </TabsList>
-            <TabsContent value="dashboard" className="mt-6">
-                <div className="space-y-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-1">
-                            <Card><CardHeader><CardTitle>User Distribution</CardTitle></CardHeader><CardContent>{users ? <UserDistributionChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}</CardContent></Card>
-                        </div>
-                        <div className="lg:col-span-2">
-                            <Card><CardHeader><CardTitle>Platform Metrics</CardTitle></CardHeader><CardContent><div className="grid gap-6 grid-cols-2 md:grid-cols-3">
-                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Building className="h-8 w-8 text-primary mb-2" /><p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Properties</p></div>
-                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Users className="h-8 w-8 text-blue-500 mb-2" /><p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Users</p></div>
-                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Banknote className="h-8 w-8 text-green-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Sale</p></div>
-                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Tag className="h-8 w-8 text-orange-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Rent</p></div>
-                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><UserRoundCheck className="h-8 w-8 text-indigo-500 mb-2" /><p className="text-3xl font-bold">{stats?.verifiedUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Verified Users</p></div>
-                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><BadgeDollarSign className="h-8 w-8 text-rose-500 mb-2" /><p className="text-3xl font-bold">{formatPrice(stats?.totalRevenue ?? 0)}</p><p className="text-sm text-muted-foreground">Total Revenue</p></div>
-                            </div></CardContent></Card>
-                        </div>
-                    </div>
-                </div>
-            </TabsContent>
-            <TabsContent value="properties" className="mt-6">
-                <Card><CardHeader><CardTitle>All Properties ({properties?.length || 0})</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
-                    <TableHead>Property</TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead>Owner</TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'listingType')}><div className="flex items-center gap-2">Type <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                </TableRow></TableHeader><TableBody>{properties?.map(property => { const owner = users?.find(u => u.id === property.userId); return (
-                    <TableRow key={property.id}><TableCell className="font-medium"><div className="flex items-center gap-3"><Avatar className="h-10 w-10 rounded-md"><AvatarImage src={property.imageUrls?.[0]} alt={property.title} /><AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback></Avatar><div className="truncate"><p className="font-semibold truncate">{property.title}</p><p className="text-xs text-muted-foreground truncate">{property.location.address}</p></div></div></TableCell>
-                    <TableCell>{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell><TableCell>{owner?.fullName || 'Unknown'}</TableCell><TableCell className="capitalize">{property.listingType}</TableCell>
-                    <TableCell className="text-right"><Button variant="ghost" size="icon" onClick={() => router.push(`/admin/edit/${property.id}`)}><Pencil className="h-4 w-4" /></Button><AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This will permanently delete the property "{property.title}".</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handlePropertyDelete(property.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog></TableCell>
-                    </TableRow>
-                )})}</TableBody></Table></div></CardContent></Card>
-            </TabsContent>
-            <TabsContent value="users" className="mt-6">
-                <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isVerified')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'dateJoined')}><div className="flex items-center gap-2">Date Joined <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date(); return (
-                    <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground">{u.phone}</p></div></div></TableCell>
-                    <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
-                    <TableCell>{u.dateJoined?.toDate ? format(u.dateJoined.toDate(), 'PPP') : 'N/A'}</TableCell>
-                    <TableCell><Dialog><DialogTrigger asChild><Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}><Coins className="h-4 w-4 text-amber-500" /><span className="font-semibold">{u.listingCredits ?? 0}</span></Button></DialogTrigger>{selectedUser?.id === u.id && (<DialogContent><DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle><DialogDescription>Adjust the number of listing credits for this user.</DialogDescription></DialogHeader><div className="flex items-center justify-center gap-4 py-4"><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button><Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} /><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button></div><DialogFooter><Button onClick={handleUpdateCredits}>Save Changes</Button></DialogFooter></DialogContent>)}</Dialog></TableCell>
-                    <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
-                    <TableCell className="text-right">{u.email !== ADMIN_EMAIL && (<div className="flex items-center justify-end gap-1">
-                        <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
-                            <DialogTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(u); setIsEditUserDialogOpen(true); }}>
-                                    <Edit className="h-4 w-4" />
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
-                                    <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
-                                </DialogHeader>
-                                {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
-                            </DialogContent>
-                        </Dialog>
-                        <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={isCurrentlyVerified ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}><Verified className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Confirm Verification</AlertDialogTitle><AlertDialogDescription>Do you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}? {isCurrentlyVerified ? ' This will remove their badge immediately.' : ' This will grant them a badge for one year.'}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>{isCurrentlyVerified ? 'Revoke Verification' : 'Grant Verification'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                        <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={u.isBlocked ? "text-green-600 hover:text-green-700" : "text-orange-600 hover:text-orange-700"}>{u.isBlocked ? <UserCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}". Blocked users cannot log in.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock User' : 'Block User'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                        <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle><AlertDialogDescription>This action will permanently delete the user "{u.fullName}" and all associated data. This cannot be undone.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete User</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                    </div>)}</TableCell></TableRow>
-                )})}</TableBody></Table></div></CardContent></Card>
-            </TabsContent>
-            <TabsContent value="orders" className="mt-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>All Orders ({allOrders.length})</CardTitle>
-                         <div className="relative mt-4">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                            <Input 
-                                placeholder="Search by user, email, or payment ID..."
-                                className="pl-10"
-                                value={orderSearchTerm}
-                                onChange={(e) => setOrderSearchTerm(e.target.value)}
-                            />
-                        </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'paymentId')}>
-                                            <div className="flex items-center gap-2">Payment ID <ArrowUpDown className="h-4 w-4" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'userName')}>
-                                            <div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'date')}>
-                                            <div className="flex items-center gap-2">Date <ArrowUpDown className="h-4 w-4" /></div>
-                                        </TableHead>
-                                        <TableHead>Description</TableHead>
-                                        <TableHead className="text-right cursor-pointer" onClick={() => handleSort(setOrderSort, 'amount')}>
-                                            <div className="flex items-center justify-end gap-2">Amount <ArrowUpDown className="h-4 w-4" /></div>
-                                        </TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {sortedAndFilteredOrders.map((order, index) => (
-                                        <TableRow key={`${order.paymentId}-${index}`}>
-                                            <TableCell className="font-mono text-xs">{order.paymentId}</TableCell>
-                                            <TableCell>
-                                                <div className="font-medium">{order.userName}</div>
-                                                <div className="text-sm text-muted-foreground">{order.userEmail}</div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {order.date?.toDate ? format(order.date.toDate(), 'PPP p') : 'N/A'}
-                                            </TableCell>
-                                            <TableCell>{order.description}</TableCell>
-                                            <TableCell className="text-right font-semibold">{formatPrice(order.amount)}</TableCell>
-                                            <TableCell className="text-right">
-                                                 <Dialog>
-                                                    <DialogTrigger asChild>
-                                                        <Button variant="ghost" size="icon">
-                                                            <FileText className="h-4 w-4" />
-                                                        </Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent>
-                                                        <DialogHeader>
-                                                            <DialogTitle>Add Refund Note</DialogTitle>
-                                                            <DialogDescription>Add a note for payment ID: {order.paymentId}</DialogDescription>
-                                                        </DialogHeader>
-                                                        <div className="py-4">
-                                                            <Textarea placeholder="Enter refund details or notes here..." />
-                                                        </div>
-                                                        <DialogFooter>
-                                                            <Button type="submit">Save Note</Button>
-                                                        </DialogFooter>
-                                                    </DialogContent>
-                                                </Dialog>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                             {sortedAndFilteredOrders.length === 0 && (
-                                <div className="text-center py-16 text-muted-foreground">
-                                    <ShoppingCart className="mx-auto h-12 w-12" />
-                                    <h3 className="mt-4 text-xl font-semibold">No orders found</h3>
-                                    <p>Try adjusting your search filters.</p>
-                                </div>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-            </TabsContent>
-            <TabsContent value="settings" className="mt-6">
-                {isLoadingSettings ? (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Platform Settings</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-center py-16">
-                                <Loader2 className="h-8 w-8 animate-spin" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    <AppSettingsForm settings={appSettings} />
-                )}
-            </TabsContent>
-        </Tabs>
+      <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="properties">Properties</TabsTrigger>
+              <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="orders">Orders</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+          <TabsContent value="dashboard" className="mt-6">
+              <div className="space-y-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      <div className="lg:col-span-1">
+                          <Card><CardHeader><CardTitle>User Distribution</CardTitle></CardHeader><CardContent>{users ? <UserDistributionChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}</CardContent></Card>
+                      </div>
+                      <div className="lg:col-span-2">
+                          <Card><CardHeader><CardTitle>Platform Metrics</CardTitle></CardHeader><CardContent><div className="grid gap-6 grid-cols-2 md:grid-cols-3">
+                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Building className="h-8 w-8 text-primary mb-2" /><p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Properties</p></div>
+                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Users className="h-8 w-8 text-blue-500 mb-2" /><p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Users</p></div>
+                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Banknote className="h-8 w-8 text-green-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Sale</p></div>
+                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Tag className="h-8 w-8 text-orange-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Rent</p></div>
+                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><UserRoundCheck className="h-8 w-8 text-indigo-500 mb-2" /><p className="text-3xl font-bold">{stats?.verifiedUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Verified Users</p></div>
+                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><BadgeDollarSign className="h-8 w-8 text-rose-500 mb-2" /><p className="text-3xl font-bold">{formatPrice(stats?.totalRevenue ?? 0)}</p><p className="text-sm text-muted-foreground">Total Revenue</p></div>
+                          </div></CardContent></Card>
+                      </div>
+                  </div>
+              </div>
+          </TabsContent>
+          <TabsContent value="properties" className="mt-6">
+              <Card><CardHeader>
+                  <CardTitle>All Properties ({properties?.length || 0})</CardTitle>
+                  <div className="relative mt-4">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input placeholder="Search by title, address, or ID..." className="pl-10" value={propertySearchTerm} onChange={(e) => setPropertySearchTerm(e.target.value)} />
+                  </div>
+              </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
+                  <TableHead>Property</TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead>Owner</TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'status')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'isFeatured')}><div className="flex items-center gap-2">Featured <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => { const owner = users?.find(u => u.id === property.userId); return (
+                  <TableRow key={property.id}>
+                      <TableCell className="font-medium"><div className="flex items-center gap-3"><Avatar className="h-10 w-10 rounded-md"><AvatarImage src={property.imageUrls?.[0]} alt={property.title} /><AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback></Avatar><div className="truncate"><p className="font-semibold truncate">{property.title}</p><p className="text-xs text-muted-foreground truncate">{property.location.address}</p></div></div></TableCell>
+                      <TableCell>{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
+                      <TableCell>{owner?.fullName || 'Unknown'}</TableCell>
+                      <TableCell><Badge variant={property.status === 'approved' ? 'success' : property.status === 'rejected' ? 'destructive' : 'secondary'} className="capitalize">{property.status}</Badge></TableCell>
+                      <TableCell>{property.isFeatured ? <CheckCircle className="h-5 w-5 text-green-500" /> : <XCircle className="h-5 w-5 text-muted-foreground" />}</TableCell>
+                      <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                              {property.status === 'pending' && (
+                                  <>
+                                      <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700" onClick={() => handlePropertyStatusChange(property.id, 'approved')}>Approve</Button>
+                                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => setPropertyToReject(property)}>Reject</Button>
+                                  </>
+                              )}
+                              {property.status === 'approved' && (
+                                  <>
+                                      <Button variant="ghost" size="sm" onClick={() => handleFeatureToggle(property.id, !!property.isFeatured)}>{property.isFeatured ? 'Unfeature' : 'Feature'}</Button>
+                                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => setPropertyToReject(property)}>Reject</Button>
+                                  </>
+                              )}
+                              {property.status === 'rejected' && (
+                                  <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700" onClick={() => handlePropertyStatusChange(property.id, 'approved')}>Approve</Button>
+                              )}
+                              <Button variant="ghost" size="icon" onClick={() => router.push(`/admin/edit/${property.id}`)}><Pencil className="h-4 w-4" /></Button>
+                              <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This will permanently delete the property "{property.title}".</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handlePropertyDelete(property.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+                          </div>
+                      </TableCell>
+                  </TableRow>
+              )})}</TableBody></Table></div></CardContent></Card>
+          </TabsContent>
+          <TabsContent value="users" className="mt-6">
+              <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'fullName')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'dateJoined')}><div className="flex items-center gap-2">Date Joined <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date(); return (
+                  <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground">{u.phone}</p></div></div></TableCell>
+                  <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
+                  <TableCell>{u.dateJoined?.toDate ? format(u.dateJoined.toDate(), 'PPP') : 'N/A'}</TableCell>
+                  <TableCell><Dialog><DialogTrigger asChild><Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}><Coins className="h-4 w-4 text-amber-500" /><span className="font-semibold">{u.listingCredits ?? 0}</span></Button></DialogTrigger>{selectedUser?.id === u.id && (<DialogContent><DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle><DialogDescription>Adjust the number of listing credits for this user.</DialogDescription></DialogHeader><div className="flex items-center justify-center gap-4 py-4"><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button><Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} /><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button></div><DialogFooter><Button onClick={handleUpdateCredits}>Save Changes</Button></DialogFooter></DialogContent>)}</Dialog></TableCell>
+                  <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
+                  <TableCell className="text-right">{u.email !== ADMIN_EMAIL && (<div className="flex items-center justify-end gap-1">
+                      <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
+                          <DialogTrigger asChild>
+                              <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(u); setIsEditUserDialogOpen(true); }}>
+                                  <Edit className="h-4 w-4" />
+                              </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-lg">
+                              <DialogHeader>
+                                  <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
+                              </DialogHeader>
+                              {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
+                          </DialogContent>
+                      </Dialog>
+                      <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={isCurrentlyVerified ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}><Verified className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Confirm Verification</AlertDialogTitle><AlertDialogDescription>Do you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}? {isCurrentlyVerified ? ' This will remove their badge immediately.' : ' This will grant them a badge for one year.'}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>{isCurrentlyVerified ? 'Revoke Verification' : 'Grant Verification'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+                      <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={u.isBlocked ? "text-green-600 hover:text-green-700" : "text-orange-600 hover:text-orange-700"}>{u.isBlocked ? <UserCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}". Blocked users cannot log in.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock User' : 'Block User'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+                      <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle><AlertDialogDescription>This action will permanently delete the user "{u.fullName}" and all associated data. This cannot be undone.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete User</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+                  </div>)}</TableCell></TableRow>
+              )})}</TableBody></Table></div></CardContent></Card>
+          </TabsContent>
+          <TabsContent value="orders" className="mt-6">
+              <Card>
+                  <CardHeader>
+                      <CardTitle>All Orders ({allOrders.length})</CardTitle>
+                       <div className="relative mt-4">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input 
+                              placeholder="Search by user, email, payment ID, or description..."
+                              className="pl-10"
+                              value={orderSearchTerm}
+                              onChange={(e) => setOrderSearchTerm(e.target.value)}
+                          />
+                      </div>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                      <div className="overflow-x-auto">
+                          <Table>
+                              <TableHeader>
+                                  <TableRow>
+                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'paymentId')}>
+                                          <div className="flex items-center gap-2">Payment ID <ArrowUpDown className="h-4 w-4" /></div>
+                                      </TableHead>
+                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'userName')}>
+                                          <div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div>
+                                      </TableHead>
+                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'date')}>
+                                          <div className="flex items-center gap-2">Date <ArrowUpDown className="h-4 w-4" /></div>
+                                      </TableHead>
+                                      <TableHead>Description</TableHead>
+                                      <TableHead className="text-right cursor-pointer" onClick={() => handleSort(setOrderSort, 'amount')}>
+                                          <div className="flex items-center justify-end gap-2">Amount <ArrowUpDown className="h-4 w-4" /></div>
+                                      </TableHead>
+                                      <TableHead className="text-right">Actions</TableHead>
+                                  </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                  {sortedAndFilteredOrders.map((order, index) => (
+                                      <TableRow key={`${order.paymentId}-${index}`}>
+                                          <TableCell className="font-mono text-xs">{order.paymentId}</TableCell>
+                                          <TableCell>
+                                              <div className="font-medium">{order.userName}</div>
+                                              <div className="text-sm text-muted-foreground">{order.userEmail}</div>
+                                          </TableCell>
+                                          <TableCell>
+                                              {order.date?.toDate ? format(order.date.toDate(), 'PPP p') : 'N/A'}
+                                          </TableCell>
+                                          <TableCell>{order.description}</TableCell>
+                                          <TableCell className="text-right font-semibold">{formatPrice(order.amount)}</TableCell>
+                                          <TableCell className="text-right">
+                                               <Dialog>
+                                                  <DialogTrigger asChild>
+                                                      <Button variant="ghost" size="icon">
+                                                          <FileText className="h-4 w-4" />
+                                                      </Button>
+                                                  </DialogTrigger>
+                                                  <DialogContent>
+                                                      <DialogHeader>
+                                                          <DialogTitle>Add Refund Note</DialogTitle>
+                                                          <DialogDescription>Add a note for payment ID: {order.paymentId}</DialogDescription>
+                                                      </DialogHeader>
+                                                      <div className="py-4">
+                                                          <Textarea placeholder="Enter refund details or notes here..." />
+                                                      </div>
+                                                      <DialogFooter>
+                                                          <Button type="submit">Save Note</Button>
+                                                      </DialogFooter>
+                                                  </DialogContent>
+                                              </Dialog>
+                                          </TableCell>
+                                      </TableRow>
+                                  ))}
+                              </TableBody>
+                          </Table>
+                           {sortedAndFilteredOrders.length === 0 && (
+                              <div className="text-center py-16 text-muted-foreground">
+                                  <ShoppingCart className="mx-auto h-12 w-12" />
+                                  <h3 className="mt-4 text-xl font-semibold">No orders found</h3>
+                                  <p>Try adjusting your search filters.</p>
+                              </div>
+                          )}
+                      </div>
+                  </CardContent>
+              </Card>
+          </TabsContent>
+          <TabsContent value="settings" className="mt-6">
+              {isLoadingSettings ? (
+                  <Card>
+                      <CardHeader>
+                          <CardTitle>Platform Settings</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div className="flex items-center justify-center py-16">
+                              <Loader2 className="h-8 w-8 animate-spin" />
+                          </div>
+                      </CardContent>
+                  </Card>
+              ) : (
+                  <AppSettingsForm settings={appSettings} />
+              )}
+          </TabsContent>
+      </Tabs>
     );
   };
 
@@ -593,6 +689,23 @@ export default function AdminPage() {
       <div className="container mx-auto px-4 py-8">
         {renderContent()}
       </div>
+      <Dialog open={!!propertyToReject} onOpenChange={(isOpen) => !isOpen && setPropertyToReject(null)}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Reject Property</DialogTitle>
+                <DialogDescription>Please provide a reason for rejecting "{propertyToReject?.title}". This will be visible to the property owner.</DialogDescription>
+            </DialogHeader>
+            <Textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="e.g., Images are blurry, description is incomplete..."
+            />
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setPropertyToReject(null)}>Cancel</Button>
+                <Button variant="destructive" onClick={() => handlePropertyStatusChange(propertyToReject!.id, 'rejected', rejectionReason)}>Confirm Rejection</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

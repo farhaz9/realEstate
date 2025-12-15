@@ -20,12 +20,11 @@ import { useFirestore, updateDocumentNonBlocking } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { User } from '@/types';
-import { Loader2, Camera } from 'lucide-react';
+import { Loader2, Camera, User as UserIcon } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { getAuth } from 'firebase/auth';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const userRoles = [
@@ -152,12 +151,14 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
         <div className="flex flex-col items-center space-y-4">
             <div className="relative group">
-                <Avatar className="h-24 w-24">
-                    <AvatarImage src={imagePreview ?? undefined} alt={user.fullName} />
-                    <AvatarFallback className="text-3xl">{getInitials(user.fullName)}</AvatarFallback>
+                <Avatar className="h-28 w-28 border-2">
+                    <AvatarImage src={imagePreview ?? undefined} alt={user.fullName} className="object-cover" />
+                    <AvatarFallback className="text-4xl bg-muted">
+                        {getInitials(user.fullName) || <UserIcon />}
+                    </AvatarFallback>
                 </Avatar>
                 <button
                     type="button"
@@ -175,41 +176,43 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
                 />
             </div>
         </div>
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Role</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {userRoles.map(role => (
-                    <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {userRoles.map(role => (
+                        <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+        </div>
         <FormField
           control={form.control}
           name="phone"
@@ -239,7 +242,7 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onSuccess}>
               Cancel
             </Button>
