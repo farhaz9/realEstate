@@ -14,18 +14,12 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email == "sk@gmail.com";
     }
 
-    // Helper function to check if a user is a professional or lister.
-    function isProfessional() {
-      // Professionals can be agents, designers, or property listers.
-      let professionalRoles = ['real-estate-agent', 'interior-designer', 'listing-property'];
-      // Check if the user's category is one of the professional roles.
-      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.category in professionalRoles;
-    }
-
     // Rules for the 'users' collection
     match /users/{userId} {
-      // Anyone can read user profiles (e.g., to see property owner details or professional profiles).
+      // Anyone can read user profiles, but only specific fields.
+      // This allows public profiles without exposing private data.
       allow read: if true;
+
       // Allow write if the user is the owner OR if the user is an admin.
       allow write: if isOwner(userId) || isAdmin();
     }

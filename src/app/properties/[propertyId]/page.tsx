@@ -56,7 +56,7 @@ export default function PropertyDetailPage() {
   
   const ownerRef = useMemoFirebase(() => {
     if (!firestore || !property) return null;
-    return doc(firestore, 'professionals', property.userId);
+    return doc(firestore, 'users', property.userId);
   }, [firestore, property]);
   
   const { data: owner } = useDoc<User>(ownerRef);
