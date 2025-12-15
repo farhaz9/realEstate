@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { User } from '@/types';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Star, Mail } from 'lucide-react';
+import { User as UserIcon, Star, Mail, Verified } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ProfessionalCardProps {
@@ -34,6 +35,8 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
 
   const cardTitle = professional.companyName || professional.fullName;
   const isCompany = !!professional.companyName;
+  const isCurrentlyVerified = professional.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
+
 
   return (
     <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
@@ -51,7 +54,10 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                 </AvatarFallback>
             </Avatar>
             
-            <h3 className="font-bold text-lg mt-4">{cardTitle}</h3>
+            <div className="flex items-center gap-2 mt-4">
+              <h3 className="font-bold text-lg">{cardTitle}</h3>
+              {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
+            </div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
 
             <div className="flex items-center gap-1 mt-2 text-sm">

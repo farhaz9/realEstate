@@ -56,7 +56,7 @@ export default function PropertyDetailPage() {
   
   const ownerRef = useMemoFirebase(() => {
     if (!firestore || !property) return null;
-    return doc(firestore, 'users', property.userId);
+    return doc(firestore, 'professionals', property.userId);
   }, [firestore, property]);
   
   const { data: owner } = useDoc<User>(ownerRef);
@@ -168,6 +168,7 @@ export default function PropertyDetailPage() {
     ];
 
   const listingDate = property.dateListed?.toDate ? property.dateListed.toDate() : (property.dateListed ? new Date(property.dateListed) : null);
+  const isOwnerVerified = owner?.verifiedUntil && owner.verifiedUntil.toDate() > new Date();
 
   return (
     <div className="bg-muted/40 pb-24">
@@ -290,7 +291,10 @@ export default function PropertyDetailPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-bold text-lg">{owner.fullName}</h3>
+                        <div className="flex items-center gap-2">
+                           <h3 className="font-bold text-lg">{owner.fullName}</h3>
+                           {isOwnerVerified && <Verified className="h-5 w-5 text-blue-500" />}
+                        </div>
                         <p className="text-sm text-muted-foreground">{owner.category === 'real-estate-agent' ? 'Real Estate Agent' : 'Owner'}</p>
                       </div>
                     </div>
