@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
@@ -65,8 +66,9 @@ export default function AdminPage() {
 
   const allUsersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'users'), orderBy(userSort.key, userSort.direction as 'asc' | 'desc'));
-  }, [firestore, userSort]);
+    // Basic query, client-side will handle complex sorting
+    return query(collection(firestore, 'users'), orderBy('dateJoined', 'desc'));
+  }, [firestore]);
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(allPropertiesQuery);
   const { data: users, isLoading: isLoadingUsers } = useCollection<User>(allUsersQuery);
@@ -93,11 +95,54 @@ export default function AdminPage() {
     });
   }, [users]);
 
-  const filteredUsers = useMemo(() => {
-    if (!userSearchTerm) return users;
-    if (!userFuse) return users;
-    return userFuse.search(userSearchTerm).map(result => result.item);
-  }, [userSearchTerm, users, userFuse]);
+  const sortedAndFilteredUsers = useMemo(() => {
+    if (!users) return [];
+
+    // 1. Filter with Fuse.js
+    let filtered = userSearchTerm && userFuse 
+      ? userFuse.search(userSearchTerm).map(result => result.item) 
+      : users;
+
+    // 2. Sort the filtered results
+    return [...filtered].sort((a, b) => {
+      const { key, direction } = userSort;
+      
+      let valA, valB;
+
+      if (key === 'isVerified') {
+        valA = a.verifiedUntil && a.verifiedUntil.toDate() > new Date() ? 1 : 0;
+        valB = b.verifiedUntil && b.verifiedUntil.toDate() > new Date() ? 1 : 0;
+      } else {
+        valA = a[key as keyof User];
+        valB = b[key as keyof User];
+      }
+
+      if (valA === valB) return 0;
+      
+      const order = direction === 'asc' ? 1 : -1;
+      
+      if (valA === null || valA === undefined) return 1 * order;
+      if (valB === null || valB === undefined) return -1 * order;
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return valA.localeCompare(valB) * order;
+      }
+      
+      if (valA instanceof Date && valB instanceof Date) {
+        return (valA.getTime() - valB.getTime()) * order;
+      }
+      
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        return (valA - valB) * order;
+      }
+      
+      if (typeof valA === 'boolean' && typeof valB === 'boolean') {
+        return (valA === valB ? 0 : valA ? -1 : 1) * order;
+      }
+
+      return 0;
+    });
+  }, [users, userSearchTerm, userFuse, userSort]);
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -183,19 +228,6 @@ export default function AdminPage() {
     });
     setSelectedUser(null);
   }
-
-  const handleCreditChange = (userId: string, change: number) => {
-    if (!firestore) return;
-    const userRef = doc(firestore, "users", userId);
-    updateDocumentNonBlocking(userRef, { listingCredits: increment(change) });
-    const user = users?.find(u => u.id === userId);
-    toast({
-        title: `Credits ${change > 0 ? 'Added' : 'Removed'}`,
-        description: `${user?.fullName} now has ${((user?.listingCredits || 0) + change)} credits.`,
-        variant: 'success',
-    });
-  };
-
 
   const handlePropertySort = (key: string) => {
     setPropertySort(prev => ({
@@ -403,19 +435,31 @@ export default function AdminPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>User</TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handleUserSort('isVerified')}>
+                                            <div className="flex items-center gap-2">
+                                                User <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
                                         <TableHead className="cursor-pointer" onClick={() => handleUserSort('category')}>
                                             <div className="flex items-center gap-2">
                                                 Role <ArrowUpDown className="h-4 w-4" />
                                             </div>
                                         </TableHead>
-                                        <TableHead>Listing Credits</TableHead>
-                                        <TableHead>Status</TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handleUserSort('listingCredits')}>
+                                            <div className="flex items-center gap-2">
+                                                Listing Credits <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
+                                        <TableHead className="cursor-pointer" onClick={() => handleUserSort('isBlocked')}>
+                                            <div className="flex items-center gap-2">
+                                                Status <ArrowUpDown className="h-4 w-4" />
+                                            </div>
+                                        </TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredUsers?.map(u => {
+                                    {sortedAndFilteredUsers?.map(u => {
                                         const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date();
                                         return (
                                         <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}>
@@ -575,3 +619,5 @@ export default function AdminPage() {
     </>
   );
 }
+
+    
