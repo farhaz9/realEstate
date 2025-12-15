@@ -20,6 +20,7 @@ import { PopularPropertyCard } from '@/components/shared/popular-property-card';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useOnScroll } from '@/hooks/use-on-scroll';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -46,6 +47,7 @@ export default function PropertyDetailPage() {
   const firestore = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
+  const { isScrollingUp } = useOnScroll(100);
 
   const propertyRef = useMemoFirebase(() => {
     if (!firestore || !propertyId) return null;
@@ -334,7 +336,10 @@ export default function PropertyDetailPage() {
       </div>
 
       {/* Sticky Action Buttons for Mobile */}
-      <div className="md:hidden fixed bottom-20 right-4 z-40 flex flex-col gap-3">
+      <div className={cn(
+        "md:hidden fixed bottom-20 right-4 z-40 flex flex-col gap-3 transition-all duration-300",
+        isScrollingUp ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"
+      )}>
         <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0">
           <Link href={`tel:${property.contactNumber}`} aria-label="Call Agent">
             <Phone className="h-6 w-6" />
@@ -350,5 +355,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    
