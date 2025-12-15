@@ -61,7 +61,7 @@ const settingsFormSchema = z.object({
 type SettingsFormValues = z.infer<typeof settingsFormSchema>;
 
 
-function AppSettingsForm({ settings }: { settings: AppSettings }) {
+function AppSettingsForm({ settings }: { settings: AppSettings | null }) {
     const firestore = useFirestore();
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -88,6 +88,8 @@ function AppSettingsForm({ settings }: { settings: AppSettings }) {
         const settingsRef = doc(firestore, "app_settings", "config");
         
         try {
+            // Using { merge: true } will create the document if it doesn't exist,
+            // or update it if it does. This resolves the initial loading issue.
             await setDoc(settingsRef, data, { merge: true });
             toast({
                 title: "Settings Updated",
@@ -377,7 +379,7 @@ export default function AdminPage() {
   };
 
   const renderContent = () => {
-    if (isUserLoading || isLoadingProperties || isLoadingUsers || isLoadingSettings) {
+    if (isUserLoading || isLoadingProperties || isLoadingUsers) {
       return <div className="flex items-center justify-center py-16"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
     }
     if (!isAuthorizedAdmin) {
@@ -549,9 +551,7 @@ export default function AdminPage() {
                 </Card>
             </TabsContent>
             <TabsContent value="settings" className="mt-6">
-                {appSettings ? (
-                    <AppSettingsForm settings={appSettings} />
-                ) : (
+                {isLoadingSettings ? (
                     <Card>
                         <CardHeader>
                             <CardTitle>Platform Settings</CardTitle>
@@ -562,6 +562,8 @@ export default function AdminPage() {
                             </div>
                         </CardContent>
                     </Card>
+                ) : (
+                    <AppSettingsForm settings={appSettings} />
                 )}
             </TabsContent>
         </Tabs>
@@ -587,3 +589,5 @@ export default function AdminPage() {
     </>
   );
 }
+
+    
