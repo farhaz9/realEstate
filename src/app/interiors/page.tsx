@@ -168,7 +168,7 @@ export default function InteriorsPage() {
                 {interiorProperties?.map((property) => {
                   const imageUrl = property.imageUrls?.[0] ?? PlaceHolderImages.find(p => p.id === 'default-property-listing')?.imageUrl ?? '';
                   return (
-                    <Card key={property.id} className="overflow-hidden group relative">
+                    <Card key={property.id} className="overflow-hidden group relative rounded-xl">
                       <Link href={`/properties/${property.id}`} className="block">
                         <div className="relative h-96 w-full">
                           <Image
@@ -178,11 +178,11 @@ export default function InteriorsPage() {
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 p-6">
-                          <h2 className="text-2xl font-bold text-white">{property.title}</h2>
-                          <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{property.description}</p>
+                          <h2 className="text-2xl font-bold text-white drop-shadow-md">{property.title}</h2>
+                          <p className="mt-1 text-sm text-neutral-200 line-clamp-2 drop-shadow-sm">{property.description}</p>
                         </div>
                       </Link>
                     </Card>
