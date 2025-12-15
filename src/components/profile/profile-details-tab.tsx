@@ -44,6 +44,7 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
     toast({
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
+      variant: 'success'
     });
     router.push('/');
   };

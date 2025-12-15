@@ -127,10 +127,11 @@ export default function LoginPage() {
 
     if (isLogin) {
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
         toast({
-          title: 'Login Successful!',
-          description: 'Welcome back!',
+          title: 'Login Successful',
+          description: `Welcome back, ${user.displayName}!`,
           variant: 'success',
         });
         router.push('/');
@@ -214,7 +215,7 @@ export default function LoginPage() {
       }
       
       toast({
-        title: 'Login Successful!',
+        title: 'Login Successful',
         description: `Welcome back, ${user.displayName}!`,
         variant: 'success',
       });
@@ -435,5 +436,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    

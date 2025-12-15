@@ -108,38 +108,10 @@ export default {
           '5%': { transform: 'translateX(-1rem)' },
           '10%, 100%': { transform: 'translateX(0)' },
         },
-        "zoom-in-90": {
-          "0%": {
-            opacity: "0",
-            transform: "scale(0.9)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "scale(1)",
-          },
+        "toast-progress": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
         },
-        "zoom-out-90": {
-          "0%": {
-            opacity: "1",
-            transform: "scale(1)",
-          },
-          "100%": {
-            opacity: "0",
-            transform: "scale(0.9)",
-          },
-        },
-        'fade-spin': {
-          '0%': {
-            opacity: '0.15',
-          },
-          '100%': {
-            opacity: '1',
-          },
-        },
-        'bounce': {
-          '0%, 80%, 100%': { transform: 'scale(0)' },
-          '40%': { transform: 'scale(1)' },
-        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -147,10 +119,7 @@ export default {
         'gradient-pan': 'gradient-pan 3s ease infinite',
         'blink': 'blink 5s ease-in-out infinite',
         'carousel-nudge': 'carousel-nudge 5s ease-in-out',
-        "zoom-in-90": "zoom-in-90 0.3s ease-in-out",
-        "zoom-out-90": "zoom-out-90 0.3s ease-in-out",
-        'fade-spin': 'fade-spin 1.2s linear infinite',
-        'bounce': 'bounce 2s infinite ease-in-out both',
+        "toast-progress": "toast-progress 5s linear forwards",
       },
     },
   },
