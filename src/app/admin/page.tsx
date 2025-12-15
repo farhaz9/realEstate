@@ -126,24 +126,24 @@ export default function AdminPage() {
       : users;
 
     return [...filtered].sort((a, b) => {
-      const { key, direction } = userSort;
-      let valA, valB;
-      if (key === 'isVerified') {
-        valA = a.verifiedUntil && a.verifiedUntil.toDate() > new Date() ? 1 : 0;
-        valB = b.verifiedUntil && b.verifiedUntil.toDate() > new Date() ? 1 : 0;
-      } else {
-        valA = a[key as keyof User];
-        valB = b[key as keyof User];
-      }
-      if (valA === valB) return 0;
-      const order = direction === 'asc' ? 1 : -1;
-      if (valA === null || valA === undefined) return 1 * order;
-      if (valB === null || valB === undefined) return -1 * order;
-      if (typeof valA === 'string' && typeof valB === 'string') return valA.localeCompare(valB) * order;
-      if (valA instanceof Date && valB instanceof Date) return (valA.getTime() - valB.getTime()) * order;
-      if (typeof valA === 'number' && typeof valB === 'number') return (valA - valB) * order;
-      if (typeof valA === 'boolean' && typeof valB === 'boolean') return (valA === valB ? 0 : valA ? -1 : 1) * order;
-      return 0;
+        const { key, direction } = userSort;
+        let valA, valB;
+
+        if (key === 'isVerified') {
+            valA = a.verifiedUntil && a.verifiedUntil.toDate() > new Date() ? 1 : 0;
+            valB = b.verifiedUntil && b.verifiedUntil.toDate() > new Date() ? 1 : 0;
+        } else if (key === 'dateJoined') {
+            valA = a.dateJoined?.toDate ? a.dateJoined.toDate() : new Date(0);
+            valB = b.dateJoined?.toDate ? b.dateJoined.toDate() : new Date(0);
+        } else {
+            valA = a[key as keyof User];
+            valB = b[key as keyof User];
+        }
+
+        const order = direction === 'asc' ? 1 : -1;
+        if (valA < valB) return -1 * order;
+        if (valA > valB) return 1 * order;
+        return 0;
     });
   }, [users, userSearchTerm, userFuse, userSort]);
 
@@ -293,12 +293,15 @@ export default function AdminPage() {
                 <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                     <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isVerified')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                     <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Listing Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'dateJoined')}><div className="flex items-center gap-2">Date Joined <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                     <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                 </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date(); return (
                     <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground">{u.phone}</p></div></div></TableCell>
-                    <TableCell>{categoryDisplay[u.category] || u.category}</TableCell><TableCell><Dialog><DialogTrigger asChild><Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}><Coins className="h-4 w-4 text-amber-500" /><span className="font-semibold">{u.listingCredits ?? 0}</span></Button></DialogTrigger>{selectedUser?.id === u.id && (<DialogContent><DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle><DialogDescription>Adjust the number of listing credits for this user.</DialogDescription></DialogHeader><div className="flex items-center justify-center gap-4 py-4"><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button><Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} /><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button></div><DialogFooter><Button onClick={handleUpdateCredits}>Save Changes</Button></DialogFooter></DialogContent>)}</Dialog></TableCell>
+                    <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
+                    <TableCell>{u.dateJoined?.toDate ? format(u.dateJoined.toDate(), 'PPP') : 'N/A'}</TableCell>
+                    <TableCell><Dialog><DialogTrigger asChild><Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}><Coins className="h-4 w-4 text-amber-500" /><span className="font-semibold">{u.listingCredits ?? 0}</span></Button></DialogTrigger>{selectedUser?.id === u.id && (<DialogContent><DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle><DialogDescription>Adjust the number of listing credits for this user.</DialogDescription></DialogHeader><div className="flex items-center justify-center gap-4 py-4"><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button><Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} /><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button></div><DialogFooter><Button onClick={handleUpdateCredits}>Save Changes</Button></DialogFooter></DialogContent>)}</Dialog></TableCell>
                     <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
                     <TableCell className="text-right">{u.email !== ADMIN_EMAIL && (<div className="flex items-center justify-end gap-1">
                         <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={isCurrentlyVerified ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}><Verified className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Confirm Verification</AlertDialogTitle><AlertDialogDescription>Do you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}? {isCurrentlyVerified ? ' This will remove their badge immediately.' : ' This will grant them a badge for one year.'}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>{isCurrentlyVerified ? 'Revoke Verification' : 'Grant Verification'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
