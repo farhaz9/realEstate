@@ -64,6 +64,23 @@
             "type": "string",
             "description": "A short biography for professional users."
         },
+        "orders": {
+          "type": "array",
+          "description": "A list of orders made by the user.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "paymentId": { "type": "string" },
+              "amount": { "type": "number" },
+              "date": { "type": "string", "format": "date-time" }
+            },
+            "required": ["paymentId", "amount", "date"]
+          }
+        },
+        "listingCredits": {
+          "type": "number",
+          "description": "Number of property listings a user is entitled to post."
+        },
         "isVerified": {
             "type": "boolean",
             "description": "Indicates if the professional user has a verified badge."
@@ -72,6 +89,10 @@
           "type": "string",
           "description": "The date and time when the user's verification expires.",
           "format": "date-time"
+        },
+        "isBlocked": {
+            "type": "boolean",
+            "description": "Indicates if the user's account is blocked."
         }
       },
       "required": [
@@ -86,7 +107,7 @@
     "Property": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Property",
-      "type": "object",
+      "type": "object"
       "description": "Represents a property listed on the Delhi Estate Luxe application.",
       "properties": {
         "id": {

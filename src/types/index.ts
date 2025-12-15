@@ -67,4 +67,5 @@ export type User = {
   listingCredits?: number;
   isVerified?: boolean;
   verifiedUntil?: Date | any;
+  isBlocked?: boolean;
 }

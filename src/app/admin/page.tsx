@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -30,6 +30,8 @@ import { doc } from 'firebase/firestore';
 import { UserDistributionChart } from '@/components/admin/user-distribution-chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import Fuse from 'fuse.js';
 
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -42,6 +44,7 @@ export default function AdminPage() {
 
   const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
   const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
+  const [userSearchTerm, setUserSearchTerm] = useState('');
 
 
   const allPropertiesQuery = useMemoFirebase(() => {
@@ -70,6 +73,20 @@ export default function AdminPage() {
       propertiesForRent,
     };
   }, [properties, users]);
+  
+  const userFuse = useMemo(() => {
+    if (!users) return null;
+    return new Fuse(users, {
+      keys: ['fullName', 'email', 'phone'],
+      threshold: 0.3,
+    });
+  }, [users]);
+
+  const filteredUsers = useMemo(() => {
+    if (!userSearchTerm) return users;
+    if (!userFuse) return users;
+    return userFuse.search(userSearchTerm).map(result => result.item);
+  }, [userSearchTerm, users, userFuse]);
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -104,15 +121,23 @@ export default function AdminPage() {
 
   const handleUserDelete = (userId: string) => {
     if (!firestore) return;
-    // Note: This only deletes the Firestore user document.
-    // The user will still exist in Firebase Authentication.
-    // A backend function is required to fully delete the user.
     const userRef = doc(firestore, "users", userId);
     deleteDocumentNonBlocking(userRef);
     toast({
       title: "User Deleted",
       description: "The user has been successfully removed from the database.",
       variant: "destructive",
+    });
+  };
+  
+  const handleUserBlockToggle = (userId: string, isBlocked: boolean) => {
+    if (!firestore) return;
+    const userRef = doc(firestore, "users", userId);
+    updateDocumentNonBlocking(userRef, { isBlocked: !isBlocked });
+    toast({
+        title: `User ${!isBlocked ? 'Blocked' : 'Unblocked'}`,
+        description: `The user has been successfully ${!isBlocked ? 'blocked' : 'unblocked'}.`,
+        variant: 'success'
     });
   };
 
@@ -134,7 +159,8 @@ export default function AdminPage() {
     'user': 'Buyer / Tenant',
     'listing-property': 'Property Owner',
     'real-estate-agent': 'Real Estate Agent',
-    'interior-designer': 'Interior Designer'
+    'interior-designer': 'Interior Designer',
+    'vendor': 'Vendor'
   };
 
 
@@ -306,6 +332,15 @@ export default function AdminPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>All Users ({users?.length || 0})</CardTitle>
+                        <div className="relative mt-4">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                            <Input 
+                                placeholder="Search by name, email, or phone..."
+                                className="pl-10"
+                                value={userSearchTerm}
+                                onChange={(e) => setUserSearchTerm(e.target.value)}
+                            />
+                        </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
@@ -313,23 +348,19 @@ export default function AdminPage() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>User</TableHead>
-                                        <TableHead className="cursor-pointer" onClick={() => handleUserSort('dateJoined')}>
-                                            <div className="flex items-center gap-2">
-                                                Date Joined <ArrowUpDown className="h-4 w-4" />
-                                            </div>
-                                        </TableHead>
                                         <TableHead className="cursor-pointer" onClick={() => handleUserSort('category')}>
                                             <div className="flex items-center gap-2">
-                                                Category <ArrowUpDown className="h-4 w-4" />
+                                                Role <ArrowUpDown className="h-4 w-4" />
                                             </div>
                                         </TableHead>
-                                        <TableHead>Contact</TableHead>
+                                        <TableHead>Listing Credits</TableHead>
+                                        <TableHead>Status</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {users?.map(u => (
-                                        <TableRow key={u.id}>
+                                    {filteredUsers?.map(u => (
+                                        <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
                                                     <Avatar className="h-10 w-10">
@@ -337,18 +368,52 @@ export default function AdminPage() {
                                                         <AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                                                     </Avatar>
                                                     <div>
-                                                        <p className="font-semibold">{u.fullName}</p>
+                                                        <div className="flex items-center gap-2">
+                                                          <p className="font-semibold">{u.fullName}</p>
+                                                          {u.isVerified && <Verified className="h-4 w-4 text-blue-500" />}
+                                                        </div>
                                                         <p className="text-xs text-muted-foreground">{u.email}</p>
+                                                        <p className="text-xs text-muted-foreground">{u.phone}</p>
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
-                                                {u.dateJoined?.toDate ? format(u.dateJoined.toDate(), 'PPP') : 'N/A'}
-                                            </TableCell>
                                             <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
-                                            <TableCell>{u.phone || 'Not provided'}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <Coins className="h-4 w-4 text-amber-500" />
+                                                    <span className="font-semibold">{u.listingCredits ?? 0}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {u.isBlocked ? (
+                                                    <Badge variant="destructive">Blocked</Badge>
+                                                ) : (
+                                                    <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>
+                                                )}
+                                            </TableCell>
                                             <TableCell className="text-right">
                                                {u.email !== ADMIN_EMAIL && (
+                                                <div className="flex items-center justify-end gap-1">
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className={u.isBlocked ? "text-green-600 hover:text-green-700" : "text-orange-600 hover:text-orange-700"}>
+                                                            {u.isBlocked ? <UserCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}". Blocked users cannot log in.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock User' : 'Block User'}</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+
                                                  <AlertDialog>
                                                     <AlertDialogTrigger asChild>
                                                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
@@ -368,6 +433,7 @@ export default function AdminPage() {
                                                         </AlertDialogFooter>
                                                     </AlertDialogContent>
                                                 </AlertDialog>
+                                                </div>
                                                )}
                                             </TableCell>
                                         </TableRow>
@@ -401,5 +467,3 @@ export default function AdminPage() {
     </>
   );
 }
-
-    
