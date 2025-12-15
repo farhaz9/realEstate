@@ -1,14 +1,13 @@
-
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { Suspense, useState, useEffect, useRef } from 'react';
+import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking, useAuth } from '@/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ArrowLeft, Camera, Edit, ShoppingBag, Verified } from 'lucide-react';
+import { User, Settings, ArrowLeft, Camera, Edit, ShoppingBag, Verified, Loader2 } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,6 +17,8 @@ import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import { WishlistTab } from '@/components/profile/wishlist-tab';
 import { OrdersTab } from '@/components/profile/orders-tab';
+import ImageKit from 'imagekit-javascript';
+import { updateProfile } from 'firebase/auth';
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -30,11 +31,15 @@ const categoryDisplay: Record<string, string> = {
 
 function SettingsPageContent() {
   const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get('tab') || 'profile';
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -44,11 +49,76 @@ function SettingsPageContent() {
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserType>(userDocRef);
 
   useEffect(() => {
-    // Only redirect if loading is complete and there's no user.
     if (!isUserLoading && !user) {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user || !userDocRef || !auth?.currentUser) {
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      toast({
+        title: 'Image too large',
+        description: 'Please select an image smaller than 2MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const authRes = await fetch('/api/imagekit/auth');
+      const authBody = await authRes.json();
+      if (!authRes.ok) {
+        throw new Error(authBody.message || 'ImageKit authentication failed.');
+      }
+
+      const imagekit = new ImageKit({
+        publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
+        urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+        authenticationEndpoint: `${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit/auth`
+      });
+
+      const uploadResult = await imagekit.upload({
+        file,
+        fileName: `${user.uid}_${Date.now()}`,
+        folder: "/delhi-estate-luxe/avatars",
+        ...authBody,
+      });
+
+      const newPhotoURL = uploadResult.url;
+
+      // Update Firebase Auth profile
+      await updateProfile(auth.currentUser, { photoURL: newPhotoURL });
+
+      // Update Firestore document
+      await updateDoc(userDocRef, { photoURL: newPhotoURL });
+
+      toast({
+        title: 'Profile picture updated!',
+        variant: 'success',
+      });
+
+    } catch (error: any) {
+      console.error('Profile picture upload failed:', error);
+      toast({
+        title: 'Upload Failed',
+        description: error.message || 'There was a problem uploading your new profile picture.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const getInitials = (name: string) => {
     if (!name) return '';
@@ -96,16 +166,30 @@ function SettingsPageContent() {
                 </Button>
             </div>
              <div className="flex flex-col items-center mt-6">
-                <div className="relative">
+                <div className="relative group">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
                         <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                             {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
                         </AvatarFallback>
                     </Avatar>
-                     <Button size="icon" variant="default" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full border-2 border-background">
-                        <Edit className="h-4 w-4" />
-                    </Button>
+                     <button 
+                        onClick={handleAvatarClick}
+                        disabled={isUploading}
+                        className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        {isUploading ? (
+                          <Loader2 className="h-8 w-8 text-white animate-spin" />
+                        ) : (
+                          <Camera className="h-8 w-8 text-white" />
+                        )}
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept="image/png, image/jpeg, image/gif"
+                    />
                 </div>
                 <div className="flex items-center gap-2 mt-4">
                   <h2 className="text-2xl font-bold">{displayName}</h2>

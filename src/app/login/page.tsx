@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -151,7 +150,7 @@ export default function LoginPage() {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        await updateProfile(user, { displayName: fullName });
+        await updateProfile(user, { displayName: fullName, photoURL: '' });
 
         const userDocRef = doc(firestore, 'users', user.uid);
         
@@ -165,7 +164,7 @@ export default function LoginPage() {
             phone: phone,
             category: category,
             dateJoined: serverTimestamp(),
-            photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+            photoURL: '',
             wishlist: [],
             orders: [],
             listingCredits: 1,
@@ -211,7 +210,7 @@ export default function LoginPage() {
           phone: user.phoneNumber || '',
           category: 'user',
           dateJoined: serverTimestamp(),
-          photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+          photoURL: user.photoURL || '',
           wishlist: [],
           orders: [],
           listingCredits: 1,
