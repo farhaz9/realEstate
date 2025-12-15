@@ -1,13 +1,12 @@
-
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
-import { collection, query, orderBy, Query, where } from 'firebase/firestore';
+import { collection, query, orderBy, Query, where, increment } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -25,6 +24,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
 import { UserDistributionChart } from '@/components/admin/user-distribution-chart';
@@ -32,6 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import Fuse from 'fuse.js';
+import { Label } from '@/components/ui/label';
 
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -45,6 +54,8 @@ export default function AdminPage() {
   const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
   const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
   const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [creditAmount, setCreditAmount] = useState(0);
 
 
   const allPropertiesQuery = useMemoFirebase(() => {
@@ -140,6 +151,51 @@ export default function AdminPage() {
         variant: 'success'
     });
   };
+
+  const handleVerificationToggle = (userId: string, user: User) => {
+    if (!firestore) return;
+    const userRef = doc(firestore, "users", userId);
+    const isCurrentlyVerified = user.verifiedUntil && user.verifiedUntil.toDate() > new Date();
+
+    let updateData = {};
+    if (isCurrentlyVerified) {
+        // If currently verified, revoke it
+        updateData = { isVerified: false, verifiedUntil: null };
+        toast({ title: 'Verification Revoked', description: `Pro verification has been removed for ${user.fullName}.`, variant: 'destructive' });
+    } else {
+        // If not verified, grant it for one year
+        const expiryDate = new Date();
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+        updateData = { isVerified: true, verifiedUntil: expiryDate };
+        toast({ title: 'User Verified!', description: `${user.fullName} is now a Pro Verified member for one year.`, variant: 'success' });
+    }
+    updateDocumentNonBlocking(userRef, updateData);
+  };
+  
+  const handleUpdateCredits = () => {
+    if (!firestore || !selectedUser) return;
+    const userRef = doc(firestore, 'users', selectedUser.id);
+    updateDocumentNonBlocking(userRef, { listingCredits: creditAmount });
+    toast({
+        title: 'Credits Updated',
+        description: `${selectedUser.fullName} now has ${creditAmount} listing credits.`,
+        variant: 'success',
+    });
+    setSelectedUser(null);
+  }
+
+  const handleCreditChange = (userId: string, change: number) => {
+    if (!firestore) return;
+    const userRef = doc(firestore, "users", userId);
+    updateDocumentNonBlocking(userRef, { listingCredits: increment(change) });
+    const user = users?.find(u => u.id === userId);
+    toast({
+        title: `Credits ${change > 0 ? 'Added' : 'Removed'}`,
+        description: `${user?.fullName} now has ${((user?.listingCredits || 0) + change)} credits.`,
+        variant: 'success',
+    });
+  };
+
 
   const handlePropertySort = (key: string) => {
     setPropertySort(prev => ({
@@ -359,7 +415,9 @@ export default function AdminPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredUsers?.map(u => (
+                                    {filteredUsers?.map(u => {
+                                        const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date();
+                                        return (
                                         <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
@@ -370,7 +428,7 @@ export default function AdminPage() {
                                                     <div>
                                                         <div className="flex items-center gap-2">
                                                           <p className="font-semibold">{u.fullName}</p>
-                                                          {u.isVerified && <Verified className="h-4 w-4 text-blue-500" />}
+                                                          {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}
                                                         </div>
                                                         <p className="text-xs text-muted-foreground">{u.email}</p>
                                                         <p className="text-xs text-muted-foreground">{u.phone}</p>
@@ -379,10 +437,37 @@ export default function AdminPage() {
                                             </TableCell>
                                             <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    <Coins className="h-4 w-4 text-amber-500" />
-                                                    <span className="font-semibold">{u.listingCredits ?? 0}</span>
-                                                </div>
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                         <Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}>
+                                                            <Coins className="h-4 w-4 text-amber-500" />
+                                                            <span className="font-semibold">{u.listingCredits ?? 0}</span>
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    {selectedUser?.id === u.id && (
+                                                    <DialogContent>
+                                                        <DialogHeader>
+                                                            <DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle>
+                                                            <DialogDescription>
+                                                                Adjust the number of listing credits for this user.
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                        <div className="flex items-center justify-center gap-4 py-4">
+                                                             <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                                             <Input 
+                                                                type="number"
+                                                                className="w-24 text-center text-xl font-bold"
+                                                                value={creditAmount}
+                                                                onChange={(e) => setCreditAmount(Number(e.target.value))}
+                                                             />
+                                                             <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                                        </div>
+                                                        <DialogFooter>
+                                                            <Button onClick={handleUpdateCredits}>Save Changes</Button>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                    )}
+                                                </Dialog>
                                             </TableCell>
                                             <TableCell>
                                                 {u.isBlocked ? (
@@ -394,6 +479,29 @@ export default function AdminPage() {
                                             <TableCell className="text-right">
                                                {u.email !== ADMIN_EMAIL && (
                                                 <div className="flex items-center justify-end gap-1">
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className={isCurrentlyVerified ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}>
+                                                            <Verified className="h-4 w-4" />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Confirm Verification</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Do you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}?
+                                                                {isCurrentlyVerified ? ' This will remove their badge immediately.' : ' This will grant them a badge for one year.'}
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>
+                                                                {isCurrentlyVerified ? 'Revoke Verification' : 'Grant Verification'}
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                                
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>
                                                         <Button variant="ghost" size="icon" className={u.isBlocked ? "text-green-600 hover:text-green-700" : "text-orange-600 hover:text-orange-700"}>
@@ -437,7 +545,7 @@ export default function AdminPage() {
                                                )}
                                             </TableCell>
                                         </TableRow>
-                                    ))}
+                                    )})}
                                 </TableBody>
                             </Table>
                         </div>
