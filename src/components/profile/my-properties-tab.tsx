@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText } from 'lucide-react';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText, Minus } from 'lucide-react';
 import type { Property, User } from '@/types';
 import {
   AlertDialog,
@@ -48,6 +48,7 @@ import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
+import { Separator } from '../ui/separator';
 
 declare const Razorpay: any;
 
@@ -72,7 +73,7 @@ const propertyFormSchema = z.object({
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
   location: z.object({
-    address: z.string().min(10, { message: 'Full address is required.' }),
+    address: z.string().min(3, { message: 'Address is required.' }),
     pincode: z.string().regex(/^\d{6}$/, { message: 'Must be a 6-digit Indian pincode.' }),
     state: z.string().min(2, { message: 'State is required.' }),
   }),
@@ -103,28 +104,23 @@ interface MyPropertiesTabProps {
   onSuccess?: () => void;
 }
 
-async function getCoordinatesForAddress(address: string) {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      console.error('Geocoding API request failed:', response.statusText);
-      return null;
-    }
-    const data = await response.json();
-    if (data && data.length > 0) {
-      return {
-        latitude: parseFloat(data[0].lat),
-        longitude: parseFloat(data[0].lon),
-      };
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching coordinates:', error);
-    return null;
-  }
-}
+const defaultFormData: Partial<PropertyFormValues> = {
+  title: 'Spacious 3BHK with Modern Amenities',
+  description: 'A beautiful and well-maintained property in a prime location, perfect for families. Features include modular kitchen, ample sunlight, and 24/7 security.',
+  price: 5000000,
+  listingType: 'sale',
+  location: { address: '123, Sunshine Apartments, Sector 18', pincode: '110001', state: 'Delhi' },
+  contactNumber: '9876543210',
+  whatsappNumber: '9876543210',
+  propertyType: 'Apartment',
+  bedrooms: 3,
+  bathrooms: 2,
+  squareYards: 200,
+  furnishing: 'semi-furnished',
+  overlooking: 'Park',
+  ageOfConstruction: '1-5 years',
+  amenities: 'Park, Gym, Reserved Parking'
+};
 
 export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabProps) {
   const { user, isUserLoading } = useUser();
@@ -211,24 +207,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      price: 0,
-      listingType: 'sale',
-      location: { address: '', pincode: '', state: '' },
-      contactNumber: '',
-      whatsappNumber: '',
-      propertyType: '',
-      bedrooms: 0,
-      bathrooms: 0,
-      squareYards: 0,
-      furnishing: 'unfurnished',
-      overlooking: '',
-      ageOfConstruction: '',
-      amenities: '',
-      images: null,
-    },
+    defaultValues: isEditing ? {} : defaultFormData
   });
 
   useEffect(() => {
@@ -255,8 +234,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         amenities: propertyToEdit.amenities?.join(', ') || '',
       });
       setImagePreviews(propertyToEdit.imageUrls?.map(url => ({ url, name: 'Uploaded Image', size: 0 })) || []);
-    } else if (isFormOpen) { 
-        form.reset();
+    } else if (isFormOpen && !isEditing) { 
+        form.reset(defaultFormData);
+        setImagePreviews([]);
+    } else if (!isFormOpen) {
+        form.reset({});
         setImagePreviews([]);
     }
   }, [isEditing, propertyToEdit, form, isFormOpen]);
@@ -332,19 +314,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     }
     
     setIsUploading(true);
-    
-    const fullAddress = `${data.location.address}, ${data.location.state}, ${data.location.pincode}`;
-    const coordinates = await getCoordinatesForAddress(fullAddress);
-    
-    if (!coordinates) {
-       toast({
-        title: "Location Not Found",
-        description: "Could not find coordinates for the address. Please provide a more specific address.",
-        variant: "destructive",
-      });
-      setIsUploading(false);
-      return;
-    }
 
     let uploadedImageUrls: string[] = isEditing ? imagePreviews.filter(p => p.url.startsWith('http')).map(p => p.url) : [];
     
@@ -405,7 +374,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     
     const propertyData = {
       ...restOfData,
-      location: { ...restOfData.location, ...coordinates },
       imageUrls: uploadedImageUrls,
       amenities: amenitiesArray,
     };
@@ -454,6 +422,39 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     }
   };
 
+  const NumberInputStepper = ({ field }: { field: any }) => {
+    const value = field.value || 0;
+    return (
+        <div className="flex items-center gap-2">
+            <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-10 w-10"
+                onClick={() => field.onChange(Math.max(0, value - 1))}
+            >
+                <Minus className="h-4 w-4" />
+            </Button>
+            <Input
+                {...field}
+                type="number"
+                className="h-10 text-center font-bold text-lg"
+                value={value}
+                onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+            />
+            <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-10 w-10"
+                onClick={() => field.onChange(value + 1)}
+            >
+                <Plus className="h-4 w-4" />
+            </Button>
+        </div>
+    );
+};
+
 
   const renderAddPropertyForm = () => (
      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -465,19 +466,21 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
             <div className="py-4">
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    
+                    <h3 className="text-lg font-semibold border-b pb-2">Property Images</h3>
                     <FormField
                       control={form.control}
                       name="images"
                       render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Property Images (up to 3, 1MB max each)</FormLabel>
+                            <FormLabel>Upload Images (up to 3, 1MB max each)</FormLabel>
                             <Button 
                                 type="button" 
                                 variant="outline" 
                                 className="w-full"
                                 onClick={() => fileInputRef.current?.click()}>
                                 <ImageUp className="mr-2 h-4 w-4" />
-                                Upload Images
+                                Select Images
                             </Button>
                           <FormControl>
                               <Input 
@@ -491,7 +494,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                               />
                           </FormControl>
                           <FormDescription>
-                              {imagePreviews.length} / 3 uploaded.
+                              {imagePreviews.length} / 3 selected.
                           </FormDescription>
                           <FormMessage />
                           </FormItem>
@@ -499,18 +502,18 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     />
                     
                      {imagePreviews.length > 0 && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {imagePreviews.map((preview, index) => (
                             <Card key={index} className="relative group overflow-hidden">
-                                <CardContent className="p-3 flex items-start gap-3">
+                                <CardContent className="p-2 flex items-start gap-3">
                                 <Image
                                     src={preview.url}
                                     alt={`Preview ${index + 1}`}
-                                    width={80}
-                                    height={80}
-                                    className="w-20 h-20 object-cover rounded-md aspect-square bg-muted"
+                                    width={64}
+                                    height={64}
+                                    className="w-16 h-16 object-cover rounded-md aspect-square bg-muted"
                                 />
-                                <div className="flex-1 truncate">
+                                <div className="flex-1 truncate pt-1">
                                     <p className="text-sm font-semibold truncate" title={preview.name}>{preview.name}</p>
                                     {preview.size > 0 && (
                                         <p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>
@@ -520,7 +523,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                                     type="button"
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 rounded-full shrink-0"
+                                    className="absolute top-1 right-1 h-7 w-7 rounded-full shrink-0"
                                     onClick={() => removeImagePreview(index)}
                                     disabled={isUploading}
                                 >
@@ -531,7 +534,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                             ))}
                         </div>
                     )}
+                    
+                    <Separator />
 
+                    <h3 className="text-lg font-semibold border-b pb-2">Property Details</h3>
 
                     <FormField
                     control={form.control}
@@ -560,6 +566,56 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                         </FormItem>
                     )}
                     />
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <FormField
+                            control={form.control}
+                            name="price"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Price (in INR)</FormLabel>
+                                <FormControl>
+                                <Input type="number" placeholder="Enter amount" {...field} disabled={isUploading} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="listingType"
+                            render={({ field }) => (
+                            <FormItem className="space-y-3">
+                                <FormLabel>Listing For</FormLabel>
+                                <FormControl>
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex items-center space-x-4 pt-2"
+                                    disabled={isUploading}
+                                >
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                        <RadioGroupItem value="sale" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Sale</FormLabel>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                        <RadioGroupItem value="rent" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Rent</FormLabel>
+                                    </FormItem>
+                                </RadioGroup>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                    </div>
+                    
+                    <Separator />
+                    <h3 className="text-lg font-semibold border-b pb-2">Location</h3>
                     
                     <div className="grid md:grid-cols-3 gap-8">
                     <FormField
@@ -592,7 +648,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                         control={form.control}
                         name="location.state"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="md:col-span-2">
                             <FormLabel>State</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
                                 <FormControl>
@@ -608,28 +664,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                             </FormItem>
                         )}
                         />
-                        <FormField
-                        control={form.control}
-                        name="propertyType"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Property Type</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a property type" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                {propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
                     </div>
                     
+                    <Separator />
+                    <h3 className="text-lg font-semibold border-b pb-2">Contact Details</h3>
                     <div className="grid md:grid-cols-2 gap-8">
                     <FormField
                         control={form.control}
@@ -659,95 +697,66 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                         />
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                    <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Price (in INR)</FormLabel>
-                            <FormControl>
-                            <Input type="number" placeholder="Enter amount" {...field} disabled={isUploading} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="listingType"
-                        render={({ field }) => (
-                        <FormItem className="space-y-3">
-                            <FormLabel>Listing For</FormLabel>
-                            <FormControl>
-                            <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                className="flex items-center space-x-4"
-                                disabled={isUploading}
-                            >
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                    <RadioGroupItem value="sale" />
-                                </FormControl>
-                                <FormLabel className="font-normal">Sale</FormLabel>
+                    <Separator />
+                    <h3 className="text-lg font-semibold border-b pb-2">Features & Amenities</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-end">
+                        <FormField
+                            control={form.control}
+                            name="bedrooms"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Bedrooms</FormLabel>
+                                    <NumberInputStepper field={field} />
+                                    <FormMessage />
                                 </FormItem>
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                    <RadioGroupItem value="rent" />
-                                </FormControl>
-                                <FormLabel className="font-normal">Rent</FormLabel>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="bathrooms"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Bathrooms</FormLabel>
+                                    <NumberInputStepper field={field} />
+                                    <FormMessage />
                                 </FormItem>
-                            </RadioGroup>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="squareYards"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Area (sq. yards)</FormLabel>
+                                <FormControl>
+                                <Input type="number" placeholder="e.g., 250" {...field} disabled={isUploading} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="propertyType"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Property Type</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isUploading}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a property type" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    {propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-8">
-                    <FormField
-                        control={form.control}
-                        name="bedrooms"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Bedrooms</FormLabel>
-                            <FormControl>
-                            <Input type="number" min="0" {...field} disabled={isUploading} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="bathrooms"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Bathrooms</FormLabel>
-                            <FormControl>
-                            <Input type="number" min="0" {...field} disabled={isUploading} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="squareYards"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Area (sq. yards)</FormLabel>
-                            <FormControl>
-                            <Input type="number" placeholder="e.g., 250" {...field} disabled={isUploading} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    </div>
                     <div className="grid md:grid-cols-2 gap-8">
                     <FormField
                         control={form.control}
@@ -815,7 +824,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     />
                     </div>
                     
-                    <DialogFooter className="pt-4">
+                    <DialogFooter className="pt-8">
                     <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)} disabled={isUploading || form.formState.isSubmitting}>
                         Cancel
                     </Button>
@@ -886,5 +895,3 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
-
-    
