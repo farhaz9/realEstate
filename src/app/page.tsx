@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
 import { NewProjects } from "@/components/shared/new-projects";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PricingSection } from "@/components/shared/pricing-section";
 
 
 const faqs = [
@@ -175,6 +177,8 @@ export default function HomePage() {
       <NewProjects />
 
       <FeaturedProperties />
+
+      <PricingSection />
 
        <section id="contact-faq" className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4">
