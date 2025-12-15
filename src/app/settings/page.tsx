@@ -109,7 +109,7 @@ function SettingsPageContent() {
                 </div>
                 <div className="flex items-center gap-2 mt-4">
                   <h2 className="text-2xl font-bold">{displayName}</h2>
-                  {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500 fill-blue-500" />}
+                  {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500" />}
                 </div>
                 <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>
                 {isCurrentlyVerified && (
