@@ -20,6 +20,8 @@ import { PopularPropertyCard } from '@/components/shared/popular-property-card';
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import MobileNav from '@/components/layout/mobile-nav';
+import { useOnScroll } from '@/hooks/use-on-scroll';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -46,6 +48,7 @@ export default function PropertyDetailPage() {
   const firestore = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
+  const { isScrollingUp } = useOnScroll(100);
 
   const propertyRef = useMemoFirebase(() => {
     if (!firestore || !propertyId) return null;
@@ -171,7 +174,7 @@ export default function PropertyDetailPage() {
   const isOwnerVerified = owner?.verifiedUntil && owner.verifiedUntil.toDate() > new Date();
 
   return (
-    <div className="bg-muted/40 pb-24">
+    <div className="bg-muted/40 pb-24 md:pb-8">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -333,20 +336,36 @@ export default function PropertyDetailPage() {
         )}
       </div>
 
-       <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t p-4 z-50">
-        <div className="container mx-auto px-4 flex items-center justify-center gap-4">
-          <Button variant="outline" className="w-full h-12 bg-background/80" asChild>
-            <Link href={`tel:${property.contactNumber}`}>
-              <Phone className="mr-2 h-5 w-5" /> Call Agent
-            </Link>
-          </Button>
-          <Button className="w-full h-12" asChild>
-            <Link href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank">
-              <CalendarDays className="mr-2 h-5 w-5" /> Book Visit
-            </Link>
-          </Button>
+       <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 z-50 overflow-hidden">
+        {/* Action Bar */}
+        <div className={cn(
+          "absolute inset-0 bg-background/80 backdrop-blur-sm border-t p-4 transition-transform duration-300 ease-in-out",
+          isScrollingUp ? "translate-y-full" : "translate-y-0"
+        )}>
+            <div className="container mx-auto px-4 flex items-center justify-center gap-4 h-full">
+              <Button variant="outline" className="w-full h-12 bg-background/80" asChild>
+                <Link href={`tel:${property.contactNumber}`}>
+                  <Phone className="mr-2 h-5 w-5" /> Call Agent
+                </Link>
+              </Button>
+              <Button className="w-full h-12" asChild>
+                <Link href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank">
+                  <CalendarDays className="mr-2 h-5 w-5" /> Book Visit
+                </Link>
+              </Button>
+            </div>
+        </div>
+        
+        {/* Standard Nav Bar */}
+        <div className={cn(
+          "absolute inset-0 transition-transform duration-300 ease-in-out",
+          isScrollingUp ? "translate-y-0" : "-translate-y-full"
+        )}>
+            <MobileNav />
         </div>
       </div>
     </div>
   );
 }
+
+    

@@ -9,9 +9,6 @@ import { cn } from "@/lib/utils";
 export default function MobileNav() {
   const pathname = usePathname();
 
-  // This will check if the current path is a property detail page (e.g., /properties/some-id)
-  const isPropertyDetailPage = /^\/properties\/.+/.test(pathname);
-
   const navLinks = [
     { href: "/properties", label: "Properties", icon: Building },
     { href: "/interiors", label: "Interiors", icon: Armchair },
@@ -19,11 +16,6 @@ export default function MobileNav() {
     { href: "/contact", label: "Contact", icon: Mail },
     { href: "/settings", label: "Profile", icon: User },
   ];
-
-  // If it's a property detail page, don't render the main mobile nav
-  if (isPropertyDetailPage) {
-    return null;
-  }
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
@@ -54,3 +46,5 @@ export default function MobileNav() {
     </nav>
   );
 }
+
+    
