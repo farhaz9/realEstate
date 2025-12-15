@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -44,6 +44,7 @@ import Fuse from 'fuse.js';
 import { Label } from '@/components/ui/label';
 import { formatPrice } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
+import { EditUserForm } from '@/components/admin/edit-user-form';
 
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -63,6 +64,7 @@ export default function AdminPage() {
   
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [creditAmount, setCreditAmount] = useState(0);
+  const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
 
   const allPropertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -132,7 +134,7 @@ export default function AdminPage() {
         if (key === 'isVerified') {
             valA = a.verifiedUntil && a.verifiedUntil.toDate() > new Date() ? 1 : 0;
             valB = b.verifiedUntil && b.verifiedUntil.toDate() > new Date() ? 1 : 0;
-        } else if (key === 'dateJoined') {
+        } else if (key === 'dateJoined' && a.dateJoined && b.dateJoined) {
             valA = a.dateJoined?.toDate ? a.dateJoined.toDate() : new Date(0);
             valB = b.dateJoined?.toDate ? b.dateJoined.toDate() : new Date(0);
         } else {
@@ -304,6 +306,19 @@ export default function AdminPage() {
                     <TableCell><Dialog><DialogTrigger asChild><Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}><Coins className="h-4 w-4 text-amber-500" /><span className="font-semibold">{u.listingCredits ?? 0}</span></Button></DialogTrigger>{selectedUser?.id === u.id && (<DialogContent><DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle><DialogDescription>Adjust the number of listing credits for this user.</DialogDescription></DialogHeader><div className="flex items-center justify-center gap-4 py-4"><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button><Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} /><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button></div><DialogFooter><Button onClick={handleUpdateCredits}>Save Changes</Button></DialogFooter></DialogContent>)}</Dialog></TableCell>
                     <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
                     <TableCell className="text-right">{u.email !== ADMIN_EMAIL && (<div className="flex items-center justify-end gap-1">
+                        <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
+                            <DialogTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(u); setIsEditUserDialogOpen(true); }}>
+                                    <Edit className="h-4 w-4" />
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                    <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
+                                </DialogHeader>
+                                {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
+                            </DialogContent>
+                        </Dialog>
                         <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={isCurrentlyVerified ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}><Verified className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Confirm Verification</AlertDialogTitle><AlertDialogDescription>Do you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}? {isCurrentlyVerified ? ' This will remove their badge immediately.' : ' This will grant them a badge for one year.'}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>{isCurrentlyVerified ? 'Revoke Verification' : 'Grant Verification'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
                         <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={u.isBlocked ? "text-green-600 hover:text-green-700" : "text-orange-600 hover:text-orange-700"}>{u.isBlocked ? <UserCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}". Blocked users cannot log in.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock User' : 'Block User'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
                         <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle><AlertDialogDescription>This action will permanently delete the user "{u.fullName}" and all associated data. This cannot be undone.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete User</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
