@@ -49,17 +49,31 @@ export function PricingSection() {
 
     const { data: userProfile } = useDoc<User>(userDocRef);
 
+    const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+    const verificationExpiresAt = isCurrentlyVerified ? userProfile.verifiedUntil.toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+
     const handleGetVerified = () => {
         if (!user) {
             router.push('/login');
             return;
         }
-        // The AlertDialog will be triggered, so we don't need to do anything else here
+        if (isCurrentlyVerified) {
+            toast({
+                title: "Already Verified",
+                description: `Your verification is active until ${verificationExpiresAt}.`,
+                variant: 'success'
+            });
+            return;
+        }
     };
 
     const handlePayment = async () => {
         if (!user || !userDocRef) {
             toast({ title: "Authentication Error", description: "You must be logged in to make a payment.", variant: "destructive" });
+            return;
+        }
+        if (isCurrentlyVerified) {
+            handleGetVerified();
             return;
         }
         if (typeof window === 'undefined' || !(window as any).Razorpay) {
@@ -87,18 +101,25 @@ export function PricingSection() {
                     description: "Congratulations! You are now a Pro Verified member.",
                     variant: "success",
                 });
-                if (userDocRef) {
-                    const newOrder = {
-                        paymentId: response.razorpay_payment_id,
-                        amount: displayAmount,
-                        date: new Date(),
-                    };
-                    
-                    updateDocumentNonBlocking(userDocRef, {
-                        orders: arrayUnion(newOrder),
-                        isVerified: true
-                    });
+                
+                const newExpiryDate = new Date();
+                if (isAnnual) {
+                    newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                } else {
+                    newExpiryDate.setDate(newExpiryDate.getDate() + 30);
                 }
+
+                const newOrder = {
+                    paymentId: response.razorpay_payment_id,
+                    amount: displayAmount,
+                    date: new Date(),
+                };
+                
+                updateDocumentNonBlocking(userDocRef, {
+                    orders: arrayUnion(newOrder),
+                    isVerified: true,
+                    verifiedUntil: newExpiryDate
+                });
             },
             prefill: {
                 name: userProfile?.fullName,
@@ -185,8 +206,8 @@ export function PricingSection() {
             <CardFooter>
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
-                         <Button size="lg" className="w-full h-12 text-lg" onClick={handleGetVerified}>
-                            Get Verified Now
+                         <Button size="lg" className="w-full h-12 text-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
+                            {isCurrentlyVerified ? 'You are already Verified' : 'Get Verified Now'}
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>

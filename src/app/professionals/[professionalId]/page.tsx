@@ -40,6 +40,8 @@ export default function ProfessionalDetailPage() {
 
   const { data: professional, isLoading, error } = useDoc<User>(professionalRef);
   
+  const isCurrentlyVerified = professional?.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
+
   // Placeholder data
   const companyName = "B S Associates";
   const reraId = "PRM/KA/RERA/121/309/AG/210107/0021";
@@ -102,7 +104,7 @@ export default function ProfessionalDetailPage() {
                             <div className="mt-6 w-full">
                                 <h1 className="text-2xl font-bold flex items-center gap-2">
                                   {professional.fullName}
-                                  {professional.isVerified && <Verified className="h-6 w-6 text-blue-500 fill-blue-500" />}
+                                  {isCurrentlyVerified && <Verified className="h-6 w-6 text-blue-500 fill-blue-500" />}
                                 </h1>
                                 <p className="text-muted-foreground">{companyName}</p>
                                 <p className="text-xs text-muted-foreground mt-2 truncate">RERA ID: {reraId}</p>

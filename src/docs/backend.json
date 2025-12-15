@@ -67,6 +67,11 @@
         "isVerified": {
             "type": "boolean",
             "description": "Indicates if the professional user has a verified badge."
+        },
+        "verifiedUntil": {
+          "type": "string",
+          "description": "The date and time when the user's verification expires.",
+          "format": "date-time"
         }
       },
       "required": [

@@ -66,4 +66,5 @@ export type User = {
   orders?: Order[];
   listingCredits?: number;
   isVerified?: boolean;
+  verifiedUntil?: Date | any;
 }
