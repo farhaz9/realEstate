@@ -167,6 +167,8 @@ export default function LoginPage() {
             dateJoined: serverTimestamp(),
             photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
             wishlist: [],
+            orders: [],
+            listingCredits: 1,
         };
         
         if (category === 'vendor') {
@@ -179,7 +181,7 @@ export default function LoginPage() {
         
         toast({
           title: 'Sign Up Successful!',
-          description: 'Welcome to Falcon Axe Homes!',
+          description: 'Welcome to Falcon Axe Homes! You have received 1 free listing credit.',
           variant: 'success',
         });
         router.push('/');
@@ -211,14 +213,22 @@ export default function LoginPage() {
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
           wishlist: [],
+          orders: [],
+          listingCredits: 1,
+        });
+         toast({
+          title: 'Sign Up Successful!',
+          description: 'Welcome to Falcon Axe Homes! You have received 1 free listing credit.',
+          variant: 'success',
+        });
+      } else {
+        toast({
+            title: 'Login Successful',
+            description: `Welcome back, ${user.displayName}!`,
+            variant: 'success',
         });
       }
       
-      toast({
-        title: 'Login Successful',
-        description: `Welcome back, ${user.displayName}!`,
-        variant: 'success',
-      });
       router.push('/');
     } catch (error: unknown) {
       handleAuthError(error);

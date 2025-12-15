@@ -194,13 +194,13 @@ export default function LoginPage() {
             dateJoined: serverTimestamp(),
             photoURL: user.photoURL || '',
             wishlist: [],
-            listingCredits: 0,
+            listingCredits: 1,
             orders: [],
         });
         
         toast({
           title: 'Sign Up Successful!',
-          description: 'Welcome to Delhi Estate Luxe!',
+          description: 'Welcome to Delhi Estate Luxe! You have received 1 free listing credit.',
           variant: 'success',
         });
         router.push('/');
@@ -233,16 +233,22 @@ export default function LoginPage() {
           dateJoined: serverTimestamp(),
           photoURL: user.photoURL || '',
           wishlist: [],
-          listingCredits: 0,
+          listingCredits: 1,
           orders: [],
+        });
+         toast({
+          title: 'Sign Up Successful!',
+          description: 'Welcome to Delhi Estate Luxe! You have received 1 free listing credit.',
+          variant: 'success',
+        });
+      } else {
+         toast({
+          title: 'Login Successful',
+          description: `Welcome back, ${user.displayName}!`,
+          variant: 'success',
         });
       }
       
-      toast({
-        title: 'Login Successful',
-        description: `Welcome back, ${user.displayName}!`,
-        variant: 'success',
-      });
       router.push('/');
     } catch (error: unknown) {
       handleAuthError(error);
