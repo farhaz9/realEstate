@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -11,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
+import { HomeSearch } from '@/components/shared/home-search';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -24,6 +27,8 @@ export default function ProfessionalsPage() {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeTab, setActiveTab] = useState('all');
+
+  const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
@@ -93,54 +98,65 @@ export default function ProfessionalsPage() {
   };
 
   return (
-    <div className="bg-muted/30 min-h-screen">
-      <div className="container mx-auto px-4 pt-8 pb-16">
-        <div className="relative h-48 w-full rounded-2xl overflow-hidden mb-6">
-            <Image 
-                src="https://images.unsplash.com/photo-1556742031-c6961e199a9b?q=80&w=2874&auto=format&fit=crop"
-                alt="Living room interior"
-                fill
-                className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-            <div className="relative z-10 flex items-center justify-center h-full">
-                <h1 className="text-4xl font-bold text-white max-w-xs text-center leading-tight">
-                    Find the right expert for your home
-                </h1>
+    <>
+      <section className="relative w-full h-[80vh] md:h-[90vh] text-white overflow-hidden">
+        {heroImage && (
+           <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            data-ai-hint={heroImage.imageHint}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+                Find your place in the world
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
+                The most comprehensive database of properties, exclusive listings, and top-rated agents in your area.
+            </p>
+            <div className="w-full max-w-2xl mt-8">
+                 <HomeSearch />
             </div>
         </div>
+      </section>
+      <div className="bg-muted/30 min-h-screen">
+        <div className="container mx-auto px-4 pt-8 pb-16">
+          <form id="professionals-search" className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+              <Input 
+                  placeholder="Search by name or location"
+                  className="pl-12 h-12 text-base rounded-lg bg-background shadow-sm border-border"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+              />
+          </form>
 
-        <form id="professionals-search" className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
-            <Input 
-                placeholder="Search by name or location"
-                className="pl-12 h-12 text-base rounded-lg bg-background shadow-sm border-border"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-        </form>
+          <div className="mb-8">
+              <div className="bg-background border rounded-lg p-1 flex items-center gap-1">
+                  {filterTabs.map(tab => (
+                      <button 
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={cn(
+                              "flex-1 rounded-md px-3 py-1.5 text-sm font-semibold transition-all",
+                              activeTab === tab.id 
+                                  ? 'bg-primary/10 text-primary' 
+                                  : 'text-muted-foreground hover:bg-muted/50'
+                          )}
+                      >
+                          {tab.label}
+                      </button>
+                  ))}
+              </div>
+          </div>
 
-        <div className="mb-8">
-            <div className="bg-background border rounded-lg p-1 flex items-center gap-1">
-                {filterTabs.map(tab => (
-                    <button 
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={cn(
-                            "flex-1 rounded-md px-3 py-1.5 text-sm font-semibold transition-all",
-                            activeTab === tab.id 
-                                ? 'bg-primary/10 text-primary' 
-                                : 'text-muted-foreground hover:bg-muted/50'
-                        )}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
+          {renderContent()}
         </div>
-
-        {renderContent()}
       </div>
-    </div>
+    </>
   );
 }
