@@ -429,10 +429,9 @@ export default function LoginPage() {
             </p>
           </div>
         </div>
-        <div className="p-6 text-center text-xs text-gray-400 dark:text-gray-600">
-            © 2024 Falcon Axe Homes. All rights reserved.
-        </div>
       </div>
     </div>
   );
 }
+
+    
