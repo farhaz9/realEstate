@@ -252,7 +252,7 @@ export default function LoginPage() {
 
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white h-screen w-full flex overflow-hidden">
+    <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white flex-grow w-full flex">
       <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end p-12">
         <Image 
           src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"

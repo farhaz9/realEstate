@@ -12,7 +12,7 @@ export default function AppProviders({
 }) {
   return (
     <>
-      <main className="min-h-[calc(100vh-theme(spacing.16))] pb-16 md:pb-0">
+      <main className="min-h-[calc(100vh-theme(spacing.16))] pb-16 md:pb-0 flex flex-col">
         {children}
       </main>
       <MobileNav />
