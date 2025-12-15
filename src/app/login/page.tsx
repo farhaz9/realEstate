@@ -253,17 +253,17 @@ export default function LoginPage() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white flex-grow w-full flex">
-      <div className="hidden lg:flex w-1/2 h-full relative flex-col justify-end p-12">
+      <div className="hidden lg:flex w-1/2 h-screen relative flex-col justify-center p-12">
         <Image 
           src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Modern minimalist living room"
           layout="fill"
-          objectFit="cover"
-          className="absolute inset-0"
+          objectFit="contain"
+          className="absolute inset-0 py-12"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20"></div>
 
-        <div className="relative z-10 text-white max-w-lg">
+        <div className="relative z-10 text-white max-w-lg self-center">
           <div className="flex items-center gap-4 mb-8">
             <Logo />
           </div>
@@ -272,7 +272,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 h-full flex flex-col overflow-y-auto bg-white dark:bg-background-dark relative">
+      <div className="w-full lg:w-1/2 min-h-screen flex flex-col overflow-y-auto bg-white dark:bg-background-dark relative">
+        <h1 className="sr-only">Login or Sign Up</h1>
         <div className="lg:hidden p-6 flex items-center gap-2">
           <Logo />
         </div>
