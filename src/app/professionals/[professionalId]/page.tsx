@@ -1,33 +1,34 @@
 
-
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
-import type { User } from '@/types';
-import { Loader2, ArrowLeft, Building, KeyRound, Handshake, Info, Globe, Phone, MessageSquare, Verified } from 'lucide-react';
-import Image from 'next/image';
+import { useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
+import { doc, collection, query, where } from 'firebase/firestore';
+import type { User, Property } from '@/types';
+import { Loader2, ArrowLeft, Mail, MessageSquare, Verified, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-
-const categoryDisplay: Record<string, string> = {
-    'real-estate-agent': 'Real Estate Agent',
-    'interior-designer': 'Interior Designer'
-};
+import { PropertyCard } from '@/components/property-card';
+import { Badge } from '@/components/ui/badge';
 
 const getInitials = (name: string) => {
+    if (!name) return '';
     const names = name.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
-}
+};
 
+const categoryDisplay: Record<string, string> = {
+    'real-estate-agent': 'Real Estate Agent',
+    'interior-designer': 'Interior Designer',
+    'listing-property': 'Property Owner',
+    'vendor': 'Vendor / Supplier',
+};
 
 export default function ProfessionalDetailPage() {
   const params = useParams();
@@ -39,22 +40,16 @@ export default function ProfessionalDetailPage() {
     return doc(firestore, 'users', professionalId);
   }, [firestore, professionalId]);
 
-  const { data: professional, isLoading, error } = useDoc<User>(professionalRef);
+  const { data: professional, isLoading: isLoadingProfessional, error } = useDoc<User>(professionalRef);
   
-  const isCurrentlyVerified = professional?.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
+  const propertiesQuery = useMemoFirebase(() => {
+    if (!firestore || !professionalId) return null;
+    return query(collection(firestore, 'properties'), where('userId', '==', professionalId));
+  }, [firestore, professionalId]);
 
-  // Placeholder data
-  const companyName = "B S Associates";
-  const reraId = "PRM/KA/RERA/121/309/AG/210107/0021";
-  const operatingSince = 2010;
-  const propertiesForSale = 24;
-  const propertiesForRent = 27;
-  const teamMembers = 8;
-  const dealsClosed = 2500;
-  const dealsIn = ["Rent/Lease", "Pre-launch", "Original Booking"];
-  const operatesIn = ["Malleshwaram", "Rajajinagar", "Yeswanthpur", "Binnipete", "1st Block Rajajinagar", "Basaveshwar Nagar", "Goragun More"];
-  const website = "www.bsassociates.info";
-  const aboutText = "B S Associates is a leading real estate consultancy in Bangalore, known for its transparent dealings and customer-centric approach. With over a decade of experience, we specialize in residential and commercial properties across prime locations.";
+  const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
+  
+  const isLoading = isLoadingProfessional || isLoadingProperties;
 
   if (isLoading) {
     return (
@@ -80,109 +75,85 @@ export default function ProfessionalDetailPage() {
     );
   }
   
+  const isCurrentlyVerified = professional.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
+
   return (
-    <div className="bg-muted/40">
-        <div className="container mx-auto p-4 md:py-8">
-            <Button asChild variant="ghost" size="sm" className="mb-4">
-                <Link href="/professionals"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Professionals</Link>
-            </Button>
-            <Card className="overflow-hidden bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50">
-                <div className="bg-primary h-2" />
-                <CardContent className="p-4 md:p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
-                            <div className="relative border-4 border-white rounded-lg shadow-lg -mt-16 bg-background w-40 h-40">
-                                <Avatar className="w-full h-full rounded-md">
-                                    <AvatarImage src={professional.photoURL} alt={professional.fullName} className="object-cover" />
-                                    <AvatarFallback className="text-5xl rounded-md">
-                                        {getInitials(professional.fullName)}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white p-1 rounded-md shadow-md">
-                                    <Image src="https://placehold.co/80x30/png?text=BSA" alt={`${companyName} Logo`} width={60} height={22} />
+    <div className="bg-muted/40 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+            <div className="mb-6">
+                <Button asChild variant="ghost" size="sm">
+                    <Link href="/professionals"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Professionals</Link>
+                </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div className="lg:col-span-1 lg:sticky top-24">
+                    <Card>
+                        <CardHeader className="items-center text-center">
+                           <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
+                                <AvatarImage src={professional.photoURL} alt={professional.fullName} className="object-cover" />
+                                <AvatarFallback className="text-4xl">
+                                    {getInitials(professional.fullName)}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="pt-4">
+                                <div className="flex items-center justify-center gap-2">
+                                    <h1 className="text-2xl font-bold">{professional.fullName}</h1>
+                                    {isCurrentlyVerified && <Verified className="h-6 w-6 text-blue-500" />}
                                 </div>
+                                <p className="text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+                                {professional.companyName && <p className="text-sm text-muted-foreground">{professional.companyName}</p>}
                             </div>
-                            <div className="mt-6 w-full">
-                                <h1 className="text-2xl font-bold flex items-center gap-2">
-                                  {professional.fullName}
-                                  {isCurrentlyVerified && <Verified className="h-6 w-6 text-blue-500" />}
-                                </h1>
-                                <p className="text-muted-foreground">{companyName}</p>
-                                <p className="text-xs text-muted-foreground mt-2 truncate">RERA ID: {reraId}</p>
-                                <p className="text-sm text-muted-foreground">Operating since: {operatingSince}</p>
-                            </div>
-                             <div className="mt-4">
-                                <Image src="https://placehold.co/120x60/png?text=Trusted" alt="Trusted Badge" width={100} height={50} />
-                            </div>
-                        </div>
-
-                        <div className="md:col-span-2">
-                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                                <div className="p-3 rounded-lg bg-background/50">
-                                    <p className="text-2xl font-bold text-primary">{propertiesForSale}</p>
-                                    <p className="text-sm text-muted-foreground">Properties For Sale</p>
-                                </div>
-                                 <div className="p-3 rounded-lg bg-background/50">
-                                    <p className="text-2xl font-bold text-primary">{propertiesForRent}</p>
-                                    <p className="text-sm text-muted-foreground">Properties For Rent</p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-background/50">
-                                    <p className="text-2xl font-bold text-primary">{teamMembers}</p>
-                                    <p className="text-sm text-muted-foreground">Team Members</p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-background/50">
-                                    <p className="text-2xl font-bold text-primary">{dealsClosed}</p>
-                                    <p className="text-sm text-muted-foreground">Deals Closed</p>
-                                </div>
-                            </div>
-                             <Separator className="my-6"/>
-                             <div className="space-y-4 text-sm">
-                                <div className="flex gap-4">
-                                    <h3 className="font-semibold w-24 flex-shrink-0">Deals in</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {dealsIn.map(deal => <Badge key={deal} variant="secondary">{deal}</Badge>)}
-                                    </div>
-                                </div>
-                                 <div className="flex gap-4">
-                                    <h3 className="font-semibold w-24 flex-shrink-0">Operates in</h3>
-                                    <p className="text-muted-foreground">{operatesIn.join(', ')}</p>
-                                </div>
-                                 <div className="flex gap-4 items-center">
-                                    <h3 className="font-semibold w-24 flex-shrink-0">Website</h3>
-                                    <a href={`https://${website}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1">
-                                        <Globe className="h-4 w-4" /> {website}
+                        </CardHeader>
+                        <CardContent className="text-center">
+                            {professional.bio && (
+                                <>
+                                 <Separator className="my-4"/>
+                                 <p className="text-sm text-muted-foreground">{professional.bio}</p>
+                                </>
+                            )}
+                             <Separator className="my-4"/>
+                             <div className="space-y-3">
+                                <Button asChild size="lg" className="w-full">
+                                    <a href={`mailto:${professional.email}`}>
+                                        <Mail className="mr-2 h-5 w-5" /> Contact Agent
                                     </a>
+                                </Button>
+                                 <Button asChild size="lg" variant="outline" className="w-full">
+                                    <a href={`https://wa.me/${professional.phone}`} target="_blank" rel="noopener noreferrer">
+                                        <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
+                                    </a>
+                                </Button>
+                             </div>
+                        </CardContent>
+                    </Card>
+                </div>
+                
+                <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Building className="h-6 w-6 text-primary" />
+                                Listings by {professional.fullName.split(' ')[0]} ({properties?.length || 0})
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {properties && properties.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {properties.map(property => (
+                                        <PropertyCard key={property.id} property={property} />
+                                    ))}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                     <Separator className="my-6"/>
-                     <div className="flex flex-col sm:flex-row gap-4">
-                        <Button variant="outline" className="w-full"><Building className="mr-2" /> View Properties</Button>
-                        <Button className="w-full bg-red-600 hover:bg-red-700"><Phone className="mr-2" /> Contact Agent</Button>
-                     </div>
-                </CardContent>
-            </Card>
-
-            <Card className="mt-8">
-                <CardContent className="p-6">
-                    <h2 className="text-2xl font-bold flex items-center gap-2"><Info className="h-6 w-6 text-primary" /> About {companyName}</h2>
-                    <Separator className="my-4" />
-                    <div className="space-y-4">
-                       <p className="text-muted-foreground whitespace-pre-wrap">{aboutText}</p>
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-                           <div>
-                                <h4 className="font-semibold">Team Size</h4>
-                                <p className="text-muted-foreground">{teamMembers} people</p>
-                           </div>
-                           <div>
-                                <h4 className="font-semibold">Address</h4>
-                                <p className="text-muted-foreground">Rajajinagar Bangalore 560010</p>
-                           </div>
-                       </div>
-                    </div>
-                </CardContent>
-            </Card>
+                            ) : (
+                                <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                    <h3 className="text-xl font-semibold">No Listings Found</h3>
+                                    <p className="text-muted-foreground mt-2">{professional.fullName} hasn't listed any properties yet.</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
         </div>
     </div>
   );
