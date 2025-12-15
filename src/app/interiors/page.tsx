@@ -3,13 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import Image from "next/image";
-import { interiorProjects } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHero } from "@/components/shared/page-hero";
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
-import type { User } from '@/types';
+import { collection, query, where, limit } from 'firebase/firestore';
+import type { Property, User } from '@/types';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Loader2, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,8 @@ import { ArrowRight } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { PropertyCard } from '@/components/property-card';
+
 
 export default function InteriorsPage() {
   const firestore = useFirestore();
@@ -47,6 +48,18 @@ export default function InteriorsPage() {
   }, [firestore]);
 
   const { data: designers, isLoading, error } = useCollection<User>(designersQuery);
+
+   const interiorPropertiesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(
+        collection(firestore, 'properties'),
+        where('propertyType', 'in', ['Apartment', 'Villa', 'Independent House', 'Penthouse']),
+        limit(6)
+    );
+  }, [firestore]);
+
+  const { data: interiorProperties, isLoading: isLoadingProperties } = useCollection<Property>(interiorPropertiesQuery);
+
 
   const filteredDesigners = designers?.filter(d => 
     d.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,36 +146,50 @@ export default function InteriorsPage() {
       <section className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Design Projects</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Design Inspiration</h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
               Get inspired by our portfolio of stunning interior transformations.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {interiorProjects.map((project) => {
-              const projectImage = PlaceHolderImages.find(p => p.id === project.images[0]);
-              return (
-                <Card key={project.id} className="overflow-hidden group relative">
-                  <div className="relative h-96 w-full">
-                    {projectImage && (
-                      <Image
-                        src={projectImage.imageUrl}
-                        alt={project.title}
-                        data-ai-hint={projectImage.imageHint}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h2 className="text-2xl font-bold text-white">{project.title}</h2>
-                    <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{project.description}</p>
-                  </div>
-                </Card>
-              )
-            })}
-          </div>
+           {isLoadingProperties ? (
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="flex flex-col space-y-3">
+                        <div className="relative h-96 bg-muted rounded-xl animate-pulse" />
+                        <div className="space-y-2 p-2">
+                            <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
+                            <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                        </div>
+                    </div>
+                ))}
+             </div>
+           ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {interiorProperties?.map((property) => {
+                  const imageUrl = property.imageUrls?.[0] ?? PlaceHolderImages.find(p => p.id === 'default-property-listing')?.imageUrl ?? '';
+                  return (
+                    <Card key={property.id} className="overflow-hidden group relative">
+                      <Link href={`/properties/${property.id}`} className="block">
+                        <div className="relative h-96 w-full">
+                          <Image
+                            src={imageUrl}
+                            alt={property.title}
+                            data-ai-hint="modern interior"
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          <h2 className="text-2xl font-bold text-white">{property.title}</h2>
+                          <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{property.description}</p>
+                        </div>
+                      </Link>
+                    </Card>
+                  )
+                })}
+              </div>
+           )}
         </div>
       </section>
       
@@ -204,31 +231,31 @@ export default function InteriorsPage() {
 
       <section className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
-           <div className="flex justify-between items-center mb-8">
-             <h2 className="text-3xl md:text-4xl font-bold">Interior Designers Near You</h2>
-             <Link href="/professionals" className="flex items-center text-sm font-semibold text-primary hover:underline">
-                View All <ArrowRight className="ml-1 h-4 w-4" />
-             </Link>
-           </div>
-           <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                <h3 className="text-xl font-semibold">Feature Coming Soon</h3>
-                <p className="text-muted-foreground mt-2">We are working on a feature to show you designers based on your location.</p>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold">Explore Properties</h2>
+            <Link href="/properties" className="flex items-center text-sm font-semibold text-primary hover:underline">
+              View All <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </div>
+           {isLoadingProperties ? (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex flex-col space-y-3">
+                        <div className="relative aspect-[4/3] bg-muted rounded-xl animate-pulse" />
+                        <div className="space-y-2 p-2">
+                            <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
+                            <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                        </div>
+                    </div>
+                ))}
+             </div>
+           ) : (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {interiorProperties?.slice(0,3).map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
             </div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-           <div className="flex justify-between items-center mb-8">
-             <h2 className="text-3xl md:text-4xl font-bold">Top Interior Design Companies</h2>
-              <Link href="/professionals" className="flex items-center text-sm font-semibold text-primary hover:underline">
-                View All <ArrowRight className="ml-1 h-4 w-4" />
-             </Link>
-           </div>
-           <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                <h3 className="text-xl font-semibold">Coming Soon</h3>
-                <p className="text-muted-foreground mt-2">A curated list of top interior design firms will be available here.</p>
-            </div>
+           )}
         </div>
       </section>
 
