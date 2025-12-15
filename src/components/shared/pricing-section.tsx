@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Check, Star, Verified } from 'lucide-react';
+import { CheckCircle2, Star, Verified } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
@@ -196,7 +196,7 @@ export function PricingSection() {
                 {benefits.map((benefit, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-green-500" />
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
                     </div>
                     <span className="font-medium text-foreground/90">{benefit}</span>
                   </li>
