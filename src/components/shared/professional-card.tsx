@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { User } from '@/types';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Star, Mail, Verified, Phone } from 'lucide-react';
+import { User as UserIcon, Mail, Verified, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ProfessionalCardProps {

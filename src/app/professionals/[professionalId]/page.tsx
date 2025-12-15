@@ -5,14 +5,14 @@ import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
 import type { User, Property } from '@/types';
-import { Loader2, ArrowLeft, Mail, MessageSquare, Verified, Building } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, MessageSquare, Verified, Building, Phone, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard } from '@/components/property-card';
-import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -105,14 +105,37 @@ export default function ProfessionalDetailPage() {
                                 {professional.companyName && <p className="text-sm text-muted-foreground">{professional.companyName}</p>}
                             </div>
                         </CardHeader>
-                        <CardContent className="text-center">
-                            {professional.bio && (
+                        <CardContent className="text-sm">
+                             {professional.bio && (
                                 <>
+                                 <p className="text-center text-muted-foreground mb-4">{professional.bio}</p>
                                  <Separator className="my-4"/>
-                                 <p className="text-sm text-muted-foreground">{professional.bio}</p>
                                 </>
                             )}
-                             <Separator className="my-4"/>
+                             <div className="space-y-4">
+                               <div className="flex items-start gap-4">
+                                 <CalendarDays className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                 <div>
+                                   <p className="font-semibold">Date Joined</p>
+                                   <p className="text-muted-foreground">{professional.dateJoined?.toDate ? format(professional.dateJoined.toDate(), 'PPP') : 'N/A'}</p>
+                                 </div>
+                               </div>
+                               <div className="flex items-start gap-4">
+                                 <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                 <div>
+                                   <p className="font-semibold">Email</p>
+                                   <a href={`mailto:${professional.email}`} className="text-primary hover:underline">{professional.email}</a>
+                                 </div>
+                               </div>
+                               <div className="flex items-start gap-4">
+                                 <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                 <div>
+                                   <p className="font-semibold">Phone</p>
+                                   <a href={`tel:${professional.phone}`} className="text-primary hover:underline">{professional.phone}</a>
+                                 </div>
+                               </div>
+                             </div>
+                             <Separator className="my-6"/>
                              <div className="space-y-3">
                                 <Button asChild size="lg" className="w-full">
                                     <a href={`mailto:${professional.email}`}>
