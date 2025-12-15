@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2 } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import {
   AlertDialog,
@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { format } from 'date-fns';
 
 
 interface ProfileDetailsTabProps {
@@ -70,6 +71,7 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
               {renderDetailItem(Mail, "Email Address", userProfile.email)}
               {renderDetailItem(Phone, "Phone", userProfile.phone)}
               {renderDetailItem(Briefcase, "Role", categoryDisplay[userProfile.category])}
+              {userProfile.dateJoined && renderDetailItem(CalendarDays, "Joined On", userProfile.dateJoined.toDate ? format(userProfile.dateJoined.toDate(), 'PPP') : 'N/A')}
           </CardContent>
         </Card>
         
