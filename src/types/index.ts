@@ -65,4 +65,5 @@ export type User = {
   bio?: string;
   orders?: Order[];
   listingCredits?: number;
+  isVerified?: boolean;
 }

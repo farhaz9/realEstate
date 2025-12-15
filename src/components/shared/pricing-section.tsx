@@ -58,7 +58,7 @@ export function PricingSection() {
     };
 
     const handlePayment = async () => {
-        if (!user) {
+        if (!user || !userDocRef) {
             toast({ title: "Authentication Error", description: "You must be logged in to make a payment.", variant: "destructive" });
             return;
         }
@@ -93,11 +93,10 @@ export function PricingSection() {
                         amount: displayAmount,
                         date: new Date(),
                     };
-                    // Here you would add logic to mark the user as verified.
-                    // For now, just adding to orders.
+                    
                     updateDocumentNonBlocking(userDocRef, {
                         orders: arrayUnion(newOrder),
-                        // You could add a field like 'isVerified' or 'subscriptionTier'
+                        isVerified: true
                     });
                 }
             },

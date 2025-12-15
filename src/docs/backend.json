@@ -63,6 +63,10 @@
         "bio": {
             "type": "string",
             "description": "A short biography for professional users."
+        },
+        "isVerified": {
+            "type": "boolean",
+            "description": "Indicates if the professional user has a verified badge."
         }
       },
       "required": [
@@ -255,4 +259,3 @@
     ]
   }
 }
-

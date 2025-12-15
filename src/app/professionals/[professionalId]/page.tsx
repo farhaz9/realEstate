@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { User } from '@/types';
-import { Loader2, ArrowLeft, Building, KeyRound, Handshake, Info, Globe, Phone, MessageSquare } from 'lucide-react';
+import { Loader2, ArrowLeft, Building, KeyRound, Handshake, Info, Globe, Phone, MessageSquare, Verified } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -99,7 +100,10 @@ export default function ProfessionalDetailPage() {
                                 </div>
                             </div>
                             <div className="mt-6 w-full">
-                                <h1 className="text-2xl font-bold">{professional.fullName}</h1>
+                                <h1 className="text-2xl font-bold flex items-center gap-2">
+                                  {professional.fullName}
+                                  {professional.isVerified && <Verified className="h-6 w-6 text-blue-500 fill-blue-500" />}
+                                </h1>
                                 <p className="text-muted-foreground">{companyName}</p>
                                 <p className="text-xs text-muted-foreground mt-2 truncate">RERA ID: {reraId}</p>
                                 <p className="text-sm text-muted-foreground">Operating since: {operatingSince}</p>
