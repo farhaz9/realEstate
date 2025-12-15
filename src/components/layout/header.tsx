@@ -151,35 +151,33 @@ export default function Header() {
           <SheetContent side="left" className="p-0 flex flex-col">
              <SheetHeader className="p-6 pb-4 border-b">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <SheetClose asChild>
-                    <Link href="/settings">
-                        <div className="flex items-center gap-4">
-                             {isUserLoading ? (
-                                <>
-                                    <Skeleton className="h-12 w-12 rounded-full" />
-                                    <div className="space-y-2">
-                                        <Skeleton className="h-4 w-[120px]" />
-                                    </div>
-                                </>
-                             ) : user ? (
-                                <>
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                                        <AvatarFallback className="text-lg bg-primary/10 text-primary font-semibold">
-                                            {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="text-base font-bold text-left">{user.displayName?.split(' ')[0] || 'User'}</p>
-                                        <p className="text-sm text-muted-foreground text-left">View Settings</p>
-                                    </div>
-                                </>
-                             ) : (
-                                 <Logo />
-                             )}
+                 {isUserLoading ? (
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-4 w-[120px]" />
                         </div>
-                    </Link>
-                </SheetClose>
+                    </div>
+                 ) : user ? (
+                    <SheetClose asChild>
+                        <Link href="/settings" className="flex items-center gap-4">
+                            <Avatar className="h-12 w-12">
+                                <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                                <AvatarFallback className="text-lg bg-primary/10 text-primary font-semibold">
+                                    {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="text-base font-bold text-left">{user.displayName?.split(' ')[0] || 'User'}</p>
+                                <p className="text-sm text-muted-foreground text-left">View Settings</p>
+                            </div>
+                        </Link>
+                    </SheetClose>
+                 ) : (
+                    <SheetClose asChild>
+                        <Logo />
+                    </SheetClose>
+                 )}
              </SheetHeader>
 
                 <div className="flex-1 space-y-2 p-4">
