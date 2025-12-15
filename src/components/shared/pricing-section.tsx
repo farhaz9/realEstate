@@ -1,11 +1,29 @@
 
 'use client';
 
-import { Check, Star } from 'lucide-react';
+import { Check, Star, Verified } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking, arrayUnion, increment } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { User } from '@/types';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+declare const Razorpay: any;
 
 
 const benefits = [
@@ -19,6 +37,82 @@ const benefits = [
 
 export function PricingSection() {
     const [isAnnual, setIsAnnual] = useState(false);
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const router = useRouter();
+    const { toast } = useToast();
+
+    const userDocRef = useMemoFirebase(() => {
+        if (!firestore || !user) return null;
+        return doc(firestore, 'users', user.uid);
+    }, [firestore, user]);
+
+    const { data: userProfile } = useDoc<User>(userDocRef);
+
+    const handleGetVerified = () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        // The AlertDialog will be triggered, so we don't need to do anything else here
+    };
+
+    const handlePayment = async () => {
+        if (!user) {
+            toast({ title: "Authentication Error", description: "You must be logged in to make a payment.", variant: "destructive" });
+            return;
+        }
+        if (typeof window === 'undefined' || !(window as any).Razorpay) {
+            toast({
+                title: "Payment Gateway Error",
+                description: "Razorpay is not available. Please check your connection and try again.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        const amount = isAnnual ? 100000 : 9900; // amount in paise
+        const displayAmount = isAnnual ? 1000 : 99;
+
+        const options = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: amount.toString(),
+            currency: "INR",
+            name: "Falcon Axe Homes - Pro Verified",
+            description: `Payment for ${isAnnual ? 'Annual' : 'Monthly'} Subscription`,
+            image: "/logo.png",
+            handler: function (response: any) {
+                toast({
+                    title: "Payment Successful!",
+                    description: "Congratulations! You are now a Pro Verified member.",
+                    variant: "success",
+                });
+                if (userDocRef) {
+                    const newOrder = {
+                        paymentId: response.razorpay_payment_id,
+                        amount: displayAmount,
+                        date: new Date(),
+                    };
+                    // Here you would add logic to mark the user as verified.
+                    // For now, just adding to orders.
+                    updateDocumentNonBlocking(userDocRef, {
+                        orders: arrayUnion(newOrder),
+                        // You could add a field like 'isVerified' or 'subscriptionTier'
+                    });
+                }
+            },
+            prefill: {
+                name: userProfile?.fullName,
+                email: userProfile?.email,
+                contact: userProfile?.phone,
+            },
+            theme: {
+                color: "#6D28D9",
+            },
+        };
+        const rzp = new Razorpay(options);
+        rzp.open();
+    };
 
   return (
     <section className="py-16 md:py-24 bg-background">
@@ -64,13 +158,11 @@ export function PricingSection() {
           </div>
         <div className="flex justify-center">
           <Card className="max-w-md w-full shadow-lg border-2 border-primary/50 relative overflow-hidden">
-             <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-bl-lg">
-                Pro Verified
+             <div className="absolute top-0 right-0 bg-gradient-to-br from-purple-600 to-accent text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1">
+                <Star className="w-3 h-3" /> PRO
             </div>
             <CardHeader className="text-center pt-12">
               <div className="flex justify-center items-center gap-2 mb-4">
-                  <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
-                  <Star className="h-10 w-10 text-yellow-400 fill-yellow-400" />
                   <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
               </div>
               <CardTitle className="text-4xl font-extrabold">
@@ -92,9 +184,31 @@ export function PricingSection() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button size="lg" className="w-full h-12 text-lg">
-                Get Verified Now
-              </Button>
+                 <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                         <Button size="lg" className="w-full h-12 text-lg" onClick={handleGetVerified}>
+                            Get Verified Now
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <div className="flex justify-center mb-4">
+                               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                 <Verified className="w-8 h-8 text-primary" />
+                               </div>
+                            </div>
+                            <AlertDialogTitle className="text-center text-2xl">Confirm Your Subscription</AlertDialogTitle>
+                            <AlertDialogDescription className="text-center">
+                                You are about to purchase the <strong>Pro Verified</strong> plan
+                                for <strong>{isAnnual ? '₹1000/year' : '₹99/month'}</strong>.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="sm:justify-center">
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handlePayment}>Proceed to Payment</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </CardFooter>
           </Card>
         </div>
