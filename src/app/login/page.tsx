@@ -253,7 +253,7 @@ export default function LoginPage() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white flex-grow w-full flex">
-      <div className="hidden lg:flex w-1/2 h-screen relative flex-col justify-center p-12">
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-center p-12">
         <Image 
           src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Modern minimalist living room"
@@ -264,9 +264,6 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20"></div>
 
         <div className="relative z-10 text-white max-w-lg self-center">
-          <div className="flex items-center gap-4 mb-8">
-            <Logo />
-          </div>
           <p className="text-5xl font-bold leading-tight mb-6 drop-shadow-lg">Discover a place you'll love to live.</p>
           <p className="text-lg text-gray-100 font-light leading-relaxed max-w-md drop-shadow-md">Join our community of homeowners and interior design enthusiasts. Find your dream home or the inspiration to build it.</p>
         </div>
@@ -304,7 +301,7 @@ export default function LoginPage() {
                         checked={category === role.id}
                         onChange={(e) => setCategory(e.target.value)}
                       />
-                      <div className="h-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
+                      <div className="h-full p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
                         <role.icon className="text-2xl group-hover:scale-110 transition-transform" />
                         <span className="text-xs font-semibold">{role.name}</span>
                       </div>
@@ -434,5 +431,6 @@ export default function LoginPage() {
     </div>
   );
 }
+    
 
     
