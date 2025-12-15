@@ -71,6 +71,7 @@ export type User = {
   isVerified?: boolean;
   verifiedUntil?: Date | any;
   isBlocked?: boolean;
+  isFeatured?: boolean;
 }
 
 export type AppSettings = {
@@ -80,5 +81,3 @@ export type AppSettings = {
     verifiedPriceAnnually: number;
     listingValidityDays: number;
 };
-
-    

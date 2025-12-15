@@ -72,7 +72,8 @@
             "properties": {
               "paymentId": { "type": "string" },
               "amount": { "type": "number" },
-              "date": { "type": "string", "format": "date-time" }
+              "date": { "type": "string", "format": "date-time" },
+              "description": { "type": "string" }
             },
             "required": ["paymentId", "amount", "date"]
           }
@@ -84,6 +85,10 @@
         "isVerified": {
             "type": "boolean",
             "description": "Indicates if the professional user has a verified badge."
+        },
+        "isFeatured": {
+            "type": "boolean",
+            "description": "Indicates if the professional user is featured."
         },
         "verifiedUntil": {
           "type": "string",
@@ -107,7 +112,7 @@
     "Property": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Property",
-      "type": "object"
+      "type": "object",
       "description": "Represents a property listed on the Delhi Estate Luxe application.",
       "properties": {
         "id": {
@@ -231,6 +236,15 @@
         "ageOfConstruction": {
             "type": "string",
             "description": "The age of the property's construction (e.g., 0-1 year, 1-5 years)."
+        },
+        "status": {
+            "type": "string",
+            "description": "The approval status of the property listing.",
+            "enum": ["pending", "approved", "rejected"]
+        },
+        "rejectionReason": {
+            "type": "string",
+            "description": "The reason a property was rejected by an admin."
         }
       },
       "required": [
@@ -249,8 +263,44 @@
         "squareYards",
         "dateListed",
         "expiresAt",
-        "listingTier"
+        "listingTier",
+        "status"
       ]
+    },
+    "AppSettings": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "AppSettings",
+        "type": "object",
+        "description": "Stores global configuration settings for the application.",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "Unique identifier for the settings document."
+            },
+            "listingPrice": {
+                "type": "number",
+                "description": "The price for purchasing a single property listing credit."
+            },
+            "verifiedPriceMonthly": {
+                "type": "number",
+                "description": "The price for a monthly 'Pro Verified' subscription."
+            },
+            "verifiedPriceAnnually": {
+                "type": "number",
+                "description": "The price for an annual 'Pro Verified' subscription."
+            },
+            "listingValidityDays": {
+                "type": "number",
+                "description": "The number of days a premium listing remains active."
+            }
+        },
+        "required": [
+            "id",
+            "listingPrice",
+            "verifiedPriceMonthly",
+            "verifiedPriceAnnually",
+            "listingValidityDays"
+        ]
     }
   },
   "auth": {
@@ -280,6 +330,16 @@
                 "$ref": "#/entities/Property"
             },
             "description": "Public collection of all property listings."
+        }
+      },
+      {
+        "path": "/app_settings/{settingsId}",
+        "definition": {
+            "entityName": "AppSettings",
+            "schema": {
+                "$ref": "#/entities/AppSettings"
+            },
+            "description": "Stores global application settings. Contains a single document."
         }
       }
     ]
