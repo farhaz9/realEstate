@@ -48,6 +48,7 @@ export type Order = {
   paymentId: string;
   amount: number;
   date: Date | any;
+  description: string;
 }
 
 export type User = {

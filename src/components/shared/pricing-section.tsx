@@ -87,6 +87,7 @@ export function PricingSection() {
 
         const amount = isAnnual ? 100000 : 9900; // amount in paise
         const displayAmount = isAnnual ? 1000 : 99;
+        const description = isAnnual ? "Annual Pro Verification" : "Monthly Pro Verification";
 
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -113,6 +114,7 @@ export function PricingSection() {
                     paymentId: response.razorpay_payment_id,
                     amount: displayAmount,
                     date: new Date(),
+                    description,
                 };
                 
                 updateDocumentNonBlocking(userDocRef, {

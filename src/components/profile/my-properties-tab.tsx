@@ -176,6 +176,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                 paymentId: response.razorpay_payment_id,
                 amount: 99,
                 date: new Date(),
+                description: "1 Listing Credit Purchase",
               };
               updateDocumentNonBlocking(userDocRef, {
                 orders: arrayUnion(newOrder),
