@@ -86,10 +86,6 @@
             "type": "boolean",
             "description": "Indicates if the professional user has a verified badge."
         },
-        "isFeatured": {
-            "type": "boolean",
-            "description": "Indicates if the professional user is featured."
-        },
         "verifiedUntil": {
           "type": "string",
           "description": "The date and time when the user's verification expires.",
@@ -98,6 +94,10 @@
         "isBlocked": {
             "type": "boolean",
             "description": "Indicates if the user's account is blocked."
+        },
+        "rank": {
+            "type": "number",
+            "description": "A number used to manually rank professionals for display order."
         }
       },
       "required": [
@@ -292,6 +292,24 @@
             "listingValidityDays": {
                 "type": "number",
                 "description": "The number of days a premium listing remains active."
+            },
+            "announcement": {
+                "type": "object",
+                "description": "Configuration for the site-wide announcement banner.",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text to display in the banner."
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "An optional URL the banner links to."
+                    },
+                    "enabled": {
+                        "type": "boolean",
+                        "description": "Whether the banner is currently active."
+                    }
+                }
             }
         },
         "required": [

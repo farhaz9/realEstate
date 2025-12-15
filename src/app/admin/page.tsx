@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
@@ -8,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -49,7 +48,9 @@ import { EditUserForm } from '@/components/admin/edit-user-form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -61,6 +62,122 @@ const settingsFormSchema = z.object({
 });
 type SettingsFormValues = z.infer<typeof settingsFormSchema>;
 
+const announcementFormSchema = z.object({
+    text: z.string().min(1, 'Announcement text cannot be empty.'),
+    url: z.string().url().optional().or(z.literal('')),
+    enabled: z.boolean(),
+});
+type AnnouncementFormValues = z.infer<typeof announcementFormSchema>;
+
+function AnnouncementForm({ settings }: { settings: AppSettings | null }) {
+    const firestore = useFirestore();
+    const { toast } = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const form = useForm<AnnouncementFormValues>({
+        resolver: zodResolver(announcementFormSchema),
+        defaultValues: {
+            text: settings?.announcement?.text || '',
+            url: settings?.announcement?.url || '',
+            enabled: settings?.announcement?.enabled || false,
+        },
+    });
+
+     useEffect(() => {
+        if (settings?.announcement) {
+            form.reset(settings.announcement);
+        }
+    }, [settings, form]);
+
+    const onSubmit = async (data: AnnouncementFormValues) => {
+        if (!firestore) return;
+        setIsSubmitting(true);
+        const settingsRef = doc(firestore, "app_settings", "config");
+        
+        try {
+            await setDoc(settingsRef, { announcement: data }, { merge: true });
+            toast({
+                title: "Announcement Updated",
+                description: "The site-wide announcement banner has been updated.",
+                variant: 'success'
+            });
+        } catch (error: any) {
+            toast({
+                title: "Update Failed",
+                description: error.message,
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    
+    return (
+         <Card>
+            <CardHeader>
+                <CardTitle>Announcement Banner</CardTitle>
+                <CardDescription>Control the announcement banner displayed at the top of the site.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="text"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Banner Text</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="E.g., Special offer: 50% off on all premium listings!" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="url"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Banner URL (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="https://example.com/special-offer" {...field} />
+                                    </FormControl>
+                                    <FormDescription>Make the banner clickable by adding a full URL.</FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="enabled"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel className="text-base">Enable Banner</FormLabel>
+                                        <FormDescription>Show this announcement banner to all visitors.</FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                         <div className="flex justify-end">
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Save Announcement
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    )
+}
 
 function AppSettingsForm({ settings }: { settings: AppSettings | null }) {
     const firestore = useFirestore();
@@ -198,6 +315,7 @@ export default function AdminPage() {
   
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [creditAmount, setCreditAmount] = useState(0);
+  const [rank, setRank] = useState(0);
   const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [propertyToReject, setPropertyToReject] = useState<Property | null>(null);
@@ -293,6 +411,9 @@ export default function AdminPage() {
         } else if (key === 'dateJoined' && a.dateJoined && b.dateJoined) {
             valA = a.dateJoined?.toDate ? a.dateJoined.toDate().getTime() : 0;
             valB = b.dateJoined?.toDate ? b.dateJoined.toDate().getTime() : 0;
+        } else if (key === 'rank') {
+            valA = a.rank ?? Infinity;
+            valB = b.rank ?? Infinity;
         } else {
             valA = a[key as keyof User];
             valB = b[key as keyof User];
@@ -391,16 +512,6 @@ export default function AdminPage() {
     }
   };
 
-  const handleFeatureToggle = (propertyId: string, isFeatured: boolean) => {
-    if (!firestore) return;
-    const propertyRef = doc(firestore, 'properties', propertyId);
-    updateDocumentNonBlocking(propertyRef, { isFeatured: !isFeatured });
-    toast({
-        title: `Property ${!isFeatured ? 'Featured' : 'Unfeatured'}`,
-        variant: 'success'
-    });
-  };
-
   const handleUserDelete = (userId: string) => {
     if (!firestore) return;
     const userRef = doc(firestore, "users", userId);
@@ -440,6 +551,14 @@ export default function AdminPage() {
     setSelectedUser(null);
   }
 
+  const handleUpdateRank = () => {
+    if (!firestore || !selectedUser) return;
+    const userRef = doc(firestore, 'users', selectedUser.id);
+    updateDocumentNonBlocking(userRef, { rank: rank });
+    toast({ title: 'Rank Updated', description: `${selectedUser.fullName}'s rank is now ${rank}.`, variant: 'success' });
+    setSelectedUser(null);
+  }
+
   const handleSort = (setter: React.Dispatch<React.SetStateAction<{key: string, direction: string}>>, key: string) => {
     setter(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' }));
   }
@@ -465,11 +584,12 @@ export default function AdminPage() {
     }
     return (
       <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="properties">Properties</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
+              <TabsTrigger value="notifications">Notifications</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" className="mt-6">
@@ -503,7 +623,6 @@ export default function AdminPage() {
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead>Owner</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'status')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'isFeatured')}><div className="flex items-center gap-2">Featured <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => { const owner = users?.find(u => u.id === property.userId); return (
                   <TableRow key={property.id}>
@@ -511,7 +630,6 @@ export default function AdminPage() {
                       <TableCell>{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
                       <TableCell>{owner?.fullName || 'Unknown'}</TableCell>
                       <TableCell><Badge variant={property.status === 'approved' ? 'success' : property.status === 'rejected' ? 'destructive' : 'secondary'} className="capitalize">{property.status}</Badge></TableCell>
-                      <TableCell>{property.isFeatured ? <CheckCircle className="h-5 w-5 text-green-500" /> : <XCircle className="h-5 w-5 text-muted-foreground" />}</TableCell>
                       <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
                               {property.status === 'pending' && (
@@ -522,7 +640,6 @@ export default function AdminPage() {
                               )}
                               {property.status === 'approved' && (
                                   <>
-                                      <Button variant="ghost" size="sm" onClick={() => handleFeatureToggle(property.id, !!property.isFeatured)}>{property.isFeatured ? 'Unfeature' : 'Feature'}</Button>
                                       <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => setPropertyToReject(property)}>Reject</Button>
                                   </>
                               )}
@@ -540,15 +657,49 @@ export default function AdminPage() {
               <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'fullName')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'dateJoined')}><div className="flex items-center gap-2">Date Joined <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date(); return (
                   <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground">{u.phone}</p></div></div></TableCell>
                   <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
-                  <TableCell>{u.dateJoined?.toDate ? format(u.dateJoined.toDate(), 'PPP') : 'N/A'}</TableCell>
-                  <TableCell><Dialog><DialogTrigger asChild><Button variant="ghost" className="flex items-center gap-2" onClick={() => {setSelectedUser(u); setCreditAmount(u.listingCredits || 0);}}><Coins className="h-4 w-4 text-amber-500" /><span className="font-semibold">{u.listingCredits ?? 0}</span></Button></DialogTrigger>{selectedUser?.id === u.id && (<DialogContent><DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle><DialogDescription>Adjust the number of listing credits for this user.</DialogDescription></DialogHeader><div className="flex items-center justify-center gap-4 py-4"><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button><Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} /><Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button></div><DialogFooter><Button onClick={handleUpdateCredits}>Save Changes</Button></DialogFooter></DialogContent>)}</Dialog></TableCell>
+                  <TableCell>
+                      <Dialog>
+                          <DialogTrigger asChild>
+                              <Button variant="ghost" onClick={() => { setSelectedUser(u); setRank(u.rank ?? 0); }}>{u.rank ?? 'N/A'}</Button>
+                          </DialogTrigger>
+                          {selectedUser?.id === u.id && (
+                              <DialogContent>
+                                  <DialogHeader><DialogTitle>Set Rank for {selectedUser.fullName}</DialogTitle></DialogHeader>
+                                  <div className="flex items-center justify-center gap-4 py-4">
+                                      <Button variant="outline" size="icon" onClick={() => setRank(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                      <Input type="number" className="w-24 text-center text-xl font-bold" value={rank} onChange={(e) => setRank(Number(e.target.value))} />
+                                      <Button variant="outline" size="icon" onClick={() => setRank(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                  </div>
+                                  <DialogFooter><Button onClick={handleUpdateRank}>Set Rank</Button></DialogFooter>
+                              </DialogContent>
+                          )}
+                      </Dialog>
+                  </TableCell>
+                  <TableCell>
+                      <Dialog>
+                          <DialogTrigger asChild>
+                              <Button variant="ghost" onClick={() => { setSelectedUser(u); setCreditAmount(u.listingCredits ?? 0); }}><Coins className="mr-2 h-4 w-4 text-amber-500" />{u.listingCredits ?? 0}</Button>
+                          </DialogTrigger>
+                          {selectedUser?.id === u.id && (
+                              <DialogContent>
+                                  <DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle></DialogHeader>
+                                  <div className="flex items-center justify-center gap-4 py-4">
+                                      <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                      <Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} />
+                                      <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                  </div>
+                                  <DialogFooter><Button onClick={handleUpdateCredits}>Save Credits</Button></DialogFooter>
+                              </DialogContent>
+                          )}
+                      </Dialog>
+                  </TableCell>
                   <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
                   <TableCell className="text-right">{u.email !== ADMIN_EMAIL && (<div className="flex items-center justify-end gap-1">
                       <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
@@ -653,6 +804,40 @@ export default function AdminPage() {
                       </div>
                   </CardContent>
               </Card>
+          </TabsContent>
+          <TabsContent value="notifications" className="mt-6">
+                <div className="grid md:grid-cols-2 gap-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Send Notification</CardTitle>
+                            <CardDescription>Send a message to your users. (UI only, no sending logic yet).</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <RadioGroup defaultValue="all">
+                                <FormLabel>Send to:</FormLabel>
+                                <div className="flex items-center space-x-4 pt-2">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="all" id="all-users" />
+                                        <Label htmlFor="all-users">All Users</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="verified" id="verified-users" />
+                                        <Label htmlFor="verified-users">Verified Dealers</Label>
+                                    </div>
+                                </div>
+                            </RadioGroup>
+                             <div>
+                                <Label htmlFor="notification-message">Message</Label>
+                                <Textarea id="notification-message" placeholder="Type your notification message here..." className="mt-2" />
+                             </div>
+                             <Button>
+                                <Send className="mr-2 h-4 w-4" />
+                                Send Notification
+                             </Button>
+                        </CardContent>
+                    </Card>
+                    <AnnouncementForm settings={appSettings} />
+                </div>
           </TabsContent>
           <TabsContent value="settings" className="mt-6">
               {isLoadingSettings ? (

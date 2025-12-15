@@ -27,7 +27,8 @@ import {
   Plus,
   Settings,
   X,
-  User as UserIcon
+  User as UserIcon,
+  Megaphone,
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -36,7 +37,7 @@ import { Separator } from "../ui/separator";
 import { useOnScroll } from "@/hooks/use-on-scroll";
 import { Input } from "../ui/input";
 import { useDoc, useMemoFirebase } from '@/firebase';
-import type { User as UserType } from '@/types';
+import type { User as UserType, AppSettings } from '@/types';
 import { doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -98,6 +99,39 @@ function StickySearchHeader({ onMenuClick, searchAction }: { onMenuClick: () => 
 }
 
 
+function AnnouncementBanner() {
+    const firestore = useFirestore();
+    const appSettingsRef = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return doc(firestore, 'app_settings', 'config');
+    }, [firestore]);
+
+    const { data: appSettings } = useDoc<AppSettings>(appSettingsRef);
+
+    const announcement = appSettings?.announcement;
+
+    if (!announcement || !announcement.enabled || !announcement.text) {
+        return null;
+    }
+
+    const BannerContent = () => (
+        <div className="flex items-center justify-center gap-2 bg-primary text-primary-foreground text-sm font-medium px-4 py-2">
+            <Megaphone className="h-4 w-4 flex-shrink-0" />
+            <p className="truncate">{announcement.text}</p>
+        </div>
+    );
+    
+    if (announcement.url) {
+        return (
+            <a href={announcement.url} target="_blank" rel="noopener noreferrer" className="block hover:bg-primary/90 transition-colors">
+                <BannerContent />
+            </a>
+        )
+    }
+
+    return <BannerContent />;
+}
+
 export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -120,7 +154,7 @@ export default function Header() {
   
   const { data: userProfile } = useDoc<UserType>(userDocRef);
 
-  const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer'].includes(userProfile.category);
+  const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(userProfile.category);
 
   const handleSearch = (searchTerm: string) => {
     let targetPath = '/properties';
@@ -147,6 +181,7 @@ export default function Header() {
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
     )}>
+       <AnnouncementBanner />
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent side="left" className="p-0 flex flex-col">
              <SheetHeader className="p-6 pb-4 border-b">
