@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -221,26 +221,6 @@ export default function AdminPage() {
 
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
   
-  const stats = useMemo(() => {
-    if (!properties || !users) return null;
-    const propertiesForSale = properties.filter(p => p.listingType === 'sale').length;
-    const propertiesForRent = properties.filter(p => p.listingType === 'rent').length;
-    return {
-      totalProperties: properties.length,
-      totalUsers: users.length,
-      propertiesForSale,
-      propertiesForRent,
-    };
-  }, [properties, users]);
-  
-  const userFuse = useMemo(() => {
-    if (!users) return null;
-    return new Fuse(users, {
-      keys: ['fullName', 'email', 'phone'],
-      threshold: 0.3,
-    });
-  }, [users]);
-  
   const allOrders = useMemo(() => {
     if (!users) return [];
     return users.flatMap(u => 
@@ -251,6 +231,31 @@ export default function AdminPage() {
             userEmail: u.email
         }))
     );
+  }, [users]);
+  
+  const stats = useMemo(() => {
+    if (!properties || !users) return null;
+    const propertiesForSale = properties.filter(p => p.listingType === 'sale').length;
+    const propertiesForRent = properties.filter(p => p.listingType === 'rent').length;
+    const verifiedUsers = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date()).length;
+    const totalRevenue = allOrders.reduce((acc, order) => acc + order.amount, 0);
+
+    return {
+      totalProperties: properties.length,
+      totalUsers: users.length,
+      propertiesForSale,
+      propertiesForRent,
+      verifiedUsers,
+      totalRevenue,
+    };
+  }, [properties, users, allOrders]);
+  
+  const userFuse = useMemo(() => {
+    if (!users) return null;
+    return new Fuse(users, {
+      keys: ['fullName', 'email', 'phone'],
+      threshold: 0.3,
+    });
   }, [users]);
   
   const orderFuse = useMemo(() => {
@@ -408,11 +413,13 @@ export default function AdminPage() {
                             <Card><CardHeader><CardTitle>User Distribution</CardTitle></CardHeader><CardContent>{users ? <UserDistributionChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}</CardContent></Card>
                         </div>
                         <div className="lg:col-span-2">
-                            <Card><CardHeader><CardTitle>Platform Metrics</CardTitle></CardHeader><CardContent><div className="grid gap-6 grid-cols-2 md:grid-cols-4">
+                            <Card><CardHeader><CardTitle>Platform Metrics</CardTitle></CardHeader><CardContent><div className="grid gap-6 grid-cols-2 md:grid-cols-3">
                                 <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Building className="h-8 w-8 text-primary mb-2" /><p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Properties</p></div>
                                 <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Users className="h-8 w-8 text-blue-500 mb-2" /><p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Users</p></div>
                                 <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Banknote className="h-8 w-8 text-green-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Sale</p></div>
                                 <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Tag className="h-8 w-8 text-orange-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Rent</p></div>
+                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><UserRoundCheck className="h-8 w-8 text-indigo-500 mb-2" /><p className="text-3xl font-bold">{stats?.verifiedUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Verified Users</p></div>
+                                <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><BadgeDollarSign className="h-8 w-8 text-rose-500 mb-2" /><p className="text-3xl font-bold">{formatPrice(stats?.totalRevenue ?? 0)}</p><p className="text-sm text-muted-foreground">Total Revenue</p></div>
                             </div></CardContent></Card>
                         </div>
                     </div>
