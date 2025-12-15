@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection } from '@/firebase';
 import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
-import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, MessageSquare, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays } from 'lucide-react';
+import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,7 @@ import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useOnScroll } from '@/hooks/use-on-scroll';
+import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -320,7 +321,7 @@ export default function PropertyDetailPage() {
                         </Button>
                          <Button asChild size="lg" variant="outline" className="w-full bg-green-50 hover:bg-green-100 border-green-200 text-green-700">
                              <a href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" rel="noopener noreferrer">
-                                <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
+                                <WhatsAppIcon className="mr-2 h-5 w-5" /> WhatsApp
                             </a>
                         </Button>
                      </div>
@@ -371,7 +372,7 @@ export default function PropertyDetailPage() {
         </Button>
         <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0 bg-green-500 hover:bg-green-600">
            <Link href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" aria-label="Contact on WhatsApp">
-            <MessageSquare className="h-6 w-6" />
+            <WhatsAppIcon className="h-6 w-6 text-white" />
           </Link>
         </Button>
       </div>
