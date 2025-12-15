@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking, arrayUnion, increment } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
+import { doc, arrayUnion, increment } from 'firebase/firestore';
 import type { User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -158,7 +158,7 @@ export function PricingSection() {
           </div>
         <div className="flex justify-center">
           <Card className="max-w-md w-full shadow-lg border-2 border-primary/50 relative overflow-hidden">
-             <div className="absolute top-0 right-0 bg-gradient-to-br from-purple-600 to-accent text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1">
+             <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1 shadow-lg">
                 <Star className="w-3 h-3" /> PRO
             </div>
             <CardHeader className="text-center pt-12">
