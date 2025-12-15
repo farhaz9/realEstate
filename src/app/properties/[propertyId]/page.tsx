@@ -314,14 +314,14 @@ export default function PropertyDetailPage() {
                      </div>
                      <Separator />
                      <div className="grid grid-cols-2 gap-3 w-full">
-                        <Button asChild size="lg" className="w-full">
+                        <Button asChild size="lg" className="w-full bg-primary/10 text-primary hover:bg-primary/20">
                             <a href={`tel:${property.contactNumber}`}>
                                 <Phone className="mr-2 h-5 w-5" /> Call Agent
                             </a>
                         </Button>
-                         <Button asChild size="lg" variant="outline" className="w-full bg-green-50 hover:bg-green-100 border-green-200 text-green-700">
+                         <Button asChild size="lg" variant="outline" className="w-full bg-white text-foreground hover:bg-muted">
                              <a href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" rel="noopener noreferrer">
-                                <WhatsAppIcon className="mr-2 h-5 w-5" /> WhatsApp
+                                <WhatsAppIcon className="mr-2 h-6 w-6" /> WhatsApp
                             </a>
                         </Button>
                      </div>
@@ -365,14 +365,14 @@ export default function PropertyDetailPage() {
         "md:hidden fixed bottom-20 right-4 z-40 flex flex-col gap-3 transition-all duration-300",
         isScrollingUp ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"
       )}>
-        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0">
+        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0 bg-primary/10 text-primary hover:bg-primary/20">
           <Link href={`tel:${property.contactNumber}`} aria-label="Call Agent">
             <Phone className="h-6 w-6" />
           </Link>
         </Button>
-        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0 bg-green-500 hover:bg-green-600">
+        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0 bg-white hover:bg-muted">
            <Link href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" aria-label="Contact on WhatsApp">
-            <WhatsAppIcon className="h-6 w-6 text-white" />
+            <WhatsAppIcon className="h-7 w-7 text-green-500" />
           </Link>
         </Button>
       </div>
@@ -380,3 +380,5 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
+
+    
