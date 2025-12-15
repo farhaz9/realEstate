@@ -17,12 +17,6 @@ export default function MobileNav() {
     { href: "/settings", label: "Profile", icon: User },
   ];
 
-  // Do not render the mobile nav on the property detail page since it has its own sticky buttons
-  if (pathname.startsWith('/properties/')) {
-    // We still render the container to avoid layout shifts from the pb-16 on main
-    return <div className="md:hidden h-16" />;
-  }
-
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur-sm">
       <div className="grid h-full grid-cols-5 items-center">
@@ -52,5 +46,3 @@ export default function MobileNav() {
     </nav>
   );
 }
-
-    
