@@ -284,7 +284,7 @@ export default function PropertyDetailPage() {
                </CardHeader>
                <CardContent className="p-4 md:p-6">
                 {owner && (
-                  <div className="flex flex-col items-start gap-4 mb-4">
+                  <div className="flex flex-col items-start gap-4">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-16 w-16 border">
                         <AvatarImage src={owner.photoURL} alt={owner.fullName} />
@@ -300,8 +300,32 @@ export default function PropertyDetailPage() {
                         <p className="text-sm text-muted-foreground">{owner.category === 'real-estate-agent' ? 'Real Estate Agent' : 'Owner'}</p>
                       </div>
                     </div>
-                     {listingDate && (
-                      <p className="text-xs text-muted-foreground text-center w-full">
+                     <Separator />
+                     <div className="space-y-3 w-full">
+                        <div className="flex items-center gap-3 text-sm">
+                            <Mail className="h-4 w-4 text-muted-foreground" />
+                            <a href={`mailto:${owner.email}`} className="text-primary hover:underline truncate">{owner.email}</a>
+                        </div>
+                         <div className="flex items-center gap-3 text-sm">
+                            <Phone className="h-4 w-4 text-muted-foreground" />
+                            <a href={`tel:${owner.phone}`} className="text-primary hover:underline">{owner.phone}</a>
+                        </div>
+                     </div>
+                     <Separator />
+                     <div className="grid grid-cols-2 gap-3 w-full">
+                        <Button asChild size="lg" className="w-full">
+                            <a href={`tel:${property.contactNumber}`}>
+                                <Phone className="mr-2 h-5 w-5" /> Call Agent
+                            </a>
+                        </Button>
+                         <Button asChild size="lg" variant="outline" className="w-full bg-green-50 hover:bg-green-100 border-green-200 text-green-700">
+                             <a href={`https://wa.me/${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" rel="noopener noreferrer">
+                                <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
+                            </a>
+                        </Button>
+                     </div>
+                    {listingDate && (
+                      <p className="text-xs text-muted-foreground text-center w-full pt-2">
                         Posted on {listingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                       </p>
                     )}
