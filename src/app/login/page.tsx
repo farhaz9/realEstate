@@ -271,9 +271,6 @@ export default function LoginPage() {
 
       <div className="w-full lg:w-1/2 min-h-screen flex flex-col overflow-y-auto bg-white dark:bg-background-dark relative">
         <h1 className="sr-only">Login or Sign Up</h1>
-        <div className="lg:hidden p-6 flex items-center gap-2">
-          <Logo />
-        </div>
         <div className="flex-1 flex items-center justify-center p-6 sm:p-12 md:p-16">
           <div className="w-full max-w-[480px] flex flex-col gap-6">
             <div className="flex flex-col gap-2 text-center sm:text-left">
@@ -301,8 +298,8 @@ export default function LoginPage() {
                         checked={category === role.id}
                         onChange={(e) => setCategory(e.target.value)}
                       />
-                      <div className="h-full p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
-                        <role.icon className="text-2xl group-hover:scale-110 transition-transform" />
+                      <div className="h-full p-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
+                        <role.icon className="text-xl group-hover:scale-110 transition-transform" />
                         <span className="text-xs font-semibold">{role.name}</span>
                       </div>
                       <div className="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity duration-200 scale-0 peer-checked:scale-100">
