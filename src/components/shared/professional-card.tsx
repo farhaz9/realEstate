@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Star, Mail, Verified } from 'lucide-react';
+import { User as UserIcon, Star, Mail, Verified, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ProfessionalCardProps {
@@ -29,10 +29,6 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
     return name.substring(0, 2).toUpperCase();
   }
 
-  // Placeholder data for rating, since it's not in the User model
-  const rating = 4.5 + (professional.fullName.length % 5) / 10;
-  const reviewCount = 10 + (professional.fullName.length * 3 % 100);
-
   const cardTitle = professional.companyName || professional.fullName;
   const isCompany = !!professional.companyName;
   const isCurrentlyVerified = professional.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
@@ -40,7 +36,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
 
   return (
     <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
-       <CardContent className="p-6 flex flex-col items-center text-center">
+       <CardContent className="p-6 flex flex-col items-center text-center h-full">
             <Avatar className={cn(
                 "h-24 w-24 border-2 border-primary/20",
                 isCompany ? "rounded-lg" : "rounded-full"
@@ -60,15 +56,22 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
             </div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
 
-            <div className="flex items-center gap-1 mt-2 text-sm">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                <span className="font-bold">{rating.toFixed(1)}</span>
-                <span className="text-muted-foreground">({reviewCount})</span>
+            <div className="flex-grow space-y-3 mt-4 text-sm text-muted-foreground text-left w-full">
+              <div className="flex items-start gap-3">
+                  <Mail className="h-4 w-4 flex-shrink-0 mt-1" />
+                  <a href={`mailto:${professional.email}`} className="hover:text-primary transition-colors truncate">{professional.email}</a>
+              </div>
+              {professional.phone && (
+                  <div className="flex items-start gap-3">
+                  <Phone className="h-4 w-4 flex-shrink-0 mt-1" />
+                  <a href={`tel:${professional.phone}`} className="hover:text-primary transition-colors">{professional.phone}</a>
+                  </div>
+              )}
             </div>
 
-            <Button asChild variant="outline" className="w-full mt-4">
-                <Link href={`mailto:${professional.email}`}>
-                    <Mail className="mr-2 h-4 w-4" /> Contact
+            <Button asChild variant="outline" className="w-full mt-6">
+                <Link href={`/professionals/${professional.id}`}>
+                    View Profile
                 </Link>
             </Button>
        </CardContent>
