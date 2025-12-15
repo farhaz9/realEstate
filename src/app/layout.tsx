@@ -5,9 +5,16 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProviders from "@/components/layout/app-providers";
 import Header from "@/components/layout/header";
-import { FirebaseClientProvider } from "@/firebase";
+import { FirebaseClientProvider, useUser, useAuth } from "@/firebase";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Script from "next/script";
+import { useEffect } from "react";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useDoc, useMemoFirebase } from "@/firebase";
+import { doc, getFirestore } from "firebase/firestore";
+import type { User as UserType } from "@/types";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -55,6 +62,38 @@ export const metadata: Metadata = {
   },
 };
 
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+  const firestore = getFirestore();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc<UserType>(userDocRef);
+
+  useEffect(() => {
+    if (!isUserLoading && user && userProfile?.isBlocked) {
+      if (auth) {
+        signOut(auth);
+        toast({
+          variant: 'destructive',
+          title: 'Account Blocked',
+          description: 'Your account has been blocked by an administrator.',
+        });
+        router.push('/login');
+      }
+    }
+  }, [user, userProfile, isUserLoading, auth, router, toast]);
+
+  return <>{children}</>;
+}
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,12 +117,16 @@ export default function RootLayout({
             src="https://checkout.razorpay.com/v1/checkout.js"
         />
         <FirebaseClientProvider>
-          <Header />
-          <ErrorBoundary>
-            <AppProviders>{children}</AppProviders>
-          </ErrorBoundary>
+          <AuthGate>
+            <Header />
+            <ErrorBoundary>
+              <AppProviders>{children}</AppProviders>
+            </ErrorBoundary>
+          </AuthGate>
         </FirebaseClientProvider>
       </body>
     </html>
   );
 }
+
+    

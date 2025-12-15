@@ -232,6 +232,15 @@
         "ageOfConstruction": {
             "type": "string",
             "description": "The age of the property's construction (e.g., 0-1 year, 1-5 years)."
+        },
+        "status": {
+            "type": "string",
+            "description": "The approval status of the property listing.",
+            "enum": ["pending", "approved", "rejected"]
+        },
+        "rejectionReason": {
+            "type": "string",
+            "description": "The reason a property was rejected by an admin."
         }
       },
       "required": [
@@ -250,7 +259,8 @@
         "squareYards",
         "dateListed",
         "expiresAt",
-        "listingTier"
+        "listingTier",
+        "status"
       ]
     },
     "AppSettings": {
@@ -331,3 +341,5 @@
     ]
   }
 }
+
+    

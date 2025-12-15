@@ -28,6 +28,8 @@ export type Property = {
   furnishing?: 'unfurnished' | 'semi-furnished' | 'fully-furnished';
   overlooking?: string;
   ageOfConstruction?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  rejectionReason?: string;
 };
 
 export type Builder = {
@@ -78,3 +80,5 @@ export type AppSettings = {
     verifiedPriceAnnually: number;
     listingValidityDays: number;
 };
+
+    

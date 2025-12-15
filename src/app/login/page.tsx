@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import Link from 'next/link';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, signOut } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -128,6 +129,20 @@ export default function LoginPage() {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+
+        // Check if user is blocked
+        const userDocRef = doc(firestore, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists() && userDoc.data().isBlocked) {
+          await signOut(auth);
+          toast({
+            variant: 'destructive',
+            title: 'Account Blocked',
+            description: 'Your account has been blocked by an administrator.',
+          });
+          return;
+        }
+
         toast({
           title: 'Login Successful',
           description: `Welcome back, ${user.displayName}!`,
@@ -168,6 +183,7 @@ export default function LoginPage() {
             wishlist: [],
             orders: [],
             listingCredits: 1,
+            isBlocked: false,
         };
         
         if (category === 'vendor') {
@@ -200,6 +216,18 @@ export default function LoginPage() {
       const userDocRef = doc(firestore, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
 
+      if (userDoc.exists()) {
+        if (userDoc.data().isBlocked) {
+            await signOut(auth);
+            toast({
+                variant: 'destructive',
+                title: 'Account Blocked',
+                description: 'Your account has been blocked by an administrator.',
+            });
+            return;
+        }
+      }
+
       if (!userDoc.exists()) {
         const username = generateUsername(user.displayName || '', user.email || '');
         await setDoc(userDocRef, {
@@ -214,6 +242,7 @@ export default function LoginPage() {
           wishlist: [],
           orders: [],
           listingCredits: 1,
+          isBlocked: false,
         });
          toast({
           title: 'Sign Up Successful!',
@@ -437,6 +466,5 @@ export default function LoginPage() {
     </div>
   );
 }
-    
 
     
