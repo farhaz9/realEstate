@@ -25,12 +25,22 @@ import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+
+const userRoles = [
+    { id: 'user', name: 'Buyer/Tenant' },
+    { id: 'listing-property', name: 'Property Owner' },
+    { id: 'real-estate-agent', name: 'Real Estate Agent' },
+    { id: 'interior-designer', name: 'Interior Designer' },
+    { id: 'vendor', name: 'Vendor/Supplier' },
+];
 
 const editUserFormSchema = z.object({
   fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
   phone: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   bio: z.string().optional(),
+  category: z.string().min(2, { message: 'A user role must be selected.' }),
 });
 
 type EditUserFormValues = z.infer<typeof editUserFormSchema>;
@@ -42,7 +52,6 @@ interface EditUserFormProps {
 
 export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
   const firestore = useFirestore();
-  const auth = getAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(user.photoURL || null);
@@ -54,6 +63,7 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
       fullName: user.fullName || '',
       phone: user.phone || '',
       bio: user.bio || '',
+      category: user.category || 'user',
     },
   });
 
@@ -178,6 +188,28 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
             </FormItem>
           )}
         />
+         <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {userRoles.map(role => (
+                    <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="phone"
@@ -220,4 +252,3 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
     </Form>
   );
 }
-
