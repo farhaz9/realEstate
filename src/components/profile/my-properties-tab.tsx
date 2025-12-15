@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText, Minus } from 'lucide-react';
-import type { Property, User } from '@/types';
+import type { Property, User, AppSettings } from '@/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,6 +49,7 @@ import ImageKit from 'imagekit-javascript';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
 import { Separator } from '../ui/separator';
+import { formatPrice } from '@/lib/utils';
 
 declare const Razorpay: any;
 
@@ -137,7 +138,13 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
+  const appSettingsRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return doc(firestore, 'app_settings', 'config');
+  }, [firestore]);
+
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<User>(userDocRef);
+  const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
 
   const userPropertiesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -147,6 +154,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
   
   const isEditing = !!propertyToEdit;
+
+  const listingPrice = appSettings?.listingPrice ?? 99;
+  const listingValidityDays = appSettings?.listingValidityDays ?? 90;
+
 
   const handlePayment = async () => {
     if (typeof window === 'undefined' || !(window as any).Razorpay) {
@@ -160,11 +171,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
 
     const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: "9900",
+        amount: (listingPrice * 100).toString(),
         currency: "INR",
-        name: "Estately Property Listing",
+        name: "Falcon Axe Homes Property Listing",
         description: "One-time fee for one property listing.",
-        image: "https://example.com/your_logo.jpg",
+        image: "/logo.png",
         handler: function (response: any){
             toast({
                 title: "Payment Successful!",
@@ -174,7 +185,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
             if(userDocRef) {
               const newOrder = {
                 paymentId: response.razorpay_payment_id,
-                amount: 99,
+                amount: listingPrice,
                 date: new Date(),
                 description: "1 Listing Credit Purchase",
               };
@@ -390,9 +401,8 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       const propertiesCollection = collection(firestore, 'properties');
       const tier = 'premium';
       const isFeatured = true;
-      const expirationDays = 90;
       const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + expirationDays);
+      expirationDate.setDate(expirationDate.getDate() + listingValidityDays);
 
       const newPropertyData = {
         ...propertyData,
@@ -865,12 +875,12 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
           <AlertDialogHeader>
             <AlertDialogTitle>Post a New Property</AlertDialogTitle>
             <AlertDialogDescription>
-               A fee of ₹99 is required to post a new property listing. Please proceed to payment.
+               A fee of {formatPrice(listingPrice)} is required to post a new property listing. Please proceed to payment.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handlePayment}>Pay ₹99</AlertDialogAction>
+            <AlertDialogAction onClick={handlePayment}>Pay {formatPrice(listingPrice)}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -881,7 +891,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     return renderAddPropertyForm();
   }
 
-  if (isUserLoading || arePropertiesLoading || isProfileLoading) {
+  if (isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings) {
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="h-8 w-8 animate-spin" />

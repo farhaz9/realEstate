@@ -35,5 +35,14 @@ service cloud.firestore {
       // Only allow the user who owns the property or an admin to update or delete it.
       allow update, delete: if isOwner(resource.data.userId) || isAdmin();
     }
+    
+    // Rules for the 'app_settings' collection
+    match /app_settings/{settingsId} {
+      // Allow any user to read the settings.
+      allow read: if true;
+      
+      // Only allow admins to write/update the settings.
+      allow write: if isAdmin();
+    }
   }
 }

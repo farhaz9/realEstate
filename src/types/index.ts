@@ -70,3 +70,11 @@ export type User = {
   verifiedUntil?: Date | any;
   isBlocked?: boolean;
 }
+
+export type AppSettings = {
+    id: string;
+    listingPrice: number;
+    verifiedPriceMonthly: number;
+    verifiedPriceAnnually: number;
+    listingValidityDays: number;
+};

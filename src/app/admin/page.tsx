@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
 import { collection, query, orderBy, Query, where, increment } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
-import type { Property, User, Order } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Property, User, Order, AppSettings } from '@/types';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { UserDistributionChart } from '@/components/admin/user-distribution-chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -45,9 +45,141 @@ import { Label } from '@/components/ui/label';
 import { formatPrice } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import { EditUserForm } from '@/components/admin/edit-user-form';
-
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+const settingsFormSchema = z.object({
+  listingPrice: z.coerce.number().positive(),
+  verifiedPriceMonthly: z.coerce.number().positive(),
+  verifiedPriceAnnually: z.coerce.number().positive(),
+  listingValidityDays: z.coerce.number().int().positive(),
+});
+type SettingsFormValues = z.infer<typeof settingsFormSchema>;
+
+
+function AppSettingsForm({ settings }: { settings: AppSettings }) {
+    const firestore = useFirestore();
+    const { toast } = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const form = useForm<SettingsFormValues>({
+        resolver: zodResolver(settingsFormSchema),
+        defaultValues: {
+            listingPrice: settings?.listingPrice || 99,
+            verifiedPriceMonthly: settings?.verifiedPriceMonthly || 99,
+            verifiedPriceAnnually: settings?.verifiedPriceAnnually || 1000,
+            listingValidityDays: settings?.listingValidityDays || 90,
+        }
+    });
+
+    useEffect(() => {
+        if (settings) {
+            form.reset(settings);
+        }
+    }, [settings, form]);
+
+    const onSubmit = async (data: SettingsFormValues) => {
+        if (!firestore) return;
+        setIsSubmitting(true);
+        const settingsRef = doc(firestore, "app_settings", "config");
+        
+        try {
+            await setDoc(settingsRef, data, { merge: true });
+            toast({
+                title: "Settings Updated",
+                description: "Application settings have been successfully saved.",
+                variant: 'success'
+            });
+        } catch (error: any) {
+            toast({
+                title: "Update Failed",
+                description: error.message,
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Platform Settings</CardTitle>
+                <CardDescription>Manage pricing and listing configurations for the entire platform.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid md:grid-cols-2 gap-8">
+                             <FormField
+                                control={form.control}
+                                name="listingPrice"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Listing Purchase Price (INR)</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="listingValidityDays"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Listing Validity (Days)</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="verifiedPriceMonthly"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Monthly Verification Price (INR)</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="verifiedPriceAnnually"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Annual Verification Price (INR)</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex justify-end">
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Save Settings
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function AdminPage() {
   const { user, isUserLoading } = useUser();
@@ -75,10 +207,16 @@ export default function AdminPage() {
     if (!firestore) return null;
     return query(collection(firestore, 'users'), orderBy('dateJoined', 'desc'));
   }, [firestore]);
+  
+  const appSettingsRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return doc(firestore, 'app_settings', 'config');
+  }, [firestore]);
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(allPropertiesQuery);
   const { data: users, isLoading: isLoadingUsers } = useCollection<User>(allUsersQuery);
-  
+  const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
+
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
   
   const stats = useMemo(() => {
@@ -239,7 +377,7 @@ export default function AdminPage() {
   };
 
   const renderContent = () => {
-    if (isUserLoading || isLoadingProperties || isLoadingUsers) {
+    if (isUserLoading || isLoadingProperties || isLoadingUsers || isLoadingSettings) {
       return <div className="flex items-center justify-center py-16"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
     }
     if (!isAuthorizedAdmin) {
@@ -254,11 +392,12 @@ export default function AdminPage() {
     }
     return (
         <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                 <TabsTrigger value="properties">Properties</TabsTrigger>
                 <TabsTrigger value="users">Users</TabsTrigger>
                 <TabsTrigger value="orders">Orders</TabsTrigger>
+                <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="dashboard" className="mt-6">
                 <div className="space-y-8">
@@ -408,6 +547,22 @@ export default function AdminPage() {
                         </div>
                     </CardContent>
                 </Card>
+            </TabsContent>
+            <TabsContent value="settings" className="mt-6">
+                {appSettings ? (
+                    <AppSettingsForm settings={appSettings} />
+                ) : (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Platform Settings</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center justify-center py-16">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
             </TabsContent>
         </Tabs>
     );

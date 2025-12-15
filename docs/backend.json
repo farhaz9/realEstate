@@ -72,7 +72,8 @@
             "properties": {
               "paymentId": { "type": "string" },
               "amount": { "type": "number" },
-              "date": { "type": "string", "format": "date-time" }
+              "date": { "type": "string", "format": "date-time" },
+              "description": { "type": "string" }
             },
             "required": ["paymentId", "amount", "date"]
           }
@@ -80,6 +81,19 @@
         "listingCredits": {
           "type": "number",
           "description": "Number of property listings a user is entitled to post."
+        },
+        "isVerified": {
+            "type": "boolean",
+            "description": "Indicates if the professional user has a verified badge."
+        },
+        "verifiedUntil": {
+          "type": "string",
+          "description": "The date and time when the user's verification expires.",
+          "format": "date-time"
+        },
+        "isBlocked": {
+            "type": "boolean",
+            "description": "Indicates if the user's account is blocked."
         }
       },
       "required": [
@@ -238,6 +252,41 @@
         "expiresAt",
         "listingTier"
       ]
+    },
+    "AppSettings": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "AppSettings",
+        "type": "object",
+        "description": "Stores global configuration settings for the application.",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "Unique identifier for the settings document."
+            },
+            "listingPrice": {
+                "type": "number",
+                "description": "The price for purchasing a single property listing credit."
+            },
+            "verifiedPriceMonthly": {
+                "type": "number",
+                "description": "The price for a monthly 'Pro Verified' subscription."
+            },
+            "verifiedPriceAnnually": {
+                "type": "number",
+                "description": "The price for an annual 'Pro Verified' subscription."
+            },
+            "listingValidityDays": {
+                "type": "number",
+                "description": "The number of days a premium listing remains active."
+            }
+        },
+        "required": [
+            "id",
+            "listingPrice",
+            "verifiedPriceMonthly",
+            "verifiedPriceAnnually",
+            "listingValidityDays"
+        ]
     }
   },
   "auth": {
@@ -267,6 +316,16 @@
                 "$ref": "#/entities/Property"
             },
             "description": "Public collection of all property listings."
+        }
+      },
+      {
+        "path": "/app_settings/{settingsId}",
+        "definition": {
+            "entityName": "AppSettings",
+            "schema": {
+                "$ref": "#/entities/AppSettings"
+            },
+            "description": "Stores global application settings. Contains a single document."
         }
       }
     ]

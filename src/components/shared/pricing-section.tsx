@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion, increment } from 'firebase/firestore';
-import type { User } from '@/types';
+import type { User, AppSettings } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import {
@@ -22,9 +22,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatPrice } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 declare const Razorpay: any;
-
 
 const benefits = [
     'Verified Dealer Badge',
@@ -32,7 +33,6 @@ const benefits = [
     'Higher visibility & more leads',
     'Dealer name shown prominently',
     'Trust badge increases buyer confidence',
-    'Valid for 30 days',
 ];
 
 export function PricingSection() {
@@ -46,11 +46,21 @@ export function PricingSection() {
         if (!firestore || !user) return null;
         return doc(firestore, 'users', user.uid);
     }, [firestore, user]);
+    
+    const appSettingsRef = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return doc(firestore, 'app_settings', 'config');
+    }, [firestore]);
 
     const { data: userProfile } = useDoc<User>(userDocRef);
+    const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
 
     const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
     const verificationExpiresAt = isCurrentlyVerified ? userProfile.verifiedUntil.toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+
+    const monthlyPrice = appSettings?.verifiedPriceMonthly ?? 99;
+    const annualPrice = appSettings?.verifiedPriceAnnually ?? 1000;
+    const annualSavings = Math.round((1 - (annualPrice / (monthlyPrice * 12))) * 100);
 
     const handleGetVerified = () => {
         if (!user) {
@@ -85,8 +95,8 @@ export function PricingSection() {
             return;
         }
 
-        const amount = isAnnual ? 100000 : 9900; // amount in paise
-        const displayAmount = isAnnual ? 1000 : 99;
+        const amount = isAnnual ? annualPrice * 100 : monthlyPrice * 100; // amount in paise
+        const displayAmount = isAnnual ? annualPrice : monthlyPrice;
         const description = isAnnual ? "Annual Pro Verification" : "Monthly Pro Verification";
 
         const options = {
@@ -173,12 +183,17 @@ export function PricingSection() {
                 </button>
               </div>
               <div className="mt-3 text-center text-xs">
-                <span className="font-medium text-primary">Save 16%</span> On
+                <span className="font-medium text-primary">Save {annualSavings}%</span> On
                 Annual Billing
               </div>
             </div>
           </div>
         <div className="flex justify-center">
+         {isLoadingSettings ? (
+            <Card className="max-w-md w-full shadow-lg border-2 border-primary/50 relative overflow-hidden flex items-center justify-center h-96">
+                <Loader2 className="h-10 w-10 animate-spin" />
+            </Card>
+         ) : (
           <Card className="max-w-md w-full shadow-lg border-2 border-primary/50 relative overflow-hidden">
              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1 shadow-lg">
                 <Star className="w-3 h-3" /> PRO
@@ -188,14 +203,14 @@ export function PricingSection() {
                   <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
               </div>
               <CardTitle className="text-4xl font-extrabold">
-                {isAnnual ? '₹1000' : '₹99'}
+                {isAnnual ? formatPrice(annualPrice) : formatPrice(monthlyPrice)}
                 <span className="text-lg font-medium text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
               </CardTitle>
               <CardDescription>Get the visibility you deserve.</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-4">
-                {benefits.map((benefit, index) => (
+                {[...benefits, `Valid for ${isAnnual ? '365' : '30'} days`].map((benefit, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
                       <CheckCircle2 className="h-5 w-5 text-green-500" />
@@ -222,7 +237,7 @@ export function PricingSection() {
                             <AlertDialogTitle className="text-center text-2xl">Confirm Your Subscription</AlertDialogTitle>
                             <AlertDialogDescription className="text-center">
                                 You are about to purchase the <strong>Pro Verified</strong> plan
-                                for <strong>{isAnnual ? '₹1000/year' : '₹99/month'}</strong>.
+                                for <strong>{isAnnual ? formatPrice(annualPrice) + '/year' : formatPrice(monthlyPrice) + '/month'}</strong>.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter className="sm:justify-center">
@@ -233,6 +248,7 @@ export function PricingSection() {
                 </AlertDialog>
             </CardFooter>
           </Card>
+         )}
         </div>
       </div>
     </section>
