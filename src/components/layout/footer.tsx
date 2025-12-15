@@ -19,7 +19,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div className="lg:col-span-4">
                         <div className="mb-6">
-                             <div className="text-center lg:text-left">
+                             <div className="text-left lg:text-left">
                                 <div className="text-3xl font-semibold tracking-wide text-black">
                                 FALCON AXE
                                 </div>
@@ -29,7 +29,7 @@ export default function Footer() {
                                 </div>
                             </div>
                         </div>
-                        <p className="text-muted-foreground text-sm max-w-md mx-auto lg:mx-0 text-center lg:text-left">
+                        <p className="text-muted-foreground text-sm max-w-md mx-0 lg:mx-0 text-left lg:text-left">
                            Discover Delhi's best real estate and interior design company. We offer luxury properties, bespoke interiors, and complete construction solutions in Delhi.
                         </p>
                     </div>
@@ -79,4 +79,3 @@ export default function Footer() {
         </footer>
     );
 }
-
