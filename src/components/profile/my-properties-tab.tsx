@@ -883,12 +883,12 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     </CardContent>
                 </Card>
                 <Card
-                    className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-blue-500 to-cyan-400 text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/30"
+                    className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-primary to-accent text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30"
                     onClick={handlePayment}
                 >
-                    <div className="absolute top-0 right-0 w-24 h-24">
-                        <div className="absolute transform rotate-45 bg-blue-700 text-center text-white font-semibold py-1 right-[-68px] top-[32px] w-[170px]">
-                            PRO
+                    <div className="absolute top-0 right-0 w-28 h-28">
+                        <div className="absolute transform rotate-45 bg-primary-dark text-center text-white font-semibold py-1 right-[-80px] top-[32px] w-[200px]">
+                            PREMIUM
                         </div>
                     </div>
                     <div className="mb-4">
@@ -935,5 +935,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
+
+    
 
     
