@@ -50,6 +50,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useRouter } from 'next/navigation';
 import { Separator } from '../ui/separator';
 import { formatPrice } from '@/lib/utils';
+import { Skeleton } from '../ui/skeleton';
 
 declare const Razorpay: any;
 
@@ -388,6 +389,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     
     const propertyData = {
       ...restOfData,
+      status: 'approved' as const,
       imageUrls: uploadedImageUrls,
       amenities: amenitiesArray,
     };
@@ -856,35 +858,48 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   const renderMyProperties = () => (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <Card 
-            className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
-            onClick={handleAddPropertyClick}
-        >
-            <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Plus className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
-                 <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
-            </CardContent>
-        </Card>
+        { (isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings) ? (
+            [...Array(3)].map((_, i) => (
+                <Card key={i}>
+                    <Skeleton className="h-56 w-full" />
+                    <CardContent className="p-6">
+                        <Skeleton className="h-5 w-2/3 mb-2" />
+                        <Skeleton className="h-4 w-1/2" />
+                    </CardContent>
+                </Card>
+            ))
+        ) : (
+            <>
+                <Card 
+                    className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
+                    onClick={handleAddPropertyClick}
+                >
+                    <CardContent className="p-6 text-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Plus className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
+                         <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
+                    </CardContent>
+                </Card>
 
-        <Card 
-            className="h-full flex items-center justify-center border-2 border-dashed bg-green-500/10 hover:bg-green-500/20 hover:border-green-600 transition-all cursor-pointer"
-            onClick={handlePayment}
-        >
-            <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-green-600/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Banknote className="h-8 w-8 text-green-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-green-700">Buy Listing Credit</h3>
-                 <p className="text-sm text-green-600 font-bold">{formatPrice(listingPrice)} per listing</p>
-            </CardContent>
-        </Card>
-
-        {properties?.map((property) => (
-          <PropertyCard key={property.id} property={property} showActiveBadge={true} />
-        ))}
+                <Card 
+                    className="h-full flex items-center justify-center border-2 border-dashed bg-green-500/10 hover:bg-green-500/20 hover:border-green-600 transition-all cursor-pointer"
+                    onClick={handlePayment}
+                >
+                    <CardContent className="p-6 text-center">
+                        <div className="w-16 h-16 bg-green-600/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Banknote className="h-8 w-8 text-green-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-green-700">Buy Listing Credit</h3>
+                         <p className="text-sm text-green-600 font-bold">{formatPrice(listingPrice)} per listing</p>
+                    </CardContent>
+                </Card>
+                {properties?.map((property) => (
+                  <PropertyCard key={property.id} property={property} showActiveBadge={true} />
+                ))}
+             </>
+        )}
       </div>
        <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
         <AlertDialogContent>
@@ -907,14 +922,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     return renderAddPropertyForm();
   }
 
-  if (isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
         {renderMyProperties()}
@@ -922,5 +929,3 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
-
-    

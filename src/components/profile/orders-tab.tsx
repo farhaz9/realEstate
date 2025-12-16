@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { Skeleton } from '../ui/skeleton';
 
 export function OrdersTab() {
   const { user, isUserLoading } = useUser();
@@ -25,14 +26,6 @@ export function OrdersTab() {
 
   const isLoading = isUserLoading || isProfileLoading;
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   const orders = userProfile?.orders || [];
 
   return (
@@ -44,7 +37,13 @@ export function OrdersTab() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {orders.length > 0 ? (
+        {isLoading ? (
+            <div className="space-y-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
+        ) : orders.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>

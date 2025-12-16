@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
@@ -9,6 +10,7 @@ import { PropertyCard } from '@/components/property-card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '../ui/skeleton';
 
 export function WishlistTab() {
   const { user, isUserLoading } = useUser();
@@ -32,39 +34,38 @@ export function WishlistTab() {
 
   const isLoading = isUserLoading || isProfileLoading || (wishlistIds.length > 0 && arePropertiesLoading);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-  
   if (error) {
       return <div className="text-center text-destructive py-16">Error: {error.message}</div>;
   }
 
-  if (properties && properties.length > 0) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold">Your Wishlist</h3>
-            <p className="text-muted-foreground mt-1">You have {properties.length} propert{properties.length === 1 ? 'y' : 'ies'} saved.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card>
-        <CardContent className="p-6">
+      <CardContent className="p-6">
+        {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(3)].map((_, i) => (
+                    <Card key={i}>
+                        <Skeleton className="h-56 w-full" />
+                        <CardContent className="p-6">
+                            <Skeleton className="h-5 w-2/3 mb-2" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        ) : properties && properties.length > 0 ? (
+            <>
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold">Your Wishlist</h3>
+                <p className="text-muted-foreground mt-1">You have {properties.length} propert{properties.length === 1 ? 'y' : 'ies'} saved.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {properties.map((property) => (
+                  <PropertyCard key={property.id} property={property} />
+                ))}
+              </div>
+            </>
+        ) : (
             <div className="text-center py-16 border-2 border-dashed rounded-lg">
                 <HeartCrack className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-2xl font-semibold">Your wishlist is empty.</h3>
@@ -73,7 +74,8 @@ export function WishlistTab() {
                     <Link href="/properties">Browse Properties</Link>
                 </Button>
             </div>
-        </CardContent>
+        )}
+      </CardContent>
     </Card>
   );
 }
