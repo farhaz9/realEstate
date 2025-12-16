@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
-import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking, useAuth } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,6 +18,8 @@ import { WishlistTab } from '@/components/profile/wishlist-tab';
 import { OrdersTab } from '@/components/profile/orders-tab';
 import ImageKit from 'imagekit-javascript';
 import { updateProfile } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -128,16 +130,17 @@ function SettingsPageContent() {
     return name.substring(0, 2).toUpperCase();
   }
   
-  if (isUserLoading || !user) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Spinner size={48} />
-      </div>
-    );
+  if (!user && !isUserLoading) {
+      router.push('/login');
+      return (
+        <div className="flex items-center justify-center min-h-[80vh]">
+          <Spinner size={48} />
+        </div>
+      );
   }
   
-  const displayAvatar = userProfile?.photoURL ?? user.photoURL;
-  const displayName = userProfile?.fullName ?? user.displayName;
+  const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
+  const displayName = userProfile?.fullName ?? user?.displayName;
   const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
 
   return (
