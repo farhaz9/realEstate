@@ -41,7 +41,7 @@ export default function ProfessionalsPage() {
 
     const professionalCategories = ['real-estate-agent', 'interior-designer', 'vendor'];
     
-    let queryConstraints = [where('isFeatured', '==', true)];
+    let queryConstraints = [];
 
     if (activeTab !== 'all' && professionalCategories.includes(activeTab)) {
       queryConstraints.push(where('category', '==', activeTab));
@@ -57,6 +57,12 @@ export default function ProfessionalsPage() {
 
   const filteredProfessionals = professionals?.filter(p => {
     const lowerCaseSearch = searchTerm.toLowerCase();
+    
+    // Only show professionals who are not blocked and are featured
+    if (p.isBlocked || p.isFeatured === false) {
+        return false;
+    }
+
     return (
         p.fullName.toLowerCase().includes(lowerCaseSearch) ||
         (p.username && p.username.toLowerCase().includes(lowerCaseSearch)) ||

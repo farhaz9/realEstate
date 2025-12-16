@@ -20,16 +20,18 @@ export default function ProfessionalsPage() {
     if (!firestore) return null;
     return query(
       collection(firestore, 'users'), 
-      where('category', 'in', ['real-estate-agent', 'interior-designer']),
-      where('isFeatured', '==', true)
+      where('category', 'in', ['real-estate-agent', 'interior-designer'])
     );
   }, [firestore]);
 
   const { data: professionals, isLoading, error } = useCollection<User>(professionalsQuery);
 
-  const filteredProfessionals = professionals?.filter(p => 
-    p.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProfessionals = professionals?.filter(p => {
+    if (p.isBlocked || p.isFeatured === false) {
+        return false;
+    }
+    return p.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   const realEstateAgents = filteredProfessionals?.filter(p => p.category === 'real-estate-agent');
   const interiorDesigners = filteredProfessionals?.filter(p => p.category === 'interior-designer');
@@ -102,4 +104,3 @@ export default function ProfessionalsPage() {
     </>
   );
 }
-

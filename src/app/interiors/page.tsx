@@ -44,8 +44,7 @@ export default function InteriorsPage() {
     if (!firestore) return null;
     return query(
       collection(firestore, 'users'), 
-      where('category', '==', 'interior-designer'),
-      where('isFeatured', '==', true)
+      where('category', '==', 'interior-designer')
     );
   }, [firestore]);
 
@@ -63,10 +62,13 @@ export default function InteriorsPage() {
   const { data: interiorProperties, isLoading: isLoadingProperties } = useCollection<Property>(interiorPropertiesQuery);
 
 
-  const filteredDesigners = designers?.filter(d => 
-    d.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredDesigners = designers?.filter(d => {
+    if (d.isBlocked || d.isFeatured === false) {
+        return false;
+    }
+    return d.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (d.companyName && d.companyName.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  });
   
   return (
     <div>
