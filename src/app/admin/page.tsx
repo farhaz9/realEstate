@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
@@ -44,6 +45,8 @@ import {
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc, setDoc } from 'firebase/firestore';
 import { UserDistributionChart } from '@/components/admin/user-distribution-chart';
+import { UserGrowthChart } from '@/components/admin/user-growth-chart';
+import { PropertyListingsChart } from '@/components/admin/property-listings-chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -65,8 +68,9 @@ import Link from 'next/link';
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 type ConfirmationAction = {
-  action: 'delete' | 'block' | 'verify';
+  action: 'delete' | 'block' | 'verify' | 'setRole';
   user: User;
+  role?: 'admin' | 'editor' | 'viewer' | 'user';
 } | null;
 
 const settingsFormSchema = z.object({
@@ -708,22 +712,33 @@ export default function AdminPage() {
                     </Card>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <Card className="lg:col-span-2">
+                     <Card className="lg:col-span-2">
                         <CardHeader>
                             <CardTitle>User Growth</CardTitle>
                             <CardDescription>Monthly user registrations</CardDescription>
                         </CardHeader>
-                        <CardContent className="h-[300px] flex items-center justify-center">
-                            <p className="text-muted-foreground">User Growth Chart Placeholder</p>
+                        <CardContent>
+                            {users ? <UserGrowthChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Property Types</CardTitle>
-                            <CardDescription>Distribution by category</CardDescription>
+                            <CardTitle>User Demographics</CardTitle>
+                            <CardDescription>Distribution by user category</CardDescription>
                         </CardHeader>
                         <CardContent>
                             {users ? <UserDistributionChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
+                        </CardContent>
+                    </Card>
+                </div>
+                 <div className="grid grid-cols-1 gap-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Property Listings</CardTitle>
+                            <CardDescription>Monthly property submissions</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {properties ? <PropertyListingsChart properties={properties} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
                         </CardContent>
                     </Card>
                 </div>
