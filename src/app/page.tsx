@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -39,7 +39,7 @@ const faqs = [
 
 const coreServices = [
   {
-    icon: Building,
+    icon: Handshake,
     title: "Property Sales",
     description: "Whether buying or selling, our expert agents guide you through market analysis, listings, and closing the best deal.",
     href: "/properties"
@@ -51,7 +51,7 @@ const coreServices = [
     href: "/services"
   },
   {
-    icon: Palette,
+    icon: Armchair,
     title: "Interior Design",
     description: "Transform your space with our curated network of top-rated interior designers tailored to your style.",
     href: "/interiors"
@@ -143,7 +143,7 @@ export default function HomePage() {
         </div>
       </section>
       
-      <section id="offers" className="py-16 bg-secondary/30">
+      <section id="offers" className="py-16 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Our Core Services</h2>
@@ -153,13 +153,15 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {coreServices.map((service) => (
-              <Card key={service.title} className="flex flex-col text-center items-center p-8 h-full group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
-                <div className="bg-primary/10 p-4 rounded-full mb-6 transition-colors group-hover:bg-primary">
-                   <service.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary-foreground" />
+              <Card key={service.title} className="flex flex-col text-center items-center p-8 h-full group transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 bg-background border">
+                 <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mb-6 before:absolute before:inset-0 before:rounded-full before:border-2 before:border-primary/20 before:animate-pulse-loader">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-inner">
+                        <service.icon className="h-8 w-8 text-primary transition-colors" />
+                    </div>
                 </div>
                 <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
                 <p className="text-muted-foreground text-sm flex-grow mb-6">{service.description}</p>
-                <UIButton asChild variant="link" className="mt-auto">
+                <UIButton asChild className="mt-auto rounded-full px-6">
                   <Link href={service.href}>
                     Learn more <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
