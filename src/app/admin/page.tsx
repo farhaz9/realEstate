@@ -51,6 +51,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -629,14 +630,20 @@ export default function AdminPage() {
     }
     return (
       <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
+          <div className="overflow-x-auto hide-scrollbar">
+            <TabsList className={cn(
+              "grid w-full",
+              "sm:inline-flex", // Use inline-flex for larger screens
+              "grid-cols-[repeat(6,min-content)] sm:grid-cols-6" // Ensure mobile has min-content columns
+            )}>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="properties">Properties</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="notifications">Notifications</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
-          </TabsList>
+            </TabsList>
+          </div>
           <TabsContent value="dashboard" className="mt-6">
               <div className="space-y-8">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
