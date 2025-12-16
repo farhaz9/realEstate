@@ -628,21 +628,19 @@ export default function AdminPage() {
     }
     return (
       <Tabs defaultValue="dashboard" className="w-full">
-          <div className="flex justify-between items-center mb-6">
-              <TabsList className={cn(
-                  "grid w-full max-w-sm",
-                  "sm:inline-flex",
-                  "grid-cols-3"
-              )}>
-                  <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
-                  <TabsTrigger value="properties"><Building className="md:hidden" /><span className="hidden md:inline">Properties</span></TabsTrigger>
-                  <TabsTrigger value="users"><Users className="md:hidden" /><span className="hidden md:inline">Users</span></TabsTrigger>
-                  <TabsTrigger value="orders"><Banknote className="md:hidden" /><span className="hidden md:inline">Orders</span></TabsTrigger>
-                  <TabsTrigger value="notifications"><Megaphone className="md:hidden" /><span className="hidden md:inline">Notifications</span></TabsTrigger>
-                  <TabsTrigger value="settings"><Settings className="md:hidden" /><span className="hidden md:inline">Settings</span></TabsTrigger>
-              </TabsList>
-              <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
-          </div>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <TabsList className="w-full sm:w-auto overflow-x-auto sm:overflow-visible hide-scrollbar">
+            <div className="flex flex-nowrap sm:w-auto">
+              <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
+              <TabsTrigger value="properties"><Building className="md:hidden" /><span className="hidden md:inline">Properties</span></TabsTrigger>
+              <TabsTrigger value="users"><Users className="md:hidden" /><span className="hidden md:inline">Users</span></TabsTrigger>
+              <TabsTrigger value="orders"><Banknote className="md:hidden" /><span className="hidden md:inline">Orders</span></TabsTrigger>
+              <TabsTrigger value="notifications"><Megaphone className="md:hidden" /><span className="hidden md:inline">Notifications</span></TabsTrigger>
+              <TabsTrigger value="settings"><Settings className="md:hidden" /><span className="hidden md:inline">Settings</span></TabsTrigger>
+            </div>
+          </TabsList>
+          <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
+        </div>
           <TabsContent value="dashboard" className="mt-6 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <Card className="relative overflow-hidden">
