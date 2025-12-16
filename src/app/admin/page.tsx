@@ -878,8 +878,8 @@ export default function AdminPage() {
               </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'fullName')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()) || isAdminUser; return (
@@ -902,7 +902,7 @@ export default function AdminPage() {
                       </Link>
                     </TableCell>
                   <TableCell className="hidden sm:table-cell">{categoryDisplay[u.category] || u.category}</TableCell>
-                  <TableCell className="hidden lg:table-cell">
+                  <TableCell>
                       <Dialog>
                           <DialogTrigger asChild>
                               <Button variant="ghost" onClick={() => { setSelectedUser(u); setRank(u.rank ?? 0); }} disabled={isAdminUser}>{isAdminUser ? 'N/A' : u.rank ?? 'N/A'}</Button>
@@ -920,7 +920,7 @@ export default function AdminPage() {
                           )}
                       </Dialog>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell">
+                  <TableCell>
                       <Dialog>
                           <DialogTrigger asChild>
                               <Button variant="ghost" onClick={() => { setSelectedUser(u); setCreditAmount(u.listingCredits ?? 0); }} disabled={isAdminUser}><Coins className="mr-2 h-4 w-4 text-amber-500" />{isAdminUser ? 1000 : (u.listingCredits ?? 0)}</Button>
