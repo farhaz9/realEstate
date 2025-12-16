@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useUser, useAuth } from '@/firebase';
@@ -21,10 +20,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from 'date-fns';
+import { Skeleton } from '../ui/skeleton';
 
 
 interface ProfileDetailsTabProps {
-    userProfile: UserType;
+    userProfile: UserType | null;
 }
 
 const categoryDisplay: Record<string, string> = {
@@ -50,15 +50,17 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
     router.push('/');
   };
 
-  const renderDetailItem = (Icon: React.ElementType, label: string, value: string | undefined) => (
+  const renderDetailItem = (Icon: React.ElementType, label: string, value: string | undefined | null) => (
     <div className="flex items-start gap-4">
       <Icon className="h-5 w-5 text-muted-foreground mt-1 flex-shrink-0" />
       <div className="flex-1">
         <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">{label}</p>
-        <p className="font-semibold">{value || 'Not provided'}</p>
+        {value === null ? <Skeleton className="h-5 w-48" /> : <p className="font-semibold">{value || 'Not provided'}</p>}
       </div>
     </div>
   );
+  
+  const isLoading = !userProfile;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -67,11 +69,11 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
             <CardTitle>Personal Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-              {renderDetailItem(UserIcon, "Full Name", userProfile.fullName)}
-              {renderDetailItem(Mail, "Email Address", userProfile.email)}
-              {renderDetailItem(Phone, "Phone", userProfile.phone)}
-              {renderDetailItem(Briefcase, "Role", categoryDisplay[userProfile.category])}
-              {userProfile.dateJoined && renderDetailItem(CalendarDays, "Joined On", userProfile.dateJoined.toDate ? format(userProfile.dateJoined.toDate(), 'PPP') : 'N/A')}
+              {renderDetailItem(UserIcon, "Full Name", isLoading ? null : userProfile.fullName)}
+              {renderDetailItem(Mail, "Email Address", isLoading ? null : userProfile.email)}
+              {renderDetailItem(Phone, "Phone", isLoading ? null : userProfile.phone)}
+              {renderDetailItem(Briefcase, "Role", isLoading ? null : categoryDisplay[userProfile.category])}
+              {renderDetailItem(CalendarDays, "Joined On", isLoading ? null : (userProfile.dateJoined?.toDate ? format(userProfile.dateJoined.toDate(), 'PPP') : 'N/A'))}
           </CardContent>
         </Card>
         

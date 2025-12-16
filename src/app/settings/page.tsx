@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { User, Settings, ArrowLeft, Camera, Edit, ShoppingBag, Verified, Loader2 } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
-import { Spinner } from '@/components/ui/spinner-1';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
@@ -20,6 +19,7 @@ import ImageKit from 'imagekit-javascript';
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -131,14 +131,11 @@ function SettingsPageContent() {
   }
   
   if (!user && !isUserLoading) {
-      router.push('/login');
-      return (
-        <div className="flex items-center justify-center min-h-[80vh]">
-          <Spinner size={48} />
-        </div>
-      );
+      if (typeof window !== 'undefined') router.push('/login');
+      return null;
   }
   
+  const isLoading = isUserLoading || isProfileLoading;
   const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
   const displayName = userProfile?.fullName ?? user?.displayName;
   const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
@@ -159,7 +156,7 @@ function SettingsPageContent() {
              <div className="flex flex-col items-center mt-6">
                 <div className="relative group">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
-                        <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} />
+                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                             {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
                         </AvatarFallback>
@@ -183,10 +180,10 @@ function SettingsPageContent() {
                     />
                 </div>
                 <div className="flex items-center gap-2 mt-4">
-                  <h2 className="text-2xl font-bold">{displayName}</h2>
+                  {isLoading ? <Skeleton className="h-8 w-40" /> : <h2 className="text-2xl font-bold">{displayName}</h2>}
                   {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500" />}
                 </div>
-                {userProfile && <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>}
+                {isLoading ? <Skeleton className="h-5 w-24 mt-1" /> : (userProfile && <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>)}
                 {isCurrentlyVerified && userProfile?.verifiedUntil && (
                   <p className="text-xs text-green-600 font-semibold mt-1">
                     Pro Verified until {userProfile.verifiedUntil.toDate().toLocaleDateString()}
@@ -205,7 +202,7 @@ function SettingsPageContent() {
                 <TabsTrigger value="orders" className="h-full">Orders</TabsTrigger>
             </TabsList>
             <TabsContent value="profile" className="mt-6">
-                {userProfile ? <ProfileDetailsTab userProfile={userProfile} /> : <div className="flex items-center justify-center min-h-[20vh]"><Spinner size={32} /></div>}
+                <ProfileDetailsTab userProfile={userProfile} />
             </TabsContent>
             <TabsContent value="listings" className="mt-6">
                 <MyPropertiesTab />
@@ -224,11 +221,7 @@ function SettingsPageContent() {
 
 export default function SettingsPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[80vh]">
-        <Spinner size={48} />
-      </div>
-    }>
+    <Suspense fallback={null}>
       <SettingsPageContent />
     </Suspense>
   )
