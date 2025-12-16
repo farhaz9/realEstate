@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText, Minus } from 'lucide-react';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText, Minus, Gem } from 'lucide-react';
 import type { Property, User, AppSettings } from '@/types';
 import {
   AlertDialog,
@@ -882,21 +882,22 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                          <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
                     </CardContent>
                 </Card>
-
                 <Card
-                    className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-primary via-purple-500 to-accent text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30"
+                    className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-blue-500 to-cyan-400 text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/30"
                     onClick={handlePayment}
                 >
-                    <div className="absolute top-0 right-0 bg-white/20 text-white text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1 shadow-lg">
-                        <Star className="w-3 h-3" /> PRO
+                    <div className="absolute top-0 right-0 w-24 h-24">
+                        <div className="absolute transform rotate-45 bg-blue-700 text-center text-white font-semibold py-1 right-[-68px] top-[32px] w-[170px]">
+                            PRO
+                        </div>
                     </div>
                     <div className="mb-4">
                         <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto transition-transform duration-300 group-hover:scale-110">
-                            <Star className="h-8 w-8" />
+                            <Gem className="h-8 w-8" />
                         </div>
                     </div>
                     <h3 className="text-xl font-bold">Buy Listing Credit</h3>
-                    <p className="text-3xl font-extrabold mt-1">{formatPrice(listingPrice)}</p>
+                    <p className="text-4xl font-extrabold mt-1">{formatPrice(listingPrice)}</p>
                     <p className="text-sm opacity-80">per premium listing</p>
                 </Card>
                 
@@ -934,3 +935,5 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
+
+    
