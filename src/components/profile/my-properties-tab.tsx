@@ -883,18 +883,23 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     </CardContent>
                 </Card>
 
-                <Card 
-                    className="h-full flex items-center justify-center border-2 border-dashed bg-green-500/10 hover:bg-green-500/20 hover:border-green-600 transition-all cursor-pointer"
+                <Card
+                    className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-primary via-purple-500 to-accent text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30"
                     onClick={handlePayment}
                 >
-                    <CardContent className="p-6 text-center">
-                        <div className="w-16 h-16 bg-green-600/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Banknote className="h-8 w-8 text-green-600" />
+                    <div className="absolute -top-2 -right-2 bg-white/20 text-white text-xs font-bold uppercase px-3 py-1 rounded-bl-lg rounded-tr-xl">
+                        Get More Leads
+                    </div>
+                    <div className="mb-4">
+                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto transition-transform duration-300 group-hover:scale-110">
+                            <Zap className="h-8 w-8" />
                         </div>
-                        <h3 className="text-lg font-semibold text-green-700">Buy Listing Credit</h3>
-                         <p className="text-sm text-green-600 font-bold">{formatPrice(listingPrice)} per listing</p>
-                    </CardContent>
+                    </div>
+                    <h3 className="text-xl font-bold">Buy Listing Credit</h3>
+                    <p className="text-3xl font-extrabold mt-1">{formatPrice(listingPrice)}</p>
+                    <p className="text-sm opacity-80">per premium listing</p>
                 </Card>
+                
                 {properties?.map((property) => (
                   <PropertyCard key={property.id} property={property} showActiveBadge={true} />
                 ))}
@@ -929,3 +934,5 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
+
+    
