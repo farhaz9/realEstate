@@ -107,4 +107,10 @@ export default function SupportPage() {
                   <span className="font-medium text-destructive">Closed</span>
                 </div>
               </CardContent>
-            
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
