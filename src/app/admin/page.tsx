@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -94,6 +94,27 @@ const notificationFormSchema = z.object({
 });
 type NotificationFormValues = z.infer<typeof notificationFormSchema>;
 
+const userFilterOptions = [
+    { value: 'all', label: 'All Users' },
+    { value: 'verified', label: 'Verified' },
+    { value: 'blocked', label: 'Blocked' },
+    { value: 'agent', label: 'Agents' },
+    { value: 'designer', label: 'Designers' },
+    { value: 'vendor', label: 'Vendors' },
+];
+
+const propertyFilterOptions = [
+    { value: 'all', label: 'All Properties' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' },
+];
+
+const orderFilterOptions = [
+    { value: 'all', label: 'All Orders' },
+    { value: 'listing', label: 'Listing Credit' },
+    { value: 'verification', label: 'Verification' },
+];
 
 function AnnouncementForm({ settings }: { settings: AppSettings | null }) {
     const firestore = useFirestore();
@@ -360,7 +381,9 @@ export default function AdminPage() {
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction>(null);
 
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [userFilter, setUserFilter] = useState<'all' | 'verified'>('all');
+  const [userFilter, setUserFilter] = useState('all');
+  const [propertyFilter, setPropertyFilter] = useState('all');
+  const [orderFilter, setOrderFilter] = useState('all');
 
 
   const allPropertiesQuery = useMemoFirebase(() => {
@@ -438,8 +461,19 @@ export default function AdminPage() {
     if (!users) return [];
     
     let baseUsers = users;
-    if (userFilter === 'verified') {
-        baseUsers = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date());
+
+    if (userFilter !== 'all') {
+        if (userFilter === 'verified') {
+            baseUsers = baseUsers.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date());
+        } else if (userFilter === 'blocked') {
+            baseUsers = baseUsers.filter(u => u.isBlocked);
+        } else if (userFilter === 'agent') {
+            baseUsers = baseUsers.filter(u => u.category === 'real-estate-agent');
+        } else if (userFilter === 'designer') {
+            baseUsers = baseUsers.filter(u => u.category === 'interior-designer');
+        } else if (userFilter === 'vendor') {
+            baseUsers = baseUsers.filter(u => u.category === 'vendor');
+        }
     }
 
     let filtered = userSearchTerm && userFuse
@@ -473,9 +507,15 @@ export default function AdminPage() {
 
   const sortedAndFilteredProperties = useMemo(() => {
     if (!properties) return [];
+
+    let baseProperties = properties;
+    if (propertyFilter !== 'all') {
+        baseProperties = baseProperties.filter(p => p.status === propertyFilter);
+    }
+    
     let filtered = propertySearchTerm && propertyFuse
-        ? propertyFuse.search(propertySearchTerm).map(result => result.item)
-        : properties;
+        ? propertyFuse.search(propertySearchTerm, { store: baseProperties }).map(result => result.item)
+        : baseProperties;
     
     return [...filtered].sort((a, b) => {
         const { key, direction } = propertySort;
@@ -492,13 +532,23 @@ export default function AdminPage() {
         if (valA > valB) return 1 * order;
         return 0;
     });
-  }, [properties, propertySearchTerm, propertyFuse, propertySort]);
+  }, [properties, propertySearchTerm, propertyFuse, propertySort, propertyFilter]);
 
 
   const sortedAndFilteredOrders = useMemo(() => {
+    let baseOrders = allOrders;
+
+    if (orderFilter !== 'all') {
+        if (orderFilter === 'listing') {
+            baseOrders = baseOrders.filter(o => o.description?.toLowerCase().includes('listing'));
+        } else if (orderFilter === 'verification') {
+            baseOrders = baseOrders.filter(o => o.description?.toLowerCase().includes('verification'));
+        }
+    }
+
     let filtered = orderSearchTerm && orderFuse
-      ? orderFuse.search(orderSearchTerm).map(result => result.item)
-      : allOrders;
+      ? orderFuse.search(orderSearchTerm, { store: baseOrders }).map(result => result.item)
+      : baseOrders;
 
     return [...filtered].sort((a, b) => {
         const { key, direction } = orderSort;
@@ -516,7 +566,7 @@ export default function AdminPage() {
         if (valA > valB) return 1 * order;
         return 0;
     });
-  }, [allOrders, orderSearchTerm, orderFuse, orderSort]);
+  }, [allOrders, orderSearchTerm, orderFuse, orderSort, orderFilter]);
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -764,10 +814,18 @@ export default function AdminPage() {
           <TabsContent value="properties" className="mt-6">
               <Card><CardHeader>
                   <CardTitle>All Properties ({properties?.length || 0})</CardTitle>
-                  <div className="relative mt-4">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                      <Input placeholder="Search by title, address, or ID..." className="pl-10" value={propertySearchTerm} onChange={(e) => setPropertySearchTerm(e.target.value)} />
-                  </div>
+                    <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                      <div className="relative flex-grow">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input placeholder="Search by title, address, or ID..." className="pl-10" value={propertySearchTerm} onChange={(e) => setPropertySearchTerm(e.target.value)} />
+                      </div>
+                      <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                           <Filter className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                          {propertyFilterOptions.map(option => (
+                               <Button key={option.value} variant={propertyFilter === option.value ? 'default' : 'outline'} size="sm" onClick={() => setPropertyFilter(option.value)} className="flex-shrink-0">{option.label}</Button>
+                          ))}
+                      </div>
+                    </div>
               </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead>Property</TableHead>
                   <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
@@ -804,7 +862,20 @@ export default function AdminPage() {
               );})}</TableBody></Table></div></CardContent></Card>
           </TabsContent>
           <TabsContent value="users" className="mt-6">
-              <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
+              <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle>
+                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                  <div className="relative flex-grow">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} />
+                  </div>
+                  <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                      <Filter className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      {userFilterOptions.map(option => (
+                           <Button key={option.value} variant={userFilter === option.value ? 'default' : 'outline'} size="sm" onClick={() => setUserFilter(option.value)} className="flex-shrink-0">{option.label}</Button>
+                      ))}
+                  </div>
+                </div>
+              </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'fullName')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
@@ -931,14 +1002,22 @@ export default function AdminPage() {
               <Card>
                   <CardHeader>
                       <CardTitle>All Orders ({allOrders.length})</CardTitle>
-                       <div className="relative mt-4">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input 
-                              placeholder="Search by user, email, payment ID, or description..."
-                              className="pl-10"
-                              value={orderSearchTerm}
-                              onChange={(e) => setOrderSearchTerm(e.target.value)}
-                          />
+                       <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                          <div className="relative flex-grow">
+                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                              <Input 
+                                  placeholder="Search by user, email, payment ID, or description..."
+                                  className="pl-10"
+                                  value={orderSearchTerm}
+                                  onChange={(e) => setOrderSearchTerm(e.target.value)}
+                              />
+                          </div>
+                           <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                                <Filter className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                {orderFilterOptions.map(option => (
+                                    <Button key={option.value} variant={orderFilter === option.value ? 'default' : 'outline'} size="sm" onClick={() => setOrderFilter(option.value)} className="flex-shrink-0">{option.label}</Button>
+                                ))}
+                            </div>
                       </div>
                   </CardHeader>
                   <CardContent className="p-0">
