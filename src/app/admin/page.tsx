@@ -64,6 +64,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
+type ConfirmationAction = {
+  action: 'delete' | 'block' | 'verify';
+  user: User;
+} | null;
+
 const settingsFormSchema = z.object({
   listingPrice: z.coerce.number().positive(),
   verifiedPriceMonthly: z.coerce.number().positive(),
@@ -347,6 +352,10 @@ export default function AdminPage() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [propertyToReject, setPropertyToReject] = useState<Property | null>(null);
 
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction>(null);
+
+
   const allPropertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'properties'), orderBy('dateListed', 'desc'));
@@ -549,9 +558,9 @@ export default function AdminPage() {
     toast({ title: `User ${!isBlocked ? 'Blocked' : 'Unblocked'}`, description: `The user has been successfully ${!isBlocked ? 'blocked' : 'unblocked'}.`, variant: 'success' });
   };
 
-  const handleVerificationToggle = (userId: string, user: User) => {
+  const handleVerificationToggle = (user: User) => {
     if (!firestore) return;
-    const userRef = doc(firestore, "users", userId);
+    const userRef = doc(firestore, "users", user.id);
     const isCurrentlyVerified = user.verifiedUntil && user.verifiedUntil.toDate() > new Date();
     let updateData = {};
     if (isCurrentlyVerified) {
@@ -582,9 +591,10 @@ export default function AdminPage() {
     setSelectedUser(null);
   }
 
-  const handleSort = (setter: React.Dispatch<React.SetStateAction<{key: string, direction: string}>>, key: string) => {
+  const handleSort = (setter: React.Dispatch<React.SetStateAction<{ key: string, direction: string }>>, key: string) => {
     setter(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' }));
   };
+
 
   const onNotificationSubmit = async (data: NotificationFormValues) => {
     if (!firestore || !appSettingsRef) return;
@@ -613,6 +623,23 @@ export default function AdminPage() {
     } finally {
         setIsSendingNotification(false);
     }
+  };
+
+  const handleConfirmationAction = () => {
+    if (!confirmationAction) return;
+
+    switch (confirmationAction.action) {
+      case 'delete':
+        handleUserDelete(confirmationAction.user.id);
+        break;
+      case 'block':
+        handleUserBlockToggle(confirmationAction.user.id, !!confirmationAction.user.isBlocked);
+        break;
+      case 'verify':
+        handleVerificationToggle(confirmationAction.user);
+        break;
+    }
+    setConfirmationAction(null);
   };
 
   const categoryDisplay: Record<string, string> = {
@@ -810,8 +837,7 @@ export default function AdminPage() {
                   <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
                   <TableCell className="text-right">
                     {!isAdminUser && (
-                      <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
-                        <AlertDialog>
+                        <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>
@@ -825,57 +851,28 @@ export default function AdminPage() {
                                           <span>Edit Profile</span>
                                       </DropdownMenuItem>
                                     </DialogTrigger>
-                                    <AlertDialogTrigger asChild>
-                                        <DropdownMenuItem>
-                                            <Verified className="mr-2 h-4 w-4" />
-                                            <span>{isCurrentlyVerified ? 'Revoke' : 'Grant'} Verification</span>
-                                        </DropdownMenuItem>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogTrigger asChild>
-                                        <DropdownMenuItem>
-                                          {u.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
-                                            <span>{u.isBlocked ? 'Unblock' : 'Block'} User</span>
-                                        </DropdownMenuItem>
-                                    </AlertDialogTrigger>
+                                    <DropdownMenuItem onSelect={() => { setConfirmationAction({ action: 'verify', user: u }); setIsConfirmationDialogOpen(true); }}>
+                                        <Verified className="mr-2 h-4 w-4" />
+                                        <span>{isCurrentlyVerified ? 'Revoke' : 'Grant'} Verification</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => { setConfirmationAction({ action: 'block', user: u }); setIsConfirmationDialogOpen(true); }}>
+                                      {u.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
+                                        <span>{u.isBlocked ? 'Unblock' : 'Block'} User</span>
+                                    </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <AlertDialogTrigger asChild>
-                                        <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            <span>Delete User</span>
-                                        </DropdownMenuItem>
-                                    </AlertDialogTrigger>
+                                    <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive" onSelect={() => { setConfirmationAction({ action: 'delete', user: u }); setIsConfirmationDialogOpen(true); }}>
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        <span>Delete User</span>
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Confirm Action</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. Are you sure you want to proceed?
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => {
-                                    // This is a simple way to distinguish actions.
-                                    // A more robust solution might use state.
-                                    if(document.body.querySelector('.lucide-trash-2')) {
-                                      handleUserDelete(u.id);
-                                    } else if(document.body.querySelector('.lucide-ban') || document.body.querySelector('.lucide-user-check')) {
-                                      handleUserBlockToggle(u.id, !!u.isBlocked);
-                                    } else if (document.body.querySelector('.lucide-verified')) {
-                                      handleVerificationToggle(u.id, u);
-                                    }
-                                }}>Confirm</AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                         <DialogContent className="max-w-lg">
-                            <DialogHeader>
-                                <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
-                            </DialogHeader>
-                            {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
-                        </DialogContent>
-                      </Dialog>
+                            <DialogContent className="max-w-lg">
+                                <DialogHeader>
+                                    <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
+                                </DialogHeader>
+                                {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
+                            </DialogContent>
+                        </Dialog>
                     )}
                   </TableCell>
                   </TableRow>
@@ -1076,7 +1073,23 @@ export default function AdminPage() {
             </DialogFooter>
         </DialogContent>
       </Dialog>
+      <AlertDialog open={isConfirmationDialogOpen} onOpenChange={setIsConfirmationDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmationAction?.action === 'delete' && `This will permanently delete the user "${confirmationAction.user.fullName}".`}
+              {confirmationAction?.action === 'block' && `This will ${confirmationAction.user.isBlocked ? 'unblock' : 'block'} the user "${confirmationAction.user.fullName}".`}
+              {confirmationAction?.action === 'verify' && `This will ${confirmationAction.user.isVerified ? 'revoke verification for' : 'grant verification to'} "${confirmationAction.user.fullName}".`}
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmationAction(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmationAction}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
-
