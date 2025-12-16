@@ -584,7 +584,7 @@ export default function AdminPage() {
 
   const handleSort = (setter: React.Dispatch<React.SetStateAction<{key: string, direction: string}>>, key: string) => {
     setter(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' }));
-  }
+  };
 
   const onNotificationSubmit = async (data: NotificationFormValues) => {
     if (!firestore || !appSettingsRef) return;
@@ -810,87 +810,73 @@ export default function AdminPage() {
                   <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
                   <TableCell className="text-right">
                     {!isAdminUser && (
-                         <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreVertical className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Manage User</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onSelect={() => { setSelectedUser(u); setIsEditUserDialogOpen(true); }}>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    <span>Edit Profile</span>
-                                </DropdownMenuItem>
-                                <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem>
-                                        <Verified className="mr-2 h-4 w-4" />
-                                        <span>{isCurrentlyVerified ? 'Revoke' : 'Grant'} Verification</span>
-                                    </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                                 <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem>
-                                       {u.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
-                                        <span>{u.isBlocked ? 'Unblock' : 'Block'} User</span>
-                                    </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                                 <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        <span>Delete User</span>
-                                    </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    )}
-                    {/* The Dialogs and AlertDialogs for actions */}
-                    <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
-                          <DialogContent className="max-w-lg">
-                              <DialogHeader>
-                                  <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
-                              </DialogHeader>
-                              {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
-                          </DialogContent>
+                      <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
+                        <AlertDialog>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Manage {u.fullName.split(' ')[0]}</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DialogTrigger asChild>
+                                      <DropdownMenuItem onSelect={() => setSelectedUser(u)}>
+                                          <Edit className="mr-2 h-4 w-4" />
+                                          <span>Edit Profile</span>
+                                      </DropdownMenuItem>
+                                    </DialogTrigger>
+                                    <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem>
+                                            <Verified className="mr-2 h-4 w-4" />
+                                            <span>{isCurrentlyVerified ? 'Revoke' : 'Grant'} Verification</span>
+                                        </DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem>
+                                          {u.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
+                                            <span>{u.isBlocked ? 'Unblock' : 'Block'} User</span>
+                                        </DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                    <DropdownMenuSeparator />
+                                    <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            <span>Delete User</span>
+                                        </DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. Are you sure you want to proceed?
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => {
+                                    // This is a simple way to distinguish actions.
+                                    // A more robust solution might use state.
+                                    if(document.body.querySelector('.lucide-trash-2')) {
+                                      handleUserDelete(u.id);
+                                    } else if(document.body.querySelector('.lucide-ban') || document.body.querySelector('.lucide-user-check')) {
+                                      handleUserBlockToggle(u.id, !!u.isBlocked);
+                                    } else if (document.body.querySelector('.lucide-verified')) {
+                                      handleVerificationToggle(u.id, u);
+                                    }
+                                }}>Confirm</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                         <DialogContent className="max-w-lg">
+                            <DialogHeader>
+                                <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
+                            </DialogHeader>
+                            {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
+                        </DialogContent>
                       </Dialog>
-                      <AlertDialog>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirm Action</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>Confirm</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                       <AlertDialog>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}".</AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock' : 'Block'}</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                       <AlertDialog>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>This will permanently delete the user "{u.fullName}". This cannot be undone.</AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                    )}
                   </TableCell>
                   </TableRow>
               );})}</TableBody></Table></div></CardContent></Card>
