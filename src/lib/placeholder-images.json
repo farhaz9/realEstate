@@ -189,7 +189,7 @@
     {
       "id": "contact-hero",
       "description": "Modern office reception area",
-      "imageUrl": "https://ik.imagekit.io/farhaz/contact-hero_gL7A9yZfE.jpg",
+      "imageUrl": "https://images.unsplash.com/photo-1556761175-577380e0c1a8?q=80&w=2874&auto=format&fit=crop",
       "imageHint": "office reception"
     },
     {
@@ -273,7 +273,7 @@
     {
       "id": "why-us-4",
       "description": "Interior of a modern room with a wooden sideboard and a plant.",
-      "imageUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxraXRjaGVufGVufDB8fHx8MTc2NTY0MTIyMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxraXRjaGVufGVufDB8fHx8fDE3NjU2NDEyMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "room interior"
     }
   ]
