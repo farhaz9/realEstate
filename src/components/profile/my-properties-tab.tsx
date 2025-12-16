@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,6 +50,7 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '../ui/separator';
 import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import { BoostReachCard } from '../shared/boost-reach-card';
 
 declare const Razorpay: any;
 
@@ -856,57 +856,44 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
   );
 
   const renderMyProperties = () => (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        { (isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings) ? (
-            [...Array(3)].map((_, i) => (
-                <Card key={i}>
-                    <Skeleton className="h-56 w-full" />
-                    <CardContent className="p-6">
-                        <Skeleton className="h-5 w-2/3 mb-2" />
-                        <Skeleton className="h-4 w-1/2" />
-                    </CardContent>
-                </Card>
-            ))
-        ) : (
-            <>
-                <Card 
-                    className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
-                    onClick={handleAddPropertyClick}
-                >
-                    <CardContent className="p-6 text-center">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Plus className="h-8 w-8 text-primary" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
-                         <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
-                    </CardContent>
-                </Card>
-                <Card
-                    className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-primary to-accent text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30"
-                    onClick={handlePayment}
-                >
-                    <div className="absolute top-0 right-0 w-28 h-28">
-                        <div className="absolute transform rotate-45 bg-primary-dark text-center text-white font-semibold py-1 right-[-80px] top-[32px] w-[200px]">
-                            PREMIUM
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto transition-transform duration-300 group-hover:scale-110">
-                            <Gem className="h-8 w-8" />
-                        </div>
-                    </div>
-                    <h3 className="text-xl font-bold">Buy Listing Credit</h3>
-                    <p className="text-4xl font-extrabold mt-1">{formatPrice(listingPrice)}</p>
-                    <p className="text-sm opacity-80">per premium listing</p>
-                </Card>
-                
-                {properties?.map((property) => (
-                  <PropertyCard key={property.id} property={property} showActiveBadge={true} />
-                ))}
-             </>
-        )}
+    <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            { (isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings) ? (
+                [...Array(3)].map((_, i) => (
+                    <Card key={i}>
+                        <Skeleton className="h-56 w-full" />
+                        <CardContent className="p-6">
+                            <Skeleton className="h-5 w-2/3 mb-2" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </CardContent>
+                    </Card>
+                ))
+            ) : (
+                <>
+                    <Card 
+                        className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
+                        onClick={handleAddPropertyClick}
+                    >
+                        <CardContent className="p-6 text-center">
+                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Plus className="h-8 w-8 text-primary" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
+                             <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
+                        </CardContent>
+                    </Card>
+                    
+                    {properties?.map((property) => (
+                      <PropertyCard key={property.id} property={property} showActiveBadge={true} />
+                    ))}
+                 </>
+            )}
       </div>
+
+      {(!userProfile?.listingCredits || userProfile.listingCredits === 0) && (
+        <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
+      )}
+      
        <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -921,7 +908,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
   
   if (isEditing) {
@@ -935,7 +922,3 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
-
-    
-
-    
