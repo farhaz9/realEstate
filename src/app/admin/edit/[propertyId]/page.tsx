@@ -5,17 +5,20 @@ import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { Property } from '@/types';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useState } from 'react';
 
 export default function EditPropertyPage() {
   const params = useParams();
   const router = useRouter();
   const propertyId = params.propertyId as string;
   const firestore = useFirestore();
+  const [isDialogOpen, setIsDialogOpen] = useState(true);
 
   const propertyRef = useMemoFirebase(() => {
     if (!firestore || !propertyId) return null;
@@ -25,8 +28,17 @@ export default function EditPropertyPage() {
   const { data: property, isLoading, error } = useDoc<Property>(propertyRef);
   
   const handleSuccess = () => {
+    setIsDialogOpen(false);
     router.push('/admin');
   };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setIsDialogOpen(false);
+      // Add a small delay to allow the dialog to close before navigating
+      setTimeout(() => router.push('/admin'), 150);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -57,11 +69,13 @@ export default function EditPropertyPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <MyPropertiesTab 
             propertyToEdit={property} 
             onSuccess={handleSuccess}
         />
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
