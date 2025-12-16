@@ -592,7 +592,7 @@ export default function AdminPage() {
     setSelectedUser(null);
   }
 
-  const handleSort = (setter: React.Dispatch<React.SetStateAction<{ key: string, direction: string }>>, key: string) => {
+  const handleSort = (setter: React.Dispatch<React.SetStateAction<{ key: string; direction: string; }>>, key: string) => {
     setter(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' }));
   };
 
@@ -846,6 +846,10 @@ export default function AdminPage() {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Manage {u.fullName.split(' ')[0]}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
+                                     <DropdownMenuItem onSelect={() => router.push(`/admin/users/${u.id}`)}>
+                                        <Info className="mr-2 h-4 w-4" />
+                                        <span>View Details</span>
+                                    </DropdownMenuItem>
                                     <DialogTrigger asChild>
                                       <DropdownMenuItem onSelect={() => setSelectedUser(u)}>
                                           <Edit className="mr-2 h-4 w-4" />
@@ -1094,5 +1098,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
-    
