@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -170,6 +171,7 @@ export default function LoginPage() {
         const userDocRef = doc(firestore, 'users', user.uid);
         
         const username = generateUsername(fullName, user.email || '');
+        const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(category);
 
         const userData: any = {
             id: user.uid,
@@ -184,6 +186,7 @@ export default function LoginPage() {
             orders: [],
             listingCredits: 1,
             isBlocked: false,
+            isFeatured: isProfessional,
         };
         
         if (category === 'vendor') {
@@ -243,6 +246,7 @@ export default function LoginPage() {
           orders: [],
           listingCredits: 1,
           isBlocked: false,
+          isFeatured: false,
         });
          toast({
           title: 'Sign Up Successful!',
@@ -466,5 +470,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    

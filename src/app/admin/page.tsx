@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -643,7 +643,7 @@ export default function AdminPage() {
   const handleFeaturedToggle = (user: User) => {
     if (!firestore) return;
     const userRef = doc(firestore, 'users', user.id);
-    const isCurrentlyFeatured = !!user.isFeatured;
+    const isCurrentlyFeatured = user.isFeatured === undefined ? true : user.isFeatured;
     const updateData = { isFeatured: !isCurrentlyFeatured };
 
     updateDocumentNonBlocking(userRef, updateData);
@@ -1002,7 +1002,7 @@ export default function AdminPage() {
                   <TableCell>
                       {isProfessional && !isAdminUser && (
                         <Switch
-                          checked={u.isFeatured}
+                          checked={u.isFeatured === undefined ? true : u.isFeatured}
                           onCheckedChange={() => handleFeaturedToggle(u)}
                         />
                       )}
@@ -1290,5 +1290,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
-    
