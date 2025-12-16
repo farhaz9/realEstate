@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -39,10 +40,17 @@ export default function ProfessionalsPage() {
     let q = collection(firestore, 'users');
 
     const professionalCategories = ['real-estate-agent', 'interior-designer', 'vendor'];
+    
+    let queryConstraints = [where('isFeatured', '==', true)];
+
     if (activeTab !== 'all' && professionalCategories.includes(activeTab)) {
-      return query(q, where('category', '==', activeTab));
+      queryConstraints.push(where('category', '==', activeTab));
+    } else {
+      queryConstraints.push(where('category', 'in', professionalCategories));
     }
-    return query(q, where('category', 'in', professionalCategories));
+    
+    return query(q, ...queryConstraints);
+
   }, [firestore, activeTab]);
 
   const { data: professionals, isLoading, error } = useCollection<User>(professionalsQuery);

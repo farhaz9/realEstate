@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
@@ -19,6 +20,7 @@ export function FeaturedProfessionals() {
     return query(
         collection(firestore, 'users'), 
         where('category', 'in', ['real-estate-agent', 'interior-designer']),
+        where('isFeatured', '==', true),
         limit(8)
     );
   }, [firestore]);

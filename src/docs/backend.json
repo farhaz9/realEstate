@@ -95,6 +95,10 @@
             "type": "boolean",
             "description": "Indicates if the user's account is blocked."
         },
+        "isFeatured": {
+            "type": "boolean",
+            "description": "Indicates if the professional should be featured on public pages."
+        },
         "rank": {
             "type": "number",
             "description": "A number used to manually rank professionals for display order."

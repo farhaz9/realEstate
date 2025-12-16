@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
@@ -639,6 +640,20 @@ export default function AdminPage() {
     updateDocumentNonBlocking(userRef, updateData);
   };
   
+  const handleFeaturedToggle = (user: User) => {
+    if (!firestore) return;
+    const userRef = doc(firestore, 'users', user.id);
+    const isCurrentlyFeatured = !!user.isFeatured;
+    const updateData = { isFeatured: !isCurrentlyFeatured };
+
+    updateDocumentNonBlocking(userRef, updateData);
+    toast({
+      title: `Professional ${!isCurrentlyFeatured ? 'Featured' : 'Unfeatured'}`,
+      description: `${user.fullName} will ${!isCurrentlyFeatured ? 'now appear' : 'no longer appear'} on public pages.`,
+      variant: 'success',
+    });
+  };
+  
   const handleUpdateCredits = () => {
     if (!firestore || !selectedUser) return;
     const userRef = doc(firestore, 'users', selectedUser.id);
@@ -925,9 +940,10 @@ export default function AdminPage() {
                   <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead>Feature</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
-              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()) || isAdminUser; return (
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()) || isAdminUser; const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(u.category); return (
                   <TableRow key={u.id} className={cn(u.isBlocked ? "bg-destructive/10" : "", isAdminUser && "bg-primary/10")}>
                     <TableCell>
                       <Link href={`/admin/users/${u.id}`} className="flex items-center gap-3 group">
@@ -982,6 +998,14 @@ export default function AdminPage() {
                               </DialogContent>
                           )}
                       </Dialog>
+                  </TableCell>
+                  <TableCell>
+                      {isProfessional && !isAdminUser && (
+                        <Switch
+                          checked={u.isFeatured}
+                          onCheckedChange={() => handleFeaturedToggle(u)}
+                        />
+                      )}
                   </TableCell>
                   <TableCell>
                       {u.isBlocked ? (

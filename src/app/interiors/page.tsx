@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -43,7 +44,8 @@ export default function InteriorsPage() {
     if (!firestore) return null;
     return query(
       collection(firestore, 'users'), 
-      where('category', '==', 'interior-designer')
+      where('category', '==', 'interior-designer'),
+      where('isFeatured', '==', true)
     );
   }, [firestore]);
 

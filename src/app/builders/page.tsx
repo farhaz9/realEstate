@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -19,7 +20,8 @@ export default function ProfessionalsPage() {
     if (!firestore) return null;
     return query(
       collection(firestore, 'users'), 
-      where('category', 'in', ['real-estate-agent', 'interior-designer'])
+      where('category', 'in', ['real-estate-agent', 'interior-designer']),
+      where('isFeatured', '==', true)
     );
   }, [firestore]);
 
@@ -100,3 +102,4 @@ export default function ProfessionalsPage() {
     </>
   );
 }
+
