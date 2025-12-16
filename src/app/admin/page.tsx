@@ -629,7 +629,7 @@ export default function AdminPage() {
     }
     return (
       <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="properties">Properties</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
@@ -665,15 +665,15 @@ export default function AdminPage() {
                   </div>
               </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead>Property</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead>Owner</TableHead>
+                  <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="hidden lg:table-cell">Owner</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'status')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => { const owner = users?.find(u => u.id === property.userId); return (
                   <TableRow key={property.id}>
                       <TableCell className="font-medium"><div className="flex items-center gap-3"><Avatar className="h-10 w-10 rounded-md"><AvatarImage src={property.imageUrls?.[0]} alt={property.title} /><AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback></Avatar><div className="truncate"><p className="font-semibold truncate">{property.title}</p><p className="text-xs text-muted-foreground truncate">{property.location.address}</p></div></div></TableCell>
-                      <TableCell>{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
-                      <TableCell>{owner?.fullName || 'Unknown'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{owner?.fullName || 'Unknown'}</TableCell>
                       <TableCell><Badge variant={property.status === 'approved' ? 'success' : property.status === 'rejected' ? 'destructive' : 'secondary'} className="capitalize">{property.status}</Badge></TableCell>
                       <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
@@ -701,15 +701,15 @@ export default function AdminPage() {
           <TabsContent value="users" className="mt-6">
               <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'fullName')}><div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setUserSort, 'category')}><div className="flex items-center gap-2">Role <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort(setUserSort, 'rank')}><div className="flex items-center gap-2">Rank <ArrowUpDown className="h-4 w-4" /></div></TableHead>
+                  <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date(); return (
-                  <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground">{u.phone}</p></div></div></TableCell>
-                  <TableCell>{categoryDisplay[u.category] || u.category}</TableCell>
-                  <TableCell>
+                  <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground md:hidden">{categoryDisplay[u.category] || u.category}</p></div></div></TableCell>
+                  <TableCell className="hidden sm:table-cell">{categoryDisplay[u.category] || u.category}</TableCell>
+                  <TableCell className="hidden lg:table-cell">
                       <Dialog>
                           <DialogTrigger asChild>
                               <Button variant="ghost" onClick={() => { setSelectedUser(u); setRank(u.rank ?? 0); }}>{u.rank ?? 'N/A'}</Button>
@@ -727,7 +727,7 @@ export default function AdminPage() {
                           )}
                       </Dialog>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden lg:table-cell">
                       <Dialog>
                           <DialogTrigger asChild>
                               <Button variant="ghost" onClick={() => { setSelectedUser(u); setCreditAmount(u.listingCredits ?? 0); }}><Coins className="mr-2 h-4 w-4 text-amber-500" />{u.listingCredits ?? 0}</Button>
@@ -785,16 +785,16 @@ export default function AdminPage() {
                           <Table>
                               <TableHeader>
                                   <TableRow>
-                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'paymentId')}>
+                                      <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setOrderSort, 'paymentId')}>
                                           <div className="flex items-center gap-2">Payment ID <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
                                       <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'userName')}>
                                           <div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
-                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'date')}>
+                                      <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setOrderSort, 'date')}>
                                           <div className="flex items-center gap-2">Date <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
-                                      <TableHead>Description</TableHead>
+                                      <TableHead className="hidden lg:table-cell">Description</TableHead>
                                       <TableHead className="text-right cursor-pointer" onClick={() => handleSort(setOrderSort, 'amount')}>
                                           <div className="flex items-center justify-end gap-2">Amount <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
@@ -804,15 +804,15 @@ export default function AdminPage() {
                               <TableBody>
                                   {sortedAndFilteredOrders.map((order, index) => (
                                       <TableRow key={`${order.paymentId}-${index}`}>
-                                          <TableCell className="font-mono text-xs">{order.paymentId}</TableCell>
+                                          <TableCell className="font-mono text-xs hidden md:table-cell">{order.paymentId}</TableCell>
                                           <TableCell>
                                               <div className="font-medium">{order.userName}</div>
                                               <div className="text-sm text-muted-foreground">{order.userEmail}</div>
                                           </TableCell>
-                                          <TableCell>
+                                          <TableCell className="hidden sm:table-cell">
                                               {order.date?.toDate ? format(order.date.toDate(), 'PPP p') : 'N/A'}
                                           </TableCell>
-                                          <TableCell>{order.description}</TableCell>
+                                          <TableCell className="hidden lg:table-cell">{order.description}</TableCell>
                                           <TableCell className="text-right font-semibold">{formatPrice(order.amount)}</TableCell>
                                           <TableCell className="text-right">
                                                <Dialog>
