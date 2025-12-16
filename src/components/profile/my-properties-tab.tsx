@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -101,9 +102,11 @@ interface ImagePreview {
   size: number;
 }
 
-interface MyPropertiesTabProps {
+export interface PropertyFormProps {
   propertyToEdit?: Property | null;
   onSuccess?: () => void;
+  onCancel?: () => void;
+  isOpen: boolean;
 }
 
 const defaultFormData: Partial<PropertyFormValues> = {
@@ -124,15 +127,13 @@ const defaultFormData: Partial<PropertyFormValues> = {
   amenities: 'Park, Gym, Reserved Parking'
 };
 
-export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabProps) {
-  const { user, isUserLoading } = useUser();
+export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: PropertyFormProps) {
+  const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -144,81 +145,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     return doc(firestore, 'app_settings', 'config');
   }, [firestore]);
 
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<User>(userDocRef);
-  const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
-
-  const userPropertiesQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
-  }, [firestore, user]);
-
-  const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
+  const { data: appSettings } = useDoc<AppSettings>(appSettingsRef);
   
   const isEditing = !!propertyToEdit;
-
-  const listingPrice = appSettings?.listingPrice ?? 99;
   const listingValidityDays = appSettings?.listingValidityDays ?? 90;
-
-
-  const handlePayment = async () => {
-    if (typeof window === 'undefined' || !(window as any).Razorpay) {
-      toast({
-        title: "Payment Gateway Error",
-        description: "Razorpay is not available. Please check your connection and try again.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: (listingPrice * 100).toString(),
-        currency: "INR",
-        name: "Falcon Axe Homes Property Listing",
-        description: "One-time fee for one property listing.",
-        image: "/logo.png",
-        handler: function (response: any){
-            toast({
-                title: "Payment Successful!",
-                description: "You have received 1 listing credit.",
-                variant: "success",
-            });
-            if(userDocRef) {
-              const newOrder = {
-                paymentId: response.razorpay_payment_id,
-                amount: listingPrice,
-                date: new Date(),
-                description: "1 Listing Credit Purchase",
-              };
-              updateDocumentNonBlocking(userDocRef, {
-                orders: arrayUnion(newOrder),
-                listingCredits: increment(1)
-              });
-            }
-            setIsPaymentAlertOpen(false);
-            if (!isFormOpen) { // Don't open form if payment was triggered from "buy" card
-               setIsFormOpen(true); 
-            }
-        },
-        prefill: {
-            name: userProfile?.fullName,
-            email: userProfile?.email,
-            contact: userProfile?.phone
-        },
-        theme: {
-            color: "#6D28D9"
-        }
-    };
-    const rzp = new Razorpay(options);
-    rzp.open();
-  }
-
-
-  useEffect(() => {
-    if(isEditing) {
-        setIsFormOpen(true);
-    }
-  }, [isEditing]);
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
@@ -249,14 +179,11 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         amenities: propertyToEdit.amenities?.join(', ') || '',
       });
       setImagePreviews(propertyToEdit.imageUrls?.map(url => ({ url, name: 'Uploaded Image', size: 0 })) || []);
-    } else if (isFormOpen && !isEditing) { 
+    } else { 
         form.reset(defaultFormData);
         setImagePreviews([]);
-    } else if (!isFormOpen) {
-        form.reset({});
-        setImagePreviews([]);
     }
-  }, [isEditing, propertyToEdit, form, isFormOpen]);
+  }, [isEditing, propertyToEdit, form, isOpen]);
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -275,7 +202,6 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
       }
       
       const filesToProcess = Array.from(files).slice(0, availableSlots);
-
       const validFiles = filesToProcess.filter(file => file.size <= 1 * 1024 * 1024);
       
       if (validFiles.length < filesToProcess.length) {
@@ -423,19 +349,10 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     }
 
     setIsUploading(false);
-    setIsFormOpen(false);
     if(onSuccess) {
       onSuccess();
     }
   }
-  
-  const handleAddPropertyClick = () => {
-    if (userProfile && userProfile.listingCredits && userProfile.listingCredits > 0) {
-      setIsFormOpen(true);
-    } else {
-      setIsPaymentAlertOpen(true);
-    }
-  };
 
   const NumberInputStepper = ({ field }: { field: any }) => {
     const value = field.value || 0;
@@ -468,11 +385,16 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
             </Button>
         </div>
     );
-};
+  };
+  
+  const handleOpenChange = (open: boolean) => {
+    if (!open && onCancel) {
+      onCancel();
+    }
+  }
 
-
-  const renderAddPropertyForm = () => (
-     <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+  return (
+     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{isEditing ? "Edit Property" : "Add a New Property"}</DialogTitle>
@@ -840,7 +762,7 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     </div>
                     
                     <DialogFooter className="pt-8">
-                    <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)} disabled={isUploading || form.formState.isSubmitting}>
+                    <Button type="button" variant="outline" onClick={onCancel} disabled={isUploading || form.formState.isSubmitting}>
                         Cancel
                     </Button>
                     <Button type="submit" disabled={isUploading || form.formState.isSubmitting}>
@@ -854,6 +776,105 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
         </DialogContent>
      </Dialog>
   );
+}
+
+export function MyPropertiesTab() {
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
+  
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const appSettingsRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return doc(firestore, 'app_settings', 'config');
+  }, [firestore]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<User>(userDocRef);
+  const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
+
+  const userPropertiesQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(collection(firestore, 'properties'), where('userId', '==', user.uid));
+  }, [firestore, user]);
+
+  const { data: properties, isLoading: arePropertiesLoading } = useCollection<Property>(userPropertiesQuery);
+  
+  const listingPrice = appSettings?.listingPrice ?? 99;
+  
+  const handlePayment = async () => {
+    if (typeof window === 'undefined' || !(window as any).Razorpay) {
+      toast({
+        title: "Payment Gateway Error",
+        description: "Razorpay is not available. Please check your connection and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: (listingPrice * 100).toString(),
+        currency: "INR",
+        name: "Falcon Axe Homes Property Listing",
+        description: "One-time fee for one property listing.",
+        image: "/logo.png",
+        handler: function (response: any){
+            toast({
+                title: "Payment Successful!",
+                description: "You have received 1 listing credit.",
+                variant: "success",
+            });
+            if(userDocRef) {
+              const newOrder = {
+                paymentId: response.razorpay_payment_id,
+                amount: listingPrice,
+                date: new Date(),
+                description: "1 Listing Credit Purchase",
+              };
+              updateDocumentNonBlocking(userDocRef, {
+                orders: arrayUnion(newOrder),
+                listingCredits: increment(1)
+              });
+            }
+            setIsPaymentAlertOpen(false);
+            if (!isFormOpen) { 
+               setIsFormOpen(true); 
+            }
+        },
+        prefill: {
+            name: userProfile?.fullName,
+            email: userProfile?.email,
+            contact: userProfile?.phone
+        },
+        theme: {
+            color: "#6D28D9"
+        }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+
+  const handleAddPropertyClick = () => {
+    if (userProfile && userProfile.listingCredits && userProfile.listingCredits > 0) {
+      setIsFormOpen(true);
+    } else {
+      setIsPaymentAlertOpen(true);
+    }
+  };
+
+  const handleFormSuccess = () => {
+    setIsFormOpen(false);
+  };
+  
+  const handleFormCancel = () => {
+    setIsFormOpen(false);
+  }
 
   const renderMyProperties = () => (
     <div className="space-y-8">
@@ -911,14 +932,14 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   );
   
-  if (isEditing) {
-    return renderAddPropertyForm();
-  }
-
   return (
     <div className="space-y-8">
         {renderMyProperties()}
-        {renderAddPropertyForm()}
+        <PropertyForm 
+          isOpen={isFormOpen}
+          onSuccess={handleFormSuccess}
+          onCancel={handleFormCancel}
+        />
     </div>
   )
 }
