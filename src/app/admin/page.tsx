@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -25,6 +25,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -629,15 +637,13 @@ export default function AdminPage() {
     return (
       <Tabs defaultValue="dashboard" className="w-full">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <TabsList className="w-full sm:w-auto overflow-x-auto sm:overflow-visible hide-scrollbar">
-            <div className="flex flex-nowrap sm:w-auto">
-              <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
-              <TabsTrigger value="properties"><Building className="md:hidden" /><span className="hidden md:inline">Properties</span></TabsTrigger>
-              <TabsTrigger value="users"><Users className="md:hidden" /><span className="hidden md:inline">Users</span></TabsTrigger>
-              <TabsTrigger value="orders"><Receipt className="md:hidden" /><span className="hidden md:inline">Orders</span></TabsTrigger>
-              <TabsTrigger value="notifications"><Megaphone className="md:hidden" /><span className="hidden md:inline">Notifications</span></TabsTrigger>
-              <TabsTrigger value="settings"><Settings className="md:hidden" /><span className="hidden md:inline">Settings</span></TabsTrigger>
-            </div>
+          <TabsList className="grid w-full grid-cols-3 sm:flex sm:w-auto h-auto">
+            <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
+            <TabsTrigger value="properties"><Building className="md:hidden" /><span className="hidden md:inline">Properties</span></TabsTrigger>
+            <TabsTrigger value="users"><Users className="md:hidden" /><span className="hidden md:inline">Users</span></TabsTrigger>
+            <TabsTrigger value="orders"><Receipt className="md:hidden" /><span className="hidden md:inline">Orders</span></TabsTrigger>
+            <TabsTrigger value="notifications"><Megaphone className="md:hidden" /><span className="hidden md:inline">Notifications</span></TabsTrigger>
+            <TabsTrigger value="settings"><Settings className="md:hidden" /><span className="hidden md:inline">Settings</span></TabsTrigger>
           </TabsList>
           <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
         </div>
@@ -735,7 +741,7 @@ export default function AdminPage() {
                           </div>
                       </TableCell>
                   </TableRow>
-              )})}</TableBody></Table></div></CardContent></Card>
+              );})}</TableBody></Table></div></CardContent></Card>
           </TabsContent>
           <TabsContent value="users" className="mt-6">
               <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle><div className="relative mt-4"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" /><Input placeholder="Search by name, email, or phone..." className="pl-10" value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} /></div></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
@@ -745,13 +751,30 @@ export default function AdminPage() {
                   <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort(setUserSort, 'listingCredits')}><div className="flex items-center gap-2">Credits <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
-              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isCurrentlyVerified = u.verifiedUntil && u.verifiedUntil.toDate() > new Date(); return (
-                  <TableRow key={u.id} className={u.isBlocked ? "bg-destructive/10" : ""}><TableCell><div className="flex items-center gap-3"><Avatar className="h-10 w-10"><AvatarImage src={u.photoURL} alt={u.fullName} /><AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><p className="font-semibold">{u.fullName}</p>{isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500" />}</div><p className="text-xs text-muted-foreground">{u.email}</p><p className="text-xs text-muted-foreground md:hidden">{categoryDisplay[u.category] || u.category}</p></div></div></TableCell>
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()) || isAdminUser; return (
+                  <TableRow key={u.id} className={cn(u.isBlocked ? "bg-destructive/10" : "", isAdminUser && "bg-primary/10")}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={u.photoURL} alt={u.fullName} />
+                          <AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold">{u.fullName}</p>
+                            {isAdminUser && <Badge variant="destructive">Admin</Badge>}
+                            {isCurrentlyVerified && !isAdminUser && <Verified className="h-4 w-4 text-blue-500" />}
+                          </div>
+                          <p className="text-xs text-muted-foreground">{u.email}</p>
+                          <p className="text-xs text-muted-foreground md:hidden">{categoryDisplay[u.category] || u.category}</p>
+                        </div>
+                      </div>
+                    </TableCell>
                   <TableCell className="hidden sm:table-cell">{categoryDisplay[u.category] || u.category}</TableCell>
                   <TableCell className="hidden lg:table-cell">
                       <Dialog>
                           <DialogTrigger asChild>
-                              <Button variant="ghost" onClick={() => { setSelectedUser(u); setRank(u.rank ?? 0); }}>{u.rank ?? 'N/A'}</Button>
+                              <Button variant="ghost" onClick={() => { setSelectedUser(u); setRank(u.rank ?? 0); }} disabled={isAdminUser}>{isAdminUser ? 'N/A' : u.rank ?? 'N/A'}</Button>
                           </DialogTrigger>
                           {selectedUser?.id === u.id && (
                               <DialogContent>
@@ -769,7 +792,7 @@ export default function AdminPage() {
                   <TableCell className="hidden lg:table-cell">
                       <Dialog>
                           <DialogTrigger asChild>
-                              <Button variant="ghost" onClick={() => { setSelectedUser(u); setCreditAmount(u.listingCredits ?? 0); }}><Coins className="mr-2 h-4 w-4 text-amber-500" />{u.listingCredits ?? 0}</Button>
+                              <Button variant="ghost" onClick={() => { setSelectedUser(u); setCreditAmount(u.listingCredits ?? 0); }} disabled={isAdminUser}><Coins className="mr-2 h-4 w-4 text-amber-500" />{isAdminUser ? 1000 : (u.listingCredits ?? 0)}</Button>
                           </DialogTrigger>
                           {selectedUser?.id === u.id && (
                               <DialogContent>
@@ -785,13 +808,44 @@ export default function AdminPage() {
                       </Dialog>
                   </TableCell>
                   <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
-                  <TableCell className="text-right">{u.email !== ADMIN_EMAIL && (<div className="flex items-center justify-end gap-1">
-                      <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
-                          <DialogTrigger asChild>
-                              <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(u); setIsEditUserDialogOpen(true); }}>
-                                  <Edit className="h-4 w-4" />
-                              </Button>
-                          </DialogTrigger>
+                  <TableCell className="text-right">
+                    {!isAdminUser && (
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Manage User</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onSelect={() => { setSelectedUser(u); setIsEditUserDialogOpen(true); }}>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    <span>Edit Profile</span>
+                                </DropdownMenuItem>
+                                <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem>
+                                        <Verified className="mr-2 h-4 w-4" />
+                                        <span>{isCurrentlyVerified ? 'Revoke' : 'Grant'} Verification</span>
+                                    </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                 <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem>
+                                       {u.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
+                                        <span>{u.isBlocked ? 'Unblock' : 'Block'} User</span>
+                                    </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                 <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        <span>Delete User</span>
+                                    </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+                    {/* The Dialogs and AlertDialogs for actions */}
+                    <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
                           <DialogContent className="max-w-lg">
                               <DialogHeader>
                                   <DialogTitle>Edit User: {selectedUser?.fullName}</DialogTitle>
@@ -799,11 +853,47 @@ export default function AdminPage() {
                               {selectedUser && <EditUserForm user={selectedUser} onSuccess={() => setIsEditUserDialogOpen(false)} />}
                           </DialogContent>
                       </Dialog>
-                      <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={isCurrentlyVerified ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}><Verified className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Confirm Verification</AlertDialogTitle><AlertDialogDescription>Do you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}? {isCurrentlyVerified ? ' This will remove their badge immediately.' : ' This will grant them a badge for one year.'}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>{isCurrentlyVerified ? 'Revoke Verification' : 'Grant Verification'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                      <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className={u.isBlocked ? "text-green-600 hover:text-green-700" : "text-orange-600 hover:text-orange-700"}>{u.isBlocked ? <UserCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}". Blocked users cannot log in.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock User' : 'Block User'}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                      <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle><AlertDialogDescription>This action will permanently delete the user "{u.fullName}" and all associated data. This cannot be undone.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete User</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                  </div>)}</TableCell></TableRow>
-              )})}</TableBody></Table></div></CardContent></Card>
+                      <AlertDialog>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to {isCurrentlyVerified ? 'revoke' : 'grant'} Pro Verified status for {u.fullName}?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleVerificationToggle(u.id, u)}>Confirm</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                       <AlertDialog>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>This action will {u.isBlocked ? 'unblock' : 'block'} the user "{u.fullName}".</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleUserBlockToggle(u.id, !!u.isBlocked)}>{u.isBlocked ? 'Unblock' : 'Block'}</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                       <AlertDialog>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>This will permanently delete the user "{u.fullName}". This cannot be undone.</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleUserDelete(u.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                  </TableCell>
+                  </TableRow>
+              );})}</TableBody></Table></div></CardContent></Card>
           </TabsContent>
           <TabsContent value="orders" className="mt-6">
               <Card>
@@ -1003,3 +1093,4 @@ export default function AdminPage() {
     </div>
   );
 }
+
