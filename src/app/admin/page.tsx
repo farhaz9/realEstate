@@ -813,27 +813,31 @@ export default function AdminPage() {
                             <CardDescription>Send a message to your users. (UI only, no sending logic yet).</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <RadioGroup defaultValue="all">
-                                <FormLabel>Send to:</FormLabel>
-                                <div className="flex items-center space-x-4 pt-2">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="all" id="all-users" />
-                                        <Label htmlFor="all-users">All Users</Label>
+                           <Form {...useForm()}>
+                              <form>
+                                <RadioGroup defaultValue="all">
+                                    <FormLabel>Send to:</FormLabel>
+                                    <div className="flex items-center space-x-4 pt-2">
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="all" id="all-users" />
+                                            <Label htmlFor="all-users">All Users</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="verified" id="verified-users" />
+                                            <Label htmlFor="verified-users">Verified Dealers</Label>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="verified" id="verified-users" />
-                                        <Label htmlFor="verified-users">Verified Dealers</Label>
-                                    </div>
-                                </div>
-                            </RadioGroup>
-                             <div>
-                                <Label htmlFor="notification-message">Message</Label>
-                                <Textarea id="notification-message" placeholder="Type your notification message here..." className="mt-2" />
-                             </div>
-                             <Button>
-                                <Send className="mr-2 h-4 w-4" />
-                                Send Notification
-                             </Button>
+                                </RadioGroup>
+                                 <div>
+                                    <Label htmlFor="notification-message">Message</Label>
+                                    <Textarea id="notification-message" placeholder="Type your notification message here..." className="mt-2" />
+                                 </div>
+                                 <Button>
+                                    <Send className="mr-2 h-4 w-4" />
+                                    Send Notification
+                                 </Button>
+                              </form>
+                           </Form>
                         </CardContent>
                     </Card>
                     <AnnouncementForm settings={appSettings} />
@@ -895,5 +899,3 @@ export default function AdminPage() {
     </>
   );
 }
-
-    
