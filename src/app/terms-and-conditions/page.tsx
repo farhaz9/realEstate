@@ -1,9 +1,17 @@
+'use client';
 
 import { PageHero } from "@/components/shared/page-hero";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function TermsAndConditionsPage() {
+  const [lastUpdated, setLastUpdated] = useState('');
+
+  useEffect(() => {
+    setLastUpdated(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
+
   return (
     <div>
       <PageHero
@@ -23,7 +31,7 @@ export default function TermsAndConditionsPage() {
             </div>
           </CardHeader>
           <CardContent className="prose prose-lg max-w-none">
-            <p><strong>Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></p>
+            {lastUpdated && <p><strong>Last Updated: {lastUpdated}</strong></p>}
 
             <h2>1. Agreement to Terms</h2>
             <p>
@@ -67,3 +75,6 @@ export default function TermsAndConditionsPage() {
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+}

@@ -1,8 +1,17 @@
+'use client';
+
 import { PageHero } from "@/components/shared/page-hero";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleDollarSign } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function RefundPolicyPage() {
+  const [lastUpdated, setLastUpdated] = useState('');
+
+  useEffect(() => {
+    setLastUpdated(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
+
   return (
     <div>
       <PageHero
@@ -22,7 +31,7 @@ export default function RefundPolicyPage() {
             </div>
           </CardHeader>
           <CardContent className="prose prose-lg max-w-none">
-            <p><strong>Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></p>
+            {lastUpdated && <p><strong>Last Updated: {lastUpdated}</strong></p>}
             
             <h2>1. General Policy</h2>
             <p>
