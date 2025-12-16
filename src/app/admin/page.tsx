@@ -61,6 +61,7 @@ import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -781,21 +782,21 @@ export default function AdminPage() {
               </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()) || isAdminUser; return (
                   <TableRow key={u.id} className={cn(u.isBlocked ? "bg-destructive/10" : "", isAdminUser && "bg-primary/10")}>
                     <TableCell>
-                      <div className="flex items-center gap-3">
+                      <Link href={`/admin/users/${u.id}`} className="flex items-center gap-3 group">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={u.photoURL} alt={u.fullName} />
                           <AvatarFallback>{u.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                         </Avatar>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-semibold">{u.fullName}</p>
+                            <p className="font-semibold group-hover:underline">{u.fullName}</p>
                             {isAdminUser && <Badge variant="destructive">Admin</Badge>}
                             {isCurrentlyVerified && !isAdminUser && <Verified className="h-4 w-4 text-blue-500" />}
                           </div>
                           <p className="text-xs text-muted-foreground">{u.email}</p>
                           <p className="text-xs text-muted-foreground md:hidden">{categoryDisplay[u.category] || u.category}</p>
                         </div>
-                      </div>
+                      </Link>
                     </TableCell>
                   <TableCell className="hidden sm:table-cell">{categoryDisplay[u.category] || u.category}</TableCell>
                   <TableCell className="hidden lg:table-cell">
@@ -1093,3 +1094,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+    
