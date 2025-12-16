@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
 import type { User, Property, Order } from '@/types';
@@ -94,6 +94,7 @@ function UserDetailSkeleton() {
 
 export default function UserDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const userId = params.userId as string;
   const firestore = useFirestore();
 
@@ -137,8 +138,8 @@ export default function UserDetailPage() {
     <div className="bg-muted/40 min-h-screen">
         <div className="container mx-auto px-4 py-8">
             <div className="mb-6">
-                <Button asChild variant="ghost" size="sm">
-                    <Link href="/admin"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Admin</Link>
+                <Button variant="ghost" size="sm" onClick={() => router.back()}>
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
             </div>
             
@@ -261,5 +262,3 @@ export default function UserDetailPage() {
     </div>
   );
 }
-
-    
