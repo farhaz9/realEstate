@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Banknote, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -52,6 +52,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -75,6 +76,7 @@ const notificationFormSchema = z.object({
     message: z.string().min(1, 'Notification message cannot be empty.'),
 });
 type NotificationFormValues = z.infer<typeof notificationFormSchema>;
+
 
 function AnnouncementForm({ settings }: { settings: AppSettings | null }) {
     const firestore = useFirestore();
@@ -373,17 +375,13 @@ export default function AdminPage() {
   
   const stats = useMemo(() => {
     if (!properties || !users) return null;
-    const propertiesForSale = properties.filter(p => p.listingType === 'sale').length;
-    const propertiesForRent = properties.filter(p => p.listingType === 'rent').length;
-    const verifiedUsers = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date()).length;
+    const verifiedUsersCount = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date()).length;
     const totalRevenue = allOrders.reduce((acc, order) => acc + order.amount, 0);
 
     return {
-      totalProperties: properties.length,
       totalUsers: users.length,
-      propertiesForSale,
-      propertiesForRent,
-      verifiedUsers,
+      totalProperties: properties.length,
+      verifiedUsers: verifiedUsersCount,
       totalRevenue,
     };
   }, [properties, users, allOrders]);
@@ -615,7 +613,7 @@ export default function AdminPage() {
   };
 
   const renderContent = () => {
-    if (isUserLoading || isLoadingProperties || isLoadingUsers) {
+    if (isUserLoading) {
       return <div className="flex items-center justify-center py-16"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
     }
     if (!isAuthorizedAdmin) {
@@ -630,38 +628,74 @@ export default function AdminPage() {
     }
     return (
       <Tabs defaultValue="dashboard" className="w-full">
-          <div className="overflow-x-auto hide-scrollbar">
-            <TabsList className={cn(
-              "grid w-full",
-              "sm:inline-flex", // Use inline-flex for larger screens
-              "grid-cols-[repeat(6,min-content)] sm:grid-cols-6" // Ensure mobile has min-content columns
-            )}>
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="properties">Properties</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
-              <TabsTrigger value="orders">Orders</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
-            </TabsList>
+          <div className="flex justify-between items-center mb-6">
+              <TabsList className={cn(
+                  "grid w-full max-w-sm",
+                  "sm:inline-flex",
+                  "grid-cols-3"
+              )}>
+                  <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
+                  <TabsTrigger value="properties"><Building className="md:hidden" /><span className="hidden md:inline">Properties</span></TabsTrigger>
+                  <TabsTrigger value="users"><Users className="md:hidden" /><span className="hidden md:inline">Users</span></TabsTrigger>
+                  <TabsTrigger value="orders"><Banknote className="md:hidden" /><span className="hidden md:inline">Orders</span></TabsTrigger>
+                  <TabsTrigger value="notifications"><Megaphone className="md:hidden" /><span className="hidden md:inline">Notifications</span></TabsTrigger>
+                  <TabsTrigger value="settings"><Settings className="md:hidden" /><span className="hidden md:inline">Settings</span></TabsTrigger>
+              </TabsList>
+              <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
           </div>
-          <TabsContent value="dashboard" className="mt-6">
-              <div className="space-y-8">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                      <div className="lg:col-span-1">
-                          <Card><CardHeader><CardTitle>User Distribution</CardTitle></CardHeader><CardContent>{users ? <UserDistributionChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}</CardContent></Card>
-                      </div>
-                      <div className="lg:col-span-2">
-                          <Card><CardHeader><CardTitle>Platform Metrics</CardTitle></CardHeader><CardContent><div className="grid gap-6 grid-cols-2 md:grid-cols-3">
-                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Building className="h-8 w-8 text-primary mb-2" /><p className="text-3xl font-bold">{stats?.totalProperties ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Properties</p></div>
-                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Users className="h-8 w-8 text-blue-500 mb-2" /><p className="text-3xl font-bold">{stats?.totalUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Total Users</p></div>
-                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Banknote className="h-8 w-8 text-green-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForSale ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Sale</p></div>
-                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><Tag className="h-8 w-8 text-orange-500 mb-2" /><p className="text-3xl font-bold">{stats?.propertiesForRent ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">For Rent</p></div>
-                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><UserRoundCheck className="h-8 w-8 text-indigo-500 mb-2" /><p className="text-3xl font-bold">{stats?.verifiedUsers ?? <Loader2 className="h-7 w-7 animate-spin" />}</p><p className="text-sm text-muted-foreground">Verified Users</p></div>
-                              <div className="flex flex-col items-center p-4 rounded-lg bg-secondary"><BadgeDollarSign className="h-8 w-8 text-rose-500 mb-2" /><p className="text-3xl font-bold">{formatPrice(stats?.totalRevenue ?? 0)}</p><p className="text-sm text-muted-foreground">Total Revenue</p></div>
-                          </div></CardContent></Card>
-                      </div>
-                  </div>
-              </div>
+          <TabsContent value="dashboard" className="mt-6 space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Card className="relative overflow-hidden">
+                        <CardHeader>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">TOTAL USERS</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {isLoadingUsers ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.totalUsers}</p>}
+                            <p className="text-xs text-muted-foreground">New registrations this month</p>
+                            <Users className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
+                        </CardContent>
+                    </Card>
+                    <Card className="relative overflow-hidden">
+                        <CardHeader>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">TOTAL PROPERTIES</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {isLoadingProperties ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.totalProperties}</p>}
+                            <p className="text-xs text-muted-foreground">Listings added this month</p>
+                             <Building className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
+                        </CardContent>
+                    </Card>
+                    <Card className="relative overflow-hidden">
+                        <CardHeader>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">ACTIVE SUBSCRIPTIONS</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {isLoadingUsers ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.verifiedUsers}</p>}
+                            <p className="text-xs text-muted-foreground">Premium users active now</p>
+                             <Verified className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <Card className="lg:col-span-2">
+                        <CardHeader>
+                            <CardTitle>User Growth</CardTitle>
+                            <CardDescription>Monthly user registrations</CardDescription>
+                        </CardHeader>
+                        <CardContent className="h-[300px] flex items-center justify-center">
+                            <p className="text-muted-foreground">User Growth Chart Placeholder</p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Property Types</CardTitle>
+                            <CardDescription>Distribution by category</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {users ? <UserDistributionChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
+                        </CardContent>
+                    </Card>
+                </div>
           </TabsContent>
           <TabsContent value="properties" className="mt-6">
               <Card><CardHeader>
@@ -943,19 +977,12 @@ export default function AdminPage() {
   };
 
   return (
-    <>
-      <div className="bg-gradient-to-br from-primary via-purple-600 to-accent text-primary-foreground">
-        <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center gap-4">
-                <LayoutDashboard className="h-10 w-10" />
-                <div>
-                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                    <p className="text-primary-foreground/80">Manage users, properties, and orders.</p>
-                </div>
-            </div>
-        </div>
-      </div>
+    <div className="bg-muted/40 min-h-screen">
       <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage platform metrics, properties, and user subscriptions securely.</p>
+        </div>
         {renderContent()}
       </div>
       <Dialog open={!!propertyToReject} onOpenChange={(isOpen) => !isOpen && setPropertyToReject(null)}>
@@ -975,6 +1002,6 @@ export default function AdminPage() {
             </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
