@@ -22,6 +22,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useOnScroll } from '@/hooks/use-on-scroll';
 import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -41,6 +42,47 @@ const getAmenityIcon = (amenity: string) => {
   const iconKey = Object.keys(amenityIcons).find(key => normalizedAmenity.includes(key));
   return iconKey ? amenityIcons[iconKey] : Building2; // Return a default icon if no match
 };
+
+function PropertyDetailSkeleton() {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
+                    <Card>
+                        <Skeleton className="h-96 w-full rounded-t-lg" />
+                        <div className="p-6 space-y-6">
+                            <Skeleton className="h-8 w-1/4" />
+                            <Skeleton className="h-6 w-3/4" />
+                            <Skeleton className="h-5 w-1/2" />
+                            <Separator />
+                            <Skeleton className="h-8 w-1/3" />
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+                <div className="lg:sticky top-24 h-fit">
+                    <Card>
+                        <CardHeader><Skeleton className="h-10 w-1/2" /></CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="h-16 w-16 rounded-full" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-5 w-32" />
+                                    <Skeleton className="h-4 w-24" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-10 w-full" />
+                            <Skeleton className="h-10 w-full" />
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -117,11 +159,7 @@ export default function PropertyDetailPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
+    return <PropertyDetailSkeleton />;
   }
 
   if (error || !property) {
@@ -380,5 +418,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    

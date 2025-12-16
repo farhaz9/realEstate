@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard } from '@/components/property-card';
 import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -29,6 +30,59 @@ const categoryDisplay: Record<string, string> = {
     'listing-property': 'Property Owner',
     'vendor': 'Vendor / Supplier',
 };
+
+function ProfessionalDetailSkeleton() {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="mb-6">
+                <Skeleton className="h-8 w-48" />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div className="lg:col-span-1 lg:sticky top-24">
+                    <Card>
+                        <CardHeader className="items-center text-center">
+                            <Skeleton className="h-28 w-28 rounded-full" />
+                            <div className="pt-4 space-y-2">
+                                <Skeleton className="h-7 w-40" />
+                                <Skeleton className="h-5 w-32" />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-5/6" />
+                             <Separator className="my-4"/>
+                             <div className="space-y-4">
+                                <Skeleton className="h-10 w-full" />
+                                <Skeleton className="h-10 w-full" />
+                             </div>
+                        </CardContent>
+                    </Card>
+                </div>
+                 <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <Skeleton className="h-8 w-1/2" />
+                        </CardHeader>
+                        <CardContent>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[...Array(2)].map((_, i) => (
+                                    <div key={i} className="flex flex-col h-full overflow-hidden border rounded-lg">
+                                        <Skeleton className="h-56 w-full" />
+                                        <div className="p-6 flex-grow flex flex-col space-y-3">
+                                            <Skeleton className="h-6 w-1/3" />
+                                            <Skeleton className="h-5 w-2/3" />
+                                            <Skeleton className="h-4 w-full" />
+                                        </div>
+                                    </div>
+                                ))}
+                             </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 export default function ProfessionalDetailPage() {
   const params = useParams();
@@ -52,11 +106,7 @@ export default function ProfessionalDetailPage() {
   const isLoading = isLoadingProfessional || isLoadingProperties;
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
+    return <ProfessionalDetailSkeleton />;
   }
 
   if (error || !professional) {
