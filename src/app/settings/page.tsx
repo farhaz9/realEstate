@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { User, Settings, ArrowLeft, Camera, Edit, ShoppingBag, Verified, Loader2 } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner-1';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
@@ -129,9 +128,7 @@ function SettingsPageContent() {
     return name.substring(0, 2).toUpperCase();
   }
   
-  const isLoading = isUserLoading || isProfileLoading;
-
-  if (isLoading || !user) {
+  if (isUserLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <Spinner size={48} />
@@ -139,15 +136,6 @@ function SettingsPageContent() {
     );
   }
   
-  if (!userProfile) {
-    return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <Spinner size={48} />
-            <p className="text-muted-foreground mt-4">Loading your profile...</p>
-        </div>
-    );
-  }
-
   const displayAvatar = userProfile?.photoURL ?? user.photoURL;
   const displayName = userProfile?.fullName ?? user.displayName;
   const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
@@ -195,8 +183,8 @@ function SettingsPageContent() {
                   <h2 className="text-2xl font-bold">{displayName}</h2>
                   {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500" />}
                 </div>
-                <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>
-                {isCurrentlyVerified && (
+                {userProfile && <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>}
+                {isCurrentlyVerified && userProfile?.verifiedUntil && (
                   <p className="text-xs text-green-600 font-semibold mt-1">
                     Pro Verified until {userProfile.verifiedUntil.toDate().toLocaleDateString()}
                   </p>
@@ -214,7 +202,7 @@ function SettingsPageContent() {
                 <TabsTrigger value="orders" className="h-full">Orders</TabsTrigger>
             </TabsList>
             <TabsContent value="profile" className="mt-6">
-                <ProfileDetailsTab userProfile={userProfile} />
+                {userProfile ? <ProfileDetailsTab userProfile={userProfile} /> : <div className="flex items-center justify-center min-h-[20vh]"><Spinner size={32} /></div>}
             </TabsContent>
             <TabsContent value="listings" className="mt-6">
                 <MyPropertiesTab />
