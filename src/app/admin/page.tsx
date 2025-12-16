@@ -359,6 +359,9 @@ export default function AdminPage() {
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction>(null);
 
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [userFilter, setUserFilter] = useState<'all' | 'verified'>('all');
+
 
   const allPropertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -433,9 +436,15 @@ export default function AdminPage() {
 
   const sortedAndFilteredUsers = useMemo(() => {
     if (!users) return [];
-    let filtered = userSearchTerm && userFuse 
-      ? userFuse.search(userSearchTerm).map(result => result.item) 
-      : users;
+    
+    let baseUsers = users;
+    if (userFilter === 'verified') {
+        baseUsers = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date());
+    }
+
+    let filtered = userSearchTerm && userFuse
+      ? userFuse.search(userSearchTerm, { store: baseUsers }).map(result => result.item)
+      : baseUsers;
 
     return [...filtered].sort((a, b) => {
         const { key, direction } = userSort;
@@ -460,7 +469,7 @@ export default function AdminPage() {
         if (valA > valB) return 1 * order;
         return 0;
     });
-  }, [users, userSearchTerm, userFuse, userSort]);
+  }, [users, userSearchTerm, userFuse, userSort, userFilter]);
 
   const sortedAndFilteredProperties = useMemo(() => {
     if (!properties) return [];
@@ -666,7 +675,7 @@ export default function AdminPage() {
       );
     }
     return (
-      <Tabs defaultValue="dashboard" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
           <TabsList className="grid w-full grid-cols-3 sm:flex sm:w-auto h-auto">
             <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
@@ -680,33 +689,42 @@ export default function AdminPage() {
         </div>
           <TabsContent value="dashboard" className="mt-6 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <Card className="relative overflow-hidden">
+                    <Card
+                      className="relative overflow-hidden cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => { setUserFilter('all'); setActiveTab('users'); }}
+                    >
                         <CardHeader>
                             <CardTitle className="text-sm font-medium text-muted-foreground">TOTAL USERS</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {isLoadingUsers ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.totalUsers}</p>}
-                            <p className="text-xs text-muted-foreground">New registrations this month</p>
+                            <p className="text-xs text-muted-foreground">Click to view all users</p>
                             <Users className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
                         </CardContent>
                     </Card>
-                    <Card className="relative overflow-hidden">
+                    <Card
+                      className="relative overflow-hidden cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setActiveTab('properties')}
+                    >
                         <CardHeader>
                             <CardTitle className="text-sm font-medium text-muted-foreground">TOTAL PROPERTIES</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {isLoadingProperties ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.totalProperties}</p>}
-                            <p className="text-xs text-muted-foreground">Listings added this month</p>
+                            <p className="text-xs text-muted-foreground">Click to view all properties</p>
                              <Building className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
                         </CardContent>
                     </Card>
-                    <Card className="relative overflow-hidden">
+                    <Card
+                      className="relative overflow-hidden cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => { setUserFilter('verified'); setActiveTab('users'); }}
+                    >
                         <CardHeader>
                             <CardTitle className="text-sm font-medium text-muted-foreground">ACTIVE SUBSCRIPTIONS</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {isLoadingUsers ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.verifiedUsers}</p>}
-                            <p className="text-xs text-muted-foreground">Premium users active now</p>
+                            <p className="text-xs text-muted-foreground">Click to view verified users</p>
                              <Verified className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
                         </CardContent>
                     </Card>
