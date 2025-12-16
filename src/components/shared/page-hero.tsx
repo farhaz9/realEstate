@@ -32,7 +32,7 @@ export function PageHero({ title, subtitle, image, imageUrl, children, className
           priority
         />
       )}
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-20 md:py-24">
         <h1 className={cn("text-4xl md:text-6xl font-bold", titleClassName)}>{title}</h1>
         <p className={cn("mt-2 text-lg max-w-3xl", subtitleClassName)}>{subtitle}</p>

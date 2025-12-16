@@ -188,9 +188,9 @@
     },
     {
       "id": "contact-hero",
-      "description": "Modern office reception area",
+      "description": "A team working together in a modern office",
       "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2940&auto=format&fit=crop",
-      "imageHint": "office reception"
+      "imageHint": "business meeting"
     },
     {
       "id": "service-properties",
