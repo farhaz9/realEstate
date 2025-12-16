@@ -26,15 +26,15 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
                     Get premium placement for your property listings.
                 </p>
             </div>
-             <Card className="max-w-md w-full mx-auto shadow-2xl shadow-primary/10 bg-gradient-to-br from-[#A881E6] to-[#E286D9] relative overflow-hidden rounded-3xl border-0">
+             <Card className="max-w-md w-full mx-auto shadow-2xl shadow-primary/20 bg-gradient-to-br from-primary to-purple-500 relative overflow-hidden rounded-3xl border-0">
                 <CardContent className="p-8 text-center text-white">
-                     <div className="absolute top-4 right-4 bg-white/20 text-white text-xs font-bold uppercase px-3 py-1 rounded-full flex items-center gap-1 shadow-lg backdrop-blur-sm">
+                     <div className="absolute top-4 right-4 bg-black/20 text-white text-xs font-bold uppercase px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
                         <Star className="w-3 h-3" /> PRO
                     </div>
 
                     <div className="mb-6 flex justify-center">
-                        <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                             <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full bg-black/20 flex items-center justify-center">
+                             <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
                                 <CheckCircle2 className="w-8 h-8" />
                              </div>
                         </div>
@@ -46,7 +46,7 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
                             {formatPrice(price)}
                         </span>
                     </div>
-                     <div className="inline-block bg-white/20 backdrop-blur-sm text-sm font-medium px-4 py-1.5 rounded-full">
+                     <div className="inline-block bg-black/20 text-sm font-medium px-4 py-1.5 rounded-full">
                         per premium listing
                     </div>
 
@@ -61,7 +61,7 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
 
                      <Button 
                         size="lg" 
-                        className="w-full h-14 text-lg mt-8 bg-white text-primary hover:bg-white/90 rounded-xl font-bold shadow-lg hover:shadow-primary/20"
+                        className="w-full h-14 text-lg mt-8 bg-white text-primary hover:bg-white/90 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
                         onClick={onPurchase}
                     >
                         Purchase Credits <ArrowRight className="ml-2 h-5 w-5" />
