@@ -25,13 +25,13 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
     return placeholder ? placeholder.imageUrl : null;
   }
 
-  const imageUrl = getImageUrl();
+  const imageUrl = getImageUrl() || PlaceHolderImages.find(p => p.id === 'default-property')?.imageUrl;
   const imageCount = property.imageUrls?.length ?? 0;
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
   return (
     <Link href={`/properties/${property.id}`} className="block group h-full">
-        <div className="border bg-card text-card-foreground rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
+        <div className="bg-[#1a1a1a] text-white rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
             <div className="relative h-48 bg-muted">
                 {imageUrl ? (
                     <Image
@@ -47,7 +47,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
                     </div>
                 )}
                  <div className="absolute top-3 left-3">
-                    <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'} className="uppercase">
+                    <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'} className="uppercase bg-primary/80 border-none">
                         {property.listingType}
                     </Badge>
                  </div>
@@ -60,13 +60,13 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
             </div>
             <div className="p-4 flex-grow flex flex-col">
                 <div className="flex justify-between items-start">
-                    <p className="font-bold text-lg text-primary">{formatPrice(property.price)}{property.listingType === 'rent' ? '/mo' : ''}</p>
-                    <Badge variant="outline" className="capitalize text-primary border-primary/50">{property.propertyType}</Badge>
+                    <p className="font-bold text-lg text-white">{formatPrice(property.price)}{property.listingType === 'rent' ? '/mo' : ''}</p>
+                    <Badge variant="outline" className="capitalize border-primary/50 text-primary bg-primary/10">{property.propertyType}</Badge>
                 </div>
                 <p className="font-semibold truncate mt-1">{property.title}</p>
-                <p className="text-sm text-muted-foreground truncate">{property.location.address}, {property.location.state}</p>
+                <p className="text-sm text-neutral-400 truncate">{property.location.address}</p>
                 
-                <div className="mt-4 pt-4 border-t flex items-center space-x-4 text-muted-foreground text-sm">
+                <div className="mt-4 pt-4 border-t border-white/10 flex items-center space-x-4 text-neutral-300 text-sm">
                     <div className="flex items-center gap-2">
                         <BedDouble className="h-4 w-4" />
                         <span>{property.bedrooms ?? 0} Beds</span>

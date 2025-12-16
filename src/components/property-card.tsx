@@ -55,7 +55,7 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
       const placeholder = PlaceHolderImages.find(p => p.id === property.imageUrls[0]);
       return placeholder?.imageUrl;
     }
-    return null;
+    return PlaceHolderImages.find(p => p.id === 'default-property')?.imageUrl;
   }
 
   const imageUrl = getImageUrl();
@@ -69,8 +69,6 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
 
   const isOwner = user && user.uid === property.userId;
   const showManagementControls = isAdmin || isOwner;
-
-  const rating = 4.5 + (property.title.length % 5) / 10;
 
   const isInWishlist = userProfile?.wishlist?.includes(property.id) ?? false;
 
@@ -120,129 +118,65 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
     router.push(`/admin/edit/${property.id}`);
   };
 
-  const handlePhoneClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    window.location.href = `tel:${property.contactNumber}`;
-  };
-
-  const handleWhatsAppClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    window.open(`https://wa.me/${property.whatsappNumber}`, '_blank');
-  };
-
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
   return (
-     <Card className={cn("flex flex-col h-full overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1", className)}>
-        <Link href={`/properties/${property.id}`} className="block flex flex-col flex-grow">
-            <div className="relative h-56 flex-shrink-0 bg-muted">
-                {imageUrl ? (
-                    <Image
-                        src={imageUrl}
-                        alt={property.title}
-                        data-ai-hint="property image"
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-muted">
-                    <ImageIcon className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-                <div className="absolute top-4 right-4 flex gap-2">
-                    <div className="flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs">
-                        <Star className="h-3 w-3 fill-current" />
-                        <span>{rating.toFixed(1)}</span>
-                    </div>
-                    {!showActiveBadge && <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'}>{property.listingType}</Badge>}
-                </div>
-                 {showActiveBadge && (
-                    <div className="absolute top-4 left-4">
-                        <Badge className="bg-green-600 text-white hover:bg-green-700">ACTIVE</Badge>
-                    </div>
-                 )}
+    <div className={cn("rounded-2xl bg-[#1a1a1a] text-white overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 h-full flex flex-col", className)}>
+      <Link href={`/properties/${property.id}`} className="block flex flex-col flex-grow">
+        <div className="relative h-56 flex-shrink-0 bg-muted">
+          {imageUrl && (
+            <Image
+              src={imageUrl}
+              alt={property.title}
+              data-ai-hint="property image"
+              fill
+              className="object-cover"
+            />
+          )}
+           <div className="absolute top-4 left-4">
+              <Badge variant="default" className="bg-primary/80 backdrop-blur-sm text-white border-none uppercase text-xs font-bold">
+                  {property.listingType}
+              </Badge>
+          </div>
+        </div>
+        <div className="p-4 flex flex-col flex-grow">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-2xl font-bold text-white">{formatPrice(property.price)}</p>
+              <h3 className="mt-1 text-lg font-semibold leading-tight truncate">{property.title}</h3>
+              <p className="mt-0.5 text-sm text-neutral-400">{property.location.address}</p>
             </div>
-            <div className="p-6 flex flex-col flex-grow">
-                <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
-                <CardTitle className="mt-2 text-xl font-semibold leading-tight">{property.title}</CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground flex-grow">{property.location.address}, {property.location.state} - {property.location.pincode}</p>
-
-                <div className="mt-4 flex items-center space-x-4 text-muted-foreground border-t pt-4">
-                    <div className="flex items-center gap-2">
-                    <BedDouble className="h-4 w-4" />
-                    <span className="text-sm">{property.bedrooms ?? 0} Beds</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                    <Bath className="h-4 w-4" />
-                    <span className="text-sm">{property.bathrooms ?? 0} Baths</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4" />
-                    <span className="text-sm">{squareFeet ? `${squareFeet.toLocaleString()} sqft` : 'N/A'}</span>
-                    </div>
-                </div>
-            </div>
-        </Link>
-      <CardFooter className="p-6 pt-0 mt-auto flex items-center gap-2">
-          <Button asChild className="w-full">
-            <Link href={`/properties/${property.id}`}>
-              View Details <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+             <Badge variant="outline" className="capitalize border-primary/50 text-primary bg-primary/10 shrink-0">
+                {property.propertyType}
+            </Badge>
+          </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreVertical className="h-4 w-4" />
+          <div className="mt-4 flex-grow" />
+
+          <div className="mt-4 flex items-center justify-between text-neutral-300 border-t border-white/10 pt-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <BedDouble className="h-4 w-4" />
+                  <span className="text-sm font-medium">{property.bedrooms ?? 0} Beds</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Bath className="h-4 w-4" />
+                  <span className="text-sm font-medium">{property.bathrooms ?? 0} Baths</span>
+                </div>
+                {squareFeet > 0 && (
+                    <div className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4" />
+                        <span className="text-sm font-medium">{squareFeet.toLocaleString()} sqft</span>
+                    </div>
+                )}
+              </div>
+              <Button size="sm" className="bg-primary/80 text-white hover:bg-primary rounded-lg">
+                View Details <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handlePhoneClick}>
-                <Phone className="mr-2 h-4 w-4" />
-                <span>Call Agent</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleWhatsAppClick}>
-                <MessageSquare className="mr-2 h-4 w-4" />
-                <span>WhatsApp</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleWishlistToggle}>
-                <Heart className={cn("mr-2 h-4 w-4", isInWishlist ? "text-red-500 fill-red-500" : "")} />
-                <span>{isInWishlist ? 'Remove from' : 'Add to'} Wishlist</span>
-              </DropdownMenuItem>
-              {showManagementControls && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={handleEdit}>
-                      <Pencil className="mr-2 h-4 w-4" />
-                      <span>Edit</span>
-                  </DropdownMenuItem>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete this property listing from our servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </CardFooter>
-    </Card>
+          </div>
+        </div>
+      </Link>
+    </div>
   );
 }
+
