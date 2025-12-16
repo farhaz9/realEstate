@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
@@ -835,7 +834,19 @@ export default function AdminPage() {
                           )}
                       </Dialog>
                   </TableCell>
-                  <TableCell>{u.isBlocked ? <Badge variant="destructive">Blocked</Badge> : <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>}</TableCell>
+                  <TableCell>
+                      {u.isBlocked ? (
+                        <Badge variant="destructive" className="flex items-center gap-1.5 w-fit">
+                            <div className="h-2 w-2 rounded-full bg-red-400" />
+                            Blocked
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="flex items-center gap-1.5 w-fit bg-green-100 text-green-800">
+                            <div className="h-2 w-2 rounded-full bg-green-500" />
+                            Active
+                        </Badge>
+                      )}
+                  </TableCell>
                   <TableCell className="text-right">
                     {!isAdminUser && (
                         <Dialog open={isEditUserDialogOpen && selectedUser?.id === u.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditUserDialogOpen(open); }}>
