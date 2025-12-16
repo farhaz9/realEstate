@@ -29,6 +29,8 @@ import {
   X,
   User as UserIcon,
   Megaphone,
+  Mail,
+  Shield,
 } from "lucide-react";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/auth/user-nav";
@@ -52,6 +54,7 @@ const navLinks = [
 
 const secondaryLinks = [
     { href: "/support", label: "Support", icon: HelpCircle },
+    { href: "/contact", label: "Contact", icon: Mail },
 ];
 
 const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -155,6 +158,7 @@ export default function Header() {
   const { data: userProfile } = useDoc<UserType>(userDocRef);
 
   const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(userProfile.category);
+  const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   const handleSearch = (searchTerm: string) => {
     let targetPath = '/properties';
@@ -248,6 +252,14 @@ export default function Header() {
                             </Link>
                         </SheetClose>
                       ))}
+                      {isAdmin && (
+                        <SheetClose asChild>
+                            <Link href="/admin" className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold text-foreground transition-all hover:bg-muted">
+                                <Shield className="h-5 w-5" />
+                                <span>Admin</span>
+                            </Link>
+                        </SheetClose>
+                      )}
                     </nav>
                 </div>
                  <SheetFooter className="p-4 mt-auto border-t">
