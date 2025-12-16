@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowRight, CheckCircle2, Star } from 'lucide-react';
+import { ArrowRight, Gem, Star } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { formatPrice } from '@/lib/utils';
@@ -35,7 +35,7 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
                     <div className="mb-6 flex justify-center">
                         <div className="w-20 h-20 rounded-full bg-black/20 flex items-center justify-center">
                              <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
-                                <CheckCircle2 className="w-8 h-8" />
+                                <Gem className="w-8 h-8" />
                              </div>
                         </div>
                     </div>
@@ -53,7 +53,9 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
                     <ul className="space-y-4 text-left mt-8">
                         {benefits.map((benefit) => (
                             <li key={benefit} className="flex items-center gap-3">
-                                <CheckCircle2 className="h-5 w-5 text-green-300 flex-shrink-0" />
+                                <div className="w-5 h-5 flex-shrink-0 rounded-full bg-green-400/20 text-green-300 flex items-center justify-center">
+                                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                                </div>
                                 <span>{benefit}</span>
                             </li>
                         ))}
