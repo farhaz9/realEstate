@@ -106,6 +106,22 @@ export function PricingSection() {
             name: "Falcon Axe Homes - Pro Verified",
             description: `Payment for ${isAnnual ? 'Annual' : 'Monthly'} Subscription`,
             image: "/logo.png",
+            config: {
+              display: {
+                blocks: {
+                  upi: {
+                    name: 'Pay with UPI',
+                    instruments: [
+                      { method: 'upi' },
+                    ],
+                  },
+                },
+                sequence: ['block.upi'],
+                preferences: {
+                  show_default_blocks: true,
+                },
+              },
+            },
             handler: function (response: any) {
                 toast({
                     title: "Payment Successful!",

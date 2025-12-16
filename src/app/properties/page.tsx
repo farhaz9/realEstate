@@ -120,6 +120,22 @@ export default function PropertiesPage() {
         name: "Estately Property Listing",
         description: "One-time fee for one property listing.",
         image: "https://example.com/your_logo.jpg", // Optional
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: 'Pay with UPI',
+                instruments: [
+                  { method: 'upi' },
+                ],
+              },
+            },
+            sequence: ['block.upi'],
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
+        },
         handler: function (response: any){
             toast({
                 title: "Payment Successful!",
