@@ -304,6 +304,8 @@ export default function AdminPage() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  
+  const notificationForm = useForm();
 
   const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
   const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
@@ -813,7 +815,7 @@ export default function AdminPage() {
                             <CardDescription>Send a message to your users. (UI only, no sending logic yet).</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                           <Form {...useForm()}>
+                           <Form {...notificationForm}>
                               <form>
                                 <RadioGroup defaultValue="all">
                                     <FormLabel>Send to:</FormLabel>
@@ -899,3 +901,5 @@ export default function AdminPage() {
     </>
   );
 }
+
+    
