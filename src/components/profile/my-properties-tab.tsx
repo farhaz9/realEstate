@@ -887,12 +887,12 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
                     className="relative h-full flex flex-col justify-center items-center bg-gradient-to-br from-primary via-purple-500 to-accent text-primary-foreground p-6 text-center rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30"
                     onClick={handlePayment}
                 >
-                    <div className="absolute -top-2 -right-2 bg-white/20 text-white text-xs font-bold uppercase px-3 py-1 rounded-bl-lg rounded-tr-xl">
-                        Get More Leads
+                    <div className="absolute top-0 right-0 bg-white/20 text-white text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1 shadow-lg">
+                        <Star className="w-3 h-3" /> PRO
                     </div>
                     <div className="mb-4">
                         <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto transition-transform duration-300 group-hover:scale-110">
-                            <Zap className="h-8 w-8" />
+                            <Star className="h-8 w-8" />
                         </div>
                     </div>
                     <h3 className="text-xl font-bold">Buy Listing Credit</h3>
@@ -934,5 +934,3 @@ export function MyPropertiesTab({ propertyToEdit, onSuccess }: MyPropertiesTabPr
     </div>
   )
 }
-
-    
