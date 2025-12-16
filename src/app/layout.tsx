@@ -9,6 +9,7 @@ import { FirebaseClientProvider } from "@/firebase";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Script from "next/script";
 import { AuthGate } from "@/components/layout/auth-gate";
+import NotificationListener from "@/components/shared/notification-listener";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -81,6 +82,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <AuthGate>
             <Header />
+            <NotificationListener />
             <ErrorBoundary>
               <AppProviders>{children}</AppProviders>
             </ErrorBoundary>

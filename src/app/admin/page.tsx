@@ -2,7 +2,7 @@
 'use client';
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
-import { collection, query, orderBy, Query, where, increment } from 'firebase/firestore';
+import { collection, query, orderBy, Query, where, increment, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
@@ -68,6 +68,12 @@ const announcementFormSchema = z.object({
     enabled: z.boolean(),
 });
 type AnnouncementFormValues = z.infer<typeof announcementFormSchema>;
+
+const notificationFormSchema = z.object({
+    audience: z.enum(['all', 'verified']),
+    message: z.string().min(1, 'Notification message cannot be empty.'),
+});
+type NotificationFormValues = z.infer<typeof notificationFormSchema>;
 
 function AnnouncementForm({ settings }: { settings: AppSettings | null }) {
     const firestore = useFirestore();
@@ -305,8 +311,16 @@ export default function AdminPage() {
   const router = useRouter();
   const { toast } = useToast();
   
-  const notificationForm = useForm();
+  const notificationForm = useForm<NotificationFormValues>({
+    resolver: zodResolver(notificationFormSchema),
+    defaultValues: {
+        audience: 'all',
+        message: '',
+    },
+  });
 
+  const [isSendingNotification, setIsSendingNotification] = useState(false);
+  
   const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
   const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
   const [orderSort, setOrderSort] = useState({ key: 'date', direction: 'desc' });
@@ -565,6 +579,35 @@ export default function AdminPage() {
     setter(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' }));
   }
 
+  const onNotificationSubmit = async (data: NotificationFormValues) => {
+    if (!firestore || !appSettingsRef) return;
+    setIsSendingNotification(true);
+    
+    const notificationData = {
+        text: data.message,
+        audience: data.audience,
+        timestamp: new Date().toISOString(),
+    };
+    
+    try {
+        await setDoc(appSettingsRef, { notification: notificationData }, { merge: true });
+        toast({
+            title: "Notification Sent!",
+            description: "Your notification has been sent to the targeted users.",
+            variant: "success",
+        });
+        notificationForm.reset();
+    } catch (error: any) {
+        toast({
+            title: "Failed to Send Notification",
+            description: error.message,
+            variant: "destructive",
+        });
+    } finally {
+        setIsSendingNotification(false);
+    }
+  };
+
   const categoryDisplay: Record<string, string> = {
     'user': 'Buyer / Tenant', 'listing-property': 'Property Owner', 'real-estate-agent': 'Real Estate Agent',
     'interior-designer': 'Interior Designer', 'vendor': 'Vendor'
@@ -812,29 +855,56 @@ export default function AdminPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Send Notification</CardTitle>
-                            <CardDescription>Send a message to your users. (UI only, no sending logic yet).</CardDescription>
+                            <CardDescription>Send a global message to your users.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent>
                            <Form {...notificationForm}>
-                              <form>
-                                <RadioGroup defaultValue="all">
-                                    <FormLabel>Send to:</FormLabel>
-                                    <div className="flex items-center space-x-4 pt-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="all" id="all-users" />
-                                            <Label htmlFor="all-users">All Users</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="verified" id="verified-users" />
-                                            <Label htmlFor="verified-users">Verified Dealers</Label>
-                                        </div>
-                                    </div>
-                                </RadioGroup>
-                                 <div>
-                                    <Label htmlFor="notification-message">Message</Label>
-                                    <Textarea id="notification-message" placeholder="Type your notification message here..." className="mt-2" />
-                                 </div>
-                                 <Button>
+                              <form onSubmit={notificationForm.handleSubmit(onNotificationSubmit)} className="space-y-6">
+                                <FormField
+                                    control={notificationForm.control}
+                                    name="audience"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Send to:</FormLabel>
+                                             <FormControl>
+                                                <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    className="flex items-center space-x-4 pt-2"
+                                                >
+                                                    <FormItem className="flex items-center space-x-2">
+                                                        <FormControl>
+                                                          <RadioGroupItem value="all" id="all-users" />
+                                                        </FormControl>
+                                                        <Label htmlFor="all-users">All Users</Label>
+                                                    </FormItem>
+                                                    <FormItem className="flex items-center space-x-2">
+                                                         <FormControl>
+                                                            <RadioGroupItem value="verified" id="verified-users" />
+                                                         </FormControl>
+                                                        <Label htmlFor="verified-users">Verified Dealers</Label>
+                                                    </FormItem>
+                                                </RadioGroup>
+                                             </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={notificationForm.control}
+                                    name="message"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Message</FormLabel>
+                                            <FormControl>
+                                                <Textarea placeholder="Type your notification message here..." {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                 />
+                                 <Button type="submit" disabled={isSendingNotification}>
+                                    {isSendingNotification && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     <Send className="mr-2 h-4 w-4" />
                                     Send Notification
                                  </Button>
@@ -901,5 +971,3 @@ export default function AdminPage() {
     </>
   );
 }
-
-    

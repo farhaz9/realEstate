@@ -86,4 +86,9 @@ export type AppSettings = {
         url?: string;
         enabled: boolean;
     };
+    notification?: {
+        text: string;
+        audience: 'all' | 'verified';
+        timestamp: string;
+    }
 };
