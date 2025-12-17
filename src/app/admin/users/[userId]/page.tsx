@@ -3,16 +3,16 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
-import { doc, collection, query, where } from 'firebase/firestore';
-import type { User, Property, Order } from '@/types';
-import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit, X } from 'lucide-react';
+import { doc, collection, query, where, deleteDoc } from 'firebase/firestore';
+import type { User, Property, Order, Review } from '@/types';
+import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit, X, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard } from '@/components/property-card';
-import { format, formatDistanceToNowStrict, differenceInDays } from 'date-fns';
+import { format, formatDistanceToNow, formatDistanceToNowStrict, differenceInDays } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -34,6 +34,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { EditUserForm } from '@/components/admin/edit-user-form';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 
 
 const getInitials = (name: string) => {
@@ -110,6 +112,88 @@ function UserDetailSkeleton() {
     )
 }
 
+function EditReviewDialog({ review, professionalId, onOpenChange, open }: { review: Review, professionalId: string, open: boolean, onOpenChange: (open: boolean) => void }) {
+    const [rating, setRating] = useState(review.rating);
+    const [comment, setComment] = useState(review.comment);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const firestore = useFirestore();
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (open) {
+            setRating(review.rating);
+            setComment(review.comment);
+        }
+    }, [open, review]);
+
+    const handleSubmit = async () => {
+        if (!firestore) return;
+        setIsSubmitting(true);
+        const reviewRef = doc(firestore, `users/${professionalId}/reviews`, review.id);
+        
+        try {
+            await updateDoc(reviewRef, { rating, comment });
+            toast({
+                title: "Review Updated",
+                description: "The review has been successfully updated.",
+                variant: 'success'
+            });
+            onOpenChange(false);
+        } catch (error: any) {
+            toast({
+                title: "Update Failed",
+                description: error.message,
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Edit Review</DialogTitle>
+                    <DialogDescription>
+                        Editing review by {review.reviewerName}.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div className="flex items-center gap-2">
+                        <Label>Rating:</Label>
+                        <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                                <Star
+                                    key={i}
+                                    className={cn("h-6 w-6 cursor-pointer transition-colors", i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300")}
+                                    onClick={() => setRating(i + 1)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="comment">Comment:</Label>
+                        <Textarea
+                            id="comment"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            rows={5}
+                        />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>Cancel</Button>
+                    <Button onClick={handleSubmit} disabled={isSubmitting}>
+                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Save Changes
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 export default function UserDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -120,8 +204,10 @@ export default function UserDetailPage() {
   const [creditAmount, setCreditAmount] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
-  type ConfirmationAction = 'delete' | 'block' | 'verify';
+  type ConfirmationAction = 'deleteUser' | 'blockUser' | 'verifyUser' | 'deleteReview';
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction | null>(null);
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
+  const [reviewToEdit, setReviewToEdit] = useState<Review | null>(null);
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -137,7 +223,14 @@ export default function UserDetailPage() {
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
   
-  const isLoading = isLoadingUser || isLoadingProperties;
+  const reviewsQuery = useMemoFirebase(() => {
+    if (!firestore || !userId) return null;
+    return query(collection(firestore, 'users', userId, 'reviews'), orderBy('date', 'desc'));
+  }, [firestore, userId]);
+  
+  const { data: reviews, isLoading: areReviewsLoading } = useCollection<Review>(reviewsQuery);
+  
+  const isLoading = isLoadingUser || isLoadingProperties || areReviewsLoading;
 
   const handleVerificationToggle = () => {
     if (!firestore || !user) return;
@@ -196,18 +289,36 @@ export default function UserDetailPage() {
     router.push('/admin');
   };
 
+  const handleDeleteReview = async () => {
+    if (!firestore || !reviewToDelete || !user) return;
+    const reviewRef = doc(firestore, `users/${user.id}/reviews`, reviewToDelete.id);
+    try {
+        await deleteDoc(reviewRef);
+        toast({ title: "Review Deleted", description: "The review has been successfully deleted.", variant: "destructive" });
+    } catch (error: any) {
+        toast({ title: "Deletion Failed", description: error.message, variant: "destructive" });
+    } finally {
+        setIsConfirmationDialogOpen(false);
+        setReviewToDelete(null);
+    }
+  };
+
+
   const handleConfirmationAction = () => {
     if (!confirmationAction) return;
 
     switch (confirmationAction) {
-      case 'delete':
+      case 'deleteUser':
         handleUserDelete();
         break;
-      case 'block':
+      case 'blockUser':
         handleUserBlockToggle();
         break;
-      case 'verify':
+      case 'verifyUser':
         handleVerificationToggle();
+        break;
+      case 'deleteReview':
+        handleDeleteReview();
         break;
     }
   };
@@ -346,7 +457,7 @@ export default function UserDetailPage() {
                                 <Button
                                     variant={isCurrentlyVerified ? 'destructive' : 'default'}
                                     size="sm"
-                                    onClick={() => { setConfirmationAction('verify'); setIsConfirmationDialogOpen(true); }}
+                                    onClick={() => { setConfirmationAction('verifyUser'); setIsConfirmationDialogOpen(true); }}
                                 >
                                     <Verified className="mr-2 h-4 w-4" />
                                     {isCurrentlyVerified ? 'Revoke' : 'Grant'}
@@ -373,7 +484,7 @@ export default function UserDetailPage() {
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    onClick={() => { setConfirmationAction('block'); setIsConfirmationDialogOpen(true); }}
+                                    onClick={() => { setConfirmationAction('blockUser'); setIsConfirmationDialogOpen(true); }}
                                 >
                                     {user.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
                                     {user.isBlocked ? 'Unblock' : 'Block'}
@@ -382,7 +493,7 @@ export default function UserDetailPage() {
                              <Button
                                 variant="destructive"
                                 className="w-full"
-                                onClick={() => { setConfirmationAction('delete'); setIsConfirmationDialogOpen(true); }}
+                                onClick={() => { setConfirmationAction('deleteUser'); setIsConfirmationDialogOpen(true); }}
                             >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete User
@@ -414,6 +525,58 @@ export default function UserDetailPage() {
                             )}
                         </CardContent>
                     </Card>
+
+                    {isProfessional && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Star className="h-6 w-6 text-primary" />
+                                    Reviews ({reviews?.length || 0})
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    {reviews && reviews.length > 0 ? (
+                                        reviews.map(review => (
+                                            <div key={review.id} className="flex items-start gap-4">
+                                                <Avatar className="h-10 w-10 border">
+                                                    <AvatarImage src={review.reviewerPhotoURL} />
+                                                    <AvatarFallback>{review.reviewerName.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <p className="font-semibold">{review.reviewerName}</p>
+                                                            <div className="flex items-center gap-0.5">
+                                                                {[...Array(5)].map((_, i) => (
+                                                                    <Star key={i} className={cn("h-4 w-4", i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300")} />
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">
+                                                            {review.date ? formatDistanceToNow(review.date.toDate(), { addSuffix: true }) : 'N/A'}
+                                                        </div>
+                                                    </div>
+                                                    <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p>
+                                                </div>
+                                                <div className="flex gap-1">
+                                                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setReviewToEdit(review)}>
+                                                        <Edit className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => { setReviewToDelete(review); setConfirmationAction('deleteReview'); setIsConfirmationDialogOpen(true); }}>
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-center text-muted-foreground py-8">No reviews yet.</p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
 
                     <Card>
                         <CardHeader>
@@ -455,20 +618,31 @@ export default function UserDetailPage() {
                 </div>
             </div>
         </div>
+
+        {reviewToEdit && (
+            <EditReviewDialog 
+                open={!!reviewToEdit}
+                onOpenChange={(isOpen) => !isOpen && setReviewToEdit(null)}
+                review={reviewToEdit}
+                professionalId={userId}
+            />
+        )}
+
         <AlertDialog open={isConfirmationDialogOpen} onOpenChange={setIsConfirmationDialogOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                    {confirmationAction === 'delete' && `This will permanently delete the user "${user.fullName}".`}
-                    {confirmationAction === 'block' && `This will ${user.isBlocked ? 'unblock' : 'block'} the user "${user.fullName}".`}
-                    {confirmationAction === 'verify' && `This will ${isCurrentlyVerified ? 'revoke verification for' : 'grant verification to'} "${user.fullName}".`}
+                    {confirmationAction === 'deleteUser' && `This will permanently delete the user "${user.fullName}".`}
+                    {confirmationAction === 'blockUser' && `This will ${user.isBlocked ? 'unblock' : 'block'} the user "${user.fullName}".`}
+                    {confirmationAction === 'verifyUser' && `This will ${isCurrentlyVerified ? 'revoke verification for' : 'grant verification to'} "${user.fullName}".`}
+                    {confirmationAction === 'deleteReview' && `This will permanently delete the review from "${reviewToDelete?.reviewerName}".`}
                     This action may have consequences that cannot be undone.
                 </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => setConfirmationAction(null)}>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleConfirmationAction} className={confirmationAction === 'delete' ? 'bg-destructive hover:bg-destructive/90' : ''}>Confirm</AlertDialogAction>
+                <AlertDialogCancel onClick={() => { setConfirmationAction(null); setReviewToDelete(null); }}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleConfirmationAction} className={(confirmationAction === 'deleteUser' || confirmationAction === 'deleteReview') ? 'bg-destructive hover:bg-destructive/90' : ''}>Confirm</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

@@ -31,7 +31,7 @@ service cloud.firestore {
         // Only an authenticated user can create a review for someone else.
         allow create: if request.auth != null && request.auth.uid != userId;
         
-        // Only the user who wrote the review can update or delete it.
+        // Only the user who wrote the review or an admin can update or delete it.
         allow update, delete: if isOwner(resource.data.reviewerId) || isAdmin();
       }
     }
