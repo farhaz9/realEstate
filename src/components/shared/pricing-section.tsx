@@ -218,7 +218,7 @@ export function PricingSection() {
               <div className="flex justify-center items-center gap-2 mb-4">
                   <div className="w-20 h-20 rounded-full bg-black/20 flex items-center justify-center">
                     <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
-                        <Verified className="w-8 h-8" />
+                        <Verified className="w-8 h-8 text-white" />
                     </div>
                 </div>
               </div>
@@ -275,3 +275,5 @@ export function PricingSection() {
     </section>
   );
 }
+
+    
