@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useMemo, useEffect, useTransition } from 'react';
@@ -101,7 +100,7 @@ export default function ProfessionalsPage() {
 
     if (filteredProfessionals && filteredProfessionals.length > 0) {
       return (
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
           {filteredProfessionals.map((professional) => (
             <ProfessionalCard key={professional.id} professional={professional} />
           ))}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Verified, Phone, Star } from 'lucide-react';
+import { User as UserIcon, Mail, Verified, Phone, Star, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
@@ -73,50 +73,86 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
 
 
   return (
-    <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
-       <CardContent className="p-6 flex flex-col items-center text-center h-full">
-            <Avatar className={cn(
-                "h-24 w-24 border-2 border-primary/20",
-                isCompany ? "rounded-lg" : "rounded-full"
-            )}>
-                <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
-                <AvatarFallback className={cn(
-                  "text-3xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
-                  isCompany ? "rounded-md" : "rounded-full"
+    <>
+        {/* Mobile View: List Item Style */}
+        <div className="md:hidden">
+            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 p-2 rounded-lg hover:bg-muted transition-colors">
+                 <Avatar className={cn(
+                    "h-14 w-14 border-2 border-primary/20",
+                    isCompany ? "rounded-lg" : "rounded-full"
                 )}>
-                    {cardTitle ? getInitials(cardTitle) : <UserIcon />}
-                </AvatarFallback>
-            </Avatar>
-            
-            <div className="flex items-center gap-2 mt-4">
-              <h3 className="font-bold text-lg">{cardTitle}</h3>
-              {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
-            </div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
-            
-            <div className="mt-2 mb-4">
-                <ProfessionalRating professionalId={professional.id} />
-            </div>
+                    <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
+                    <AvatarFallback className={cn(
+                    "text-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
+                    isCompany ? "rounded-md" : "rounded-full"
+                    )}>
+                        {cardTitle ? getInitials(cardTitle) : <UserIcon />}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                    <div className="flex items-center gap-1.5">
+                        <h3 className="font-bold text-base truncate">{cardTitle}</h3>
+                        {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+                    <div className="mt-1">
+                        <ProfessionalRating professionalId={professional.id} />
+                    </div>
+                </div>
+                 <Button variant="ghost" size="icon" className="text-muted-foreground">
+                    <Info className="h-5 w-5" />
+                </Button>
+            </Link>
+        </div>
 
-            <div className="flex-grow space-y-3 mt-4 text-sm text-muted-foreground text-left w-full">
-              <div className="flex items-start gap-3">
-                  <Mail className="h-4 w-4 flex-shrink-0 mt-1" />
-                  <a href={`mailto:${professional.email}`} className="hover:text-primary transition-colors truncate">{professional.email}</a>
-              </div>
-              {professional.phone && (
-                  <div className="flex items-start gap-3">
-                  <Phone className="h-4 w-4 flex-shrink-0 mt-1" />
-                  <a href={`tel:${professional.phone}`} className="hover:text-primary transition-colors">{professional.phone}</a>
-                  </div>
-              )}
-            </div>
+        {/* Desktop View: Card Style */}
+        <div className="hidden md:block h-full">
+            <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
+            <CardContent className="p-6 flex flex-col items-center text-center h-full">
+                    <Avatar className={cn(
+                        "h-24 w-24 border-2 border-primary/20",
+                        isCompany ? "rounded-lg" : "rounded-full"
+                    )}>
+                        <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
+                        <AvatarFallback className={cn(
+                        "text-3xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
+                        isCompany ? "rounded-md" : "rounded-full"
+                        )}>
+                            {cardTitle ? getInitials(cardTitle) : <UserIcon />}
+                        </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex items-center gap-2 mt-4">
+                    <h3 className="font-bold text-lg">{cardTitle}</h3>
+                    {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
+                    </div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+                    
+                    <div className="mt-2 mb-4">
+                        <ProfessionalRating professionalId={professional.id} />
+                    </div>
 
-            <Button asChild variant="outline" className="w-full mt-6">
-                <Link href={`/professionals/${professional.id}`}>
-                    View Profile
-                </Link>
-            </Button>
-       </CardContent>
-    </Card>
+                    <div className="flex-grow space-y-3 mt-4 text-sm text-muted-foreground text-left w-full">
+                    <div className="flex items-start gap-3">
+                        <Mail className="h-4 w-4 flex-shrink-0 mt-1" />
+                        <a href={`mailto:${professional.email}`} className="hover:text-primary transition-colors truncate">{professional.email}</a>
+                    </div>
+                    {professional.phone && (
+                        <div className="flex items-start gap-3">
+                        <Phone className="h-4 w-4 flex-shrink-0 mt-1" />
+                        <a href={`tel:${professional.phone}`} className="hover:text-primary transition-colors">{professional.phone}</a>
+                        </div>
+                    )}
+                    </div>
+
+                    <Button asChild variant="outline" className="w-full mt-6">
+                        <Link href={`/professionals/${professional.id}`}>
+                            View Profile
+                        </Link>
+                    </Button>
+            </CardContent>
+            </Card>
+        </div>
+    </>
   );
 }
