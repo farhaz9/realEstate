@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
@@ -44,6 +45,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { cn } from '@/lib/utils';
 
 
 const categoryDisplay: Record<string, string> = {
@@ -207,8 +209,8 @@ function SettingsPageContent() {
       }
       setIsUploading(true);
       try {
-        await updateProfile(auth.currentUser, { photoURL: null });
-        await updateDoc(userDocRef, { photoURL: null });
+        await updateProfile(auth.currentUser, { photoURL: "" });
+        await updateDoc(userDocRef, { photoURL: "" });
         toast({
           title: 'Profile picture removed',
           variant: 'success',
@@ -310,12 +312,14 @@ function SettingsPageContent() {
       
       <div className="container mx-auto px-4 py-8 -mt-16">
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 max-w-lg mx-auto h-12">
-                <TabsTrigger value="profile" className="h-full">Profile</TabsTrigger>
-                <TabsTrigger value="listings" className="h-full">My Listings</TabsTrigger>
-                <TabsTrigger value="wishlist" className="h-full">Wishlist</TabsTrigger>
-                <TabsTrigger value="orders" className="h-full">Orders</TabsTrigger>
-            </TabsList>
+            <div className="flex justify-center">
+                <TabsList className="h-auto p-1.5 bg-muted rounded-xl">
+                    <TabsTrigger value="profile" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'profile' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Profile</TabsTrigger>
+                    <TabsTrigger value="listings" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'listings' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>My Listings</TabsTrigger>
+                    <TabsTrigger value="wishlist" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'wishlist' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Wishlist</TabsTrigger>
+                    <TabsTrigger value="orders" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'orders' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Orders</TabsTrigger>
+                </TabsList>
+            </div>
             <TabsContent value="profile" className="mt-6">
                 <ProfileDetailsTab userProfile={userProfile} />
             </TabsContent>
@@ -379,3 +383,5 @@ export default function SettingsPage() {
     </Suspense>
   )
 }
+
+    
