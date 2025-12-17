@@ -199,20 +199,24 @@ export default function Header() {
                         </div>
                     </div>
                  ) : user ? (
-                    <SheetClose asChild>
-                        <Link href="/settings" className="flex items-center gap-4">
-                            <Avatar className="h-12 w-12">
-                                <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                                <AvatarFallback className="text-lg bg-primary/10 text-primary font-semibold">
-                                    {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="text-base font-bold text-left">{user.displayName?.split(' ')[0] || 'User'}</p>
-                                <p className="text-sm text-muted-foreground text-left">View Settings</p>
-                            </div>
-                        </Link>
-                    </SheetClose>
+                   <div className="flex items-center justify-between gap-4">
+                      <Link href="/settings" className="flex items-center gap-3 overflow-hidden">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                          <AvatarFallback className="text-lg bg-primary/10 text-primary font-semibold">
+                              {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className="text-base font-bold text-left truncate">{user.displayName || 'User'}</p>
+                      </Link>
+                      <SheetClose asChild>
+                          <Button asChild variant="ghost" size="icon">
+                            <Link href="/settings">
+                                <Settings />
+                            </Link>
+                          </Button>
+                      </SheetClose>
+                  </div>
                  ) : (
                     <SheetClose asChild>
                         <Logo />
