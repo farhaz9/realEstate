@@ -15,6 +15,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { FeaturedProfessionals } from "@/components/shared/featured-professionals";
 import { NewProjects } from "@/components/shared/new-projects";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AppPricingSection } from "@/components/shared/app-pricing-section";
 import { PricingSection } from "@/components/shared/pricing-section";
 
 
@@ -180,6 +181,8 @@ export default function HomePage() {
 
       <FeaturedProperties />
 
+      <AppPricingSection />
+      
       <PricingSection />
 
        <section id="contact-faq" className="py-16 md:py-24 bg-secondary/30">
