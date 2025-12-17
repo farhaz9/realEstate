@@ -124,10 +124,12 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('user');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   
   // Vendor specific fields
@@ -210,6 +212,14 @@ export default function LoginPage() {
         handleAuthError(error);
       }
     } else { // Sign up
+      if (password !== confirmPassword) {
+        toast({
+            variant: 'destructive',
+            title: 'Passwords do not match',
+            description: 'Please ensure both password fields are identical.',
+        });
+        return;
+      }
       if (!fullName || !phone) {
         toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out all required fields.' });
         return;
@@ -520,6 +530,21 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
+              
+              {!isLogin && (
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="confirm-password">Confirm Password</Label>
+                  <div className="relative group">
+                    <Input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="confirm-password" placeholder="Confirm your password" type={showConfirmPassword ? 'text' : 'password'}/>
+                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
+                      <Lock className="h-[22px] w-[22px]" />
+                    </div>
+                    <button onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#111418] dark:hover:text-white transition-colors" type="button">
+                      {showConfirmPassword ? <EyeOff className="h-[22px] w-[22px]" /> : <Eye className="h-[22px] w-[22px]" />}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <Button className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 mt-2" type="submit">
                 {isLogin ? 'Sign In' : 'Sign Up'}
@@ -545,3 +570,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
