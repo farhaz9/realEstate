@@ -1,12 +1,16 @@
+
 'use client';
 
-import type { User } from '@/types';
+import type { User, Review } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Verified, Phone } from 'lucide-react';
+import { User as UserIcon, Mail, Verified, Phone, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import { useMemo } from 'react';
 
 interface ProfessionalCardProps {
   professional: User;
@@ -17,6 +21,41 @@ const categoryDisplay: Record<string, string> = {
     'interior-designer': 'Interior Designer',
     'vendor': 'Vendor / Supplier'
 };
+
+function ProfessionalRating({ professionalId }: { professionalId: string }) {
+    const firestore = useFirestore();
+
+    const reviewsQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return query(collection(firestore, `users/${professionalId}/reviews`));
+    }, [firestore, professionalId]);
+
+    const { data: reviews } = useCollection<Review>(reviewsQuery);
+
+    const { averageRating, reviewCount } = useMemo(() => {
+        if (!reviews || reviews.length === 0) {
+            return { averageRating: 0, reviewCount: 0 };
+        }
+        const total = reviews.reduce((acc, review) => acc + review.rating, 0);
+        return {
+            averageRating: total / reviews.length,
+            reviewCount: reviews.length
+        };
+    }, [reviews]);
+    
+    if (reviewCount === 0) {
+        return <div className="text-xs text-muted-foreground">No reviews yet</div>;
+    }
+
+    return (
+        <div className="flex items-center gap-1">
+            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+            <span className="font-bold text-sm">{averageRating.toFixed(1)}</span>
+            <span className="text-xs text-muted-foreground">({reviewCount} reviews)</span>
+        </div>
+    );
+}
+
 
 export function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const getInitials = (name: string) => {
@@ -54,6 +93,10 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
               {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
             </div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+            
+            <div className="mt-2 mb-4">
+                <ProfessionalRating professionalId={professional.id} />
+            </div>
 
             <div className="flex-grow space-y-3 mt-4 text-sm text-muted-foreground text-left w-full">
               <div className="flex items-start gap-3">
