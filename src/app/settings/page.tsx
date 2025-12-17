@@ -258,7 +258,7 @@ function SettingsPageContent() {
              <div className="flex flex-col items-center mt-6">
                 <div className="relative group">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
-                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
+                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? undefined} alt={displayName ?? ''} /> }
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                             {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
                         </AvatarFallback>
@@ -276,7 +276,7 @@ function SettingsPageContent() {
                         </DropdownMenuItem>
                          <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          className="text-destructive"
+                          className="text-destructive focus:bg-destructive/10 focus:text-destructive"
                           onSelect={() => setIsDeleteAlertOpen(true)}
                           disabled={!displayAvatar}
                         >
