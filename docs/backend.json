@@ -94,6 +94,14 @@
         "isBlocked": {
             "type": "boolean",
             "description": "Indicates if the user's account is blocked."
+        },
+        "isFeatured": {
+            "type": "boolean",
+            "description": "Indicates if the professional should be featured on public pages."
+        },
+        "rank": {
+            "type": "number",
+            "description": "A number used to manually rank professionals for display order."
         }
       },
       "required": [
@@ -161,7 +169,7 @@
               "description": "The longitude of the property."
             }
           },
-          "required": ["address", "pincode", "state", "latitude", "longitude"]
+          "required": ["address", "pincode", "state"]
         },
          "contactNumber": {
           "type": "string",
@@ -263,6 +271,23 @@
         "status"
       ]
     },
+    "Review": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Review",
+        "type": "object",
+        "description": "Represents a user-submitted review for a professional.",
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for the review." },
+          "professionalId": { "type": "string", "description": "ID of the professional being reviewed." },
+          "reviewerId": { "type": "string", "description": "ID of the user who wrote the review." },
+          "reviewerName": { "type": "string", "description": "Name of the reviewer at the time of posting." },
+          "reviewerPhotoURL": { "type": "string", "description": "URL of the reviewer's profile picture." },
+          "rating": { "type": "number", "description": "A rating from 1 to 5.", "minimum": 1, "maximum": 5 },
+          "comment": { "type": "string", "description": "The text content of the review." },
+          "date": { "type": "string", "description": "The date the review was submitted.", "format": "date-time" }
+        },
+        "required": ["id", "professionalId", "reviewerId", "reviewerName", "rating", "comment", "date"]
+    },
     "AppSettings": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "title": "AppSettings",
@@ -288,6 +313,44 @@
             "listingValidityDays": {
                 "type": "number",
                 "description": "The number of days a premium listing remains active."
+            },
+            "announcement": {
+                "type": "object",
+                "description": "Configuration for the site-wide announcement banner.",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The text to display in the banner."
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "An optional URL the banner links to."
+                    },
+                    "enabled": {
+                        "type": "boolean",
+                        "description": "Whether the banner is currently active."
+                    }
+                }
+            },
+            "notification": {
+                "type": "object",
+                "description": "Stores the most recent global notification sent by an admin.",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The content of the notification message."
+                    },
+                    "audience": {
+                        "type": "string",
+                        "description": "The target audience for the notification.",
+                        "enum": ["all", "verified"]
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "The ISO 8601 timestamp of when the notification was sent.",
+                        "format": "date-time"
+                    }
+                }
             }
         },
         "required": [
@@ -319,6 +382,16 @@
         }
       },
       {
+        "path": "/users/{userId}/reviews/{reviewId}",
+        "definition": {
+          "entityName": "Review",
+          "schema": {
+            "$ref": "#/entities/Review"
+          },
+          "description": "Stores reviews for a specific professional."
+        }
+      },
+      {
         "path": "/properties/{propertyId}",
         "definition": {
             "entityName": "Property",
@@ -341,5 +414,3 @@
     ]
   }
 }
-
-    

@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { PropertyCard } from '@/components/property-card';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ReviewsSection } from '@/components/shared/reviews-section';
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -58,7 +59,7 @@ function ProfessionalDetailSkeleton() {
                         </CardContent>
                     </Card>
                 </div>
-                 <div className="lg:col-span-2">
+                 <div className="lg:col-span-2 space-y-8">
                     <Card>
                         <CardHeader>
                             <Skeleton className="h-8 w-1/2" />
@@ -77,6 +78,10 @@ function ProfessionalDetailSkeleton() {
                                 ))}
                              </div>
                         </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
+                        <CardContent><Skeleton className="h-32 w-full" /></CardContent>
                     </Card>
                 </div>
             </div>
@@ -202,7 +207,9 @@ export default function ProfessionalDetailPage() {
                     </Card>
                 </div>
                 
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2 space-y-8">
+                    <ReviewsSection professionalId={professionalId} />
+
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">

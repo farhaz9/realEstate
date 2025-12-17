@@ -53,6 +53,17 @@ export type Order = {
   description: string;
 }
 
+export type Review = {
+  id: string;
+  professionalId: string;
+  reviewerId: string;
+  reviewerName: string;
+  reviewerPhotoURL?: string;
+  rating: number;
+  comment: string;
+  date: Date | any;
+}
+
 export type User = {
   id: string;
   fullName: string;

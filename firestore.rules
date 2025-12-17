@@ -22,6 +22,18 @@ service cloud.firestore {
 
       // Allow write if the user is the owner OR if the user is an admin.
       allow write: if isOwner(userId) || isAdmin();
+
+      // Rules for the 'reviews' subcollection
+      match /reviews/{reviewId} {
+        // Anyone can read reviews.
+        allow read: if true;
+        
+        // Only an authenticated user can create a review for someone else.
+        allow create: if request.auth != null && request.auth.uid != userId;
+        
+        // Only the user who wrote the review can update or delete it.
+        allow update, delete: if isOwner(resource.data.reviewerId) || isAdmin();
+      }
     }
 
     // Rules for the 'properties' collection
