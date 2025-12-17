@@ -47,9 +47,10 @@ type EditUserFormValues = z.infer<typeof editUserFormSchema>;
 interface EditUserFormProps {
   user: User;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
+export function EditUserForm({ user, onSuccess, onCancel }: EditUserFormProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -243,7 +244,7 @@ export function EditUserForm({ user, onSuccess }: EditUserFormProps) {
           )}
         />
         <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onSuccess}>
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>

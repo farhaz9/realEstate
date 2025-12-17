@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
 import type { User, Property, Order } from '@/types';
-import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
@@ -118,7 +118,7 @@ export default function UserDetailPage() {
   const { toast } = useToast();
   
   const [creditAmount, setCreditAmount] = useState(0);
-  const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   type ConfirmationAction = 'delete' | 'block' | 'verify';
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction | null>(null);
@@ -248,6 +248,17 @@ export default function UserDetailPage() {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-1 lg:sticky top-24 space-y-8">
+                    {isEditing ? (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Edit Profile</CardTitle>
+                                <CardDescription>Update the user's information below.</CardDescription>
+                            </CardHeader>
+                             <CardContent>
+                                <EditUserForm user={user} onSuccess={() => setIsEditing(false)} onCancel={() => setIsEditing(false)} />
+                            </CardContent>
+                        </Card>
+                    ) : (
                     <Card>
                         <CardHeader className="items-center text-center">
                            <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
@@ -296,6 +307,7 @@ export default function UserDetailPage() {
                              </div>
                         </CardContent>
                     </Card>
+                    )}
 
                     <Card>
                         <CardHeader>
@@ -355,17 +367,10 @@ export default function UserDetailPage() {
                              <Separator />
 
                             <div className="grid grid-cols-2 gap-2">
-                                <Dialog open={isEditUserDialogOpen} onOpenChange={setIsEditUserDialogOpen}>
-                                  <DialogTrigger asChild>
-                                      <Button variant="outline"><Edit className="mr-2 h-4 w-4" />Edit Profile</Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="max-w-lg">
-                                      <DialogHeader>
-                                          <DialogTitle>Edit User: {user?.fullName}</DialogTitle>
-                                      </DialogHeader>
-                                      {user && <EditUserForm user={user} onSuccess={() => setIsEditUserDialogOpen(false)} />}
-                                  </DialogContent>
-                                </Dialog>
+                                <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
+                                    {isEditing ? <X className="mr-2 h-4 w-4" /> : <Edit className="mr-2 h-4 w-4" />}
+                                    {isEditing ? "Cancel" : "Edit Profile"}
+                                </Button>
                                 <Button
                                     variant="outline"
                                     onClick={() => { setConfirmationAction('block'); setIsConfirmationDialogOpen(true); }}
@@ -470,5 +475,3 @@ export default function UserDetailPage() {
     </div>
   );
 }
-
-    
