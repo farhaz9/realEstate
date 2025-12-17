@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ArrowLeft, Camera, Edit, ShoppingBag, Verified, Loader2 } from 'lucide-react';
+import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,6 +20,19 @@ import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -41,6 +54,10 @@ function SettingsPageContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [isCameraDialogOpen, setIsCameraDialogOpen] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -55,27 +72,46 @@ function SettingsPageContent() {
     }
   }, [user, isUserLoading, router]);
 
+  useEffect(() => {
+    if (isCameraDialogOpen) {
+      const getCameraPermission = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          setHasCameraPermission(true);
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (error) {
+          console.error('Error accessing camera:', error);
+          setHasCameraPermission(false);
+          toast({
+            variant: 'destructive',
+            title: 'Camera Access Denied',
+            description: 'Please enable camera permissions in your browser settings.',
+          });
+          setIsCameraDialogOpen(false);
+        }
+      };
+      getCameraPermission();
+    } else {
+      // Cleanup camera stream when dialog is closed
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    }
+  }, [isCameraDialogOpen, toast]);
+
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
   };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user || !userDocRef || !auth?.currentUser) {
+  
+  const uploadImage = async (file: File | Blob) => {
+    if (!user || !userDocRef || !auth?.currentUser) {
       return;
     }
-
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-      toast({
-        title: 'Image too large',
-        description: 'Please select an image smaller than 2MB.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     setIsUploading(true);
-
     try {
       const authRes = await fetch('/api/imagekit/auth');
       const authBody = await authRes.json();
@@ -91,17 +127,14 @@ function SettingsPageContent() {
 
       const uploadResult = await imagekit.upload({
         file,
-        fileName: `${user.uid}_${Date.now()}`,
+        fileName: `${user.uid}_${Date.now()}.png`,
         folder: "/delhi-estate-luxe/avatars",
         ...authBody,
       });
 
       const newPhotoURL = uploadResult.url;
 
-      // Update Firebase Auth profile
       await updateProfile(auth.currentUser, { photoURL: newPhotoURL });
-
-      // Update Firestore document
       await updateDoc(userDocRef, { photoURL: newPhotoURL });
 
       toast({
@@ -119,7 +152,40 @@ function SettingsPageContent() {
     } finally {
       setIsUploading(false);
     }
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      toast({
+        title: 'Image too large',
+        description: 'Please select an image smaller than 2MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    await uploadImage(file);
   };
+  
+  const handleCapture = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          await uploadImage(blob);
+        }
+        setIsCameraDialogOpen(false);
+      }, 'image/png');
+    }
+  };
+
 
   const getInitials = (name: string) => {
     if (!name) return '';
@@ -150,31 +216,44 @@ function SettingsPageContent() {
                 </Button>
             </div>
              <div className="flex flex-col items-center mt-6">
-                <div className="relative group">
-                    <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
-                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
-                        <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
-                            {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
-                        </AvatarFallback>
-                    </Avatar>
-                     <button 
-                        onClick={handleAvatarClick}
-                        disabled={isUploading}
-                        className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                        {isUploading ? (
-                          <Loader2 className="h-8 w-8 text-white animate-spin" />
-                        ) : (
-                          <Camera className="h-8 w-8 text-white" />
-                        )}
-                    </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                      accept="image/png, image/jpeg, image/gif"
-                    />
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="relative group cursor-pointer">
+                        <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
+                            {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
+                            <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
+                                {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
+                            </AvatarFallback>
+                        </Avatar>
+                         <div
+                            className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            {isUploading ? (
+                              <Loader2 className="h-8 w-8 text-white animate-spin" />
+                            ) : (
+                              <Camera className="h-8 w-8 text-white" />
+                            )}
+                        </div>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onSelect={() => setIsCameraDialogOpen(true)}>
+                      <Camera className="mr-2 h-4 w-4" />
+                      <span>Take photo</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={handleAvatarClick}>
+                      <Upload className="mr-2 h-4 w-4" />
+                      <span>Upload photo</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept="image/png, image/jpeg, image/gif"
+                />
                 <div className="flex items-center gap-2 mt-4">
                   {isLoading ? <Skeleton className="h-8 w-40" /> : <h2 className="text-2xl font-bold">{displayName}</h2>}
                   {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500" />}
@@ -211,6 +290,25 @@ function SettingsPageContent() {
             </TabsContent>
         </Tabs>
       </div>
+
+       <Dialog open={isCameraDialogOpen} onOpenChange={setIsCameraDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Take a Profile Photo</DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted playsInline />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCameraDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleCapture} disabled={hasCameraPermission === false}>
+              <Camera className="mr-2 h-4 w-4" />
+              Capture
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
