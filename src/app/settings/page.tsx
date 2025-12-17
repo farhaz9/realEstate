@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit } from 'lucide-react';
+import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2 } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +25,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -34,6 +35,17 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -59,6 +71,8 @@ function SettingsPageContent() {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -187,6 +201,35 @@ function SettingsPageContent() {
     }
   };
 
+  const handleDeletePhoto = async () => {
+      if (!user || !userDocRef || !auth?.currentUser) {
+        toast({
+          title: 'Error',
+          description: 'Could not delete photo. User not found.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      setIsUploading(true);
+      try {
+        await updateProfile(auth.currentUser, { photoURL: '' });
+        await updateDoc(userDocRef, { photoURL: '' });
+        toast({
+          title: 'Profile picture removed',
+          variant: 'success',
+        });
+      } catch (error: any) {
+        console.error('Photo deletion failed:', error);
+        toast({
+          title: 'Deletion Failed',
+          description: error.message || 'There was a problem removing your profile picture.',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsUploading(false);
+      }
+    };
+
 
   const getInitials = (name: string) => {
     if (!name) return '';
@@ -217,31 +260,32 @@ function SettingsPageContent() {
                 </Button>
             </div>
              <div className="flex flex-col items-center mt-6">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <div className="relative group cursor-pointer">
-                        <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
-                            {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
-                            <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
-                                {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
-                            </AvatarFallback>
-                        </Avatar>
+                <div className="relative group cursor-pointer">
+                    <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
+                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
+                        <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
+                            {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
+                        </AvatarFallback>
+                    </Avatar>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
                          <Button size="icon" variant="default" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full border-2 border-background">
                             <Edit className="h-4 w-4" />
                         </Button>
-                    </div>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onSelect={() => setIsCameraDialogOpen(true)}>
-                      <Camera className="mr-2 h-4 w-4" />
-                      <span>Take photo</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={handleAvatarClick}>
-                      <Upload className="mr-2 h-4 w-4" />
-                      <span>Upload photo</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
+                          <Upload className="mr-2 h-4 w-4" />
+                          <span>Upload photo</span>
+                        </DropdownMenuItem>
+                         <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive" onSelect={() => setIsDeleteAlertOpen(true)}>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Delete photo</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
 
                 <input
                   type="file"
@@ -305,6 +349,25 @@ function SettingsPageContent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete your profile picture. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeletePhoto}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
