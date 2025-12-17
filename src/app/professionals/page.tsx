@@ -12,9 +12,10 @@ import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { HomeSearch } from '@/components/shared/home-search';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PageHero } from '@/components/shared/page-hero';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -26,14 +27,19 @@ const filterTabs = [
 export default function ProfessionalsPage() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+  const [heroSearchTerm, setHeroSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
-
-  const heroImage = PlaceHolderImages.find(p => p.id === 'contact-hero');
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
   }, [searchParams]);
+
+   const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchTerm(heroSearchTerm);
+  };
 
   const professionalsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -113,30 +119,37 @@ export default function ProfessionalsPage() {
 
   return (
     <>
-      <section className="relative w-full h-[80vh] md:h-[90vh] text-white overflow-hidden">
-        {heroImage && (
-           <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            data-ai-hint={heroImage.imageHint}
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-                Find your place in the world
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg md:text-xl text-neutral-200">
-                The most comprehensive database of properties, exclusive listings, and top-rated agents in your area.
-            </p>
-            <div className="w-full max-w-2xl mt-8">
-                 <HomeSearch />
+      <PageHero
+        title="Find a Professional"
+        subtitle="Connect with top-rated real estate agents, interior designers, and vendors."
+        imageUrl="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=2874&auto=format&fit=crop"
+        className="h-[80vh] md:h-[90vh]"
+      >
+        <div className="w-full max-w-xl mx-auto">
+          <form
+            onSubmit={handleHeroSearch}
+            className="flex w-full items-center rounded-full bg-white p-2 shadow-lg"
+          >
+            <div className="relative flex-grow">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                id="search-professional"
+                placeholder="Search by name, category, or company"
+                className="pl-12 pr-4 h-12 text-base rounded-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground"
+                value={heroSearchTerm}
+                onChange={(e) => setHeroSearchTerm(e.target.value)}
+              />
             </div>
+            <Button
+              type="submit"
+              size="lg"
+              className="rounded-full px-8 text-base h-12"
+            >
+              Search
+            </Button>
+          </form>
         </div>
-      </section>
+      </PageHero>
       <div className="bg-muted/30 min-h-screen">
         <div className="container mx-auto px-4 pt-8 pb-16">
           <form id="professionals-search" className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
