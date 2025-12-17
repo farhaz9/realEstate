@@ -89,7 +89,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                         {cardTitle ? getInitials(cardTitle) : <UserIcon />}
                     </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 grid grid-cols-2 gap-4">
+                <div className="flex-1">
                     <div>
                         <div className="flex items-center gap-1.5">
                             <h3 className="font-bold text-base truncate">{cardTitle}</h3>
@@ -100,18 +100,8 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                             <ProfessionalRating professionalId={professional.id} />
                         </div>
                     </div>
-                     <div className="space-y-1 text-xs">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <Mail className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">{professional.email}</span>
-                        </div>
-                         <div className="flex items-center gap-2 text-muted-foreground">
-                            <Phone className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">{professional.phone}</span>
-                        </div>
-                    </div>
                 </div>
-                 <Button size="sm" className="bg-primary hover:bg-primary/90">
+                 <Button size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
                     View Profile
                 </Button>
             </Link>
@@ -143,21 +133,10 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                     <div className="mt-2 mb-4">
                         <ProfessionalRating professionalId={professional.id} />
                     </div>
+                    
+                    <div className="flex-grow" />
 
-                    <div className="flex-grow space-y-3 mt-4 text-sm text-muted-foreground text-left w-full">
-                    <div className="flex items-start gap-3">
-                        <Mail className="h-4 w-4 flex-shrink-0 mt-1" />
-                        <a href={`mailto:${professional.email}`} className="hover:text-primary transition-colors truncate">{professional.email}</a>
-                    </div>
-                    {professional.phone && (
-                        <div className="flex items-start gap-3">
-                        <Phone className="h-4 w-4 flex-shrink-0 mt-1" />
-                        <a href={`tel:${professional.phone}`} className="hover:text-primary transition-colors">{professional.phone}</a>
-                        </div>
-                    )}
-                    </div>
-
-                    <Button asChild variant="outline" className="w-full mt-6">
+                    <Button asChild variant="outline" className="w-full mt-6 rounded-full">
                         <Link href={`/professionals/${professional.id}`}>
                             View Profile
                         </Link>
