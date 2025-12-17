@@ -86,7 +86,10 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
             </Button>
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <Button variant="link" className="w-full text-destructive hover:text-destructive/80">Delete Account</Button>
+                    <Button variant="destructive" className="w-full h-12 text-base font-bold">
+                        <Trash2 className="mr-2 h-5 w-5" />
+                        Delete Account
+                    </Button>
                 </AlertDialogTrigger>
                  <AlertDialogContent>
                     <AlertDialogHeader>
