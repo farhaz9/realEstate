@@ -31,7 +31,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
 
   return (
     <Link href={`/properties/${property.id}`} className="block group h-full">
-        <div className="bg-[#1a1a1a] text-white rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
+        <div className="bg-gradient-to-br from-primary/80 to-purple-500/90 text-white rounded-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
             <div className="relative h-48 bg-muted">
                 {imageUrl ? (
                     <Image
@@ -47,7 +47,7 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
                     </div>
                 )}
                  <div className="absolute top-3 left-3">
-                    <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'} className="uppercase bg-primary/80 border-none">
+                    <Badge variant={property.listingType === 'sale' ? 'default' : 'secondary'} className="uppercase bg-white/90 text-primary font-bold border-none">
                         {property.listingType}
                     </Badge>
                  </div>
@@ -61,12 +61,12 @@ export function PopularPropertyCard({ property, className }: PopularPropertyCard
             <div className="p-4 flex-grow flex flex-col">
                 <div className="flex justify-between items-start">
                     <p className="font-bold text-lg text-white">{formatPrice(property.price)}{property.listingType === 'rent' ? '/mo' : ''}</p>
-                    <Badge variant="outline" className="capitalize border-primary/50 text-primary bg-primary/10">{property.propertyType}</Badge>
+                    <Badge variant="outline" className="capitalize border-white/30 text-white bg-white/10">{property.propertyType}</Badge>
                 </div>
                 <p className="font-semibold truncate mt-1">{property.title}</p>
-                <p className="text-sm text-neutral-400 truncate">{property.location.address}</p>
+                <p className="text-sm text-neutral-200 truncate">{property.location.address}</p>
                 
-                <div className="mt-4 pt-4 border-t border-white/10 flex items-center space-x-4 text-neutral-300 text-sm">
+                <div className="mt-4 pt-4 border-t border-white/20 flex items-center space-x-4 text-neutral-200 text-sm">
                     <div className="flex items-center gap-2">
                         <BedDouble className="h-4 w-4" />
                         <span>{property.bedrooms ?? 0} Beds</span>
