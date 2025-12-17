@@ -216,7 +216,11 @@ export function PricingSection() {
             </div>
             <CardHeader className="text-center pt-12">
               <div className="flex justify-center items-center gap-2 mb-4">
-                  <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
+                  <div className="w-20 h-20 rounded-full bg-black/20 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
+                        <Verified className="w-8 h-8" />
+                    </div>
+                </div>
               </div>
               <CardTitle className="text-4xl font-extrabold text-white">
                 {isAnnual ? formatPrice(annualPrice) : formatPrice(monthlyPrice)}
@@ -240,6 +244,7 @@ export function PricingSection() {
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
                          <Button size="lg" className="w-full h-12 text-lg bg-white text-primary hover:bg-white/90 shadow-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
+                            <Verified className="mr-2 h-5 w-5" />
                             {isCurrentlyVerified ? 'You are already Verified' : 'Get Verified Now'}
                         </Button>
                     </AlertDialogTrigger>
