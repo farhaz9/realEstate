@@ -208,6 +208,24 @@ export default function Header() {
     return true;
   });
 
+  const NavLink = ({ href, label }: { href: string, label: string }) => {
+    const isActive = pathname === href;
+    return (
+      <Link href={href} className="relative group px-3 py-2 transition-colors">
+        <span className={cn(
+          "relative z-10",
+          isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground"
+        )}>
+          {label}
+        </span>
+        <span className={cn(
+          "absolute bottom-0 left-1/2 h-0.5 bg-primary transition-all duration-300",
+          "w-0 group-hover:w-full group-hover:left-0"
+        )}></span>
+      </Link>
+    );
+  };
+
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
@@ -332,19 +350,7 @@ export default function Header() {
                     </div>
                     <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
                         {visibleNavLinks.slice(1,3).map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                            "px-4 py-1.5 rounded-full transition-colors",
-                            "text-muted-foreground hover:text-foreground",
-                            pathname === link.href
-                                ? "bg-primary/10 text-primary font-semibold"
-                                : ""
-                            )}
-                        >
-                            {link.label}
-                        </Link>
+                           <NavLink key={link.href} href={link.href} label={link.label} />
                         ))}
                     </nav>
                 </div>
@@ -354,33 +360,10 @@ export default function Header() {
                 <div className="flex items-center gap-2 justify-end">
                     <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
                         {navLinks.filter(l => l.label !== 'Home' && l.label !== 'Properties' && l.label !== 'Interiors').map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                            "px-4 py-1.5 rounded-full transition-colors",
-                            "text-muted-foreground hover:text-foreground",
-                            pathname === link.href
-                                ? "bg-primary/10 text-primary font-semibold"
-                                : ""
-                            )}
-                        >
-                            {link.label}
-                        </Link>
+                           <NavLink key={link.href} href={link.href} label={link.label} />
                         ))}
                         {user && isProfessional && !isVendor && (
-                        <Link
-                            href="/settings?tab=listings"
-                            className={cn(
-                            "px-4 py-1.5 rounded-full transition-colors",
-                            "text-muted-foreground hover:text-foreground",
-                            pathname === "/settings"
-                                ? "bg-primary/10 text-primary font-semibold"
-                                : ""
-                            )}
-                        >
-                            My Listings
-                        </Link>
+                          <NavLink href="/settings?tab=listings" label="My Listings" />
                         )}
                     </nav>
                     {isUserLoading ? (
