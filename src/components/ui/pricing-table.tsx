@@ -104,54 +104,59 @@ export function PricingTable({
         </div>
 
         {/* Mobile View - Cards */}
-        <div className="sm:hidden space-y-4">
-          {plans.map((plan) => (
-            <div key={plan.level} className="border rounded-xl p-4">
-               <div className="flex items-center justify-between mb-1">
-                <span className="text-lg font-bold">{plan.name}</span>
-                {plan.popular && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                    Popular
-                  </span>
-                )}
-              </div>
-              {plan.description && (
-                <p className="text-xs text-muted-foreground mb-2">{plan.description}</p>
-              )}
-               <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-2xl font-bold">
-                  {formatPrice(
-                    isYearly ? plan.price.yearly : plan.price.monthly,
-                  )}
-                </span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  /{isYearly ? "year" : "month"}
-                </span>
-              </div>
-              <ul className="space-y-2 text-sm">
-                {features.map((feature) => (
-                  <li key={feature.name} className="flex items-center gap-2">
-                    {shouldShowCheck(feature.included, plan.level) ? (
-                      <CheckIcon className="w-4 h-4 text-primary" />
-                    ) : (
-                      <Cross1Icon className="w-3.5 h-3.5 text-destructive/50" />
+        <div className="sm:hidden space-y-6">
+            {plans.map((plan) => (
+                <div 
+                    key={plan.level} 
+                    className={cn(
+                        "rounded-2xl p-6 relative",
+                        plan.popular ? "bg-gradient-to-br from-primary/20 to-purple-500/20 border-2 border-primary" : "bg-muted/50 border"
                     )}
-                    <span>{feature.name}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                onClick={() => handlePlanSelect(plan.level)}
-                className={cn(
-                  "w-full mt-4",
-                  buttonClassName,
-                )}
-              >
-                Get started
-                <ArrowRightIcon className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          ))}
+                >
+                    {plan.popular && (
+                        <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                            <div className="bg-primary text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-full shadow-lg">
+                                Popular
+                            </div>
+                        </div>
+                    )}
+                    <div className="text-center">
+                        <h3 className="text-2xl font-bold">{plan.name}</h3>
+                        {plan.description && (
+                            <p className="text-muted-foreground mt-1">{plan.description}</p>
+                        )}
+                        <div className="mt-4">
+                            <span className="text-4xl font-extrabold tracking-tight">
+                            {formatPrice(isYearly ? plan.price.yearly : plan.price.monthly)}
+                            </span>
+                            <span className="text-muted-foreground">/{isYearly ? "year" : "month"}</span>
+                        </div>
+                    </div>
+
+                    <ul className="mt-8 space-y-4">
+                        {features.map((feature) => (
+                            <li key={feature.name} className="flex items-center gap-3">
+                                {shouldShowCheck(feature.included, plan.level) ? (
+                                <CheckIcon className="w-5 h-5 text-primary flex-shrink-0" />
+                                ) : (
+                                <Cross1Icon className="w-4 h-4 text-destructive/50 flex-shrink-0" />
+                                )}
+                                <span className="text-sm">{feature.name}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <Button
+                        onClick={() => handlePlanSelect(plan.level)}
+                        className={cn(
+                            "w-full mt-8 h-12 text-base font-bold",
+                            plan.popular ? "bg-primary hover:bg-primary/90" : "bg-primary/80 hover:bg-primary/90 text-primary-foreground",
+                            buttonClassName,
+                        )}
+                    >
+                        Choose {plan.name}
+                    </Button>
+                </div>
+            ))}
         </div>
 
         {/* Desktop View - Table */}
@@ -232,7 +237,7 @@ export function PricingTable({
                             {shouldShowCheck(feature.included, plan.level) ? (
                               <CheckIcon className="w-5 h-5 text-primary" />
                             ) : (
-                              <Cross1Icon className="w-4 h-4 text-destructive/50" />
+                                <Cross1Icon className="w-4 h-4 text-destructive/50" />
                             )}
                           </div>
                         ))}
@@ -264,9 +269,12 @@ function shouldShowCheck(
   included: PricingFeature["included"],
   level: string,
 ): boolean {
-  if (level === 'business') return true;
-  if (level === 'pro' && (included === 'pro' || included === 'starter' || included === 'free')) return true;
-  if (level === 'starter' && (included === 'starter' || included === 'free')) return true;
-  if (level === 'free' && included === 'free') return true;
-  return false;
+    if (level === 'business') return true;
+    if (level === 'pro' && (included === 'pro' || included === 'starter' || included === 'free')) return true;
+    if (level === 'starter' && (included === 'starter' || included === 'free')) return true;
+    if (level === 'free' && included === 'free') return true;
+    if (level === 'pro' && (included === 'business')) return false;
+    if (level === 'starter' && (included === 'pro' || included === 'business')) return false;
+    if (level === 'free' && (included !== 'free')) return false;
+    return false;
 }
