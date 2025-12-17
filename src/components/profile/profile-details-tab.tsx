@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays, AlertTriangle } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import {
   AlertDialog,
@@ -89,15 +89,18 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
                     </Button>
                 </AlertDialogTrigger>
                  <AlertDialogContent>
-                    <AlertDialogHeader>
+                    <AlertDialogHeader className="items-center">
+                        <div className="rounded-full bg-primary/10 p-3 mb-4">
+                            <LogOut className="h-8 w-8 text-primary" />
+                        </div>
                       <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
-                      <AlertDialogDescription>
+                      <AlertDialogDescription className="text-center">
                           You will be returned to the homepage. You can always log back in later.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleSignOut}>Log Out</AlertDialogAction>
+                    <AlertDialogFooter className="sm:justify-center">
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleSignOut}>Log Out</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -110,16 +113,19 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
                     </Button>
                 </AlertDialogTrigger>
                  <AlertDialogContent>
-                    <AlertDialogHeader>
+                    <AlertDialogHeader className="items-center">
+                         <div className="rounded-full bg-destructive/10 p-3 mb-4">
+                            <AlertTriangle className="h-8 w-8 text-destructive" />
+                        </div>
                       <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
+                      <AlertDialogDescription className="text-center">
                           This action cannot be undone. This will permanently delete your account
                           and remove your data from our servers.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
+                    <AlertDialogFooter className="sm:justify-center">
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                    <AlertDialogAction className="bg-destructive hover:bg-destructive/90">Delete Account</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
