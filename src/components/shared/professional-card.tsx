@@ -101,8 +101,11 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                         </div>
                     </div>
                 </div>
-                 <Button size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
-                    View Profile
+                 <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
+                    <Link href={`/professionals/${professional.id}`}>
+                        <Info className="mr-2 h-4 w-4" />
+                        View Profile
+                    </Link>
                 </Button>
             </Link>
         </div>
@@ -138,6 +141,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
 
                     <Button asChild variant="outline" className="w-full mt-6 rounded-full">
                         <Link href={`/professionals/${professional.id}`}>
+                            <Info className="mr-2 h-4 w-4" />
                             View Profile
                         </Link>
                     </Button>
