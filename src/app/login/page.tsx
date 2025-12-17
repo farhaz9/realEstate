@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import Link from 'next/link';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, signOut, User as FirebaseUser } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -29,6 +29,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -67,6 +74,51 @@ const roles = [
     { id: 'vendor', name: 'Vendor/Supplier', icon: Wrench },
 ];
 
+function RoleSelectionDialog({ open, onOpenChange, onRoleSelect }: { open: boolean, onOpenChange: (open: boolean) => void, onRoleSelect: (role: string) => void }) {
+    const [selectedRole, setSelectedRole] = useState('user');
+
+    const handleConfirm = () => {
+        onRoleSelect(selectedRole);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Complete Your Profile</DialogTitle>
+                    <DialogDescription>Please select your primary role on our platform to continue.</DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                        {roles.map((role) => (
+                            <label key={role.id} className="cursor-pointer relative group">
+                                <input
+                                    className="peer sr-only"
+                                    name="role-dialog"
+                                    type="radio"
+                                    value={role.id}
+                                    checked={selectedRole === role.id}
+                                    onChange={(e) => setSelectedRole(e.target.value)}
+                                />
+                                <div className="h-full p-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
+                                    <role.icon className="text-xl group-hover:scale-110 transition-transform" />
+                                    <span className="text-xs font-semibold">{role.name}</span>
+                                </div>
+                                <div className="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity duration-200 scale-0 peer-checked:scale-100">
+                                    <CheckCircle2 className="text-lg" />
+                                </div>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+                <AlertDialogFooter>
+                    <Button onClick={handleConfirm}>Confirm Role</Button>
+                </AlertDialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -82,6 +134,10 @@ export default function LoginPage() {
   const [companyName, setCompanyName] = useState('');
   const [servicesProvided, setServicesProvided] = useState('');
   const [bio, setBio] = useState('');
+
+  // Google Sign-In Role Selection
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [googleUser, setGoogleUser] = useState<FirebaseUser | null>(null);
 
   const auth = useAuth();
   const firestore = getFirestore();
@@ -209,6 +265,42 @@ export default function LoginPage() {
     }
   };
 
+  const completeGoogleUserCreation = async (user: FirebaseUser, selectedRole: string) => {
+    const userDocRef = doc(firestore, 'users', user.uid);
+    const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(selectedRole);
+
+    const username = generateUsername(user.displayName || '', user.email || '');
+    await setDoc(userDocRef, {
+      id: user.uid,
+      fullName: user.displayName,
+      username: username,
+      email: user.email,
+      phone: user.phoneNumber || '',
+      category: selectedRole,
+      dateJoined: serverTimestamp(),
+      photoURL: user.photoURL || '',
+      wishlist: [],
+      orders: [],
+      listingCredits: 1,
+      isBlocked: false,
+      isFeatured: isProfessional,
+    });
+    toast({
+      title: 'Sign Up Successful!',
+      description: 'Welcome to Falcon Axe Homes! You have received 1 free listing credit.',
+      variant: 'success',
+    });
+    router.push('/');
+  };
+
+  const handleRoleSelected = (selectedRole: string) => {
+    setIsRoleDialogOpen(false);
+    if (googleUser) {
+        completeGoogleUserCreation(googleUser, selectedRole);
+    }
+  };
+
+
   const handleGoogleSignIn = async () => {
     if (!auth) return;
     try {
@@ -229,39 +321,17 @@ export default function LoginPage() {
             });
             return;
         }
-      }
-
-      if (!userDoc.exists()) {
-        const username = generateUsername(user.displayName || '', user.email || '');
-        await setDoc(userDocRef, {
-          id: user.uid,
-          fullName: user.displayName,
-          username: username,
-          email: user.email,
-          phone: user.phoneNumber || '',
-          category: 'user',
-          dateJoined: serverTimestamp(),
-          photoURL: user.photoURL || '',
-          wishlist: [],
-          orders: [],
-          listingCredits: 1,
-          isBlocked: false,
-          isFeatured: false,
-        });
-         toast({
-          title: 'Sign Up Successful!',
-          description: 'Welcome to Falcon Axe Homes! You have received 1 free listing credit.',
-          variant: 'success',
-        });
-      } else {
         toast({
             title: 'Login Successful',
             description: `Welcome back, ${user.displayName}!`,
             variant: 'success',
         });
+        router.push('/');
+      } else {
+        // New user: open role selection dialog
+        setGoogleUser(user);
+        setIsRoleDialogOpen(true);
       }
-      
-      router.push('/');
     } catch (error: unknown) {
       handleAuthError(error);
     }
@@ -295,6 +365,11 @@ export default function LoginPage() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white flex-grow w-full flex">
+      <RoleSelectionDialog 
+        open={isRoleDialogOpen}
+        onOpenChange={setIsRoleDialogOpen}
+        onRoleSelect={handleRoleSelected}
+      />
       <div className="hidden lg:flex w-1/2 relative flex-col justify-center p-12">
         <Image 
           src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
