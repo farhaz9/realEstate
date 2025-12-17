@@ -92,7 +92,8 @@ export function PricingTable({
     onPlanSelect?.(planLevel);
     
     if (plan.level === 'free') {
-        onPlanSelect?.(planLevel);
+        // Handle free plan selection, e.g. navigate to a signup page or show a confirmation.
+        // For now, we just call the callback and don't open the payment dialog.
         return;
     }
 
@@ -182,18 +183,10 @@ export function PricingTable({
   const selectedPlanData = plans.find((p) => p.level === selectedPlan);
 
   return (
-    <section
-      className={cn(
-        "bg-background text-foreground",
-        "py-12 sm:py-16 md:py-20 px-4",
-        "fade-bottom overflow-hidden pb-0",
-        className
-      )}
-    >
-      <div
+    <div
         className={cn("w-full max-w-5xl mx-auto", containerClassName)}
         {...props}
-      >
+    >
          <div
             className="relative mx-auto grid w-fit grid-cols-2 rounded-full border bg-muted p-1 mb-8"
         >
@@ -227,8 +220,8 @@ export function PricingTable({
                     key={plan.level} 
                     className={cn(
                         "rounded-2xl p-6 relative border transition-all",
-                        selectedPlan === plan.level ? "ring-2 ring-primary border-primary" : "bg-muted/50",
-                        plan.popular ? "bg-gradient-to-br from-primary/10 to-purple-500/10" : ""
+                        selectedPlan === plan.level ? "ring-2 ring-primary border-primary" : "bg-card",
+                        plan.popular ? "bg-gradient-to-br from-primary/[.05] to-purple-500/[.05]" : ""
                     )}
                 >
                     {plan.popular && (
@@ -290,7 +283,7 @@ export function PricingTable({
                     "flex-1 p-4 rounded-xl text-left transition-all",
                     "border",
                     selectedPlan === plan.level &&
-                      "ring-2 ring-primary border-primary",
+                      "ring-2 ring-primary border-primary bg-primary/5",
                   )}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -402,8 +395,7 @@ export function PricingTable({
             </AlertDialogContent>
         </AlertDialog>
 
-      </div>
-    </section>
+    </div>
   )
 }
 
