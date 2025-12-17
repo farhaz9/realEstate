@@ -88,7 +88,11 @@ export function PricingTable({
     const plan = plans.find(p => p.level === planLevel);
     if (!plan) return;
 
-    setSelectedPlan(planLevel);
+    // Do not allow selecting the free plan visually
+    if (plan.level !== 'free') {
+        setSelectedPlan(planLevel);
+    }
+    
     onPlanSelect?.(planLevel);
     
     if (plan.level === 'free') {
@@ -220,11 +224,11 @@ export function PricingTable({
                     key={plan.level} 
                     className={cn(
                         "rounded-2xl p-6 relative border transition-all",
-                        selectedPlan === plan.level ? "ring-2 ring-primary border-primary" : "bg-card",
-                        plan.popular ? "bg-gradient-to-br from-primary/[.05] to-purple-500/[.05]" : ""
+                         selectedPlan === plan.level ? "ring-2 ring-primary border-primary" : "bg-card",
+                        plan.popular && plan.level !== 'free' ? "bg-gradient-to-br from-primary/[.05] to-purple-500/[.05]" : ""
                     )}
                 >
-                    {plan.popular && (
+                    {plan.popular && plan.level !== 'free' && (
                         <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
                             <div className="bg-primary text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-full shadow-lg">
                                 Popular
@@ -258,13 +262,14 @@ export function PricingTable({
                     </ul>
                     <Button
                         onClick={() => handlePlanSelect(plan.level)}
+                         variant={plan.level === 'free' ? 'outline' : 'default'}
                         className={cn(
                             "w-full mt-8 h-12 text-base font-bold",
-                            plan.popular ? "bg-primary hover:bg-primary/90" : "bg-primary/80 hover:bg-primary/90 text-primary-foreground",
-                            buttonClassName,
+                             plan.popular && plan.level !== 'free' ? "bg-primary hover:bg-primary/90" : "",
+                            buttonClassName
                         )}
                     >
-                        {plan.level === 'free' ? 'Get Started' : `Choose ${plan.name}`}
+                         {plan.level === 'free' ? 'Get Started' : `Choose ${plan.name}`}
                         {plan.level !== 'free' && <ArrowRightIcon className="w-4 h-4 ml-2" />}
                     </Button>
                 </div>
@@ -278,17 +283,18 @@ export function PricingTable({
                 <button
                   key={plan.name}
                   type="button"
-                  onClick={() => setSelectedPlan(plan.level)}
+                  onClick={() => handlePlanSelect(plan.level)}
                   className={cn(
                     "flex-1 p-4 rounded-xl text-left transition-all",
                     "border",
                     selectedPlan === plan.level &&
                       "ring-2 ring-primary border-primary bg-primary/5",
                   )}
+                  disabled={plan.level === 'free'}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">{plan.name}</span>
-                    {plan.popular && (
+                    {plan.popular && plan.level !== 'free' && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                         Popular
                       </span>
