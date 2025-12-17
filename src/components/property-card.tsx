@@ -121,7 +121,7 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
   return (
-    <div className={cn("rounded-2xl bg-card text-card-foreground border overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 h-full flex flex-col", className)}>
+    <div className={cn("rounded-2xl bg-card text-card-foreground border overflow-hidden group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col", className)}>
       <Link href={`/properties/${property.id}`} className="block flex flex-col flex-grow">
         <div className="relative h-56 flex-shrink-0 bg-muted">
           {imageUrl && (
@@ -170,8 +170,8 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
                     </div>
                 )}
               </div>
-              <Button size="sm" variant="default" className="rounded-lg">
-                View <ArrowRight className="w-4 h-4 ml-2" />
+              <Button size="sm" variant="default" className="rounded-lg md:w-auto w-10 h-10 p-0 md:px-3 md:py-2 md:h-9">
+                  <span className="hidden md:inline">View</span> <ArrowRight className="w-4 h-4 md:ml-2" />
               </Button>
           </div>
         </div>
