@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, User, Building, Mail, Armchair } from "lucide-react";
+import { Home, User, Building, Mail, Armchair, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function MobileNav() {
@@ -13,7 +13,7 @@ export default function MobileNav() {
     { href: "/properties", label: "Properties", icon: Building },
     { href: "/interiors", label: "Interiors", icon: Armchair },
     { href: "/", label: "Home", icon: Home },
-    { href: "/contact", label: "Contact", icon: Mail },
+    { href: "/professionals", label: "Pro's", icon: Briefcase },
     { href: "/settings", label: "Profile", icon: User },
   ];
 
