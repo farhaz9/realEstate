@@ -242,7 +242,9 @@ export default function Header() {
                     </Link>
                  ) : (
                     <SheetClose asChild>
-                        <Logo />
+                        <div className="flex justify-center">
+                          <Logo />
+                        </div>
                     </SheetClose>
                  )}
              </SheetHeader>
