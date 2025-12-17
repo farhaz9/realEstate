@@ -31,8 +31,11 @@ import {
   Megaphone,
   Mail,
   Shield,
+  LogOut,
 } from "lucide-react";
-import { useUser } from "@/firebase";
+import { useUser, useAuth } from "@/firebase";
+import { signOut } from 'firebase/auth';
+import { useToast } from "@/hooks/use-toast";
 import { UserNav } from "@/components/auth/user-nav";
 import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
@@ -149,6 +152,8 @@ export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const { toast } = useToast();
   const router = useRouter();
   
   const isHomePage = pathname === '/';
@@ -184,6 +189,17 @@ export default function Header() {
     } else {
       router.push(`${targetPath}?${params.toString()}`);
     }
+  };
+
+  const handleSignOut = async () => {
+    if (!auth) return;
+    await signOut(auth);
+    toast({
+      title: 'Logged Out',
+      description: 'You have been successfully logged out.',
+      variant: 'success'
+    });
+    router.push('/');
   };
   
   const visibleNavLinks = navLinks.filter(link => {
@@ -231,7 +247,7 @@ export default function Header() {
                  )}
              </SheetHeader>
 
-                <div className="flex-1 space-y-2 p-4">
+                <div className="flex-1 space-y-2 p-4 overflow-y-auto">
                     <nav className="flex flex-col gap-1">
                       {visibleNavLinks.map((link) => {
                           const isActive = pathname === link.href;
@@ -274,18 +290,23 @@ export default function Header() {
                       )}
                     </nav>
                 </div>
-                {!isVendor && (
-                  <SheetFooter className="p-4 mt-auto border-t">
-                      <SheetClose asChild>
-                          <Button asChild variant="default" className="w-full h-12 text-base">
-                              <Link href="/settings?tab=listings">
-                                  <Plus className="mr-2 h-5 w-5" />
-                                  Post Property
-                              </Link>
-                          </Button>
-                      </SheetClose>
-                  </SheetFooter>
-                )}
+                <SheetFooter className="p-4 mt-auto border-t">
+                  {user ? (
+                      <Button variant="outline" className="w-full h-12 text-base" onClick={handleSignOut}>
+                          <LogOut className="mr-2 h-5 w-5" />
+                          Log Out
+                      </Button>
+                  ) : (
+                    <SheetClose asChild>
+                        <Button asChild variant="default" className="w-full h-12 text-base">
+                            <Link href="/login">
+                                <Plus className="mr-2 h-5 w-5" />
+                                Log In
+                            </Link>
+                        </Button>
+                    </SheetClose>
+                  )}
+                </SheetFooter>
           </SheetContent>
 
         <div className="container p-2">
