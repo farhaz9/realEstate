@@ -58,6 +58,15 @@ const secondaryLinks = [
     { href: "/contact", label: "Contact", icon: Mail },
 ];
 
+const categoryDisplay: Record<string, string> = {
+  'user': 'Buyer / Tenant',
+  'listing-property': 'Property Owner',
+  'real-estate-agent': 'Real Estate Agent',
+  'interior-designer': 'Interior Designer',
+  'vendor': 'Vendor / Supplier'
+};
+
+
 export const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -194,23 +203,27 @@ export default function Header() {
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                  {isUserLoading ? (
                     <div className="flex items-center gap-4">
-                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <Skeleton className="h-16 w-16 rounded-full" />
                         <div className="space-y-2">
-                            <Skeleton className="h-4 w-[120px]" />
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-4 w-40" />
+                            <Skeleton className="h-4 w-24" />
                         </div>
                     </div>
                  ) : user ? (
-                   <div className="flex items-center justify-between gap-4">
-                      <Link href="/settings" className="flex items-center gap-3 overflow-hidden">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
-                          <AvatarFallback className="text-lg bg-primary/10 text-primary font-semibold">
-                              {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
-                          </AvatarFallback>
+                    <Link href="/settings" className="flex flex-col items-center text-center">
+                        <Avatar className="h-24 w-24 border-2 border-primary/20">
+                            <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? ''} />
+                            <AvatarFallback className="text-3xl bg-primary/10 text-primary font-semibold">
+                                {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
+                            </AvatarFallback>
                         </Avatar>
-                        <p className="text-base font-bold text-left truncate">{user.displayName || 'User'}</p>
-                      </Link>
-                  </div>
+                        <p className="text-lg font-bold mt-3">{user.displayName}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                        {userProfile?.category && (
+                            <p className="text-xs font-semibold text-primary mt-1">{categoryDisplay[userProfile.category]}</p>
+                        )}
+                    </Link>
                  ) : (
                     <SheetClose asChild>
                         <Logo />
