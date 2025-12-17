@@ -143,12 +143,9 @@ function SettingsPageContent() {
     <>
       <div className="bg-muted/40 pb-12">
         <div className="container mx-auto px-4 py-6">
-            <div className="flex justify-between items-center">
-                 <Button asChild variant="ghost" size="icon">
-                    <Link href="/"><ArrowLeft/></Link>
-                 </Button>
+            <div className="relative flex justify-center items-center">
                 <h1 className="text-xl font-bold">Profile</h1>
-                 <Button asChild variant="ghost" size="icon">
+                 <Button asChild variant="ghost" size="icon" className="absolute right-0">
                     <Link href="#"><Settings /></Link>
                 </Button>
             </div>
