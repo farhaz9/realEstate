@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { Property, User } from '@/types';
-import { ArrowLeft, User as UserIcon, CalendarDays } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, CalendarDays, Edit, X } from 'lucide-react';
 import { PropertyForm } from '@/components/profile/my-properties-tab';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
 
-export default function EditPropertyPage() {
+export default function AdminPropertyDetailPage() {
   const params = useParams();
   const router = useRouter();
   const propertyId = params.propertyId as string;
@@ -68,19 +68,6 @@ export default function EditPropertyPage() {
     );
   }
   
-  if (isEditing) {
-    return (
-        <div className="container mx-auto px-4 py-12">
-            <PropertyForm 
-              propertyToEdit={property} 
-              onSuccess={handleClose}
-              onCancel={handleClose}
-              isOpen={true} // This will be handled by page logic now
-            />
-        </div>
-    )
-  }
-
   return (
     <div className="bg-muted/40 min-h-screen">
       <div className="container mx-auto px-4 py-8">
@@ -89,35 +76,48 @@ export default function EditPropertyPage() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
             </Button>
         </div>
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-3xl">{property.title}</CardTitle>
-                <CardDescription>{property.location.address}</CardDescription>
-                <div className="flex items-center gap-6 pt-4 text-sm text-muted-foreground">
-                    {owner && (
-                        <div className="flex items-center gap-2">
-                           <Avatar className="h-6 w-6">
-                                <AvatarImage src={owner.photoURL} alt={owner.fullName} />
-                                <AvatarFallback className="text-xs">
-                                    {owner.fullName.split(' ').map(n => n[0]).join('')}
-                                </AvatarFallback>
-                            </Avatar>
-                            <span>Listed by {owner.fullName}</span>
+
+        {isEditing ? (
+             <PropertyForm 
+              propertyToEdit={property} 
+              onSuccess={handleClose}
+              onCancel={handleClose}
+              isOpen={true}
+            />
+        ) : (
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-3xl">{property.title}</CardTitle>
+                    <CardDescription>{property.location.address}</CardDescription>
+                    <div className="flex items-center gap-6 pt-4 text-sm text-muted-foreground">
+                        {owner && (
+                            <div className="flex items-center gap-2">
+                               <Avatar className="h-6 w-6">
+                                    <AvatarImage src={owner.photoURL} alt={owner.fullName} />
+                                    <AvatarFallback className="text-xs">
+                                        {owner.fullName.split(' ').map(n => n[0]).join('')}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <span>Listed by {owner.fullName}</span>
+                            </div>
+                        )}
+                         <div className="flex items-center gap-2">
+                            <CalendarDays className="h-4 w-4" />
+                            <span>Listed on {property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</span>
                         </div>
-                    )}
-                     <div className="flex items-center gap-2">
-                        <CalendarDays className="h-4 w-4" />
-                        <span>Listed on {property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</span>
                     </div>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className="prose max-w-none text-muted-foreground">
-                    <p>{property.description}</p>
-                </div>
-                 <Button onClick={() => setIsEditing(true)} className="mt-6">Edit Property</Button>
-            </CardContent>
-        </Card>
+                </CardHeader>
+                <CardContent>
+                    <div className="prose max-w-none text-muted-foreground">
+                        <p>{property.description}</p>
+                    </div>
+                     <Button onClick={() => setIsEditing(true)} className="mt-6">
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Property
+                     </Button>
+                </CardContent>
+            </Card>
+        )}
       </div>
     </div>
   );

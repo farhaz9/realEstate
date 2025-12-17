@@ -70,7 +70,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 type ConfirmationAction = {
-  action: 'delete' | 'block' | 'verify' | 'setRole';
+  action: 'delete' | 'block' | 'verify';
   user: User;
   role?: 'admin' | 'editor' | 'viewer' | 'user';
 } | null;
@@ -99,7 +99,7 @@ type NotificationFormValues = z.infer<typeof notificationFormSchema>;
 const userFilterOptions = [
     { value: 'all', label: 'All Users' },
     { value: 'verified', label: 'Verified' },
-    { value: 'blocked', label: 'Blocked' },
+    { value: 'disabled', label: 'Disabled' },
     { value: 'agent', label: 'Agents' },
     { value: 'designer', label: 'Designers' },
     { value: 'vendor', label: 'Vendors' },
@@ -467,7 +467,7 @@ export default function AdminPage() {
     if (userFilter !== 'all') {
         if (userFilter === 'verified') {
             baseUsers = baseUsers.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date());
-        } else if (userFilter === 'blocked') {
+        } else if (userFilter === 'disabled') {
             baseUsers = baseUsers.filter(u => u.isBlocked);
         } else if (userFilter === 'agent') {
             baseUsers = baseUsers.filter(u => u.category === 'real-estate-agent');
@@ -620,7 +620,7 @@ export default function AdminPage() {
     if (!firestore) return;
     const userRef = doc(firestore, "users", userId);
     updateDocumentNonBlocking(userRef, { isBlocked: !isBlocked });
-    toast({ title: `User ${!isBlocked ? 'Blocked' : 'Unblocked'}`, description: `The user has been successfully ${!isBlocked ? 'blocked' : 'unblocked'}.`, variant: 'success' });
+    toast({ title: `User ${!isBlocked ? 'Disabled' : 'Enabled'}`, description: `The user has been successfully ${!isBlocked ? 'disabled' : 'enabled'}.`, variant: 'success' });
   };
 
   const handleVerificationToggle = (user: User) => {
@@ -892,9 +892,17 @@ export default function AdminPage() {
                   <TableHead className="hidden lg:table-cell">Expires In</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'status')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
-              </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => { const owner = users?.find(u => u.id === property.userId); return (
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => (
                   <TableRow key={property.id}>
-                      <TableCell className="font-medium"><div className="flex items-center gap-3"><Avatar className="h-10 w-10 rounded-md"><AvatarImage src={property.imageUrls?.[0]} alt={property.title} /><AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback></Avatar><div className="truncate"><p className="font-semibold truncate">{property.title}</p><p className="text-xs text-muted-foreground truncate">{property.location.address}</p></div></div></TableCell>
+                      <TableCell className="font-medium">
+                        <Link href={`/admin/properties/${property.id}`} className="flex items-center gap-3 group">
+                            <Avatar className="h-10 w-10 rounded-md"><AvatarImage src={property.imageUrls?.[0]} alt={property.title} /><AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback></Avatar>
+                            <div className="truncate">
+                                <p className="font-semibold truncate group-hover:underline">{property.title}</p>
+                                <p className="text-xs text-muted-foreground truncate">{property.location.address}</p>
+                            </div>
+                        </Link>
+                      </TableCell>
                       <TableCell className="hidden md:table-cell">{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
                        <TableCell className="hidden lg:table-cell">
                         {property.expiresAt?.toDate() ? (
@@ -921,12 +929,11 @@ export default function AdminPage() {
                               {property.status === 'rejected' && (
                                   <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700" onClick={() => handlePropertyStatusChange(property.id, 'approved')}>Approve</Button>
                               )}
-                              <Button variant="ghost" size="icon" onClick={() => router.push(`/admin/edit/${property.id}`)}><Pencil className="h-4 w-4" /></Button>
                               <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Are you sure?</AlertDialogTitle><AlertDialogDescription>This will permanently delete the property "{property.title}".</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handlePropertyDelete(property.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
                           </div>
                       </TableCell>
                   </TableRow>
-              );})}</TableBody></Table></div></CardContent></Card>
+              ))}</TableBody></Table></div></CardContent></Card>
           </TabsContent>
           <TabsContent value="users" className="mt-6">
               <Card><CardHeader><CardTitle>All Users ({users?.length || 0})</CardTitle>
@@ -1029,12 +1036,12 @@ export default function AdminPage() {
                       {u.isBlocked ? (
                         <Badge variant="destructive" className="flex items-center gap-1.5 w-fit">
                             <div className="h-2 w-2 rounded-full bg-red-400" />
-                            Blocked
+                            Disabled
                         </Badge>
                       ) : (
                         <Badge variant="secondary" className="flex items-center gap-1.5 w-fit bg-green-100 text-green-800">
                             <div className="h-2 w-2 rounded-full bg-green-500" />
-                            Active
+                            Enabled
                         </Badge>
                       )}
                   </TableCell>
@@ -1064,7 +1071,7 @@ export default function AdminPage() {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onSelect={() => { setConfirmationAction({ action: 'block', user: u }); setIsConfirmationDialogOpen(true); }}>
                                       {u.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
-                                        <span>{u.isBlocked ? 'Unblock' : 'Block'} User</span>
+                                        <span>{u.isBlocked ? 'Enable' : 'Disable'} User</span>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive" onSelect={() => { setConfirmationAction({ action: 'delete', user: u }); setIsConfirmationDialogOpen(true); }}>
@@ -1294,7 +1301,7 @@ export default function AdminPage() {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               {confirmationAction?.action === 'delete' && `This will permanently delete the user "${confirmationAction.user.fullName}".`}
-              {confirmationAction?.action === 'block' && `This will ${confirmationAction.user.isBlocked ? 'unblock' : 'block'} the user "${confirmationAction.user.fullName}".`}
+              {confirmationAction?.action === 'block' && `This will ${confirmationAction.user.isBlocked ? 'enable' : 'disable'} the user "${confirmationAction.user.fullName}".`}
               {confirmationAction?.action === 'verify' && `This will ${confirmationAction.user.isVerified ? 'revoke verification for' : 'grant verification to'} "${confirmationAction.user.fullName}".`}
               This action cannot be undone.
             </AlertDialogDescription>
@@ -1309,4 +1316,3 @@ export default function AdminPage() {
   );
 }
 
-    
