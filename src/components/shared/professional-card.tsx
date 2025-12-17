@@ -89,18 +89,30 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                         {cardTitle ? getInitials(cardTitle) : <UserIcon />}
                     </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                    <div className="flex items-center gap-1.5">
-                        <h3 className="font-bold text-base truncate">{cardTitle}</h3>
-                        {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
+                <div className="flex-1 grid grid-cols-2 gap-4">
+                    <div>
+                        <div className="flex items-center gap-1.5">
+                            <h3 className="font-bold text-base truncate">{cardTitle}</h3>
+                            {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
+                        </div>
+                        <p className="text-xs text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+                        <div className="mt-1">
+                            <ProfessionalRating professionalId={professional.id} />
+                        </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
-                    <div className="mt-1">
-                        <ProfessionalRating professionalId={professional.id} />
+                     <div className="space-y-1 text-xs">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <Mail className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{professional.email}</span>
+                        </div>
+                         <div className="flex items-center gap-2 text-muted-foreground">
+                            <Phone className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{professional.phone}</span>
+                        </div>
                     </div>
                 </div>
-                 <Button variant="ghost" size="icon" className="text-muted-foreground">
-                    <Info className="h-5 w-5" />
+                 <Button size="sm" className="bg-primary hover:bg-primary/90">
+                    View Profile
                 </Button>
             </Link>
         </div>
