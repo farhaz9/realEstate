@@ -154,6 +154,7 @@ export function PricingTable({
                         )}
                     >
                         Choose {plan.name}
+                        <ArrowRightIcon className="w-4 h-4 ml-2" />
                     </Button>
                 </div>
             ))}
