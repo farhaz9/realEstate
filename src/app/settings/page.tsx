@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
@@ -7,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload } from 'lucide-react';
+import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -225,14 +226,9 @@ function SettingsPageContent() {
                                 {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
                             </AvatarFallback>
                         </Avatar>
-                         <div
-                            className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                            {isUploading ? (
-                              <Loader2 className="h-8 w-8 text-white animate-spin" />
-                            ) : (
-                              <Camera className="h-8 w-8 text-white" />
-                            )}
-                        </div>
+                         <Button size="icon" variant="default" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full border-2 border-background">
+                            <Edit className="h-4 w-4" />
+                        </Button>
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
