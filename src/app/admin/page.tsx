@@ -8,12 +8,12 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow, differenceInDays } from 'date-fns';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
   AlertDialog,
@@ -889,14 +889,21 @@ export default function AdminPage() {
               </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead>Property</TableHead>
                   <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="hidden lg:table-cell">Owner</TableHead>
+                  <TableHead className="hidden lg:table-cell">Expires In</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'status')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => { const owner = users?.find(u => u.id === property.userId); return (
                   <TableRow key={property.id}>
                       <TableCell className="font-medium"><div className="flex items-center gap-3"><Avatar className="h-10 w-10 rounded-md"><AvatarImage src={property.imageUrls?.[0]} alt={property.title} /><AvatarFallback className="rounded-md">{property.title.charAt(0)}</AvatarFallback></Avatar><div className="truncate"><p className="font-semibold truncate">{property.title}</p><p className="text-xs text-muted-foreground truncate">{property.location.address}</p></div></div></TableCell>
                       <TableCell className="hidden md:table-cell">{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
-                      <TableCell className="hidden lg:table-cell">{owner?.fullName || 'Unknown'}</TableCell>
+                       <TableCell className="hidden lg:table-cell">
+                        {property.expiresAt?.toDate() ? (
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-muted-foreground" />
+                            <span>{formatDistanceToNow(property.expiresAt.toDate(), { addSuffix: true })}</span>
+                          </div>
+                        ) : 'N/A'}
+                      </TableCell>
                       <TableCell><Badge variant={property.status === 'approved' ? 'success' : property.status === 'rejected' ? 'destructive' : 'secondary'} className="capitalize">{property.status}</Badge></TableCell>
                       <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
@@ -943,7 +950,7 @@ export default function AdminPage() {
                   <TableHead>Feature</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
-              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()) || isAdminUser; const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(u.category); return (
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()); const verificationDaysLeft = isCurrentlyVerified ? differenceInDays(u.verifiedUntil.toDate(), new Date()) : null; const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(u.category); return (
                   <TableRow key={u.id} className={cn(u.isBlocked ? "bg-destructive/10" : "", isAdminUser && "bg-primary/10")}>
                     <TableCell>
                       <Link href={`/admin/users/${u.id}`} className="flex items-center gap-3 group">
@@ -955,7 +962,18 @@ export default function AdminPage() {
                           <div className="flex items-center gap-2">
                             <p className="font-semibold group-hover:underline">{u.fullName}</p>
                             {isAdminUser && <Badge variant="destructive">Admin</Badge>}
-                            {isCurrentlyVerified && !isAdminUser && <Verified className="h-4 w-4 text-blue-500" />}
+                             {isCurrentlyVerified && !isAdminUser && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <Verified className="h-4 w-4 text-blue-500" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{verificationDaysLeft} days left</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </div>
                           <p className="text-xs text-muted-foreground">{u.email}</p>
                           <p className="text-xs text-muted-foreground md:hidden">{categoryDisplay[u.category] || u.category}</p>
