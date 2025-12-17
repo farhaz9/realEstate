@@ -207,8 +207,8 @@ function SettingsPageContent() {
       }
       setIsUploading(true);
       try {
-        await updateProfile(auth.currentUser, { photoURL: '' });
-        await updateDoc(userDocRef, { photoURL: '' });
+        await updateProfile(auth.currentUser, { photoURL: null });
+        await updateDoc(userDocRef, { photoURL: null });
         toast({
           title: 'Profile picture removed',
           variant: 'success',
@@ -242,8 +242,8 @@ function SettingsPageContent() {
   
   const isLoading = isUserLoading || isProfileLoading;
   const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
-  const displayName = userProfile?.fullName ?? user?.displayName;
   const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+  const displayName = userProfile?.fullName ?? user?.displayName;
 
   return (
     <>
@@ -258,7 +258,7 @@ function SettingsPageContent() {
              <div className="flex flex-col items-center mt-6">
                 <div className="relative group">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
-                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? undefined} alt={displayName ?? ''} /> }
+                        {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar || undefined} alt={displayName ?? ''} /> }
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                             {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
                         </AvatarFallback>
