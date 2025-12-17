@@ -53,11 +53,12 @@ const navLinks = [
 ];
 
 const secondaryLinks = [
+    { href: "/settings", label: "Settings", icon: Settings },
     { href: "/support", label: "Support", icon: HelpCircle },
     { href: "/contact", label: "Contact", icon: Mail },
 ];
 
-const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+export const TwoStripesIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -209,13 +210,6 @@ export default function Header() {
                         </Avatar>
                         <p className="text-base font-bold text-left truncate">{user.displayName || 'User'}</p>
                       </Link>
-                      <SheetClose asChild>
-                          <Button asChild variant="ghost" size="icon">
-                            <Link href="/settings">
-                                <Settings />
-                            </Link>
-                          </Button>
-                      </SheetClose>
                   </div>
                  ) : (
                     <SheetClose asChild>
