@@ -107,13 +107,13 @@ export function PricingTable({
                 "flex-1 p-4 rounded-xl text-left transition-all",
                 "border border-zinc-200 dark:border-zinc-800",
                 selectedPlan === plan.level &&
-                  "ring-2 ring-blue-500 dark:ring-blue-400",
+                  "ring-2 ring-primary dark:ring-primary",
               )}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">{plan.name}</span>
                 {plan.popular && (
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                     Popular
                   </span>
                 )}
@@ -154,7 +154,7 @@ export function PricingTable({
                   className={cn(
                     "flex items-center p-4 transition-colors",
                     feature.included === selectedPlan &&
-                      "bg-blue-50/50 dark:bg-blue-900/20",
+                      "bg-primary/10",
                   )}
                 >
                   <div className="flex-1 text-sm">{feature.name}</div>
@@ -168,7 +168,7 @@ export function PricingTable({
                         )}
                       >
                         {shouldShowCheck(feature.included, plan.level) ? (
-                          <CheckIcon className="w-5 h-5 text-blue-500" />
+                          <CheckIcon className="w-5 h-5 text-primary" />
                         ) : (
                           <span className="text-zinc-300 dark:text-zinc-700">
                             -
@@ -186,7 +186,7 @@ export function PricingTable({
         <div className="mt-8 text-center">
           <Button
             className={cn(
-              "w-full sm:w-auto bg-blue-500 hover:bg-blue-600 px-8 py-2 rounded-xl",
+              "w-full sm:w-auto bg-primary hover:bg-primary/90 px-8 py-2 rounded-xl",
               buttonClassName,
             )}
           >
