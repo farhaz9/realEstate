@@ -2,21 +2,39 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useDoc, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
 import type { User, Property, Order } from '@/types';
-import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard } from '@/components/property-card';
-import { format } from 'date-fns';
+import { format, formatDistanceToNowStrict, differenceInDays } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatPrice } from '@/lib/utils';
+import React, { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { EditUserForm } from '@/components/admin/edit-user-form';
+
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -97,6 +115,13 @@ export default function UserDetailPage() {
   const router = useRouter();
   const userId = params.userId as string;
   const firestore = useFirestore();
+  const { toast } = useToast();
+  
+  const [creditAmount, setCreditAmount] = useState(0);
+  const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  type ConfirmationAction = 'delete' | 'block' | 'verify';
+  const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction | null>(null);
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -113,6 +138,79 @@ export default function UserDetailPage() {
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
   
   const isLoading = isLoadingUser || isLoadingProperties;
+
+  const handleVerificationToggle = () => {
+    if (!firestore || !user) return;
+    const userRef = doc(firestore, "users", user.id);
+    const isCurrentlyVerified = user.verifiedUntil && user.verifiedUntil.toDate() > new Date();
+    let updateData = {};
+    if (isCurrentlyVerified) {
+        updateData = { isVerified: false, verifiedUntil: null };
+        toast({ title: 'Verification Revoked', description: `Pro verification has been removed for ${user.fullName}.`, variant: 'destructive' });
+    } else {
+        const expiryDate = new Date();
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+        updateData = { isVerified: true, verifiedUntil: expiryDate };
+        toast({ title: 'User Verified!', description: `${user.fullName} is now a Pro Verified member for one year.`, variant: 'success' });
+    }
+    updateDocumentNonBlocking(userRef, updateData);
+    setIsConfirmationDialogOpen(false);
+  };
+  
+  const handleFeaturedToggle = () => {
+    if (!firestore || !user) return;
+    const userRef = doc(firestore, 'users', user.id);
+    const isCurrentlyFeatured = user.isFeatured === undefined ? true : user.isFeatured;
+    const updateData = { isFeatured: !isCurrentlyFeatured };
+
+    updateDocumentNonBlocking(userRef, updateData);
+    toast({
+      title: `Professional ${!isCurrentlyFeatured ? 'Featured' : 'Unfeatured'}`,
+      description: `${user.fullName} will ${!isCurrentlyFeatured ? 'now appear' : 'no longer appear'} on public pages.`,
+      variant: 'success',
+    });
+  };
+
+  const handleUpdateCredits = () => {
+    if (!firestore || !user) return;
+    const userRef = doc(firestore, 'users', user.id);
+    updateDocumentNonBlocking(userRef, { listingCredits: creditAmount });
+    toast({ title: 'Credits Updated', description: `${user.fullName} now has ${creditAmount} listing credits.`, variant: 'success' });
+  }
+
+  const handleUserBlockToggle = () => {
+    if (!firestore || !user) return;
+    const userRef = doc(firestore, "users", user.id);
+    const newBlockedState = !user.isBlocked;
+    updateDocumentNonBlocking(userRef, { isBlocked: newBlockedState });
+    toast({ title: `User ${newBlockedState ? 'Blocked' : 'Unblocked'}`, description: `The user has been successfully ${newBlockedState ? 'blocked' : 'unblocked'}.`, variant: 'success' });
+    setIsConfirmationDialogOpen(false);
+  };
+
+  const handleUserDelete = () => {
+    if (!firestore || !user) return;
+    const userRef = doc(firestore, "users", user.id);
+    updateDocumentNonBlocking(userRef, { isBlocked: true, fullName: "Deleted User", email: `deleted-${user.id}@deleted.com` });
+    toast({ title: "User Deleted", description: "The user has been marked as deleted and blocked.", variant: "destructive" });
+    setIsConfirmationDialogOpen(false);
+    router.push('/admin');
+  };
+
+  const handleConfirmationAction = () => {
+    if (!confirmationAction) return;
+
+    switch (confirmationAction) {
+      case 'delete':
+        handleUserDelete();
+        break;
+      case 'block':
+        handleUserBlockToggle();
+        break;
+      case 'verify':
+        handleVerificationToggle();
+        break;
+    }
+  };
 
   if (isLoading) {
     return <UserDetailSkeleton />;
@@ -134,6 +232,11 @@ export default function UserDetailPage() {
     );
   }
   
+  const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(user.category);
+  const isCurrentlyVerified = user.verifiedUntil && user.verifiedUntil.toDate() > new Date();
+  const verificationDaysLeft = isCurrentlyVerified ? differenceInDays(user.verifiedUntil.toDate(), new Date()) : null;
+
+
   return (
     <div className="bg-muted/40 min-h-screen">
         <div className="container mx-auto px-4 py-8">
@@ -144,7 +247,7 @@ export default function UserDetailPage() {
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-1 lg:sticky top-24">
+                <div className="lg:col-span-1 lg:sticky top-24 space-y-8">
                     <Card>
                         <CardHeader className="items-center text-center">
                            <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
@@ -191,6 +294,94 @@ export default function UserDetailPage() {
                                  </div>
                                </div>
                              </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Admin Controls</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="credits" className="font-semibold">Listing Credits</Label>
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button variant="outline" size="sm" onClick={() => setCreditAmount(user.listingCredits || 0)}>
+                                        <Coins className="mr-2 h-4 w-4" /> {user.listingCredits || 0}
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <DialogHeader><DialogTitle>Manage Credits for {user.fullName}</DialogTitle></DialogHeader>
+                                    <div className="flex items-center justify-center gap-4 py-4">
+                                        <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                        <Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} />
+                                        <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                    </div>
+                                    <DialogFooter><Button onClick={handleUpdateCredits}>Save Credits</Button></DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <p className="font-semibold">Verified Status</p>
+                                    {isCurrentlyVerified ? (
+                                        <p className="text-xs text-green-600">Expires in {formatDistanceToNowStrict(user.verifiedUntil.toDate())}</p>
+                                    ) : (
+                                        <p className="text-xs text-muted-foreground">Not verified</p>
+                                    )}
+                                </div>
+                                <Button
+                                    variant={isCurrentlyVerified ? 'destructive' : 'default'}
+                                    size="sm"
+                                    onClick={() => { setConfirmationAction('verify'); setIsConfirmationDialogOpen(true); }}
+                                >
+                                    <Verified className="mr-2 h-4 w-4" />
+                                    {isCurrentlyVerified ? 'Revoke' : 'Grant'}
+                                </Button>
+                            </div>
+                            
+                            {isProfessional && (
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="featured-switch" className="font-semibold">Featured Professional</Label>
+                                    <Switch
+                                        id="featured-switch"
+                                        checked={user.isFeatured === undefined ? true : user.isFeatured}
+                                        onCheckedChange={handleFeaturedToggle}
+                                    />
+                                </div>
+                            )}
+
+                             <Separator />
+
+                            <div className="grid grid-cols-2 gap-2">
+                                <Dialog open={isEditUserDialogOpen} onOpenChange={setIsEditUserDialogOpen}>
+                                  <DialogTrigger asChild>
+                                      <Button variant="outline"><Edit className="mr-2 h-4 w-4" />Edit Profile</Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-lg">
+                                      <DialogHeader>
+                                          <DialogTitle>Edit User: {user?.fullName}</DialogTitle>
+                                      </DialogHeader>
+                                      {user && <EditUserForm user={user} onSuccess={() => setIsEditUserDialogOpen(false)} />}
+                                  </DialogContent>
+                                </Dialog>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => { setConfirmationAction('block'); setIsConfirmationDialogOpen(true); }}
+                                >
+                                    {user.isBlocked ? <UserCheck className="mr-2 h-4 w-4" /> : <Ban className="mr-2 h-4 w-4" />}
+                                    {user.isBlocked ? 'Unblock' : 'Block'}
+                                </Button>
+                            </div>
+                             <Button
+                                variant="destructive"
+                                className="w-full"
+                                onClick={() => { setConfirmationAction('delete'); setIsConfirmationDialogOpen(true); }}
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete User
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>
@@ -259,6 +450,25 @@ export default function UserDetailPage() {
                 </div>
             </div>
         </div>
+        <AlertDialog open={isConfirmationDialogOpen} onOpenChange={setIsConfirmationDialogOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                    {confirmationAction === 'delete' && `This will permanently delete the user "${user.fullName}".`}
+                    {confirmationAction === 'block' && `This will ${user.isBlocked ? 'unblock' : 'block'} the user "${user.fullName}".`}
+                    {confirmationAction === 'verify' && `This will ${isCurrentlyVerified ? 'revoke verification for' : 'grant verification to'} "${user.fullName}".`}
+                    This action may have consequences that cannot be undone.
+                </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setConfirmationAction(null)}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleConfirmationAction} className={confirmationAction === 'delete' ? 'bg-destructive hover:bg-destructive/90' : ''}>Confirm</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }
+
+    
