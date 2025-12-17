@@ -131,7 +131,6 @@ function SettingsPageContent() {
   }
   
   if (!user && !isUserLoading) {
-      if (typeof window !== 'undefined') router.push('/login');
       return null;
   }
   
