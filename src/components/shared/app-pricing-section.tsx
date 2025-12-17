@@ -1,3 +1,4 @@
+
 "use client";
 
 import { PricingTable } from "@/components/ui/pricing-table";
@@ -44,21 +45,30 @@ const plans = [
 
 export function AppPricingSection() {
     return (
-        <PricingTable
-            features={features.map(feature => ({
-                ...feature,
-                name: feature.name
-            }))}
-            plans={plans.map(plan => ({
-                ...plan,
-                name: plan.name,
-                description: plan.listings, // Use description for the listing count
-            }))}
-            defaultPlan="pro"
-            defaultInterval="monthly"
-            onPlanSelect={(plan) => console.log("Selected plan:", plan)}
-            containerClassName="py-12"
-            buttonClassName="bg-primary hover:bg-primary/90"
-        />
+        <section className="py-16 md:py-24 bg-background">
+             <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold">Flexible Plans for Everyone</h2>
+                    <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+                        Choose the perfect plan that fits your needs, from a single listing to unlimited exposure.
+                    </p>
+                </div>
+                <PricingTable
+                    features={features.map(feature => ({
+                        ...feature,
+                        name: feature.name
+                    }))}
+                    plans={plans.map(plan => ({
+                        ...plan,
+                        name: plan.name,
+                        description: plan.listings,
+                    }))}
+                    defaultPlan="pro"
+                    defaultInterval="monthly"
+                    onPlanSelect={(plan) => console.log("Selected plan:", plan)}
+                    buttonClassName="bg-primary hover:bg-primary/90"
+                />
+            </div>
+        </section>
     );
 }
