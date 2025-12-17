@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown, Bell } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown, Bell, LayoutGrid, ShoppingCart, Home, User, Building } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
 import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp, increment } from 'firebase/firestore';
@@ -22,11 +22,8 @@ import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
-import { useGeolocation } from '@/hooks/use-geolocation';
-import { LocationDisplay } from '@/components/shared/location-display';
 import Fuse from 'fuse.js';
 import { Spinner } from '@/components/ui/spinner-1';
 import {
@@ -42,6 +39,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { LocationDisplay } from '@/components/shared/location-display';
 
 declare const Razorpay: any;
 
@@ -67,11 +65,11 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 };
 
 const tabOptions = [
-  { value: "all", label: "All" },
-  { value: "buy", label: "Buy" },
-  { value: "rent", label: "Rent" },
-  { value: "pg", label: "PG / Co-living" },
-  { value: "commercial", label: "Commercial" },
+    { value: "all", label: "All", icon: LayoutGrid },
+    { value: "buy", label: "Buy", icon: ShoppingCart },
+    { value: "rent", label: "Rent", icon: Home },
+    { value: "pg", label: "PG / Co-living", icon: User },
+    { value: "commercial", label: "Commercial", icon: Building },
 ];
 
 
@@ -81,7 +79,6 @@ export default function PropertiesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
-  const { location: userLocation, city: detectedCity, canAskPermission } = useGeolocation();
   
   const [activeTab, setActiveTab] = useState(searchParams.get('type') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -182,29 +179,17 @@ export default function PropertiesPage() {
     }
   };
 
-  const searchSuggestions = useMemo(() => {
-    if (detectedCity) {
-      return [
-        `Search for properties in ${detectedCity}`,
-        `Find 2BHK apartments in ${detectedCity}`,
-        `Luxury villas for sale near ${detectedCity}`,
-        `Rent a house in ${detectedCity}`,
-      ];
-    }
-    return staticSearchSuggestions;
-  }, [detectedCity]);
-
   useEffect(() => {
     const interval = setInterval(() => {
       setPlaceholder(prev => {
-        const currentIndex = searchSuggestions.indexOf(prev);
-        const nextIndex = (currentIndex + 1) % searchSuggestions.length;
-        return searchSuggestions[nextIndex];
+        const currentIndex = staticSearchSuggestions.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % staticSearchSuggestions.length;
+        return staticSearchSuggestions[nextIndex];
       });
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [searchSuggestions]);
+  }, []);
   
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -279,10 +264,10 @@ export default function PropertiesPage() {
     let processedProperties = [...baseProperties];
     
     // Calculate distances if user location is available
-    if (userLocation) {
+    if (location) {
         processedProperties = processedProperties.map(p => {
-          if (p.location?.latitude && p.location?.longitude) {
-            const distance = getDistance(userLocation.latitude, userLocation.longitude, p.location.latitude, p.location.longitude);
+          if (p.location?.latitude && p.location?.longitude && (location as any).latitude) {
+            const distance = getDistance((location as any).latitude, (location as any).longitude, p.location.latitude, p.location.longitude);
             return {
               ...p,
               distance: distance
@@ -293,7 +278,7 @@ export default function PropertiesPage() {
     }
 
     // Apply sorting
-    if (sortBy === 'nearby' && userLocation) {
+    if (sortBy === 'nearby' && location) {
       processedProperties.sort((a, b) => ((a as any).distance || Infinity) - ((b as any).distance || Infinity));
     }
 
@@ -317,7 +302,6 @@ export default function PropertiesPage() {
         return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
       }
       
-      const detectedCityMatch = !detectedCity || (p.location?.address?.toLowerCase().includes(detectedCity.toLowerCase())) || (p.location?.state?.toLowerCase().includes(detectedCity.toLowerCase()));
       const locationMatch = location === 'all' || p.location?.state === location;
       const pincodeMatch = !pincode || p.location?.pincode === pincode;
       const bedroomsMatch = bedrooms === 0 || p.bedrooms >= bedrooms;
@@ -330,9 +314,9 @@ export default function PropertiesPage() {
         return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
       }
 
-      return tabMatch && detectedCityMatch && priceMatch;
+      return tabMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, userLocation, fuse, detectedCity]);
+  }, [properties, activeTab, searchTerm, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, fuse]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -358,14 +342,14 @@ export default function PropertiesPage() {
                 <Input
                     id="search"
                     placeholder={placeholder}
-                    className="pl-12 text-foreground h-12 rounded-lg bg-muted border-transparent focus:bg-background focus:border-primary"
+                    className="pl-12 text-foreground h-12 rounded-full bg-muted border-transparent focus:bg-background focus:border-primary"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button size="icon" className="h-12 w-12 rounded-lg flex-shrink-0 shadow-sm">
+                    <Button size="icon" className="h-12 w-12 rounded-full flex-shrink-0 shadow-sm bg-primary text-primary-foreground">
                         <SlidersHorizontal className="h-5 w-5" />
                     </Button>
                 </SheetTrigger>
@@ -385,7 +369,7 @@ export default function PropertiesPage() {
                                     <SelectItem value="dateListed-asc">Oldest First</SelectItem>
                                     <SelectItem value="price-desc">Price: High to Low</SelectItem>
                                     <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                                    {userLocation && canAskPermission && <SelectItem value="nearby">Nearby</SelectItem>}
+                                    {location && <SelectItem value="nearby">Nearby</SelectItem>}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -462,10 +446,11 @@ export default function PropertiesPage() {
                   key={tab.value}
                   onClick={() => setActiveTab(tab.value)}
                   className={cn(
-                    "relative py-3 px-4 text-sm font-medium whitespace-nowrap transition-colors text-muted-foreground",
+                    "relative py-3 px-4 text-sm font-medium whitespace-nowrap transition-colors text-muted-foreground flex items-center gap-2",
                     activeTab === tab.value && "text-primary"
                   )}
                  >
+                    <tab.icon className="h-4 w-4" />
                     {tab.label}
                     {activeTab === tab.value && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
                  </button>
@@ -485,7 +470,7 @@ export default function PropertiesPage() {
                   <SelectItem value="dateListed-desc">Newest</SelectItem>
                   <SelectItem value="price-desc">Price: High to Low</SelectItem>
                   <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                  {userLocation && <SelectItem value="nearby">Nearby</SelectItem>}
+                  {location && <SelectItem value="nearby">Nearby</SelectItem>}
               </SelectContent>
           </Select>
         </div>

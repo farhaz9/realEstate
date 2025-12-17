@@ -79,10 +79,10 @@ export function LocationDisplay() {
          <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-base text-foreground font-semibold h-auto p-1 flex items-center gap-1">
-                        <MapPin className="h-5 w-5 text-primary" />
+                    <Button variant="default" size="sm" className="text-base text-primary-foreground font-semibold h-auto p-2 flex items-center gap-1 rounded-full">
+                        <MapPin className="h-5 w-5" />
                         {city}
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="h-4 w-4" />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
