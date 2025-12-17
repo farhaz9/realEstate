@@ -215,12 +215,10 @@ export default function PropertyDetailPage() {
 
   return (
     <div className="bg-muted/40 pb-24 md:pb-8">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-            <Button variant="ghost" size="sm" onClick={() => router.back()}>
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back
-            </Button>
-        </div>
+       <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80">
+        <ArrowLeft className="h-5 w-5" />
+      </Button>
+      <div className="container mx-auto px-4 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
@@ -400,23 +398,27 @@ export default function PropertyDetailPage() {
         )}
       </div>
 
-      {/* Sticky Action Buttons for Mobile */}
+       {/* Sticky Action Buttons for Mobile */}
       <div className={cn(
-        "md:hidden fixed bottom-20 right-4 z-40 flex flex-col gap-3 transition-all duration-300",
-        isScrollingUp ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"
+        "md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-t p-3 transition-transform duration-300",
+        isScrollingUp ? "translate-y-0" : "translate-y-full"
       )}>
-        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0 bg-primary/10 text-primary hover:bg-primary/20">
-          <Link href={`tel:+91${property.contactNumber}`} aria-label="Call Agent">
-            <Phone className="h-6 w-6" />
-          </Link>
-        </Button>
-        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0 bg-white hover:bg-muted">
-           <Link href={`https://wa.me/91${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" aria-label="Contact on WhatsApp">
-            <WhatsAppIcon className="h-7 w-7 text-green-500" />
-          </Link>
-        </Button>
+         <div className="grid grid-cols-2 gap-3 w-full">
+            <Button asChild size="lg" className="w-full bg-primary/10 text-primary hover:bg-primary/20 h-12">
+                <a href={`tel:+91${property.contactNumber}`} aria-label="Call Agent">
+                    <Phone className="mr-2 h-5 w-5" /> Call
+                </a>
+            </Button>
+            <Button asChild size="lg" className="w-full bg-green-500/10 text-green-600 hover:bg-green-500/20 h-12">
+               <a href={`https://wa.me/91${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" aria-label="Contact on WhatsApp">
+                <WhatsAppIcon className="mr-2 h-6 w-6" /> WhatsApp
+              </a>
+            </Button>
+         </div>
       </div>
 
     </div>
   );
 }
+
+    
