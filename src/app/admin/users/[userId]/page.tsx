@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, collection, query, where, deleteDoc, updateDoc, orderBy } from 'firebase/firestore';
 import type { User, Property, Order, Review } from '@/types';
-import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit, X, Star } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit, X, Star, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
@@ -36,6 +36,9 @@ import {
 import { EditUserForm } from '@/components/admin/edit-user-form';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import { useOnScroll } from '@/hooks/use-on-scroll';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import Header, { TwoStripesIcon } from '@/components/layout/header';
 
 
 const getInitials = (name: string) => {
@@ -208,6 +211,8 @@ export default function UserDetailPage() {
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction | null>(null);
   const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
   const [reviewToEdit, setReviewToEdit] = useState<Review | null>(null);
+  const { isScrollingUp } = useOnScroll(100);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -350,9 +355,16 @@ export default function UserDetailPage() {
 
   return (
     <div className="bg-muted/40 min-h-screen">
-        <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80">
-            <ArrowLeft className="h-5 w-5" />
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => isScrollingUp ? router.back() : setIsSheetOpen(true)} 
+            className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80 text-primary"
+        >
+          {isScrollingUp ? <ArrowLeft className="h-5 w-5" /> : <TwoStripesIcon className="h-5 w-5" />}
         </Button>
+      </Sheet>
         <div className="container mx-auto px-4 py-8 pt-20">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-1 lg:sticky top-24 space-y-8">
@@ -431,11 +443,13 @@ export default function UserDetailPage() {
                                     </Button>
                                   </DialogTrigger>
                                   <DialogContent>
-                                    <DialogHeader><DialogTitle>Manage Credits for {user.fullName}</DialogTitle></DialogHeader>
+                                    <DialogHeader>
+                                        <DialogTitle>Manage Credits for {user.fullName}</DialogTitle>
+                                    </DialogHeader>
                                     <div className="flex items-center justify-center gap-4 py-4">
-                                        <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                        <Button variant="outline" size="icon" className="rounded-full" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
                                         <Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} />
-                                        <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                        <Button variant="outline" size="icon" className="rounded-full" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
                                     </div>
                                     <DialogFooter><Button onClick={handleUpdateCredits}>Save Credits</Button></DialogFooter>
                                   </DialogContent>

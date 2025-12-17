@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -995,11 +995,13 @@ export default function AdminPage() {
                           </DialogTrigger>
                           {selectedUser?.id === u.id && (
                               <DialogContent>
-                                  <DialogHeader><DialogTitle>Set Rank for {selectedUser.fullName}</DialogTitle></DialogHeader>
+                                  <DialogHeader>
+                                    <DialogTitle>Set Rank for {selectedUser.fullName}</DialogTitle>
+                                  </DialogHeader>
                                   <div className="flex items-center justify-center gap-4 py-4">
-                                      <Button variant="outline" size="icon" onClick={() => setRank(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                      <Button variant="outline" size="icon" className="rounded-full" onClick={() => setRank(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
                                       <Input type="number" className="w-24 text-center text-xl font-bold" value={rank} onChange={(e) => setRank(Number(e.target.value))} />
-                                      <Button variant="outline" size="icon" onClick={() => setRank(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                      <Button variant="outline" size="icon" className="rounded-full" onClick={() => setRank(c => c + 1)}><Plus className="h-4 w-4" /></Button>
                                   </div>
                                   <DialogFooter><Button onClick={handleUpdateRank}>Set Rank</Button></DialogFooter>
                               </DialogContent>
@@ -1013,11 +1015,13 @@ export default function AdminPage() {
                           </DialogTrigger>
                           {selectedUser?.id === u.id && (
                               <DialogContent>
-                                  <DialogHeader><DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle></DialogHeader>
+                                  <DialogHeader>
+                                    <DialogTitle>Manage Credits for {selectedUser.fullName}</DialogTitle>
+                                  </DialogHeader>
                                   <div className="flex items-center justify-center gap-4 py-4">
-                                      <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
+                                      <Button variant="outline" size="icon" className="rounded-full" onClick={() => setCreditAmount(c => Math.max(0, c - 1))}><Minus className="h-4 w-4" /></Button>
                                       <Input type="number" className="w-24 text-center text-xl font-bold" value={creditAmount} onChange={(e) => setCreditAmount(Number(e.target.value))} />
-                                      <Button variant="outline" size="icon" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
+                                      <Button variant="outline" size="icon" className="rounded-full" onClick={() => setCreditAmount(c => c + 1)}><Plus className="h-4 w-4" /></Button>
                                   </div>
                                   <DialogFooter><Button onClick={handleUpdateCredits}>Save Credits</Button></DialogFooter>
                               </DialogContent>

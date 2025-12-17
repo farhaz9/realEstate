@@ -428,17 +428,17 @@ export default function PropertiesPage() {
                              <div className="space-y-2">
                                 <Label>Bedrooms</Label>
                                 <div className="flex items-center gap-2">
-                                     <Button variant="outline" size="icon" onClick={() => setBedrooms(b => Math.max(0, b - 1))}><Minus className="h-4 w-4" /></Button>
+                                     <Button variant="outline" size="icon" className="rounded-full" onClick={() => setBedrooms(b => Math.max(0, b - 1))}><Minus className="h-4 w-4" /></Button>
                                      <Input className="text-center font-bold bg-muted border-none h-11" readOnly value={bedrooms > 0 ? `${bedrooms}+` : 'Any'} />
-                                     <Button variant="outline" size="icon" onClick={() => setBedrooms(b => Math.min(10, b + 1))}><Plus className="h-4 w-4" /></Button>
+                                     <Button variant="outline" size="icon" className="rounded-full" onClick={() => setBedrooms(b => Math.min(10, b + 1))}><Plus className="h-4 w-4" /></Button>
                                 </div>
                              </div>
                              <div className="space-y-2">
                                 <Label>Bathrooms</Label>
                                 <div className="flex items-center gap-2">
-                                     <Button variant="outline" size="icon" onClick={() => setBathrooms(b => Math.max(0, b - 1))}><Minus className="h-4 w-4" /></Button>
+                                     <Button variant="outline" size="icon" className="rounded-full" onClick={() => setBathrooms(b => Math.max(0, b - 1))}><Minus className="h-4 w-4" /></Button>
                                      <Input className="text-center font-bold bg-muted border-none h-11" readOnly value={bathrooms > 0 ? `${bathrooms}+` : 'Any'} />
-                                     <Button variant="outline" size="icon" onClick={() => setBathrooms(b => Math.min(10, b + 1))}><Plus className="h-4 w-4" /></Button>
+                                     <Button variant="outline" size="icon" className="rounded-full" onClick={() => setBathrooms(b => Math.min(10, b + 1))}><Plus className="h-4 w-4" /></Button>
                                 </div>
                              </div>
                         </div>

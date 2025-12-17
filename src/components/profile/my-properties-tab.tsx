@@ -362,7 +362,7 @@ export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: Pr
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-10 w-10"
+                className="h-10 w-10 rounded-full"
                 onClick={() => field.onChange(Math.max(0, value - 1))}
             >
                 <Minus className="h-4 w-4" />
@@ -378,7 +378,7 @@ export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: Pr
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-10 w-10"
+                className="h-10 w-10 rounded-full"
                 onClick={() => field.onChange(value + 1)}
             >
                 <Plus className="h-4 w-4" />
