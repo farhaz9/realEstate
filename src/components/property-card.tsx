@@ -4,7 +4,7 @@ import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil, Info } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
@@ -171,7 +171,7 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
                 )}
               </div>
               <Button size="sm" variant="default" className="rounded-lg md:w-auto w-10 h-10 p-0 md:px-3 md:py-2 md:h-9">
-                  <span className="hidden md:inline">View</span> <ArrowRight className="w-4 h-4 md:ml-2" />
+                  <span className="hidden md:inline">View</span> <Info className="w-4 h-4 md:ml-2" />
               </Button>
           </div>
         </div>
