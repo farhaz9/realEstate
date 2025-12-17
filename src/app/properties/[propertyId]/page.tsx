@@ -23,6 +23,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useOnScroll } from '@/hooks/use-on-scroll';
 import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -86,6 +87,7 @@ function PropertyDetailSkeleton() {
 
 export default function PropertyDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const propertyId = params.propertyId as string;
   const firestore = useFirestore();
   const { user } = useUser();
@@ -214,6 +216,11 @@ export default function PropertyDetailPage() {
   return (
     <div className="bg-muted/40 pb-24 md:pb-8">
       <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+            <Button variant="ghost" size="sm" onClick={() => router.back()}>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
@@ -227,11 +234,6 @@ export default function PropertyDetailPage() {
                       <ImageIcon className="h-24 w-24 text-gray-400" />
                     </div>
                   )}
-                  <div className="absolute top-4 left-4">
-                     <Button asChild variant="secondary" size="sm">
-                       <Link href="/properties"><ArrowLeft className="mr-2 h-4 w-4" /> Back</Link>
-                     </Button>
-                  </div>
                 </div>
                 <div className="p-6">
                   <div className="flex justify-between items-start">
@@ -418,5 +420,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    
