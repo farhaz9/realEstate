@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
@@ -20,7 +19,7 @@ import ImageKit from 'imagekit-javascript';
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '../ui/skeleton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -279,7 +278,11 @@ function SettingsPageContent() {
                           <span>Upload photo</span>
                         </DropdownMenuItem>
                          <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive" onSelect={() => setIsDeleteAlertOpen(true)}>
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onSelect={() => setIsDeleteAlertOpen(true)}
+                          disabled={!displayAvatar}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           <span>Delete photo</span>
                         </DropdownMenuItem>
