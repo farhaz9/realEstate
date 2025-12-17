@@ -84,9 +84,18 @@ export function PricingTable({
   const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
   const verificationExpiresAt = isCurrentlyVerified ? userProfile.verifiedUntil.toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
 
-  const handlePlanSelect = (plan: PlanLevel) => {
-    setSelectedPlan(plan)
-    onPlanSelect?.(plan)
+  const handlePlanSelect = (planLevel: PlanLevel) => {
+    const plan = plans.find(p => p.level === planLevel);
+    if (!plan) return;
+
+    setSelectedPlan(planLevel);
+    onPlanSelect?.(planLevel);
+    
+    if (plan.level === 'free') {
+        onPlanSelect?.(planLevel);
+        return;
+    }
+
     if (user) {
         if(isCurrentlyVerified) {
              toast({
@@ -161,7 +170,8 @@ export function PricingTable({
     rzp.open();
   };
 
-  const formatPrice = (price: number) => {
+  const formatPriceLocal = (price: number) => {
+    if (price === 0) return "Free";
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
@@ -235,9 +245,9 @@ export function PricingTable({
                         )}
                         <div className="mt-4">
                             <span className="text-4xl font-extrabold tracking-tight">
-                            {formatPrice(isYearly ? plan.price.yearly : plan.price.monthly)}
+                            {formatPriceLocal(isYearly ? plan.price.yearly : plan.price.monthly)}
                             </span>
-                            <span className="text-muted-foreground">/{isYearly ? "year" : "month"}</span>
+                             {plan.price.monthly > 0 && <span className="text-muted-foreground">/{isYearly ? "year" : "month"}</span>}
                         </div>
                     </div>
 
@@ -261,8 +271,8 @@ export function PricingTable({
                             buttonClassName,
                         )}
                     >
-                        Choose {plan.name}
-                        <ArrowRightIcon className="w-4 h-4 ml-2" />
+                        {plan.level === 'free' ? 'Get Started' : `Choose ${plan.name}`}
+                        {plan.level !== 'free' && <ArrowRightIcon className="w-4 h-4 ml-2" />}
                     </Button>
                 </div>
             ))}
@@ -275,7 +285,7 @@ export function PricingTable({
                 <button
                   key={plan.name}
                   type="button"
-                  onClick={() => handlePlanSelect(plan.level)}
+                  onClick={() => setSelectedPlan(plan.level)}
                   className={cn(
                     "flex-1 p-4 rounded-xl text-left transition-all",
                     "border",
@@ -296,13 +306,13 @@ export function PricingTable({
                   )}
                   <div className="flex items-baseline gap-1">
                     <span className="text-2xl font-bold">
-                      {formatPrice(
+                      {formatPriceLocal(
                         isYearly ? plan.price.yearly : plan.price.monthly,
                       )}
                     </span>
-                    <span className="text-sm font-normal text-muted-foreground">
+                     {plan.price.monthly > 0 && <span className="text-sm font-normal text-muted-foreground">
                       /{isYearly ? "year" : "month"}
-                    </span>
+                    </span>}
                   </div>
                 </button>
               ))}
@@ -361,12 +371,12 @@ export function PricingTable({
               <Button
                 onClick={() => handlePlanSelect(selectedPlan)}
                 className={cn(
-                  "w-full sm:w-auto px-8 py-2 rounded-xl",
+                  "w-full sm:w-auto px-8 py-2 rounded-xl h-12 text-base font-bold",
                   buttonClassName,
                 )}
               >
-                Get started with {plans.find((p) => p.level === selectedPlan)?.name}
-                <ArrowRightIcon className="w-4 h-4 ml-2" />
+                {selectedPlan === 'free' ? 'Get Started' : `Get started with ${plans.find((p) => p.level === selectedPlan)?.name}`}
+                {selectedPlan !== 'free' && <ArrowRightIcon className="w-4 h-4 ml-2" />}
               </Button>
             </div>
         </div>
