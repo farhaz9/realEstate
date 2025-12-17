@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
 import type { User, Property } from '@/types';
@@ -91,6 +91,7 @@ function ProfessionalDetailSkeleton() {
 
 export default function ProfessionalDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const professionalId = params.professionalId as string;
   const firestore = useFirestore();
 
@@ -134,13 +135,10 @@ export default function ProfessionalDetailPage() {
 
   return (
     <div className="bg-muted/40 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
-            <div className="mb-6">
-                <Button asChild variant="ghost" size="sm">
-                    <Link href="/professionals"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Professionals</Link>
-                </Button>
-            </div>
-            
+        <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80">
+            <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="container mx-auto px-4 py-8 pt-20">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-1 lg:sticky top-24">
                     <Card>
