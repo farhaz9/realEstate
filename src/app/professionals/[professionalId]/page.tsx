@@ -198,7 +198,7 @@ export default function ProfessionalDetailPage() {
                                     </a>
                                 </Button>
                                  <Button asChild size="lg" variant="outline" className="w-full">
-                                    <a href={`https://wa.me/${professional.phone}`} target="_blank" rel="noopener noreferrer">
+                                    <a href={`https://wa.me/91${professional.phone}`} target="_blank" rel="noopener noreferrer">
                                         <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
                                     </a>
                                 </Button>
