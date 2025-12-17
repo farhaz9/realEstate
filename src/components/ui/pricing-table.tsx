@@ -66,16 +66,17 @@ export function PricingTable({
     <section
       className={cn(
         "bg-background text-foreground",
-        "py-12 sm:py-24 md:py-32 px-4",
+        "py-12 sm:py-16 md:py-20 px-4",
         "fade-bottom overflow-hidden pb-0",
+        className
       )}
     >
       <div
-        className={cn("w-full max-w-4xl mx-auto px-4", containerClassName)}
+        className={cn("w-full max-w-5xl mx-auto", containerClassName)}
         {...props}
       >
         <div className="flex justify-end mb-8">
-            <div
+             <div
                 className="relative mx-auto grid w-fit grid-cols-2 rounded-full border bg-muted p-1"
             >
                 <div
@@ -102,31 +103,22 @@ export function PricingTable({
             </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        {/* Mobile View - Cards */}
+        <div className="sm:hidden space-y-4">
           {plans.map((plan) => (
-            <button
-              key={plan.name}
-              type="button"
-              onClick={() => handlePlanSelect(plan.level)}
-              className={cn(
-                "flex-1 p-4 rounded-xl text-left transition-all",
-                "border",
-                selectedPlan === plan.level &&
-                  "ring-2 ring-primary border-primary",
-              )}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium">{plan.name}</span>
+            <div key={plan.level} className="border rounded-xl p-4">
+               <div className="flex items-center justify-between mb-1">
+                <span className="text-lg font-bold">{plan.name}</span>
                 {plan.popular && (
                   <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                     Popular
                   </span>
                 )}
               </div>
-               {plan.description && (
+              {plan.description && (
                 <p className="text-xs text-muted-foreground mb-2">{plan.description}</p>
               )}
-              <div className="flex items-baseline gap-1">
+               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-2xl font-bold">
                   {formatPrice(
                     isYearly ? plan.price.yearly : plan.price.monthly,
@@ -136,69 +128,132 @@ export function PricingTable({
                   /{isYearly ? "year" : "month"}
                 </span>
               </div>
-            </button>
+              <ul className="space-y-2 text-sm">
+                {features.map((feature) => (
+                  <li key={feature.name} className="flex items-center gap-2">
+                    {shouldShowCheck(feature.included, plan.level) ? (
+                      <CheckIcon className="w-4 h-4 text-primary" />
+                    ) : (
+                      <Cross1Icon className="w-3.5 h-3.5 text-destructive/50" />
+                    )}
+                    <span>{feature.name}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                onClick={() => handlePlanSelect(plan.level)}
+                className={cn(
+                  "w-full mt-4",
+                  buttonClassName,
+                )}
+              >
+                Get started
+                <ArrowRightIcon className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           ))}
         </div>
 
-        <div className="border rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <div className="min-w-[640px] divide-y">
-              <div className="flex items-center p-4 bg-muted">
-                <div className="flex-1 text-sm font-medium">Features</div>
-                <div className="flex items-center gap-8 text-sm">
-                  {plans.map((plan) => (
+        {/* Desktop View - Table */}
+        <div className="hidden sm:block">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              {plans.map((plan) => (
+                <button
+                  key={plan.name}
+                  type="button"
+                  onClick={() => handlePlanSelect(plan.level)}
+                  className={cn(
+                    "flex-1 p-4 rounded-xl text-left transition-all",
+                    "border",
+                    selectedPlan === plan.level &&
+                      "ring-2 ring-primary border-primary",
+                  )}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">{plan.name}</span>
+                    {plan.popular && (
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                        Popular
+                      </span>
+                    )}
+                  </div>
+                  {plan.description && (
+                    <p className="text-xs text-muted-foreground mb-2">{plan.description}</p>
+                  )}
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold">
+                      {formatPrice(
+                        isYearly ? plan.price.yearly : plan.price.monthly,
+                      )}
+                    </span>
+                    <span className="text-sm font-normal text-muted-foreground">
+                      /{isYearly ? "year" : "month"}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="border rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <div className="min-w-[640px] divide-y">
+                  <div className="flex items-center p-4 bg-muted">
+                    <div className="flex-1 text-sm font-medium">Features</div>
+                    <div className="flex items-center gap-8 text-sm">
+                      {plans.map((plan) => (
+                        <div
+                          key={plan.level}
+                          className="w-16 text-center font-medium"
+                        >
+                          {plan.name}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {features.map((feature) => (
                     <div
-                      key={plan.level}
-                      className="w-16 text-center font-medium"
+                      key={feature.name}
+                      className={cn(
+                        "flex items-center p-4 transition-colors",
+                        feature.included === selectedPlan &&
+                          "bg-primary/10",
+                      )}
                     >
-                      {plan.name}
+                      <div className="flex-1 text-sm">{feature.name}</div>
+                      <div className="flex items-center gap-8 text-sm">
+                        {plans.map((plan) => (
+                          <div
+                            key={plan.level}
+                            className={cn(
+                              "w-16 flex justify-center",
+                              plan.level === selectedPlan && "font-medium",
+                            )}
+                          >
+                            {shouldShowCheck(feature.included, plan.level) ? (
+                              <CheckIcon className="w-5 h-5 text-primary" />
+                            ) : (
+                              <Cross1Icon className="w-4 h-4 text-destructive/50" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
-              {features.map((feature) => (
-                <div
-                  key={feature.name}
-                  className={cn(
-                    "flex items-center p-4 transition-colors",
-                    feature.included === selectedPlan &&
-                      "bg-primary/10",
-                  )}
-                >
-                  <div className="flex-1 text-sm">{feature.name}</div>
-                  <div className="flex items-center gap-8 text-sm">
-                    {plans.map((plan) => (
-                      <div
-                        key={plan.level}
-                        className={cn(
-                          "w-16 flex justify-center",
-                          plan.level === selectedPlan && "font-medium",
-                        )}
-                      >
-                        {shouldShowCheck(feature.included, plan.level) ? (
-                          <CheckIcon className="w-5 h-5 text-primary" />
-                        ) : (
-                          <Cross1Icon className="w-4 h-4 text-destructive/50" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
             </div>
-          </div>
-        </div>
 
-        <div className="mt-8 text-center">
-          <Button
-            className={cn(
-              "w-full sm:w-auto px-8 py-2 rounded-xl",
-              buttonClassName,
-            )}
-          >
-            Get started with {plans.find((p) => p.level === selectedPlan)?.name}
-            <ArrowRightIcon className="w-4 h-4 ml-2" />
-          </Button>
+            <div className="mt-8 text-center">
+              <Button
+                className={cn(
+                  "w-full sm:w-auto px-8 py-2 rounded-xl",
+                  buttonClassName,
+                )}
+              >
+                Get started with {plans.find((p) => p.level === selectedPlan)?.name}
+                <ArrowRightIcon className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
         </div>
       </div>
     </section>
