@@ -19,7 +19,7 @@ import ImageKit from 'imagekit-javascript';
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { Skeleton } from '../ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -116,10 +116,6 @@ function SettingsPageContent() {
       }
     }
   }, [isCameraDialogOpen, toast]);
-
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click();
-  };
   
   const uploadImage = async (file: File | Blob) => {
     if (!user || !userDocRef || !auth?.currentUser) {
@@ -226,6 +222,7 @@ function SettingsPageContent() {
         });
       } finally {
         setIsUploading(false);
+        setIsDeleteAlertOpen(false);
       }
     };
 
@@ -259,14 +256,14 @@ function SettingsPageContent() {
                 </Button>
             </div>
              <div className="flex flex-col items-center mt-6">
-                <div className="relative group cursor-pointer">
+                <div className="relative group">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
                         {isLoading ? <Skeleton className="h-full w-full rounded-full" /> : <AvatarImage src={displayAvatar ?? ''} alt={displayName ?? ''} /> }
                         <AvatarFallback className="text-4xl bg-gradient-to-br from-primary to-accent text-primary-foreground flex items-center justify-center">
                             {displayName ? getInitials(displayName) : <User className="h-12 w-12" />}
                         </AvatarFallback>
                     </Avatar>
-                    <DropdownMenu>
+                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                          <Button size="icon" variant="default" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full border-2 border-background">
                             <Edit className="h-4 w-4" />
