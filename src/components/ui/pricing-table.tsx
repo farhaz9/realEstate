@@ -1,9 +1,10 @@
+
 "use client"
 
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { CheckIcon, ArrowRightIcon } from "@radix-ui/react-icons"
+import { CheckIcon, ArrowRightIcon, Cross1Icon } from "@radix-ui/react-icons"
 
 export type PlanLevel = "starter" | "pro" | "all" | string
 
@@ -174,9 +175,7 @@ export function PricingTable({
                         {shouldShowCheck(feature.included, plan.level) ? (
                           <CheckIcon className="w-5 h-5 text-primary" />
                         ) : (
-                          <span className="text-muted-foreground/50">
-                            -
-                          </span>
+                          <Cross1Icon className="w-4 h-4 text-destructive/50" />
                         )}
                       </div>
                     ))}
@@ -207,15 +206,10 @@ function shouldShowCheck(
   included: PricingFeature["included"],
   level: string,
 ): boolean {
-  if (included === "all") return true
-  if (included === "business") return true
-  if (included === "pro" && (level === "pro" || level === "business")) return true
-  if (
-    included === "starter" &&
-    (level === "starter" || level === "pro" || level === "business")
-  )
-    return true
-  if (included === 'free' && (level === 'free' || level === 'starter' || level === 'pro' || level === 'business')) return true;
-  if (level === included) return true;
-  return false
+  if (included === 'all') return true;
+  if (level === 'business') return true;
+  if (level === 'pro' && (included === 'pro' || included === 'starter' || included === 'free')) return true;
+  if (level === 'starter' && (included === 'starter' || included === 'free')) return true;
+  if (level === 'free' && included === 'free') return true;
+  return false;
 }
