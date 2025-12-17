@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown, LayoutGrid, ShoppingCart, Home, User, Building } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown, LayoutGrid, ShoppingCart, Home, User, Building, X, Minus, Plus } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
 import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp, increment } from 'firebase/firestore';
@@ -21,7 +21,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from '@/components/ui/sheet';
 import Link from 'next/link';
 import { analyzeSearchQuery, type SearchAnalysis } from '@/ai/flows/property-search-flow';
 import Fuse from 'fuse.js';
@@ -40,6 +40,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { LocationDisplay } from '@/components/shared/location-display';
+import { Separator } from '@/components/ui/separator';
 
 declare const Razorpay: any;
 
@@ -329,7 +330,7 @@ export default function PropertiesPage() {
     <div>
       <section className="bg-background border-b sticky top-14 z-40">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <LocationDisplay />
             <form onSubmit={handleSearch} className="relative flex-grow">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -346,88 +347,115 @@ export default function PropertiesPage() {
                     <SlidersHorizontal className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Filters</SheetTitle>
-                  </SheetHeader>
-                  <div className="grid gap-6 mt-6">
-                    <div className="space-y-2">
-                      <Label>Sort By</Label>
-                      <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
-                          <SelectValue placeholder="Sort by" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="dateListed-desc">Newest First</SelectItem>
-                          <SelectItem value="dateListed-asc">Oldest First</SelectItem>
-                          <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                          <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                          {location && <SelectItem value="nearby">Nearby</SelectItem>}
-                        </SelectContent>
-                      </Select>
+                <SheetContent className="flex flex-col">
+                    <SheetHeader>
+                        <SheetTitle className="text-2xl">Filters</SheetTitle>
+                    </SheetHeader>
+                    <div className="flex-1 space-y-8 overflow-y-auto py-6 pr-6">
+
+                        {/* Sort & Filter */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">Sort & Filter</h3>
+                            <div className="space-y-2">
+                                <Label>Sort By</Label>
+                                <Select value={sortBy} onValueChange={setSortBy}>
+                                    <SelectTrigger className="bg-muted border-none h-11">
+                                        <SelectValue placeholder="Sort by" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="dateListed-desc">Newest First</SelectItem>
+                                        <SelectItem value="dateListed-asc">Oldest First</SelectItem>
+                                        <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                                        <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                                        {location && <SelectItem value="nearby">Nearby</SelectItem>}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        
+                        <Separator />
+
+                        {/* Location */}
+                         <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">Location</h3>
+                            <div className="space-y-2">
+                                <Label>State</Label>
+                                <Select value={location} onValueChange={setLocation}>
+                                    <SelectTrigger className="bg-muted border-none h-11">
+                                    <SelectValue placeholder="All States" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                    <SelectItem value="all">All States</SelectItem>
+                                    {uniqueLocations.map((loc, index) => <SelectItem key={`${loc}-${index}`} value={loc}>{loc}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="pincode">Pincode</Label>
+                                <Input 
+                                id="pincode"
+                                placeholder="e.g. 110085"
+                                value={pincode}
+                                onChange={(e) => setPincode(e.target.value)}
+                                className="bg-muted border-none h-11"
+                                />
+                            </div>
+                        </div>
+                        
+                        <Separator />
+                        
+                        {/* Price Range */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">Price Range</h3>
+                            <Label className="text-base font-bold text-center block">
+                                {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
+                            </Label>
+                            <Slider
+                                min={0}
+                                max={20}
+                                step={0.5}
+                                value={priceRange}
+                                onValueChange={(value) => setPriceRange(value)}
+                                className="[&>span]:bg-background py-2"
+                            />
+                        </div>
+
+                        <Separator />
+                        
+                        {/* Rooms & Bathrooms */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg">Features</h3>
+                             <div className="space-y-2">
+                                <Label>Bedrooms</Label>
+                                <div className="flex items-center gap-2">
+                                     <Button variant="outline" size="icon" onClick={() => setBedrooms(b => Math.max(0, b - 1))}><Minus className="h-4 w-4" /></Button>
+                                     <Input className="text-center font-bold bg-muted border-none h-11" readOnly value={bedrooms > 0 ? `${bedrooms}+` : 'Any'} />
+                                     <Button variant="outline" size="icon" onClick={() => setBedrooms(b => Math.min(10, b + 1))}><Plus className="h-4 w-4" /></Button>
+                                </div>
+                             </div>
+                             <div className="space-y-2">
+                                <Label>Bathrooms</Label>
+                                <div className="flex items-center gap-2">
+                                     <Button variant="outline" size="icon" onClick={() => setBathrooms(b => Math.max(0, b - 1))}><Minus className="h-4 w-4" /></Button>
+                                     <Input className="text-center font-bold bg-muted border-none h-11" readOnly value={bathrooms > 0 ? `${bathrooms}+` : 'Any'} />
+                                     <Button variant="outline" size="icon" onClick={() => setBathrooms(b => Math.min(10, b + 1))}><Plus className="h-4 w-4" /></Button>
+                                </div>
+                             </div>
+                        </div>
+
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>State</Label>
-                        <Select value={location} onValueChange={setLocation}>
-                          <SelectTrigger className="bg-background text-foreground h-9 shadow-sm">
-                            <SelectValue placeholder="All States" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All States</SelectItem>
-                            {uniqueLocations.map((loc, index) => <SelectItem key={`${loc}-${index}`} value={loc}>{loc}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="pincode">Pincode</Label>
-                        <Input 
-                          id="pincode"
-                          placeholder="e.g. 110085"
-                          value={pincode}
-                          onChange={(e) => setPincode(e.target.value)}
-                          className="bg-background text-foreground h-9 shadow-sm"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold truncate text-center block">
-                        Price: {formatPrice(priceRange[0], true)} - {formatPrice(priceRange[1], true, true)}
-                      </Label>
-                      <Slider
-                        min={0}
-                        max={20}
-                        step={0.5}
-                        value={priceRange}
-                        onValueChange={(value) => setPriceRange(value)}
-                        className="[&>span]:bg-background py-2"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="bedrooms-filter">Beds</Label>
-                        <Select value={String(bedrooms)} onValueChange={(val) => setBedrooms(Number(val))}>
-                          <SelectTrigger id="bedrooms-filter">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[0, 1, 2, 3, 4, 5].map(b => <SelectItem key={b} value={String(b)}>{b === 0 ? 'Any' : `${b}+`}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="bathrooms-filter">Baths</Label>
-                        <Select value={String(bathrooms)} onValueChange={(val) => setBathrooms(Number(val))}>
-                          <SelectTrigger id="bathrooms-filter">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[0, 1, 2, 3, 4, 5].map(b => <SelectItem key={b} value={String(b)}>{b === 0 ? 'Any' : `${b}+`}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
+                    <SheetFooter className="grid grid-cols-2 gap-4 border-t pt-6">
+                        <Button variant="outline" onClick={() => {
+                            setLocation('all');
+                            setPincode('');
+                            setBedrooms(0);
+                            setBathrooms(0);
+                            setPriceRange([0, 20]);
+                        }}>Clear All</Button>
+                        <SheetClose asChild>
+                            <Button>Apply Filters</Button>
+                        </SheetClose>
+                    </SheetFooter>
                 </SheetContent>
               </Sheet>
             </form>
