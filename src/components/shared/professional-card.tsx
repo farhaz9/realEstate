@@ -75,39 +75,37 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
   return (
     <>
         {/* Mobile View: List Item Style */}
-        <div className="md:hidden">
-            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 p-2 rounded-lg hover:bg-muted transition-colors">
-                 <Avatar className={cn(
-                    "h-14 w-14 border-2 border-primary/20",
-                    isCompany ? "rounded-lg" : "rounded-full"
+        <div className="md:hidden flex items-center gap-4 p-2 rounded-lg hover:bg-muted transition-colors">
+            <Avatar className={cn(
+                "h-14 w-14 border-2 border-primary/20",
+                isCompany ? "rounded-lg" : "rounded-full"
+            )}>
+                <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
+                <AvatarFallback className={cn(
+                "text-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
+                isCompany ? "rounded-md" : "rounded-full"
                 )}>
-                    <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
-                    <AvatarFallback className={cn(
-                    "text-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
-                    isCompany ? "rounded-md" : "rounded-full"
-                    )}>
-                        {cardTitle ? getInitials(cardTitle) : <UserIcon />}
-                    </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                    <div>
-                        <div className="flex items-center gap-1.5">
-                            <h3 className="font-bold text-base truncate">{cardTitle}</h3>
-                            {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
-                        </div>
-                        <p className="text-xs text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
-                        <div className="mt-1">
-                            <ProfessionalRating professionalId={professional.id} />
-                        </div>
+                    {cardTitle ? getInitials(cardTitle) : <UserIcon />}
+                </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+                <div>
+                    <div className="flex items-center gap-1.5">
+                        <h3 className="font-bold text-base truncate">{cardTitle}</h3>
+                        {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+                    <div className="mt-1">
+                        <ProfessionalRating professionalId={professional.id} />
                     </div>
                 </div>
-                 <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
-                    <Link href={`/professionals/${professional.id}`}>
-                        <Info className="mr-2 h-4 w-4" />
-                        View Profile
-                    </Link>
-                </Button>
-            </Link>
+            </div>
+              <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full">
+                <Link href={`/professionals/${professional.id}`}>
+                    <Info className="mr-2 h-4 w-4" />
+                    View Profile
+                </Link>
+            </Button>
         </div>
 
         {/* Desktop View: Card Style */}
