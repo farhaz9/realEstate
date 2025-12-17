@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useTransition } from 'react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
@@ -29,7 +29,7 @@ export default function ProfessionalsPage() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeTab, setActiveTab] = useState('all');
 
-  const heroImage = PlaceHolderImages.find(p => p.id === 'home-hero');
+  const heroImage = PlaceHolderImages.find(p => p.id === 'contact-hero');
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
