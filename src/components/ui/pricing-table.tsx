@@ -14,6 +14,7 @@ export interface PricingFeature {
 
 export interface PricingPlan {
   name: string
+  description?: string;
   level: PlanLevel
   price: {
     monthly: number
@@ -69,7 +70,7 @@ export function PricingTable({
       )}
     >
       <div
-        className={cn("w-full max-w-3xl mx-auto px-4", containerClassName)}
+        className={cn("w-full max-w-4xl mx-auto px-4", containerClassName)}
         {...props}
       >
         <div className="flex justify-end mb-4 sm:mb-8">
@@ -79,7 +80,7 @@ export function PricingTable({
               onClick={() => setIsYearly(false)}
               className={cn(
                 "px-3 py-1 rounded-md transition-colors",
-                !isYearly ? "bg-zinc-100 dark:bg-zinc-800" : "text-zinc-500",
+                !isYearly ? "bg-muted" : "text-muted-foreground",
               )}
             >
               Monthly
@@ -89,7 +90,7 @@ export function PricingTable({
               onClick={() => setIsYearly(true)}
               className={cn(
                 "px-3 py-1 rounded-md transition-colors",
-                isYearly ? "bg-zinc-100 dark:bg-zinc-800" : "text-zinc-500",
+                isYearly ? "bg-muted" : "text-muted-foreground",
               )}
             >
               Yearly
@@ -105,12 +106,12 @@ export function PricingTable({
               onClick={() => handlePlanSelect(plan.level)}
               className={cn(
                 "flex-1 p-4 rounded-xl text-left transition-all",
-                "border border-zinc-200 dark:border-zinc-800",
+                "border",
                 selectedPlan === plan.level &&
-                  "ring-2 ring-primary dark:ring-primary",
+                  "ring-2 ring-primary border-primary",
               )}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium">{plan.name}</span>
                 {plan.popular && (
                   <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
@@ -118,13 +119,16 @@ export function PricingTable({
                   </span>
                 )}
               </div>
+               {plan.description && (
+                <p className="text-xs text-muted-foreground mb-2">{plan.description}</p>
+              )}
               <div className="flex items-baseline gap-1">
                 <span className="text-2xl font-bold">
                   {formatPrice(
                     isYearly ? plan.price.yearly : plan.price.monthly,
                   )}
                 </span>
-                <span className="text-sm font-normal text-zinc-500">
+                <span className="text-sm font-normal text-muted-foreground">
                   /{isYearly ? "year" : "month"}
                 </span>
               </div>
@@ -132,10 +136,10 @@ export function PricingTable({
           ))}
         </div>
 
-        <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
+        <div className="border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <div className="min-w-[640px] divide-y divide-zinc-200 dark:divide-zinc-800">
-              <div className="flex items-center p-4 bg-zinc-50 dark:bg-zinc-900">
+            <div className="min-w-[640px] divide-y">
+              <div className="flex items-center p-4 bg-muted">
                 <div className="flex-1 text-sm font-medium">Features</div>
                 <div className="flex items-center gap-8 text-sm">
                   {plans.map((plan) => (
@@ -170,7 +174,7 @@ export function PricingTable({
                         {shouldShowCheck(feature.included, plan.level) ? (
                           <CheckIcon className="w-5 h-5 text-primary" />
                         ) : (
-                          <span className="text-zinc-300 dark:text-zinc-700">
+                          <span className="text-muted-foreground/50">
                             -
                           </span>
                         )}
@@ -186,7 +190,7 @@ export function PricingTable({
         <div className="mt-8 text-center">
           <Button
             className={cn(
-              "w-full sm:w-auto bg-primary hover:bg-primary/90 px-8 py-2 rounded-xl",
+              "w-full sm:w-auto px-8 py-2 rounded-xl",
               buttonClassName,
             )}
           >
@@ -204,12 +208,14 @@ function shouldShowCheck(
   level: string,
 ): boolean {
   if (included === "all") return true
-  if (included === "pro" && (level === "pro" || level === "all" || level === "business")) return true
+  if (included === "business") return true
+  if (included === "pro" && (level === "pro" || level === "business")) return true
   if (
     included === "starter" &&
-    (level === "starter" || level === "pro" || level === "all" || level === "business")
+    (level === "starter" || level === "pro" || level === "business")
   )
     return true
+  if (included === 'free' && (level === 'free' || level === 'starter' || level === 'pro' || level === 'business')) return true;
   if (level === included) return true;
   return false
 }

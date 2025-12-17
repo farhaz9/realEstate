@@ -51,7 +51,8 @@ export function AppPricingSection() {
             }))}
             plans={plans.map(plan => ({
                 ...plan,
-                name: `${plan.name} - ${plan.listings}`
+                name: plan.name,
+                description: plan.listings, // Use description for the listing count
             }))}
             defaultPlan="pro"
             defaultInterval="monthly"
