@@ -159,6 +159,7 @@ export default function Header() {
 
   const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(userProfile.category);
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const isVendor = userProfile?.category === 'vendor';
 
   const handleSearch = (searchTerm: string) => {
     let targetPath = '/properties';
@@ -262,16 +263,18 @@ export default function Header() {
                       )}
                     </nav>
                 </div>
-                 <SheetFooter className="p-4 mt-auto border-t">
-                    <SheetClose asChild>
-                        <Button asChild variant="default" className="w-full h-12 text-base">
-                            <Link href="/settings?tab=listings">
-                                <Plus className="mr-2 h-5 w-5" />
-                                Post Property
-                            </Link>
-                        </Button>
-                    </SheetClose>
-                </SheetFooter>
+                {!isVendor && (
+                  <SheetFooter className="p-4 mt-auto border-t">
+                      <SheetClose asChild>
+                          <Button asChild variant="default" className="w-full h-12 text-base">
+                              <Link href="/settings?tab=listings">
+                                  <Plus className="mr-2 h-5 w-5" />
+                                  Post Property
+                              </Link>
+                          </Button>
+                      </SheetClose>
+                  </SheetFooter>
+                )}
           </SheetContent>
 
         <div className="container p-2">
@@ -331,7 +334,7 @@ export default function Header() {
                             {link.label}
                         </Link>
                         ))}
-                        {user && isProfessional && (
+                        {user && isProfessional && !isVendor && (
                         <Link
                             href="/settings?tab=listings"
                             className={cn(

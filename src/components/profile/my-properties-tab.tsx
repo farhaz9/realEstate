@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText, Minus, Gem } from 'lucide-react';
+import { Banknote, ExternalLink, ImageUp, Loader2, Plus, Star, X, Zap, CheckCircle2, ArrowRight, FileText, Minus, Gem, Building } from 'lucide-react';
 import type { Property, User, AppSettings } from '@/types';
 import {
   AlertDialog,
@@ -892,6 +892,8 @@ export function MyPropertiesTab() {
     setIsFormOpen(false);
   }
 
+  const isVendor = userProfile?.category === 'vendor';
+
   const renderMyProperties = () => (
     <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -907,18 +909,20 @@ export function MyPropertiesTab() {
                 ))
             ) : (
                 <>
-                    <Card 
-                        className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
-                        onClick={handleAddPropertyClick}
-                    >
-                        <CardContent className="p-6 text-center">
-                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Plus className="h-8 w-8 text-primary" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
-                             <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
-                        </CardContent>
-                    </Card>
+                    {!isVendor && (
+                      <Card 
+                          className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
+                          onClick={handleAddPropertyClick}
+                      >
+                          <CardContent className="p-6 text-center">
+                              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  <Plus className="h-8 w-8 text-primary" />
+                              </div>
+                              <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
+                               <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
+                          </CardContent>
+                      </Card>
+                    )}
                     
                     {properties?.map((property) => (
                       <PropertyCard key={property.id} property={property} showActiveBadge={true} />
@@ -927,10 +931,20 @@ export function MyPropertiesTab() {
             )}
       </div>
 
-      {(!userProfile?.listingCredits || userProfile.listingCredits === 0) && (
+      {userProfile && !isVendor && (!userProfile.listingCredits || userProfile.listingCredits === 0) && (
         <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
       )}
       
+      {isVendor && (
+          <Alert>
+              <Building className="h-4 w-4" />
+              <AlertTitle>Property Listings are Unavailable</AlertTitle>
+              <AlertDescription>
+                  As a vendor, you do not have permission to list properties. This section is for property owners and agents.
+              </AlertDescription>
+          </Alert>
+      )}
+
        <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
