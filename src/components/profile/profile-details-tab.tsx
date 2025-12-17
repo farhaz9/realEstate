@@ -81,9 +81,27 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
              <Button className="w-full h-12 text-base font-bold">
                 <Edit className="mr-2 h-5 w-5" /> Edit Profile
             </Button>
-            <Button variant="outline" className="w-full h-12 text-base font-bold" onClick={handleSignOut}>
-                <LogOut className="mr-2 h-5 w-5" /> Log Out
-            </Button>
+            
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="outline" className="w-full h-12 text-base font-bold">
+                        <LogOut className="mr-2 h-5 w-5" /> Log Out
+                    </Button>
+                </AlertDialogTrigger>
+                 <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                          You will be returned to the homepage. You can always log back in later.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleSignOut}>Log Out</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
             <AlertDialog>
                 <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full h-12 text-base font-bold">
