@@ -210,36 +210,36 @@ export function PricingSection() {
                 <Loader2 className="h-10 w-10 animate-spin" />
             </Card>
          ) : (
-          <Card className="max-w-md w-full shadow-lg border-2 border-primary/50 relative overflow-hidden">
-             <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold uppercase px-4 py-1 rounded-bl-lg flex items-center gap-1 shadow-lg">
+          <Card className="max-w-md w-full shadow-2xl shadow-primary/20 bg-gradient-to-br from-primary to-purple-500 relative overflow-hidden rounded-3xl border-0">
+             <div className="absolute top-4 right-4 bg-black/20 text-white text-xs font-bold uppercase px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
                 <Star className="w-3 h-3" /> PRO
             </div>
             <CardHeader className="text-center pt-12">
               <div className="flex justify-center items-center gap-2 mb-4">
                   <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
               </div>
-              <CardTitle className="text-4xl font-extrabold">
+              <CardTitle className="text-4xl font-extrabold text-white">
                 {isAnnual ? formatPrice(annualPrice) : formatPrice(monthlyPrice)}
-                <span className="text-lg font-medium text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
+                <span className="text-lg font-medium text-white/80">/{isAnnual ? 'year' : 'month'}</span>
               </CardTitle>
-              <CardDescription>Get the visibility you deserve.</CardDescription>
+              <CardDescription className="text-white/80">Get the visibility you deserve.</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-4">
                 {[...benefits, `Valid for ${isAnnual ? '365' : '30'} days`].map((benefit, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      <CheckCircle2 className="h-5 w-5 text-green-300" />
                     </div>
-                    <span className="font-medium text-foreground/90">{benefit}</span>
+                    <span className="font-medium text-white">{benefit}</span>
                   </li>
                 ))}
               </ul>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="p-6">
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
-                         <Button size="lg" className="w-full h-12 text-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
+                         <Button size="lg" className="w-full h-12 text-lg bg-white text-primary hover:bg-white/90 shadow-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
                             {isCurrentlyVerified ? 'You are already Verified' : 'Get Verified Now'}
                         </Button>
                     </AlertDialogTrigger>
