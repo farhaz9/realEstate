@@ -331,10 +331,6 @@ export default function PropertiesPage() {
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center mb-4">
              <LocationDisplay />
-             <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <div className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-destructive border-2 border-background" />
-             </Button>
           </div>
            <form onSubmit={handleSearch} className="flex items-center gap-2">
              <div className="relative flex-grow">
