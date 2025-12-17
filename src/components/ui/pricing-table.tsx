@@ -74,29 +74,32 @@ export function PricingTable({
         className={cn("w-full max-w-4xl mx-auto px-4", containerClassName)}
         {...props}
       >
-        <div className="flex justify-end mb-4 sm:mb-8">
-          <div className="inline-flex items-center gap-2 text-xs sm:text-sm">
-            <button
-              type="button"
-              onClick={() => setIsYearly(false)}
-              className={cn(
-                "px-3 py-1 rounded-md transition-colors",
-                !isYearly ? "bg-muted" : "text-muted-foreground",
-              )}
+        <div className="flex justify-end mb-8">
+            <div
+                className="relative mx-auto grid w-fit grid-cols-2 rounded-full border bg-muted p-1"
             >
-              Monthly
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsYearly(true)}
-              className={cn(
-                "px-3 py-1 rounded-md transition-colors",
-                isYearly ? "bg-muted" : "text-muted-foreground",
-              )}
-            >
-              Yearly
-            </button>
-          </div>
+                <div
+                    aria-hidden="true"
+                    className={cn(
+                        'pointer-events-none absolute inset-1 w-[calc(50%-4px)] rounded-full bg-primary shadow ring-1 ring-black/5 transition-transform duration-500 ease-in-out',
+                        isYearly ? "translate-x-full" : "translate-x-0"
+                    )}
+                />
+                <button
+                    className="relative duration-500 rounded-full h-8 w-24 text-sm hover:opacity-75"
+                    onClick={() => setIsYearly(false)}
+                    type="button"
+                >
+                    <span className={cn(!isYearly ? 'text-primary-foreground' : 'text-foreground')}>Monthly</span>
+                </button>
+                <button
+                    className="relative duration-500 rounded-full h-8 w-24 text-sm hover:opacity-75"
+                    onClick={() => setIsYearly(true)}
+                    type="button"
+                >
+                    <span className={cn(isYearly ? 'text-primary-foreground' : 'text-foreground')}>Annually</span>
+                </button>
+            </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -206,7 +209,6 @@ function shouldShowCheck(
   included: PricingFeature["included"],
   level: string,
 ): boolean {
-  if (included === 'all') return true;
   if (level === 'business') return true;
   if (level === 'pro' && (included === 'pro' || included === 'starter' || included === 'free')) return true;
   if (level === 'starter' && (included === 'starter' || included === 'free')) return true;
