@@ -108,9 +108,9 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
             <div className="flex-shrink-0">
                 <ProfessionalRating professional={professional} />
             </div>
-            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full h-9 w-9 p-0">
+            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full h-9 px-3">
                 <Link href={`/professionals/${professional.id}`}>
-                    <Info className="w-4 h-4" />
+                    <Info className="w-4 h-4 mr-1" /> Info
                 </Link>
             </Button>
         </div>
