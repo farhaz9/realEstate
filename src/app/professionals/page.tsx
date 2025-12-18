@@ -129,23 +129,22 @@ function ProfessionalsPageContent() {
               />
           </form>
 
-          <div className="mb-8">
-              <div className="bg-background border rounded-lg p-1 flex items-center gap-1 max-w-md mx-auto">
-                  {filterTabs.map(tab => (
-                      <button 
-                          key={tab.id}
-                          onClick={() => setActiveTab(tab.id)}
-                          className={cn(
-                              "flex-1 rounded-md px-3 py-1.5 text-sm font-semibold transition-all",
-                              activeTab === tab.id 
-                                  ? 'bg-primary/10 text-primary' 
-                                  : 'text-muted-foreground hover:bg-muted/50'
-                          )}
-                      >
-                          {tab.label}
-                      </button>
-                  ))}
-              </div>
+          <div className="mb-8 flex justify-center border-b">
+              {filterTabs.map(tab => (
+                  <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={cn(
+                          "relative px-4 py-2.5 text-sm font-semibold transition-all text-muted-foreground hover:text-primary",
+                          activeTab === tab.id && "text-primary"
+                      )}
+                  >
+                      {tab.label}
+                      {activeTab === tab.id && (
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                      )}
+                  </button>
+              ))}
           </div>
 
           {renderContent()}
