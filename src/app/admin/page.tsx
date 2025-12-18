@@ -7,8 +7,8 @@ import { collection, query, orderBy, Query, where, increment, serverTimestamp } 
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
-import type { Property, User, Transaction, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown } from 'lucide-react';
+import type { Property, User, Transaction, AppSettings, Lead } from '@/types';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown, Handshake } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -123,6 +123,7 @@ const adminTabs = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'properties', label: 'Properties', icon: Building },
   { id: 'users', label: 'Users', icon: Users },
+  { id: 'leads', label: 'Leads', icon: Handshake },
   { id: 'transactions', label: 'Transactions', icon: Receipt },
   { id: 'notifications', label: 'Notifications', icon: Megaphone },
   { id: 'settings', label: 'Settings', icon: Settings },
@@ -378,10 +379,12 @@ export default function AdminPage() {
   const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
   const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
   const [transactionSort, setTransactionSort] = useState({ key: 'date', direction: 'desc' });
+  const [leadSort, setLeadSort] = useState({ key: 'leadDate', direction: 'desc' });
   
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [propertySearchTerm, setPropertySearchTerm] = useState('');
   const [transactionSearchTerm, setTransactionSearchTerm] = useState('');
+  const [leadSearchTerm, setLeadSearchTerm] = useState('');
   
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [creditAmount, setCreditAmount] = useState(0);
@@ -409,6 +412,11 @@ export default function AdminPage() {
     return query(collection(firestore, 'users'), orderBy('dateJoined', 'desc'));
   }, [firestore]);
   
+  const allLeadsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'leads'), orderBy('leadDate', 'desc'));
+  }, [firestore]);
+  
   const appSettingsRef = useMemoFirebase(() => {
     if (!firestore) return null;
     return doc(firestore, 'app_settings', 'config');
@@ -416,6 +424,7 @@ export default function AdminPage() {
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(allPropertiesQuery);
   const { data: users, isLoading: isLoadingUsers } = useCollection<User>(allUsersQuery);
+  const { data: leads, isLoading: isLoadingLeads } = useCollection<Lead>(allLeadsQuery);
   const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
 
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
@@ -443,17 +452,18 @@ export default function AdminPage() {
   }, [users]);
   
   const stats = useMemo(() => {
-    if (!properties || !users) return null;
+    if (!properties || !users || !leads) return null;
     const verifiedUsersCount = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date()).length;
     const totalRevenue = allTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 
     return {
       totalUsers: users.length,
       totalProperties: properties.length,
+      totalLeads: leads.length,
       verifiedUsers: verifiedUsersCount,
       totalRevenue,
     };
-  }, [properties, users, allTransactions]);
+  }, [properties, users, allTransactions, leads]);
   
   const userFuse = useMemo(() => {
     if (!users) return null;
@@ -470,6 +480,14 @@ export default function AdminPage() {
         threshold: 0.3
     });
   }, [properties]);
+
+  const leadFuse = useMemo(() => {
+    if (!leads) return null;
+    return new Fuse(leads, {
+      keys: ['propertyTitle', 'agentName', 'inquiringUserName', 'inquiringUserEmail'],
+      threshold: 0.3,
+    });
+  }, [leads]);
   
   const transactionFuse = useMemo(() => {
     if (allTransactions.length === 0) return null;
@@ -556,6 +574,30 @@ export default function AdminPage() {
     });
   }, [properties, propertySearchTerm, propertyFuse, propertySort, propertyFilter]);
 
+
+  const sortedAndFilteredLeads = useMemo(() => {
+    if (!leads) return [];
+    
+    let filtered = leadSearchTerm && leadFuse
+      ? leadFuse.search(leadSearchTerm).map(result => result.item)
+      : leads;
+
+    return [...filtered].sort((a, b) => {
+        const { key, direction } = leadSort;
+        let valA: any = a[key as keyof Lead];
+        let valB: any = b[key as keyof Lead];
+        
+        if (key === 'leadDate') {
+            valA = a.leadDate?.toDate ? a.leadDate.toDate().getTime() : 0;
+            valB = b.leadDate?.toDate ? b.leadDate.toDate().getTime() : 0;
+        }
+
+        const order = direction === 'asc' ? 1 : -1;
+        if (valA < valB) return -1 * order;
+        if (valA > valB) return 1 * order;
+        return 0;
+    });
+  }, [leads, leadSearchTerm, leadFuse, leadSort]);
 
   const sortedAndFilteredTransactions = useMemo(() => {
     let baseTransactions = allTransactions;
@@ -814,7 +856,7 @@ export default function AdminPage() {
           <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
         </div>
           <TabsContent value="dashboard" className="mt-6 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <Card
                       className="relative overflow-hidden cursor-pointer hover:bg-muted/50 transition-colors"
                       onClick={() => { setUserFilter('all'); setActiveTab('users'); }}
@@ -839,6 +881,19 @@ export default function AdminPage() {
                             {isLoadingProperties ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.totalProperties}</p>}
                             <p className="text-xs text-muted-foreground">Click to view all properties</p>
                              <Building className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
+                        </CardContent>
+                    </Card>
+                     <Card
+                      className="relative overflow-hidden cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setActiveTab('leads')}
+                    >
+                        <CardHeader>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">TOTAL LEADS</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {isLoadingLeads ? <Skeleton className="h-8 w-24" /> : <p className="text-3xl font-bold">{stats?.totalLeads}</p>}
+                            <p className="text-xs text-muted-foreground">Click to view all leads</p>
+                             <Handshake className="absolute -right-4 -bottom-4 h-24 w-24 text-muted" />
                         </CardContent>
                     </Card>
                     <Card
@@ -1120,6 +1175,72 @@ export default function AdminPage() {
                   </TableCell>
                   </TableRow>
               );})}</TableBody></Table></div></CardContent></Card>
+          </TabsContent>
+          <TabsContent value="leads" className="mt-6">
+              <Card>
+                  <CardHeader>
+                      <CardTitle>All Leads ({leads?.length || 0})</CardTitle>
+                      <div className="relative flex-grow mt-4">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input
+                              placeholder="Search by property, agent, or user..."
+                              className="pl-10"
+                              value={leadSearchTerm}
+                              onChange={(e) => setLeadSearchTerm(e.target.value)}
+                          />
+                      </div>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                      <div className="overflow-x-auto">
+                          <Table>
+                              <TableHeader>
+                                  <TableRow>
+                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setLeadSort, 'leadDate')}>
+                                          <div className="flex items-center gap-2">Date <ArrowUpDown className="h-4 w-4" /></div>
+                                      </TableHead>
+                                      <TableHead>Property</TableHead>
+                                      <TableHead>Agent</TableHead>
+                                      <TableHead>Inquiring User</TableHead>
+                                      <TableHead>Contact Method</TableHead>
+                                  </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                  {sortedAndFilteredLeads?.map((lead) => (
+                                      <TableRow key={lead.id}>
+                                          <TableCell>{lead.leadDate?.toDate ? format(lead.leadDate.toDate(), 'PPP p') : 'N/A'}</TableCell>
+                                          <TableCell>
+                                              <Link href={`/properties/${lead.propertyId}`} className="font-medium hover:underline text-primary">
+                                                  {lead.propertyTitle}
+                                              </Link>
+                                          </TableCell>
+                                          <TableCell>
+                                               <Link href={`/admin/users/${lead.agentId}`} className="hover:underline">
+                                                  {lead.agentName}
+                                              </Link>
+                                          </TableCell>
+                                          <TableCell>
+                                              <Link href={`/admin/users/${lead.inquiringUserId}`} className="hover:underline">
+                                                  {lead.inquiringUserName}
+                                              </Link>
+                                              <p className="text-xs text-muted-foreground">{lead.inquiringUserEmail}</p>
+                                          </TableCell>
+                                           <TableCell className="capitalize">
+                                                <Badge variant="secondary">{lead.contactMethod}</Badge>
+                                          </TableCell>
+                                      </TableRow>
+                                  ))}
+                              </TableBody>
+                          </Table>
+                          {sortedAndFilteredLeads.length === 0 && (
+                            <div className="text-center py-16 text-muted-foreground">
+                                <Handshake className="mx-auto h-12 w-12" />
+                                <h3 className="mt-4 text-xl font-semibold">No leads found</h3>
+                                <p>Leads will appear here when users contact agents.</p>
+                            </div>
+                          )}
+                      </div>
+                  </CardContent>
+              </Card>
           </TabsContent>
           <TabsContent value="transactions" className="mt-6">
               <Card>

@@ -1,10 +1,11 @@
 
+
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection } from '@/firebase';
-import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit } from 'firebase/firestore';
-import type { Property, User } from '@/types';
+import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection, addDocumentNonBlocking } from '@/firebase';
+import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit, serverTimestamp } from 'firebase/firestore';
+import type { Property, User, Lead } from '@/types';
 import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
@@ -145,6 +146,41 @@ export default function PropertyDetailPage() {
       description: `${property?.title} has been ${isInWishlist ? 'removed from' : 'added to'} your wishlist.`,
       variant: 'success',
     });
+  };
+
+  const createLead = (method: 'call' | 'whatsapp' | 'email') => {
+    if (!user || !userProfile || !property || !owner) {
+        toast({ title: 'Please log in', description: 'You need to be logged in to contact an agent.', variant: 'destructive' });
+        router.push('/login');
+        return false;
+    }
+
+    const leadsCollection = collection(firestore, 'leads');
+    const newLead: Omit<Lead, 'id'> = {
+        propertyId: property.id,
+        propertyTitle: property.title,
+        agentId: owner.id,
+        agentName: owner.fullName,
+        inquiringUserId: user.uid,
+        inquiringUserName: userProfile.fullName,
+        inquiringUserEmail: userProfile.email,
+        inquiringUserPhone: userProfile.phone,
+        leadDate: serverTimestamp(),
+        contactMethod: method,
+    };
+    addDocumentNonBlocking(leadsCollection, newLead);
+    toast({
+        title: "Agent Notified",
+        description: "The agent has been notified of your interest.",
+        variant: "success"
+    });
+    return true;
+  }
+
+  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>, method: 'call' | 'whatsapp') => {
+      if (!createLead(method)) {
+          e.preventDefault();
+      }
   };
   
   const handleShare = () => {
@@ -353,12 +389,12 @@ export default function PropertyDetailPage() {
                      <Separator />
                      <div className="grid grid-cols-2 gap-3 w-full">
                         <Button asChild size="lg" className="w-full bg-primary/10 text-primary hover:bg-primary/20">
-                            <a href={`tel:+91${property.contactNumber}`}>
+                            <a href={`tel:+91${property.contactNumber}`} onClick={(e) => handleContactClick(e, 'call')}>
                                 <Phone className="mr-2 h-5 w-5" /> Call Agent
                             </a>
                         </Button>
                          <Button asChild size="lg" variant="outline" className="w-full bg-white text-foreground hover:bg-muted">
-                             <a href={`https://wa.me/91${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" rel="noopener noreferrer">
+                             <a href={`https://wa.me/91${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" rel="noopener noreferrer" onClick={(e) => handleContactClick(e, 'whatsapp')}>
                                 <WhatsAppIcon className="mr-2 h-6 w-6" /> WhatsApp
                             </a>
                         </Button>
@@ -405,12 +441,12 @@ export default function PropertyDetailPage() {
       )}>
          <div className="grid grid-cols-2 gap-3 w-full">
             <Button asChild size="lg" className="w-full bg-primary/10 text-primary hover:bg-primary/20 h-12">
-                <a href={`tel:+91${property.contactNumber}`} aria-label="Call Agent">
+                <a href={`tel:+91${property.contactNumber}`} onClick={(e) => handleContactClick(e, 'call')} aria-label="Call Agent">
                     <Phone className="mr-2 h-5 w-5" /> Call
                 </a>
             </Button>
             <Button asChild size="lg" className="w-full bg-green-500/10 text-green-600 hover:bg-green-500/20 h-12">
-               <a href={`https://wa.me/91${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" aria-label="Contact on WhatsApp">
+               <a href={`https://wa.me/91${property.whatsappNumber}?text=${encodeURIComponent(`I'm interested in your property: ${property.title}`)}`} target="_blank" onClick={(e) => handleContactClick(e, 'whatsapp')} aria-label="Contact on WhatsApp">
                 <WhatsAppIcon className="mr-2 h-6 w-6" /> WhatsApp
               </a>
             </Button>
@@ -420,5 +456,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    

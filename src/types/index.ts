@@ -105,4 +105,16 @@ export type AppSettings = {
     }
 };
 
-    
+export type Lead = {
+    id: string;
+    propertyId: string;
+    propertyTitle: string;
+    agentId: string;
+    agentName: string;
+    inquiringUserId: string;
+    inquiringUserName: string;
+    inquiringUserEmail: string;
+    inquiringUserPhone: string;
+    leadDate: Date | any;
+    contactMethod: 'call' | 'whatsapp' | 'email';
+}

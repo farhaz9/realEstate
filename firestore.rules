@@ -48,6 +48,15 @@ service cloud.firestore {
       allow update, delete: if isOwner(resource.data.userId) || isAdmin();
     }
     
+    // Rules for the 'leads' collection
+    match /leads/{leadId} {
+      // Only an authenticated user can create a lead.
+      allow create: if request.auth != null;
+      
+      // Only admins can read, update, or delete leads.
+      allow read, update, delete: if isAdmin();
+    }
+    
     // Rules for the 'app_settings' collection
     match /app_settings/{settingsId} {
       // Allow any user to read the settings.
