@@ -3,13 +3,12 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Mail, Phone, MapPin, MessageSquare, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageSquare, Loader2, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { PageHero } from '@/components/shared/page-hero';
 import { sendEmail } from '@/app/actions/send-email';
 import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -18,14 +17,17 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
+    <Button type="submit" className="w-full h-12 text-base" disabled={pending}>
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Sending...
         </>
       ) : (
-        'Send Message'
+         <>
+            <Send className="mr-2 h-4 w-4" />
+            Send Message
+         </>
       )}
     </Button>
   );
@@ -56,77 +58,82 @@ export default function ContactPage() {
     }
   }, [state, toast]);
 
-  return (
-    <div>
-      <PageHero
-        title="Contact Us"
-        subtitle="We'd love to hear from you. Let's find your dream home together."
-        className="text-foreground bg-background py-24"
-        titleClassName="text-primary"
-        subtitleClassName="text-muted-foreground"
-      />
+  const contactMethods = [
+    {
+      icon: Mail,
+      title: "Email Us",
+      content: "contact@delhiestateluxe.com",
+      href: "mailto:contact@delhiestateluxe.com",
+    },
+    {
+      icon: Phone,
+      title: "Call Us",
+      content: "+91 9953414336",
+      href: "tel:+919953414336",
+    },
+    {
+      icon: MessageSquare,
+      title: "WhatsApp",
+      content: "+91 9953414336",
+      href: "https://wa.me/919953414336",
+    },
+  ];
 
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 gap-12">
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Send us a Message</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form ref={formRef} action={dispatch} className="space-y-4">
-                  <Input name="name" placeholder="Your Name" required minLength={2} />
-                  <Input name="email" type="email" placeholder="Your Email" required />
-                  <Input name="subject" placeholder="Subject" required minLength={2} />
-                  <Textarea name="message" placeholder="Your Message" rows={5} required minLength={10} />
+  return (
+    <div className="bg-muted/40">
+      <div className="container mx-auto px-4 py-16 md:py-24">
+        <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary">Get In Touch</h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Whether you have a question about a property, our services, or anything else, our team is ready to answer all your questions.
+            </p>
+        </div>
+
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
+            <div className="bg-card p-8 rounded-2xl shadow-sm">
+                <h2 className="text-3xl font-bold mb-6">Send a Message</h2>
+                <form ref={formRef} action={dispatch} className="space-y-6">
+                    <div className="grid sm:grid-cols-2 gap-6">
+                        <Input name="name" placeholder="Your Name" required minLength={2} className="h-12 bg-muted border-transparent focus:bg-background" />
+                        <Input name="email" type="email" placeholder="Your Email" required className="h-12 bg-muted border-transparent focus:bg-background" />
+                    </div>
+                  <Input name="subject" placeholder="Subject" required minLength={2} className="h-12 bg-muted border-transparent focus:bg-background" />
+                  <Textarea name="message" placeholder="Your Message" rows={5} required minLength={10} className="bg-muted border-transparent focus:bg-background" />
                   <SubmitButton />
                 </form>
-              </CardContent>
-            </Card>
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <MapPin className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Our Office</h3>
-                  <p className="text-muted-foreground">Rohini, Vijay Vihar, Delhi 110085</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <Mail className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Email Us</h3>
-                  <p className="text-muted-foreground">contact@delhiestateluxe.com</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <Phone className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Call Us</h3>
-                  <p className="text-muted-foreground">+91 9953414336</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <MessageSquare className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">WhatsApp</h3>
-                  <Link href="https://wa.me/919953414336" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
-                    +91 9953414336
-                  </Link>
-                </div>
-              </div>
             </div>
-          </div>
+            <div className="space-y-8">
+                 <div className="bg-card p-8 rounded-2xl shadow-sm">
+                     <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+                     <div className="space-y-6">
+                        {contactMethods.map((method, index) => (
+                            <div key={index} className="flex items-start gap-4">
+                                <div className="bg-primary/10 p-3 rounded-xl">
+                                    <method.icon className="h-6 w-6 text-primary" />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-lg">{method.title}</h4>
+                                    <a href={method.href} target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
+                                        {method.content}
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                     </div>
+                 </div>
+                 <div className="bg-card p-8 rounded-2xl shadow-sm">
+                     <h3 className="text-2xl font-bold mb-6">Our Office</h3>
+                     <div className="flex items-start gap-4">
+                        <div className="bg-primary/10 p-3 rounded-xl">
+                            <MapPin className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-lg">Delhi, India</h4>
+                            <p className="text-muted-foreground">Rohini, Vijay Vihar, Delhi 110085</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
     </div>
