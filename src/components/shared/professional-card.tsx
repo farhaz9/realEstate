@@ -46,14 +46,23 @@ function ProfessionalRating({ professional }: { professional: User }) {
     
     return (
         <div className="flex items-center gap-1">
-            <Star className={cn("w-4 h-4", reviewCount > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300")} />
-            {reviewCount > 0 ? (
-                <>
-                    <span className="font-bold text-sm">{averageRating.toFixed(1)}</span>
-                    <span className="text-xs text-muted-foreground">({reviewCount} reviews)</span>
-                </>
+            <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                    <Star
+                        key={i}
+                        className={cn(
+                            "h-4 w-4",
+                            i < Math.round(averageRating)
+                                ? "text-yellow-400 fill-yellow-400"
+                                : "text-gray-300"
+                        )}
+                    />
+                ))}
+            </div>
+             {reviewCount > 0 ? (
+                <span className="text-xs text-muted-foreground ml-1">({reviewCount})</span>
             ) : (
-                <span className="text-xs text-muted-foreground">No reviews</span>
+                <span className="text-xs text-muted-foreground ml-1">No reviews</span>
             )}
         </div>
     );
@@ -77,7 +86,7 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
 
   if (variant === 'compact') {
       return (
-        <div className="flex items-center gap-4 p-4 hover:bg-muted transition-colors w-full">
+        <div className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors w-full">
             <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 flex-grow min-w-0">
                 <Avatar className={cn(
                     "h-12 w-12 border-2 border-primary/20",
@@ -101,9 +110,11 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             </Link>
             <div className="flex-shrink-0 ml-auto flex items-center gap-4">
                 <ProfessionalRating professional={professional} />
-                <Link href={`/professionals/${professional.id}`}>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                </Link>
+                <Button asChild variant="ghost" size="icon" className="rounded-full h-9 w-9">
+                  <Link href={`/professionals/${professional.id}`}>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  </Link>
+                </Button>
             </div>
         </div>
       );
