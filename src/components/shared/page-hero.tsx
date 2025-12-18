@@ -19,10 +19,11 @@ interface PageHeroProps {
 export function PageHero({ title, subtitle, image, imageUrl, children, className, titleClassName, subtitleClassName }: PageHeroProps) {
   const heroImage = image ? PlaceHolderImages.find((p) => p.id === image.id) : null;
   const finalImageUrl = imageUrl || heroImage?.imageUrl;
+  const hasImage = !!finalImageUrl;
 
   return (
-    <section className={cn("relative w-full overflow-hidden text-white", className)}>
-      {finalImageUrl && (
+    <section className={cn("relative w-full overflow-hidden", hasImage && 'text-white', className)}>
+      {hasImage && (
         <Image
           src={finalImageUrl}
           alt={typeof title === 'string' ? title : 'Hero background'}
@@ -32,10 +33,10 @@ export function PageHero({ title, subtitle, image, imageUrl, children, className
           priority
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-20 md:py-24">
+      {hasImage && <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />}
+      <div className={cn("relative z-10 flex flex-col items-center justify-center text-center px-4 py-20 md:py-24", !hasImage && 'py-12 md:py-16')}>
         <h1 className={cn("text-4xl md:text-6xl font-bold", titleClassName)}>{title}</h1>
-        <p className={cn("mt-2 text-lg max-w-3xl", subtitleClassName)}>{subtitle}</p>
+        <p className={cn("mt-2 text-lg max-w-3xl", hasImage ? "text-white/90" : "text-muted-foreground", subtitleClassName)}>{subtitle}</p>
         <div className="mt-8 w-full max-w-3xl mx-auto">
           {children}
         </div>

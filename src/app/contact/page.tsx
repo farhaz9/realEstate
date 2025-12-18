@@ -61,10 +61,9 @@ export default function ContactPage() {
       <PageHero
         title="Contact Us"
         subtitle="We'd love to hear from you. Let's find your dream home together."
-        image={{
-          id: 'contact-hero',
-          imageHint: 'office reception',
-        }}
+        className="text-foreground bg-background py-24"
+        titleClassName="text-primary"
+        subtitleClassName="text-muted-foreground"
       />
 
       <div className="container mx-auto px-4 py-16">
