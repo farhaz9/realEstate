@@ -1,6 +1,10 @@
+
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Check, Pencil, Star, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 
 export interface PricingTier {
     name: string;
@@ -10,6 +14,7 @@ export interface PricingTier {
     features: string[];
     popular?: boolean;
     color: string;
+    level: string;
 }
 
 function CreativePricing({
@@ -17,11 +22,13 @@ function CreativePricing({
     title = "Make Short Videos That Pop",
     description = "Edit, enhance, and go viral in minutes",
     tiers,
+    onGetStarted,
 }: {
     tag?: string;
     title?: string;
     description?: string;
     tiers: PricingTier[];
+    onGetStarted: (tier: PricingTier) => void;
 }) {
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
@@ -89,11 +96,13 @@ function CreativePricing({
                             {/* Price */}
                             <div className="mb-6">
                                 <span className="text-4xl font-bold text-zinc-900 dark:text-white">
-                                    ₹{tier.price.toLocaleString()}
+                                    {formatPrice(tier.price)}
                                 </span>
-                                <span className="text-zinc-600 dark:text-zinc-400">
-                                    /month
-                                </span>
+                                {tier.price > 0 && 
+                                    <span className="text-zinc-600 dark:text-zinc-400">
+                                        /month
+                                    </span>
+                                }
                             </div>
 
                             <div className="space-y-3 mb-6">
@@ -116,19 +125,19 @@ function CreativePricing({
                             </div>
 
                             <Button
+                                onClick={() => onGetStarted(tier)}
+                                disabled={tier.price === 0}
                                 className={cn(
                                     "w-full h-12 text-lg relative",
                                     "border-2 border-zinc-900 dark:border-white",
                                     "transition-all duration-300",
                                     "shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
-                                    "hover:shadow-[6px_6px_0px_0px]",
-                                    "hover:translate-x-[-2px] hover:translate-y-[-2px]",
-                                     "bg-primary text-primary-foreground",
-                                     "hover:bg-primary/90",
-                                     "active:bg-primary/80",
+                                    tier.price > 0 && "hover:shadow-[6px_6px_0px_0px] hover:translate-x-[-2px] hover:translate-y-[-2px]",
+                                    tier.price > 0 ? "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80"
+                                    : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed",
                                 )}
                             >
-                                Get Started
+                                {tier.price === 0 ? "Included" : "Get Started"}
                             </Button>
                         </div>
                     </div>
@@ -139,4 +148,4 @@ function CreativePricing({
 }
 
 
-export { CreativePricing }
+export { CreativePricing };
