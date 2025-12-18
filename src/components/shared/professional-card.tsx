@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 
 interface ProfessionalCardProps {
   professional: User;
+  variant?: 'default' | 'compact';
 }
 
 const categoryDisplay: Record<string, string> = {
@@ -65,7 +66,7 @@ function ProfessionalRating({ professional }: { professional: User }) {
 }
 
 
-export function ProfessionalCard({ professional }: ProfessionalCardProps) {
+export function ProfessionalCard({ professional, variant = 'default' }: ProfessionalCardProps) {
   const getInitials = (name: string) => {
     if (!name) return '';
     const names = name.split(' ');
@@ -80,11 +81,10 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const isCurrentlyVerified = professional.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
 
 
-  return (
-    <>
-        {/* Mobile View: List Item Style */}
-        <div className="md:hidden flex items-center gap-4 p-2 rounded-lg hover:bg-muted transition-colors w-full">
-            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-3 flex-grow">
+  if (variant === 'compact') {
+      return (
+        <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-muted transition-colors w-full">
+            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-3 flex-grow min-w-0">
                 <Avatar className={cn(
                     "h-12 w-12 border-2 border-primary/20",
                     isCompany ? "rounded-lg" : "rounded-full"
@@ -105,7 +105,7 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                     <p className="text-xs text-muted-foreground truncate">{categoryDisplay[professional.category] || professional.category}</p>
                 </div>
             </Link>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 hidden sm:block">
                 <ProfessionalRating professional={professional} />
             </div>
             <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full h-9 px-3">
@@ -114,46 +114,45 @@ export function ProfessionalCard({ professional }: ProfessionalCardProps) {
                 </Link>
             </Button>
         </div>
+      );
+  }
 
 
-        {/* Desktop View: Card Style */}
-        <div className="hidden md:block h-full">
-            <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
-            <CardContent className="p-6 flex flex-col items-center text-center h-full">
-                    <Avatar className={cn(
-                        "h-24 w-24 border-2 border-primary/20",
-                        isCompany ? "rounded-lg" : "rounded-full"
-                    )}>
-                        <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
-                        <AvatarFallback className={cn(
-                        "text-3xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
-                        isCompany ? "rounded-md" : "rounded-full"
-                        )}>
-                            {cardTitle ? getInitials(cardTitle) : <UserIcon />}
-                        </AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="flex items-center gap-2 mt-4">
-                    <h3 className="font-bold text-lg">{cardTitle}</h3>
-                    {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
-                    </div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
-                    
-                    <div className="mt-2 mb-4">
-                        <ProfessionalRating professional={professional} />
-                    </div>
-                    
-                    <div className="flex-grow" />
+  return (
+    <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
+    <CardContent className="p-6 flex flex-col items-center text-center h-full">
+            <Avatar className={cn(
+                "h-24 w-24 border-2 border-primary/20",
+                isCompany ? "rounded-lg" : "rounded-full"
+            )}>
+                <AvatarImage src={professional.photoURL} alt={cardTitle} className="object-cover" />
+                <AvatarFallback className={cn(
+                "text-3xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary",
+                isCompany ? "rounded-md" : "rounded-full"
+                )}>
+                    {cardTitle ? getInitials(cardTitle) : <UserIcon />}
+                </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex items-center gap-2 mt-4">
+            <h3 className="font-bold text-lg">{cardTitle}</h3>
+            {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+            
+            <div className="mt-2 mb-4">
+                <ProfessionalRating professional={professional} />
+            </div>
+            
+            <div className="flex-grow" />
 
-                    <Button asChild variant="outline" className="w-full mt-6 rounded-full">
-                        <Link href={`/professionals/${professional.id}`}>
-                            <Info className="mr-2 h-4 w-4" />
-                            View Profile
-                        </Link>
-                    </Button>
-            </CardContent>
-            </Card>
-        </div>
-    </>
+            <Button asChild variant="outline" className="w-full mt-6 rounded-full">
+                <Link href={`/professionals/${professional.id}`}>
+                    <Info className="mr-2 h-4 w-4" />
+                    View Profile
+                </Link>
+            </Button>
+    </CardContent>
+    </Card>
   );
 }

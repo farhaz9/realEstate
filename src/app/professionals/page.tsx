@@ -78,16 +78,15 @@ export default function ProfessionalsPage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-2">
           {[...Array(8)].map((_, i) => (
-             <div key={i} className="flex flex-col items-center space-y-3 p-4 border rounded-lg">
-                <div className="relative w-24 h-24 bg-muted rounded-full animate-pulse" />
-                <div className="space-y-2 w-full flex flex-col items-center">
+             <div key={i} className="flex items-center space-y-3 p-2 border rounded-lg">
+                <div className="relative w-12 h-12 bg-muted rounded-full animate-pulse" />
+                <div className="space-y-2 w-full flex-grow ml-3">
                     <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
                     <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
-                    <div className="h-4 w-1/4 bg-muted rounded animate-pulse" />
-                    <div className="h-9 w-full bg-muted rounded-lg animate-pulse mt-2" />
                 </div>
+                <div className="h-9 w-24 bg-muted rounded-full animate-pulse" />
             </div>
           ))}
         </div>
@@ -100,9 +99,9 @@ export default function ProfessionalsPage() {
 
     if (filteredProfessionals && filteredProfessionals.length > 0) {
       return (
-         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+         <div className="grid grid-cols-1 gap-2">
           {filteredProfessionals.map((professional) => (
-            <ProfessionalCard key={professional.id} professional={professional} />
+            <ProfessionalCard key={professional.id} professional={professional} variant="compact" />
           ))}
         </div>
       );
