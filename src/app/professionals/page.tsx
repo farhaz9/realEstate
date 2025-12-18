@@ -12,6 +12,7 @@ import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -71,15 +72,15 @@ function ProfessionalsPageContent() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 gap-2">
+        <div className="divide-y border rounded-lg">
           {[...Array(8)].map((_, i) => (
-             <div key={i} className="flex items-center space-y-3 p-2 border rounded-lg">
+             <div key={i} className="flex items-center space-x-4 p-4">
                 <Skeleton className="relative w-12 h-12 rounded-full" />
-                <div className="space-y-2 w-full flex-grow ml-3">
+                <div className="space-y-2 w-full flex-grow">
                     <Skeleton className="h-5 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
                 </div>
-                <Skeleton className="h-9 w-24 rounded-full" />
+                <Skeleton className="h-9 w-24 rounded-lg" />
             </div>
           ))}
         </div>
@@ -92,7 +93,7 @@ function ProfessionalsPageContent() {
 
     if (filteredProfessionals && filteredProfessionals.length > 0) {
       return (
-         <div className="grid grid-cols-1 gap-2">
+         <div className="divide-y border rounded-lg overflow-hidden">
           {filteredProfessionals.map((professional) => (
             <ProfessionalCard key={professional.id} professional={professional} variant="compact" />
           ))}
@@ -160,15 +161,15 @@ function LoadingFallback() {
             <div className="space-y-6">
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-10 w-1/2" />
-                <div className="grid grid-cols-1 gap-2">
+                <div className="divide-y border rounded-lg">
                     {[...Array(8)].map((_, i) => (
-                        <div key={i} className="flex items-center space-y-3 p-2 border rounded-lg">
+                        <div key={i} className="flex items-center space-x-4 p-4">
                             <Skeleton className="relative w-12 h-12 rounded-full" />
-                            <div className="space-y-2 w-full flex-grow ml-3">
+                            <div className="space-y-2 w-full flex-grow">
                                 <Skeleton className="h-5 w-3/4" />
                                 <Skeleton className="h-4 w-1/2" />
                             </div>
-                            <Skeleton className="h-9 w-24 rounded-full" />
+                            <Skeleton className="h-9 w-24 rounded-lg" />
                         </div>
                     ))}
                 </div>

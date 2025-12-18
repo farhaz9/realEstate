@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Verified, Phone, Star, Info } from 'lucide-react';
+import { User as UserIcon, Mail, Verified, Phone, Star, Info, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
@@ -83,8 +83,8 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
 
   if (variant === 'compact') {
       return (
-        <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-muted transition-colors w-full">
-            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-3 flex-grow min-w-0">
+        <div className="flex items-center gap-4 p-4 hover:bg-muted transition-colors w-full">
+            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 flex-grow min-w-0">
                 <Avatar className={cn(
                     "h-12 w-12 border-2 border-primary/20",
                     isCompany ? "rounded-lg" : "rounded-full"
@@ -108,10 +108,10 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             <div className="flex-shrink-0 hidden sm:block">
                 <ProfessionalRating professional={professional} />
             </div>
-            <Button asChild size="sm" className="rounded-full h-9 w-9 p-0 sm:w-auto sm:px-3 sm:py-2">
+            <Button asChild variant="outline" size="sm" className="rounded-lg h-9 w-auto px-3">
                 <Link href={`/professionals/${professional.id}`}>
-                    <Info className="w-4 h-4 sm:mr-1" />
-                    <span className="hidden sm:inline">Info</span>
+                    <span className="hidden sm:inline">View</span>
+                    <ChevronRight className="w-4 h-4 sm:ml-1" />
                 </Link>
             </Button>
         </div>
