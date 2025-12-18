@@ -83,7 +83,7 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
 
   if (variant === 'compact') {
       return (
-        <div className="flex items-center gap-4 p-4 hover:bg-muted transition-colors w-full">
+        <div className="flex items-center gap-4 p-4 hover:bg-muted transition-colors w-full border-b">
             <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 flex-grow min-w-0">
                 <Avatar className={cn(
                     "h-12 w-12 border-2 border-primary/20",
@@ -108,7 +108,7 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             <div className="flex-shrink-0 hidden sm:block">
                 <ProfessionalRating professional={professional} />
             </div>
-            <Button asChild variant="ghost" size="icon" className="rounded-full h-9 w-9">
+            <Button asChild variant="outline" size="icon" className="rounded-full h-9 w-9">
                 <Link href={`/professionals/${professional.id}`}>
                     <ChevronRight className="w-5 h-5" />
                 </Link>

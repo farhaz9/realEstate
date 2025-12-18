@@ -93,7 +93,7 @@ function ProfessionalsPageContent() {
 
     if (filteredProfessionals && filteredProfessionals.length > 0) {
       return (
-         <div className="divide-y border rounded-lg overflow-hidden">
+         <div className="overflow-hidden">
           {filteredProfessionals.map((professional) => (
             <ProfessionalCard key={professional.id} professional={professional} variant="compact" />
           ))}
