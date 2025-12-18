@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { format } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { EditProfileForm } from './edit-profile-form';
 
 
 interface ProfileDetailsTabProps {
@@ -38,6 +41,7 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleSignOut = async () => {
     if (!auth) return;
@@ -78,9 +82,24 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
         </Card>
         
         <div className="space-y-3">
-             <Button className="w-full h-12 text-base font-bold">
-                <Edit className="mr-2 h-5 w-5" /> Edit Profile
-            </Button>
+             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button className="w-full h-12 text-base font-bold">
+                        <Edit className="mr-2 h-5 w-5" /> Edit Profile
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Edit Your Profile</DialogTitle>
+                    </DialogHeader>
+                    {userProfile && (
+                        <EditProfileForm 
+                            userProfile={userProfile} 
+                            onSuccess={() => setIsEditDialogOpen(false)} 
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
             
             <AlertDialog>
                 <AlertDialogTrigger asChild>

@@ -9,6 +9,7 @@ import {
   DocumentReference,
   SetOptions,
 } from 'firebase/firestore';
+import { updateProfile, type User } from 'firebase/auth';
 import { errorEmitter } from '@/firebase/error-emitter';
 import {FirestorePermissionError} from '@/firebase/errors';
 
@@ -85,5 +86,16 @@ export function deleteDocumentNonBlocking(docRef: DocumentReference) {
           operation: 'delete',
         })
       )
+    });
+}
+
+/**
+ * Initiates a profile update operation for a user.
+ * Does NOT await the operation internally.
+ */
+export function updateProfileNonBlocking(user: User, data: { displayName?: string | null, photoURL?: string | null}) {
+    updateProfile(user, data).catch(error => {
+        // Here you might want to handle profile update errors, maybe with a different event type
+        console.error("Profile update failed:", error);
     });
 }
