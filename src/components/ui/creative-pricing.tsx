@@ -25,41 +25,25 @@ function CreativePricing({
 }) {
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
-            <div className="text-center space-y-6 mb-16">
-                <div className="font-handwritten text-xl text-primary rotate-[-1deg]">
+            <div className="text-center space-y-4 mb-12">
+                <div className="text-sm font-bold text-primary uppercase tracking-wider">
                     {tag}
                 </div>
                 <div className="relative">
-                    <h2 className="text-4xl md:text-5xl font-bold font-handwritten text-zinc-900 dark:text-white rotate-[-1deg]">
+                    <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white">
                         {title}
-                        <div className="absolute -right-12 top-0 text-amber-500 rotate-12">
-                            ✨
-                        </div>
-                        <div className="absolute -left-8 bottom-0 text-primary -rotate-12">
-                            ⭐️
-                        </div>
                     </h2>
-                    <div
-                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-3 bg-primary/20 
-                        rotate-[-1deg] rounded-full blur-sm"
-                    />
                 </div>
-                <p className="font-handwritten text-xl text-zinc-600 dark:text-zinc-400 rotate-[-1deg]">
+                <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
                     {description}
                 </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {tiers.map((tier, index) => (
+                {tiers.map((tier) => (
                     <div
                         key={tier.name}
-                        className={cn(
-                            "relative group",
-                            "transition-all duration-300",
-                            index === 0 && "rotate-[-1deg]",
-                            index === 1 && "rotate-[1deg]",
-                            index === 2 && "rotate-[-2deg]"
-                        )}
+                        className="relative group"
                     >
                         <div
                             className={cn(
@@ -76,10 +60,10 @@ function CreativePricing({
                         <div className="relative p-6">
                             {tier.popular && (
                                 <div
-                                    className="absolute -top-2 -right-2 bg-primary text-primary-foreground 
-                                    font-handwritten px-3 py-1 rounded-full rotate-12 text-sm border-2 border-zinc-900"
+                                    className="absolute -top-3 right-4 bg-primary text-primary-foreground 
+                                    font-semibold px-3 py-1 rounded-full text-sm border-2 border-zinc-900"
                                 >
-                                    Popular!
+                                    Popular
                                 </div>
                             )}
 
@@ -94,16 +78,16 @@ function CreativePricing({
                                 >
                                     {tier.icon}
                                 </div>
-                                <h3 className="font-handwritten text-2xl text-zinc-900 dark:text-white">
+                                <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">
                                     {tier.name}
                                 </h3>
-                                <p className="font-handwritten text-zinc-600 dark:text-zinc-400">
+                                <p className="text-zinc-600 dark:text-zinc-400">
                                     {tier.description}
                                 </p>
                             </div>
 
                             {/* Price */}
-                            <div className="mb-6 font-handwritten">
+                            <div className="mb-6">
                                 <span className="text-4xl font-bold text-zinc-900 dark:text-white">
                                     ₹{tier.price.toLocaleString()}
                                 </span>
@@ -124,7 +108,7 @@ function CreativePricing({
                                         >
                                             <Check className="w-3 h-3" />
                                         </div>
-                                        <span className="font-handwritten text-lg text-zinc-900 dark:text-white">
+                                        <span className="text-lg text-zinc-900 dark:text-white">
                                             {feature}
                                         </span>
                                     </div>
@@ -133,7 +117,7 @@ function CreativePricing({
 
                             <Button
                                 className={cn(
-                                    "w-full h-12 font-handwritten text-lg relative",
+                                    "w-full h-12 text-lg relative",
                                     "border-2 border-zinc-900 dark:border-white",
                                     "transition-all duration-300",
                                     "shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
@@ -149,14 +133,6 @@ function CreativePricing({
                         </div>
                     </div>
                 ))}
-            </div>
-            <div className="absolute -z-10 inset-0 overflow-hidden">
-                <div className="absolute top-40 left-20 text-4xl rotate-12">
-                    ✎
-                </div>
-                <div className="absolute bottom-40 right-20 text-4xl -rotate-12">
-                    ✏️
-                </div>
             </div>
         </div>
     );
