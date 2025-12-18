@@ -108,9 +108,10 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             <div className="flex-shrink-0 hidden sm:block">
                 <ProfessionalRating professional={professional} />
             </div>
-            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-full h-9 px-3">
+            <Button asChild size="sm" className="rounded-full h-9 w-9 p-0 sm:w-auto sm:px-3 sm:py-2">
                 <Link href={`/professionals/${professional.id}`}>
-                    <Info className="w-4 h-4 mr-1" /> Info
+                    <Info className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Info</span>
                 </Link>
             </Button>
         </div>
