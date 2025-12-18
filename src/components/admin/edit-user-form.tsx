@@ -37,6 +37,7 @@ const userRoles = [
 
 const editUserFormSchema = z.object({
   fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
   phone: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   bio: z.string().optional(),
   category: z.string().min(2, { message: 'A user role must be selected.' }),
@@ -61,6 +62,7 @@ export function EditUserForm({ user, onSuccess, onCancel }: EditUserFormProps) {
     resolver: zodResolver(editUserFormSchema),
     defaultValues: {
       fullName: user.fullName || '',
+      email: user.email || '',
       phone: user.phone || '',
       bio: user.bio || '',
       category: user.category || 'user',
@@ -214,6 +216,22 @@ export function EditUserForm({ user, onSuccess, onCancel }: EditUserFormProps) {
               )}
             />
         </div>
+         <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email Address</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+               <FormDescription>
+                Note: Changing this only affects the display email, not the login credential.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="phone"
