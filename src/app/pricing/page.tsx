@@ -3,7 +3,7 @@
 
 import { CreativePricing } from "@/components/ui/creative-pricing";
 import type { PricingTier } from "@/components/ui/creative-pricing";
-import { Pencil, Star, Sparkles, Loader2 } from "lucide-react";
+import { Pencil, Star, Sparkles } from "lucide-react";
 import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion } from 'firebase/firestore';
 import type { User, AppSettings } from '@/types';
@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { Briefcase } from "lucide-react";
 
 declare const Razorpay: any;
 
@@ -66,11 +67,11 @@ export default function PricingPage() {
             name: "Pro",
             level: "pro",
             icon: <Star className="w-6 h-6" />,
-            price: appSettings?.verifiedPriceMonthly ?? 999,
+            price: 1000,
             description: "For professionals and agents.",
             color: "blue",
             features: [
-                "5 Property Listings",
+                "15 Property Listings",
                 "Featured on Homepage",
                 "Priority Support",
                 "Verified Badge",
@@ -80,8 +81,8 @@ export default function PricingPage() {
         {
             name: "Business",
             level: "business",
-            icon: <Sparkles className="w-6 h-6" />,
-            price: appSettings?.verifiedPriceAnnually ?? 2499,
+            icon: <Briefcase className="w-6 h-6" />,
+            price: 2500,
             description: "For agencies and large teams.",
             color: "purple",
             features: [
@@ -168,14 +169,6 @@ export default function PricingPage() {
         const rzp = new Razorpay(options);
         rzp.open();
     };
-
-    if (isLoadingSettings) {
-      return (
-        <div className="flex justify-center items-center h-screen">
-          <Loader2 className="h-12 w-12 animate-spin" />
-        </div>
-      )
-    }
 
   return (
     <>
