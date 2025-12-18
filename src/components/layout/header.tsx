@@ -53,7 +53,7 @@ const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/properties", label: "Properties", icon: Building },
   { href: "/interiors", label: "Interiors", icon: Armchair },
-  { href: "/professionals", label: "Professionals", icon: Briefcase },
+  { href: "/professionals", label: "Professionals", icon: UserIcon },
   { href: "/pricing", label: "Pricing", icon: Tag },
 ];
 
