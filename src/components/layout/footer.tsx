@@ -21,7 +21,7 @@ export default function Footer() {
                         <div className="mb-6">
                              <div className="text-left lg:text-left">
                                 <div className="text-3xl font-semibold tracking-wide text-black">
-                                FALCON AXE
+                                FALCON
                                 </div>
 
                                 <div className="mt-1 text-xs tracking-[0.4em] text-purple-700">
@@ -73,9 +73,11 @@ export default function Footer() {
             </div>
             <div className="border-t">
                  <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-                    &copy; {new Date().getFullYear()} Falcon Axe Homes. All Rights Reserved.
+                    &copy; {new Date().getFullYear()} Falcon Homes. All Rights Reserved.
                 </div>
             </div>
         </footer>
     );
 }
+
+    

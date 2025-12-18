@@ -6,7 +6,7 @@ export function Logo() {
     <Link href="/" className="flex items-center gap-2 w-fit">
        <div className="text-center">
         <div className="text-base font-semibold tracking-wide text-black">
-          FALCON AXE
+          FALCON
         </div>
         <div className="mt-1 text-[0.45rem] tracking-[0.2em] text-purple-700">
           H O M E S
@@ -15,3 +15,5 @@ export function Logo() {
     </Link>
   );
 }
+
+    

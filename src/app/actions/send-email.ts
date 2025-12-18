@@ -61,7 +61,7 @@ export async function sendEmail(
     const data = await resend.emails.send({
       from: 'Contact Form <onboarding@resend.dev>',
       to: [toEmail],
-      subject: `New Message from Delhi Estate Luxe: ${subject}`,
+      subject: `New Message from Falcon Homes: ${subject}`,
       reply_to: email,
       react: React.createElement(ContactFormEmail, {
         name,
@@ -87,3 +87,5 @@ export async function sendEmail(
     };
   }
 }
+
+    

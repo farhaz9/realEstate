@@ -55,12 +55,12 @@ export default function TermsAndConditionsPage() {
 
             <h2>5. Intellectual Property</h2>
             <p>
-              All content on this website, including text, graphics, logos, and software, is the property of Falcon Axe Homes or its content suppliers and is protected by intellectual property laws.
+              All content on this website, including text, graphics, logos, and software, is the property of Falcon Homes or its content suppliers and is protected by intellectual property laws.
             </p>
             
             <h2>6. Limitation of Liability</h2>
             <p>
-              Falcon Axe Homes will not be liable for any damages of any kind arising from the use of this site, including, but not limited to direct, indirect, incidental, punitive, and consequential damages.
+              Falcon Homes will not be liable for any damages of any kind arising from the use of this site, including, but not limited to direct, indirect, incidental, punitive, and consequential damages.
             </p>
 
             <h2>7. Governing Law</h2>
@@ -70,7 +70,7 @@ export default function TermsAndConditionsPage() {
 
              <h2>8. Contact Us</h2>
             <p>
-              If you have any questions about these Terms, please contact us at contact@falconaxehomes.com.
+              If you have any questions about these Terms, please contact us at contact@falconhomes.com.
             </p>
           </CardContent>
         </Card>
@@ -78,3 +78,5 @@ export default function TermsAndConditionsPage() {
     </div>
   );
 }
+
+    

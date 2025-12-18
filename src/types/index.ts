@@ -51,7 +51,7 @@ export type Transaction = {
   paymentId: string;
   amount: number;
   date: Date | any;
-  description: string;
+  description?: string;
 }
 
 export type Review = {
@@ -104,3 +104,5 @@ export type AppSettings = {
         timestamp: string;
     }
 };
+
+    
