@@ -744,58 +744,26 @@ export default function AdminPage() {
     return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <TabsList className="grid w-full grid-cols-3 sm:flex sm:w-auto h-auto">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="dashboard"><LayoutDashboard className="md:hidden" /><span className="hidden md:inline">Dashboard</span></TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Dashboard</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="properties"><Building className="md:hidden" /><span className="hidden md:inline">Properties</span></TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Properties</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="users"><Users className="md:hidden" /><span className="hidden md:inline">Users</span></TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Users</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="orders"><Receipt className="md:hidden" /><span className="hidden md:inline">Orders</span></TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Orders</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="notifications"><Megaphone className="md:hidden" /><span className="hidden md:inline">Notifications</span></TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Notifications</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <TabsTrigger value="settings"><Settings className="md:hidden" /><span className="hidden md:inline">Settings</span></TabsTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Settings</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </TabsList>
+          <div className="w-full sm:w-auto bg-muted p-1.5 rounded-xl flex">
+            <button onClick={() => setActiveTab('dashboard')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'dashboard' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
+              <LayoutDashboard className="h-4 w-4" /> Dashboard
+            </button>
+            <button onClick={() => setActiveTab('properties')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'properties' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
+              <Building className="h-4 w-4" /> Properties
+            </button>
+            <button onClick={() => setActiveTab('users')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'users' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
+              <Users className="h-4 w-4" /> Users
+            </button>
+            <button onClick={() => setActiveTab('orders')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'orders' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
+              <Receipt className="h-4 w-4" /> Orders
+            </button>
+             <button onClick={() => setActiveTab('notifications')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'notifications' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
+              <Megaphone className="h-4 w-4" /> Notifications
+            </button>
+            <button onClick={() => setActiveTab('settings')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'settings' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
+              <Settings className="h-4 w-4" /> Settings
+            </button>
+          </div>
           <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
         </div>
           <TabsContent value="dashboard" className="mt-6 space-y-8">
