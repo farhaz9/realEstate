@@ -13,7 +13,7 @@ export default function MobileNav() {
     { href: "/properties", label: "Properties", icon: Building },
     { href: "/interiors", label: "Interiors", icon: Armchair },
     { href: "/", label: "Home", icon: Home },
-    { href: "/professionals", label: "Pro's", icon: Briefcase },
+    { href: "/professionals", label: "Pro's", icon: User },
     { href: "/contact", label: "Contact", icon: Mail },
   ];
 
