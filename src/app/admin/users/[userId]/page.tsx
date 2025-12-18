@@ -1,10 +1,11 @@
 
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useDoc, useCollection, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, collection, query, where, deleteDoc, updateDoc, orderBy } from 'firebase/firestore';
-import type { User, Property, Order, Review } from '@/types';
+import type { User, Property, Transaction, Review } from '@/types';
 import { Loader2, ArrowLeft, Mail, Phone, CalendarDays, User as UserIcon, Building, ShoppingBag, Verified, Coins, Minus, Plus, Ban, UserCheck, Trash2, Edit, X, Star, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -593,11 +594,11 @@ export default function UserDetailPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <ShoppingBag className="h-6 w-6 text-primary" />
-                                Order History
+                                Transaction History
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                             {user.orders && user.orders.length > 0 ? (
+                             {user.transactions && user.transactions.length > 0 ? (
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -608,19 +609,19 @@ export default function UserDetailPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {user.orders.sort((a: Order, b: Order) => b.date.toMillis() - a.date.toMillis()).map((order: Order) => (
-                                        <TableRow key={order.paymentId}>
-                                            <TableCell className="font-mono text-xs">{order.paymentId}</TableCell>
-                                            <TableCell>{order.date?.toDate ? format(order.date.toDate(), 'PPP p') : 'N/A'}</TableCell>
-                                            <TableCell>{order.description || 'N/A'}</TableCell>
-                                            <TableCell className="text-right font-semibold">{formatPrice(order.amount)}</TableCell>
+                                        {user.transactions.sort((a: Transaction, b: Transaction) => b.date.toMillis() - a.date.toMillis()).map((transaction: Transaction) => (
+                                        <TableRow key={transaction.paymentId}>
+                                            <TableCell className="font-mono text-xs">{transaction.paymentId}</TableCell>
+                                            <TableCell>{transaction.date?.toDate ? format(transaction.date.toDate(), 'PPP p') : 'N/A'}</TableCell>
+                                            <TableCell>{transaction.description || 'N/A'}</TableCell>
+                                            <TableCell className="text-right font-semibold">{formatPrice(transaction.amount)}</TableCell>
                                         </TableRow>
                                         ))}
                                     </TableBody>
                                 </Table>
                              ) : (
                                  <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                                    <h3 className="text-xl font-semibold">No Orders Found</h3>
+                                    <h3 className="text-xl font-semibold">No Transactions Found</h3>
                                     <p className="text-muted-foreground mt-2">{user.fullName} has not made any purchases yet.</p>
                                 </div>
                              )}

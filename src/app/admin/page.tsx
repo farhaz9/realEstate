@@ -7,7 +7,7 @@ import { collection, query, orderBy, Query, where, increment, serverTimestamp } 
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
-import type { Property, User, Order, AppSettings } from '@/types';
+import type { Property, User, Transaction, AppSettings } from '@/types';
 import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -113,8 +113,8 @@ const propertyFilterOptions = [
     { value: 'rejected', label: 'Rejected' },
 ];
 
-const orderFilterOptions = [
-    { value: 'all', label: 'All Orders' },
+const transactionFilterOptions = [
+    { value: 'all', label: 'All Transactions' },
     { value: 'listing', label: 'Listing Credit' },
     { value: 'verification', label: 'Verification' },
 ];
@@ -123,7 +123,7 @@ const adminTabs = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'properties', label: 'Properties', icon: Building },
   { id: 'users', label: 'Users', icon: Users },
-  { id: 'orders', label: 'Orders', icon: Receipt },
+  { id: 'transactions', label: 'Transactions', icon: Receipt },
   { id: 'notifications', label: 'Notifications', icon: Megaphone },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
@@ -377,11 +377,11 @@ export default function AdminPage() {
   
   const [propertySort, setPropertySort] = useState({ key: 'dateListed', direction: 'desc' });
   const [userSort, setUserSort] = useState({ key: 'dateJoined', direction: 'desc' });
-  const [orderSort, setOrderSort] = useState({ key: 'date', direction: 'desc' });
+  const [transactionSort, setTransactionSort] = useState({ key: 'date', direction: 'desc' });
   
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [propertySearchTerm, setPropertySearchTerm] = useState('');
-  const [orderSearchTerm, setOrderSearchTerm] = useState('');
+  const [transactionSearchTerm, setTransactionSearchTerm] = useState('');
   
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [creditAmount, setCreditAmount] = useState(0);
@@ -396,7 +396,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [userFilter, setUserFilter] = useState('all');
   const [propertyFilter, setPropertyFilter] = useState('all');
-  const [orderFilter, setOrderFilter] = useState('all');
+  const [transactionFilter, setTransactionFilter] = useState('all');
 
 
   const allPropertiesQuery = useMemoFirebase(() => {
@@ -420,15 +420,15 @@ export default function AdminPage() {
 
   const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
   
-  const allOrders = useMemo(() => {
+  const allTransactions = useMemo(() => {
     if (!users) return [];
     return users.flatMap(u => 
-        (u.orders || []).map(order => ({
-            ...order,
+        (u.transactions || []).map(transaction => ({
+            ...transaction,
             userId: u.id,
             userName: u.fullName,
             userEmail: u.email,
-            description: order.description || 'N/A',
+            description: transaction.description || 'N/A',
         }))
     );
   }, [users]);
@@ -436,7 +436,7 @@ export default function AdminPage() {
   const stats = useMemo(() => {
     if (!properties || !users) return null;
     const verifiedUsersCount = users.filter(u => u.isVerified && u.verifiedUntil && u.verifiedUntil.toDate() > new Date()).length;
-    const totalRevenue = allOrders.reduce((acc, order) => acc + order.amount, 0);
+    const totalRevenue = allTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 
     return {
       totalUsers: users.length,
@@ -444,7 +444,7 @@ export default function AdminPage() {
       verifiedUsers: verifiedUsersCount,
       totalRevenue,
     };
-  }, [properties, users, allOrders]);
+  }, [properties, users, allTransactions]);
   
   const userFuse = useMemo(() => {
     if (!users) return null;
@@ -462,13 +462,13 @@ export default function AdminPage() {
     });
   }, [properties]);
   
-  const orderFuse = useMemo(() => {
-    if (allOrders.length === 0) return null;
-    return new Fuse(allOrders, {
+  const transactionFuse = useMemo(() => {
+    if (allTransactions.length === 0) return null;
+    return new Fuse(allTransactions, {
         keys: ['userName', 'userEmail', 'paymentId', 'description'],
         threshold: 0.3
     });
-  }, [allOrders]);
+  }, [allTransactions]);
 
   const sortedAndFilteredUsers = useMemo(() => {
     if (!users) return [];
@@ -548,23 +548,23 @@ export default function AdminPage() {
   }, [properties, propertySearchTerm, propertyFuse, propertySort, propertyFilter]);
 
 
-  const sortedAndFilteredOrders = useMemo(() => {
-    let baseOrders = allOrders;
+  const sortedAndFilteredTransactions = useMemo(() => {
+    let baseTransactions = allTransactions;
 
-    if (orderFilter !== 'all') {
-        if (orderFilter === 'listing') {
-            baseOrders = baseOrders.filter(o => o.description?.toLowerCase().includes('listing'));
-        } else if (orderFilter === 'verification') {
-            baseOrders = baseOrders.filter(o => o.description?.toLowerCase().includes('verification'));
+    if (transactionFilter !== 'all') {
+        if (transactionFilter === 'listing') {
+            baseTransactions = baseTransactions.filter(o => o.description?.toLowerCase().includes('listing'));
+        } else if (transactionFilter === 'verification') {
+            baseTransactions = baseTransactions.filter(o => o.description?.toLowerCase().includes('verification'));
         }
     }
 
-    let filtered = orderSearchTerm && orderFuse
-      ? orderFuse.search(orderSearchTerm, { store: baseOrders }).map(result => result.item)
-      : baseOrders;
+    let filtered = transactionSearchTerm && transactionFuse
+      ? transactionFuse.search(transactionSearchTerm, { store: baseTransactions }).map(result => result.item)
+      : baseTransactions;
 
     return [...filtered].sort((a, b) => {
-        const { key, direction } = orderSort;
+        const { key, direction } = transactionSort;
         let valA: any = a[key as keyof typeof a];
         let valB: any = b[key as keyof typeof b];
 
@@ -579,7 +579,7 @@ export default function AdminPage() {
         if (valA > valB) return 1 * order;
         return 0;
     });
-  }, [allOrders, orderSearchTerm, orderFuse, orderSort, orderFilter]);
+  }, [allTransactions, transactionSearchTerm, transactionFuse, transactionSort, transactionFilter]);
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -759,22 +759,24 @@ export default function AdminPage() {
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
           
           {/* Desktop Tabs */}
-          <div className="hidden sm:flex w-full sm:w-auto bg-muted p-1.5 rounded-xl">
-             {adminTabs.map(tab => (
-                <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={cn(
-                        "flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2",
-                        activeTab === tab.id
-                            ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10"
-                            : "bg-transparent text-muted-foreground hover:text-foreground"
-                    )}
-                >
-                    <tab.icon className="h-4 w-4" />
-                    {tab.label}
-                </button>
-            ))}
+          <div className="hidden sm:block w-full sm:w-auto bg-muted p-1.5 rounded-xl">
+             <div className="flex items-center gap-1">
+                {adminTabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                            "flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2",
+                            activeTab === tab.id
+                                ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10"
+                                : "bg-transparent text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <tab.icon className="h-4 w-4" />
+                        {tab.label}
+                    </button>
+                ))}
+             </div>
           </div>
 
           {/* Mobile Dropdown */}
@@ -1110,24 +1112,24 @@ export default function AdminPage() {
                   </TableRow>
               );})}</TableBody></Table></div></CardContent></Card>
           </TabsContent>
-          <TabsContent value="orders" className="mt-6">
+          <TabsContent value="transactions" className="mt-6">
               <Card>
                   <CardHeader>
-                      <CardTitle>All Orders ({allOrders.length})</CardTitle>
+                      <CardTitle>All Transactions ({allTransactions.length})</CardTitle>
                        <div className="flex flex-col sm:flex-row gap-4 mt-4">
                           <div className="relative flex-grow">
                               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                               <Input 
                                   placeholder="Search by user, email, payment ID, or description..."
                                   className="pl-10"
-                                  value={orderSearchTerm}
-                                  onChange={(e) => setOrderSearchTerm(e.target.value)}
+                                  value={transactionSearchTerm}
+                                  onChange={(e) => setTransactionSearchTerm(e.target.value)}
                               />
                           </div>
                            <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
                                 <Filter className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                                {orderFilterOptions.map(option => (
-                                    <Button key={option.value} variant={orderFilter === option.value ? 'default' : 'outline'} size="sm" onClick={() => setOrderFilter(option.value)} className="flex-shrink-0">{option.label}</Button>
+                                {transactionFilterOptions.map(option => (
+                                    <Button key={option.value} variant={transactionFilter === option.value ? 'default' : 'outline'} size="sm" onClick={() => setTransactionFilter(option.value)} className="flex-shrink-0">{option.label}</Button>
                                 ))}
                             </div>
                       </div>
@@ -1137,35 +1139,35 @@ export default function AdminPage() {
                           <Table>
                               <TableHeader>
                                   <TableRow>
-                                      <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setOrderSort, 'paymentId')}>
+                                      <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setTransactionSort, 'paymentId')}>
                                           <div className="flex items-center gap-2">Payment ID <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
-                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setOrderSort, 'userName')}>
+                                      <TableHead className="cursor-pointer" onClick={() => handleSort(setTransactionSort, 'userName')}>
                                           <div className="flex items-center gap-2">User <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
-                                      <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setOrderSort, 'date')}>
+                                      <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort(setTransactionSort, 'date')}>
                                           <div className="flex items-center gap-2">Date <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
                                       <TableHead className="hidden lg:table-cell">Description</TableHead>
-                                      <TableHead className="text-right cursor-pointer" onClick={() => handleSort(setOrderSort, 'amount')}>
+                                      <TableHead className="text-right cursor-pointer" onClick={() => handleSort(setTransactionSort, 'amount')}>
                                           <div className="flex items-center justify-end gap-2">Amount <ArrowUpDown className="h-4 w-4" /></div>
                                       </TableHead>
                                       <TableHead className="text-right">Actions</TableHead>
                                   </TableRow>
                               </TableHeader>
                               <TableBody>
-                                  {sortedAndFilteredOrders.map((order, index) => (
-                                      <TableRow key={`${order.paymentId}-${index}`}>
-                                          <TableCell className="font-mono text-xs hidden md:table-cell">{order.paymentId}</TableCell>
+                                  {sortedAndFilteredTransactions.map((transaction, index) => (
+                                      <TableRow key={`${transaction.paymentId}-${index}`}>
+                                          <TableCell className="font-mono text-xs hidden md:table-cell">{transaction.paymentId}</TableCell>
                                           <TableCell>
-                                              <div className="font-medium">{order.userName}</div>
-                                              <div className="text-sm text-muted-foreground">{order.userEmail}</div>
+                                              <div className="font-medium">{transaction.userName}</div>
+                                              <div className="text-sm text-muted-foreground">{transaction.userEmail}</div>
                                           </TableCell>
                                           <TableCell className="hidden sm:table-cell">
-                                              {order.date?.toDate ? format(order.date.toDate(), 'PPP p') : 'N/A'}
+                                              {transaction.date?.toDate ? format(transaction.date.toDate(), 'PPP p') : 'N/A'}
                                           </TableCell>
-                                          <TableCell className="hidden lg:table-cell">{order.description}</TableCell>
-                                          <TableCell className="text-right font-semibold">{formatPrice(order.amount)}</TableCell>
+                                          <TableCell className="hidden lg:table-cell">{transaction.description}</TableCell>
+                                          <TableCell className="text-right font-semibold">{formatPrice(transaction.amount)}</TableCell>
                                           <TableCell className="text-right">
                                                <Dialog>
                                                   <DialogTrigger asChild>
@@ -1176,7 +1178,7 @@ export default function AdminPage() {
                                                   <DialogContent>
                                                       <DialogHeader>
                                                           <DialogTitle>Add Refund Note</DialogTitle>
-                                                          <DialogDescription>Add a note for payment ID: {order.paymentId}</DialogDescription>
+                                                          <DialogDescription>Add a note for payment ID: {transaction.paymentId}</DialogDescription>
                                                       </DialogHeader>
                                                       <div className="py-4">
                                                           <Textarea placeholder="Enter refund details or notes here..." />
@@ -1191,10 +1193,10 @@ export default function AdminPage() {
                                   ))}
                               </TableBody>
                           </Table>
-                           {sortedAndFilteredOrders.length === 0 && (
+                           {sortedAndFilteredTransactions.length === 0 && (
                               <div className="text-center py-16 text-muted-foreground">
                                   <ShoppingCart className="mx-auto h-12 w-12" />
-                                  <h3 className="mt-4 text-xl font-semibold">No orders found</h3>
+                                  <h3 className="mt-4 text-xl font-semibold">No transactions found</h3>
                                   <p>Try adjusting your search filters.</p>
                               </div>
                           )}

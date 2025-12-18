@@ -1,4 +1,5 @@
 
+
 export type Property = {
   id: string;
   userId: string;
@@ -46,7 +47,7 @@ export type InteriorProject = {
   images: string[];
 };
 
-export type Order = {
+export type Transaction = {
   paymentId: string;
   amount: number;
   date: Date | any;
@@ -77,7 +78,7 @@ export type User = {
   companyName?: string;
   servicesProvided?: string[];
   bio?: string;
-  orders?: Order[];
+  transactions?: Transaction[];
   listingCredits?: number;
   isVerified?: boolean;
   verifiedUntil?: Date | any;

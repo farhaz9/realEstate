@@ -1,9 +1,10 @@
 
+
 'use client';
 
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
-import type { User, Order } from '@/types';
+import type { User, Transaction } from '@/types';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -13,7 +14,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
 
-export function OrdersTab() {
+export function TransactionTab() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
@@ -26,14 +27,14 @@ export function OrdersTab() {
 
   const isLoading = isUserLoading || isProfileLoading;
 
-  const orders = userProfile?.orders || [];
+  const transactions = userProfile?.transactions || [];
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShoppingBag />
-          Order History
+          Transaction History
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -43,7 +44,7 @@ export function OrdersTab() {
                 <Skeleton className="h-10 w-full" />
                 <Skeleton className="h-10 w-full" />
             </div>
-        ) : orders.length > 0 ? (
+        ) : transactions.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -54,14 +55,14 @@ export function OrdersTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders.sort((a, b) => b.date.toMillis() - a.date.toMillis()).map((order: Order, index: number) => (
-                  <TableRow key={order.paymentId || index}>
-                    <TableCell className="font-mono text-xs">{order.paymentId}</TableCell>
+                {transactions.sort((a, b) => b.date.toMillis() - a.date.toMillis()).map((transaction: Transaction, index: number) => (
+                  <TableRow key={transaction.paymentId || index}>
+                    <TableCell className="font-mono text-xs">{transaction.paymentId}</TableCell>
                     <TableCell>
-                      {order.date?.toDate ? format(order.date.toDate(), 'PPP p') : 'N/A'}
+                      {transaction.date?.toDate ? format(transaction.date.toDate(), 'PPP p') : 'N/A'}
                     </TableCell>
                     <TableCell className="text-right font-semibold">
-                      {formatPrice(order.amount)}
+                      {formatPrice(transaction.amount)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -71,7 +72,7 @@ export function OrdersTab() {
         ) : (
           <div className="text-center py-16 border-2 border-dashed rounded-lg">
             <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-2xl font-semibold">No Orders Found</h3>
+            <h3 className="mt-4 text-2xl font-semibold">No Transactions Found</h3>
             <p className="text-muted-foreground mt-2">You haven't purchased any listings yet.</p>
              <Button asChild className="mt-6">
                 <Link href="/properties">Browse Properties</Link>

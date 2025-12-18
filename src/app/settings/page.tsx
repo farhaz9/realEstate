@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
@@ -15,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import { WishlistTab } from '@/components/profile/wishlist-tab';
-import { OrdersTab } from '@/components/profile/orders-tab';
+import { TransactionTab } from '@/components/profile/transactions-tab';
 import ImageKit from 'imagekit-javascript';
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -317,7 +318,7 @@ function SettingsPageContent() {
                     <TabsTrigger value="profile" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'profile' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Profile</TabsTrigger>
                     <TabsTrigger value="listings" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'listings' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>My Listings</TabsTrigger>
                     <TabsTrigger value="wishlist" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'wishlist' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Wishlist</TabsTrigger>
-                    <TabsTrigger value="orders" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'orders' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Orders</TabsTrigger>
+                    <TabsTrigger value="transactions" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'transactions' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>Transactions</TabsTrigger>
                 </TabsList>
             </div>
             <TabsContent value="profile" className="mt-6">
@@ -329,8 +330,8 @@ function SettingsPageContent() {
             <TabsContent value="wishlist" className="mt-6">
                 <WishlistTab />
             </TabsContent>
-            <TabsContent value="orders" className="mt-6">
-              <OrdersTab />
+            <TabsContent value="transactions" className="mt-6">
+              <TransactionTab />
             </TabsContent>
         </Tabs>
       </div>

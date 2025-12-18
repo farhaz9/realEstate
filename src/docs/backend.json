@@ -64,9 +64,9 @@
             "type": "string",
             "description": "A short biography for professional users."
         },
-        "orders": {
+        "transactions": {
           "type": "array",
-          "description": "A list of orders made by the user.",
+          "description": "A list of transactions made by the user.",
           "items": {
             "type": "object",
             "properties": {
@@ -271,6 +271,23 @@
         "status"
       ]
     },
+    "Review": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Review",
+        "type": "object",
+        "description": "Represents a user-submitted review for a professional.",
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for the review." },
+          "professionalId": { "type": "string", "description": "ID of the professional being reviewed." },
+          "reviewerId": { "type": "string", "description": "ID of the user who wrote the review." },
+          "reviewerName": { "type": "string", "description": "Name of the reviewer at the time of posting." },
+          "reviewerPhotoURL": { "type": "string", "description": "URL of the reviewer's profile picture." },
+          "rating": { "type": "number", "description": "A rating from 1 to 5.", "minimum": 1, "maximum": 5 },
+          "comment": { "type": "string", "description": "The text content of the review." },
+          "date": { "type": "string", "description": "The date the review was submitted.", "format": "date-time" }
+        },
+        "required": ["id", "professionalId", "reviewerId", "reviewerName", "rating", "comment", "date"]
+    },
     "AppSettings": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "title": "AppSettings",
@@ -362,6 +379,16 @@
             "$ref": "#/entities/User"
           },
           "description": "Stores user profiles."
+        }
+      },
+      {
+        "path": "/users/{userId}/reviews/{reviewId}",
+        "definition": {
+          "entityName": "Review",
+          "schema": {
+            "$ref": "#/entities/Review"
+          },
+          "description": "Stores reviews for a specific professional."
         }
       },
       {
