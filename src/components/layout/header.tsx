@@ -163,7 +163,7 @@ export default function Header() {
   const isProfessionalsPage = pathname === '/professionals';
 
   const scrollTriggerId = isHomePage ? 'offers' : (isInteriorsPage ? 'top-designers' : (isProfessionalsPage ? 'professionals-search' : ''));
-  const { isScrolled } = useOnScroll(scrollTriggerId); 
+  const { isScrolled, isScrollingUp } = useOnScroll(scrollTriggerId); 
   
   const firestore = useFirestore();
 
@@ -231,6 +231,7 @@ export default function Header() {
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-300",
+       isScrollingUp ? "translate-y-0" : "-translate-y-full"
     )}>
        <AnnouncementBanner />
        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
