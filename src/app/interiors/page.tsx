@@ -1,8 +1,7 @@
 
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,9 +18,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
+import { Skeleton } from '@/components/ui/skeleton';
 
-
-export default function InteriorsPage() {
+function InteriorsPageContent() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -266,3 +265,34 @@ export default function InteriorsPage() {
     </div>
   );
 }
+
+
+function LoadingFallback() {
+  return (
+    <div className='container mx-auto px-4'>
+      <div className="py-16 md:py-24 bg-background">
+          <Skeleton className="h-8 w-1/3 mb-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex flex-col space-y-3">
+                      <Skeleton className="relative aspect-square rounded-xl" />
+                      <div className="space-y-2 p-2">
+                          <Skeleton className="h-5 w-3/4" />
+                          <Skeleton className="h-4 w-1/2" />
+                      </div>
+                  </div>
+              ))}
+          </div>
+      </div>
+    </div>
+  )
+}
+
+export default function InteriorsPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <InteriorsPageContent />
+    </Suspense>
+  )
+}
+    
