@@ -146,7 +146,7 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             
             <div className="flex-grow" />
 
-            <Button asChild variant="outline" className="w-full mt-6 rounded-full">
+            <Button asChild variant="default" className="w-full mt-6 rounded-full">
                 <Link href={`/professionals/${professional.id}`}>
                     <Info className="mr-2 h-4 w-4" />
                     View Profile
