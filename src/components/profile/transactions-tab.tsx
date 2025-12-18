@@ -13,6 +13,7 @@ import { formatPrice } from '@/lib/utils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
+import { useMemo } from 'react';
 
 export function TransactionTab() {
   const { user, isUserLoading } = useUser();
@@ -27,7 +28,13 @@ export function TransactionTab() {
 
   const isLoading = isUserLoading || isProfileLoading;
 
-  const transactions = userProfile?.transactions || [];
+  const transactions = useMemo(() => {
+    if (!userProfile) return [];
+    // @ts-ignore
+    const legacyOrders = userProfile.orders || [];
+    const currentTransactions = userProfile.transactions || [];
+    return [...currentTransactions, ...legacyOrders];
+  }, [userProfile]);
 
   return (
     <Card>

@@ -422,15 +422,24 @@ export default function AdminPage() {
   
   const allTransactions = useMemo(() => {
     if (!users) return [];
-    return users.flatMap(u => 
-        (u.transactions || []).map(transaction => ({
+    return users.flatMap(u => {
+        const userTransactions = (u.transactions || []).map(transaction => ({
             ...transaction,
             userId: u.id,
             userName: u.fullName,
             userEmail: u.email,
             description: transaction.description || 'N/A',
-        }))
-    );
+        }));
+        // @ts-ignore - Handle legacy 'orders' field
+        const legacyOrders = (u.orders || []).map(order => ({
+             ...order,
+            userId: u.id,
+            userName: u.fullName,
+            userEmail: u.email,
+            description: order.description || 'N/A',
+        }));
+        return [...userTransactions, ...legacyOrders];
+    });
   }, [users]);
   
   const stats = useMemo(() => {

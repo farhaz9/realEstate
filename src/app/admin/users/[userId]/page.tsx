@@ -18,7 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatPrice } from '@/lib/utils';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -237,6 +237,14 @@ export default function UserDetailPage() {
   const { data: reviews, isLoading: areReviewsLoading } = useCollection<Review>(reviewsQuery);
   
   const isLoading = isLoadingUser || isLoadingProperties || areReviewsLoading;
+
+  const transactions = useMemo(() => {
+    if (!user) return [];
+    // @ts-ignore
+    const legacyOrders = user.orders || [];
+    const currentTransactions = user.transactions || [];
+    return [...currentTransactions, ...legacyOrders];
+  }, [user]);
 
   const handleVerificationToggle = () => {
     if (!firestore || !user) return;
@@ -598,7 +606,7 @@ export default function UserDetailPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                             {user.transactions && user.transactions.length > 0 ? (
+                             {transactions && transactions.length > 0 ? (
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -609,7 +617,7 @@ export default function UserDetailPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {user.transactions.sort((a: Transaction, b: Transaction) => b.date.toMillis() - a.date.toMillis()).map((transaction: Transaction) => (
+                                        {transactions.sort((a: Transaction, b: Transaction) => b.date.toMillis() - a.date.toMillis()).map((transaction: Transaction) => (
                                         <TableRow key={transaction.paymentId}>
                                             <TableCell className="font-mono text-xs">{transaction.paymentId}</TableCell>
                                             <TableCell>{transaction.date?.toDate ? format(transaction.date.toDate(), 'PPP p') : 'N/A'}</TableCell>
