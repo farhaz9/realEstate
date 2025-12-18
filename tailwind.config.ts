@@ -18,6 +18,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-poppins)", "sans-serif"],
+        handwritten: ["Gaegu", "cursive"],
       },
       colors: {
         background: 'hsl(var(--background))',
