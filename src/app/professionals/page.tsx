@@ -11,10 +11,6 @@ import { Input } from '@/components/ui/input';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { HomeSearch } from '@/components/shared/home-search';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { PageHero } from '@/components/shared/page-hero';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const filterTabs = [
@@ -27,18 +23,15 @@ const filterTabs = [
 function ProfessionalsPageContent() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
-  const [heroSearchTerm, setHeroSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
   }, [searchParams]);
 
-   const handleHeroSearch = (e: React.FormEvent) => {
+   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setSearchTerm(heroSearchTerm);
   };
 
   const professionalsQuery = useMemoFirebase(() => {
@@ -64,7 +57,6 @@ function ProfessionalsPageContent() {
   const filteredProfessionals = professionals?.filter(p => {
     const lowerCaseSearch = searchTerm.toLowerCase();
     
-    // Only show professionals who are not blocked and are featured
     if (p.isBlocked || p.isFeatured === false) {
         return false;
     }
@@ -118,51 +110,26 @@ function ProfessionalsPageContent() {
 
   return (
     <>
-      <PageHero
-        title="Find a Professional"
-        subtitle="Connect with top-rated real estate agents, interior designers, and vendors."
-        imageUrl="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=2874&auto=format&fit=crop"
-        className="h-[80vh] md:h-[90vh]"
-      >
-        <div className="w-full max-w-xl mx-auto">
-          <form
-            onSubmit={handleHeroSearch}
-            className="flex w-full items-center rounded-full bg-white p-2 shadow-lg"
-          >
-            <div className="relative flex-grow">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input
-                id="search-professional"
-                placeholder="Search by name, category, or company"
-                className="pl-12 pr-4 h-12 text-base rounded-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground"
-                value={heroSearchTerm}
-                onChange={(e) => setHeroSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button
-              type="submit"
-              size="lg"
-              className="rounded-full px-8 text-base h-12"
-            >
-              Search
-            </Button>
-          </form>
-        </div>
-      </PageHero>
       <div className="bg-muted/30 min-h-screen">
         <div className="container mx-auto px-4 pt-8 pb-16">
-          <form id="professionals-search" className="relative mb-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold tracking-tight">Find a Professional</h1>
+                <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+                    Connect with top-rated real estate agents, interior designers, and vendors.
+                </p>
+            </div>
+          <form id="professionals-search" className="relative mb-6 max-w-xl mx-auto" onSubmit={handleSearch}>
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
               <Input 
-                  placeholder="Search by name or location"
-                  className="pl-12 h-12 text-base rounded-lg bg-background shadow-sm border-border"
+                  placeholder="Search by name, category, or company"
+                  className="pl-12 h-12 text-base rounded-full bg-background shadow-sm border-border"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
           </form>
 
           <div className="mb-8">
-              <div className="bg-background border rounded-lg p-1 flex items-center gap-1">
+              <div className="bg-background border rounded-lg p-1 flex items-center gap-1 max-w-md mx-auto">
                   {filterTabs.map(tab => (
                       <button 
                           key={tab.id}
