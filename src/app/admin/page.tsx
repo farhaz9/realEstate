@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Order, AppSettings } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -118,6 +118,16 @@ const orderFilterOptions = [
     { value: 'listing', label: 'Listing Credit' },
     { value: 'verification', label: 'Verification' },
 ];
+
+const adminTabs = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'properties', label: 'Properties', icon: Building },
+  { id: 'users', label: 'Users', icon: Users },
+  { id: 'orders', label: 'Orders', icon: Receipt },
+  { id: 'notifications', label: 'Notifications', icon: Megaphone },
+  { id: 'settings', label: 'Settings', icon: Settings },
+];
+
 
 function AnnouncementForm({ settings }: { settings: AppSettings | null }) {
     const firestore = useFirestore();
@@ -726,6 +736,9 @@ export default function AdminPage() {
     'user': 'Buyer / Tenant', 'listing-property': 'Property Owner', 'real-estate-agent': 'Real Estate Agent',
     'interior-designer': 'Interior Designer', 'vendor': 'Vendor'
   };
+  
+  const currentTabLabel = adminTabs.find(tab => tab.id === activeTab)?.label || 'Dashboard';
+  const CurrentTabIcon = adminTabs.find(tab => tab.id === activeTab)?.icon || LayoutDashboard;
 
   const renderContent = () => {
     if (isUserLoading) {
@@ -744,26 +757,49 @@ export default function AdminPage() {
     return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <div className="w-full sm:w-auto bg-muted p-1.5 rounded-xl flex">
-            <button onClick={() => setActiveTab('dashboard')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'dashboard' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
-              <LayoutDashboard className="h-4 w-4" /> Dashboard
-            </button>
-            <button onClick={() => setActiveTab('properties')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'properties' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
-              <Building className="h-4 w-4" /> Properties
-            </button>
-            <button onClick={() => setActiveTab('users')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'users' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
-              <Users className="h-4 w-4" /> Users
-            </button>
-            <button onClick={() => setActiveTab('orders')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'orders' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
-              <Receipt className="h-4 w-4" /> Orders
-            </button>
-             <button onClick={() => setActiveTab('notifications')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'notifications' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
-              <Megaphone className="h-4 w-4" /> Notifications
-            </button>
-            <button onClick={() => setActiveTab('settings')} className={cn("flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2", activeTab === 'settings' ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10" : "bg-transparent text-muted-foreground hover:text-foreground")}>
-              <Settings className="h-4 w-4" /> Settings
-            </button>
+          
+          {/* Desktop Tabs */}
+          <div className="hidden sm:flex w-full sm:w-auto bg-muted p-1.5 rounded-xl">
+             {adminTabs.map(tab => (
+                <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={cn(
+                        "flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all text-center flex items-center gap-2",
+                        activeTab === tab.id
+                            ? "shadow-sm bg-white dark:bg-gray-700 text-primary dark:text-white ring-1 ring-black/5 dark:ring-white/10"
+                            : "bg-transparent text-muted-foreground hover:text-foreground"
+                    )}
+                >
+                    <tab.icon className="h-4 w-4" />
+                    {tab.label}
+                </button>
+            ))}
           </div>
+
+          {/* Mobile Dropdown */}
+          <div className="sm:hidden w-full">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span className="flex items-center gap-2">
+                    <CurrentTabIcon className="h-4 w-4" />
+                    {currentTabLabel}
+                  </span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {adminTabs.map(tab => (
+                   <DropdownMenuItem key={tab.id} onSelect={() => setActiveTab(tab.id)}>
+                      <tab.icon className="mr-2 h-4 w-4" />
+                      <span>{tab.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           <Button variant="outline"><Upload className="mr-2 h-4 w-4" /> Export Data</Button>
         </div>
           <TabsContent value="dashboard" className="mt-6 space-y-8">
