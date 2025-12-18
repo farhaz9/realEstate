@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useTransition } from 'react';
+import { useState, useMemo, useEffect, useTransition, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
@@ -11,10 +12,10 @@ import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useSearchParams, useRouter } from 'next/navigation';
 import { HomeSearch } from '@/components/shared/home-search';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { PageHero } from '@/components/shared/page-hero';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -23,7 +24,7 @@ const filterTabs = [
   { id: 'vendor', label: 'Vendors' },
 ];
 
-export default function ProfessionalsPage() {
+function ProfessionalsPageContent() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -81,12 +82,12 @@ export default function ProfessionalsPage() {
         <div className="grid grid-cols-1 gap-2">
           {[...Array(8)].map((_, i) => (
              <div key={i} className="flex items-center space-y-3 p-2 border rounded-lg">
-                <div className="relative w-12 h-12 bg-muted rounded-full animate-pulse" />
+                <Skeleton className="relative w-12 h-12 rounded-full" />
                 <div className="space-y-2 w-full flex-grow ml-3">
-                    <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
-                    <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
                 </div>
-                <div className="h-9 w-24 bg-muted rounded-full animate-pulse" />
+                <Skeleton className="h-9 w-24 rounded-full" />
             </div>
           ))}
         </div>
@@ -184,4 +185,35 @@ export default function ProfessionalsPage() {
       </div>
     </>
   );
+}
+
+function LoadingFallback() {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="space-y-6">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-10 w-1/2" />
+                <div className="grid grid-cols-1 gap-2">
+                    {[...Array(8)].map((_, i) => (
+                        <div key={i} className="flex items-center space-y-3 p-2 border rounded-lg">
+                            <Skeleton className="relative w-12 h-12 rounded-full" />
+                            <div className="space-y-2 w-full flex-grow ml-3">
+                                <Skeleton className="h-5 w-3/4" />
+                                <Skeleton className="h-4 w-1/2" />
+                            </div>
+                            <Skeleton className="h-9 w-24 rounded-full" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default function ProfessionalsPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <ProfessionalsPageContent />
+        </Suspense>
+    )
 }
