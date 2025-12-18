@@ -46,6 +46,7 @@ import {
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc, setDoc } from 'firebase/firestore';
 import { UserDistributionChart } from '@/components/admin/user-distribution-chart';
+import { UserStatusChart } from '@/components/admin/user-status-chart';
 import { UserGrowthChart } from '@/components/admin/user-growth-chart';
 import { PropertyListingsChart } from '@/components/admin/property-listings-chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -839,8 +840,8 @@ export default function AdminPage() {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                     <Card className="lg:col-span-2">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                     <Card className="lg:col-span-3">
                         <CardHeader>
                             <CardTitle>User Growth</CardTitle>
                             <CardDescription>Monthly user registrations</CardDescription>
@@ -849,7 +850,7 @@ export default function AdminPage() {
                             {users ? <UserGrowthChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="lg:col-span-2">
                         <CardHeader>
                             <CardTitle>User Demographics</CardTitle>
                             <CardDescription>Distribution by user category</CardDescription>
@@ -859,8 +860,17 @@ export default function AdminPage() {
                         </CardContent>
                     </Card>
                 </div>
-                 <div className="grid grid-cols-1 gap-6">
-                    <Card>
+                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <Card className="lg:col-span-2">
+                        <CardHeader>
+                            <CardTitle>User Status</CardTitle>
+                            <CardDescription>Verified, Active, and Blocked users</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {users ? <UserStatusChart users={users} /> : <div className="h-[300px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
+                        </CardContent>
+                    </Card>
+                    <Card className="lg:col-span-3">
                         <CardHeader>
                             <CardTitle>Property Listings</CardTitle>
                             <CardDescription>Monthly property submissions</CardDescription>
