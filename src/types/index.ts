@@ -61,7 +61,7 @@ export type Review = {
   reviewerName: string;
   reviewerPhotoURL?: string;
   rating: number;
-  comment: string;
+  comment?: string;
   date: Date | any;
 }
 

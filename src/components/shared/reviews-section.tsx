@@ -56,23 +56,30 @@ export function ReviewsSection({ professionalId }: ReviewsSectionProps) {
       toast({ title: "Rating required", description: "Please select a star rating.", variant: "destructive" });
       return;
     }
-    if (!comment.trim()) {
-      toast({ title: "Comment required", description: "Please write a comment for your review.", variant: "destructive" });
-      return;
-    }
 
     setIsSubmitting(true);
     
-    const reviewData = {
+    const reviewData: {
+        professionalId: string;
+        reviewerId: string;
+        reviewerName: string;
+        reviewerPhotoURL: string;
+        rating: number;
+        comment?: string;
+        date: any;
+    } = {
         professionalId,
         reviewerId: user.uid,
         reviewerName: user.displayName || 'Anonymous',
         reviewerPhotoURL: user.photoURL || '',
         rating,
-        comment,
         date: serverTimestamp(),
     };
     
+    if (comment.trim()) {
+        reviewData.comment = comment;
+    }
+
     const reviewsRef = collection(firestore, `users/${professionalId}/reviews`);
     await addDocumentNonBlocking(reviewsRef, reviewData);
     
@@ -124,7 +131,7 @@ export function ReviewsSection({ professionalId }: ReviewsSectionProps) {
                             ))}
                         </div>
                     </div>
-                    <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p>
+                    {review.comment && <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p>}
                 </div>
               </div>
             ))}
@@ -167,7 +174,7 @@ export function ReviewsSection({ professionalId }: ReviewsSectionProps) {
                         </div>
                     </div>
                     <Textarea 
-                        placeholder="Share your experience..."
+                        placeholder="Share your experience... (optional)"
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         rows={3}

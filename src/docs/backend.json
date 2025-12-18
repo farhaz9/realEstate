@@ -286,7 +286,7 @@
           "comment": { "type": "string", "description": "The text content of the review." },
           "date": { "type": "string", "description": "The date the review was submitted.", "format": "date-time" }
         },
-        "required": ["id", "professionalId", "reviewerId", "reviewerName", "rating", "comment", "date"]
+        "required": ["id", "professionalId", "reviewerId", "reviewerName", "rating", "date"]
     },
     "AppSettings": {
         "$schema": "http://json-schema.org/draft-07/schema#",
