@@ -70,6 +70,22 @@ export default function ContactPage() {
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 gap-12">
           <div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Send us a Message</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form ref={formRef} action={dispatch} className="space-y-4">
+                  <Input name="name" placeholder="Your Name" required minLength={2} />
+                  <Input name="email" type="email" placeholder="Your Email" required />
+                  <Input name="subject" placeholder="Subject" required minLength={2} />
+                  <Textarea name="message" placeholder="Your Message" rows={5} required minLength={10} />
+                  <SubmitButton />
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+          <div>
             <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
@@ -111,22 +127,6 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-          </div>
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Send us a Message</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form ref={formRef} action={dispatch} className="space-y-4">
-                  <Input name="name" placeholder="Your Name" required minLength={2} />
-                  <Input name="email" type="email" placeholder="Your Email" required />
-                  <Input name="subject" placeholder="Subject" required minLength={2} />
-                  <Textarea name="message" placeholder="Your Message" rows={5} required minLength={10} />
-                  <SubmitButton />
-                </form>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
