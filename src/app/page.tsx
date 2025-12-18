@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair, Send } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -225,7 +225,9 @@ export default function HomePage() {
                       <Label htmlFor="message">Message</Label>
                       <Textarea id="message" placeholder="Tell us how we can help..." rows={4} />
                     </div>
-                    <UIButton type="submit" className="w-full !mt-6">Send Inquiry</UIButton>
+                    <UIButton type="submit" className="w-full !mt-6">
+                      <Send className="mr-2 h-4 w-4" /> Send Inquiry
+                    </UIButton>
                   </form>
                 </CardContent>
               </Card>
