@@ -70,24 +70,26 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased overflow-x-hidden",
+          "min-h-screen bg-background font-sans antialiased",
           poppins.variable
         )}
         suppressHydrationWarning
       >
-        <Script
-            id="razorpay-checkout-js"
-            src="https://checkout.razorpay.com/v1/checkout.js"
-        />
-        <FirebaseClientProvider>
-          <AuthGate>
-            <Header />
-            <NotificationListener />
-            <ErrorBoundary>
-              <AppProviders>{children}</AppProviders>
-            </ErrorBoundary>
-          </AuthGate>
-        </FirebaseClientProvider>
+        <div className="overflow-x-hidden">
+          <Script
+              id="razorpay-checkout-js"
+              src="https://checkout.razorpay.com/v1/checkout.js"
+          />
+          <FirebaseClientProvider>
+            <AuthGate>
+              <Header />
+              <NotificationListener />
+              <ErrorBoundary>
+                <AppProviders>{children}</AppProviders>
+              </ErrorBoundary>
+            </AuthGate>
+          </FirebaseClientProvider>
+        </div>
       </body>
     </html>
   );
