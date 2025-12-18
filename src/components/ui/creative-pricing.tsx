@@ -26,7 +26,7 @@ function CreativePricing({
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
             <div className="text-center space-y-6 mb-16">
-                <div className="font-handwritten text-xl text-blue-500 rotate-[-1deg]">
+                <div className="font-handwritten text-xl text-primary rotate-[-1deg]">
                     {tag}
                 </div>
                 <div className="relative">
@@ -35,12 +35,12 @@ function CreativePricing({
                         <div className="absolute -right-12 top-0 text-amber-500 rotate-12">
                             ✨
                         </div>
-                        <div className="absolute -left-8 bottom-0 text-blue-500 -rotate-12">
+                        <div className="absolute -left-8 bottom-0 text-primary -rotate-12">
                             ⭐️
                         </div>
                     </h2>
                     <div
-                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-3 bg-blue-500/20 
+                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-3 bg-primary/20 
                         rotate-[-1deg] rounded-full blur-sm"
                     />
                 </div>
@@ -76,7 +76,7 @@ function CreativePricing({
                         <div className="relative p-6">
                             {tier.popular && (
                                 <div
-                                    className="absolute -top-2 -right-2 bg-amber-400 text-zinc-900 
+                                    className="absolute -top-2 -right-2 bg-primary text-primary-foreground 
                                     font-handwritten px-3 py-1 rounded-full rotate-12 text-sm border-2 border-zinc-900"
                                 >
                                     Popular!
@@ -89,7 +89,7 @@ function CreativePricing({
                                         "w-12 h-12 rounded-full mb-4",
                                         "flex items-center justify-center",
                                         "border-2 border-zinc-900 dark:border-white",
-                                        `text-${tier.color}-500`
+                                        `text-primary`
                                     )}
                                 >
                                     {tier.icon}
@@ -105,7 +105,7 @@ function CreativePricing({
                             {/* Price */}
                             <div className="mb-6 font-handwritten">
                                 <span className="text-4xl font-bold text-zinc-900 dark:text-white">
-                                    ${tier.price}
+                                    ₹{tier.price.toLocaleString()}
                                 </span>
                                 <span className="text-zinc-600 dark:text-zinc-400">
                                     /month
@@ -139,20 +139,9 @@ function CreativePricing({
                                     "shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
                                     "hover:shadow-[6px_6px_0px_0px]",
                                     "hover:translate-x-[-2px] hover:translate-y-[-2px]",
-                                    tier.popular
-                                        ? [
-                                              "bg-amber-400 text-zinc-900",
-                                              "hover:bg-amber-300",
-                                              "active:bg-amber-400",
-                                              "dark:hover:bg-amber-300",
-                                              "dark:active:bg-amber-400",
-                                          ]
-                                        : [
-                                              "bg-zinc-50 dark:bg-zinc-800",
-                                              "text-zinc-900 dark:text-white",
-                                              "hover:bg-white dark:hover:bg-zinc-700",
-                                              "active:bg-zinc-50 dark:active:bg-zinc-800",
-                                          ]
+                                     "bg-primary text-primary-foreground",
+                                     "hover:bg-primary/90",
+                                     "active:bg-primary/80",
                                 )}
                             >
                                 Get Started
@@ -172,5 +161,6 @@ function CreativePricing({
         </div>
     );
 }
+
 
 export { CreativePricing }
