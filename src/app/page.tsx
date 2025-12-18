@@ -162,7 +162,7 @@ export default function HomePage() {
                 </div>
                 <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
                 <p className="text-muted-foreground text-sm flex-grow mb-6">{service.description}</p>
-                <UIButton asChild className="mt-auto rounded-full px-6">
+                <UIButton asChild className="mt-auto px-6">
                   <Link href={service.href}>
                     Learn more <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
