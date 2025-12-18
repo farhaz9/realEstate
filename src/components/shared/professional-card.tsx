@@ -44,23 +44,17 @@ function ProfessionalRating({ professional }: { professional: User }) {
         };
     }, [reviews]);
     
-    if (reviewCount === 0) {
-        if (professional.phone) {
-             return (
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Phone className="w-3 h-3" />
-                    <span>{professional.phone}</span>
-                </div>
-            );
-        }
-        return null;
-    }
-
     return (
         <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="font-bold text-sm">{averageRating.toFixed(1)}</span>
-            <span className="text-xs text-muted-foreground">({reviewCount} reviews)</span>
+            <Star className={cn("w-4 h-4", reviewCount > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300")} />
+            {reviewCount > 0 ? (
+                <>
+                    <span className="font-bold text-sm">{averageRating.toFixed(1)}</span>
+                    <span className="text-xs text-muted-foreground">({reviewCount} reviews)</span>
+                </>
+            ) : (
+                <span className="text-xs text-muted-foreground">No reviews</span>
+            )}
         </div>
     );
 }
@@ -83,7 +77,7 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
 
   if (variant === 'compact') {
       return (
-        <div className="flex items-center gap-4 p-4 hover:bg-muted transition-colors w-full border-b">
+        <div className="flex items-center gap-4 p-4 hover:bg-muted transition-colors w-full">
             <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 flex-grow min-w-0">
                 <Avatar className={cn(
                     "h-12 w-12 border-2 border-primary/20",
@@ -105,12 +99,12 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
                     <p className="text-xs text-muted-foreground truncate">{categoryDisplay[professional.category] || professional.category}</p>
                 </div>
             </Link>
-            <div className="flex-shrink-0 hidden sm:block">
+            <div className="flex-shrink-0 ml-auto flex items-center gap-4">
                 <ProfessionalRating professional={professional} />
+                <Link href={`/professionals/${professional.id}`}>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </Link>
             </div>
-            <Link href={`/professionals/${professional.id}`}>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </Link>
         </div>
       );
   }
