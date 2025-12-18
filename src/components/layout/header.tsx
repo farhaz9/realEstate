@@ -32,6 +32,7 @@ import {
   Mail,
   Shield,
   LogOut,
+  Tag,
 } from "lucide-react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from 'firebase/auth';
@@ -53,6 +54,7 @@ const navLinks = [
   { href: "/properties", label: "Properties", icon: Building },
   { href: "/interiors", label: "Interiors", icon: Armchair },
   { href: "/professionals", label: "Professionals", icon: Briefcase },
+  { href: "/pricing", label: "Pricing", icon: Tag },
 ];
 
 const secondaryLinks = [
@@ -349,7 +351,7 @@ export default function Header() {
                         <Separator orientation="vertical" className="h-6" />
                     </div>
                     <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                        {visibleNavLinks.slice(1,3).map((link) => (
+                        {visibleNavLinks.filter(l => l.href !== '/' && l.href !== '/professionals' && l.href !== '/pricing').map((link) => (
                            <NavLink key={link.href} href={link.href} label={link.label} />
                         ))}
                     </nav>
@@ -359,7 +361,7 @@ export default function Header() {
                 </div>
                 <div className="flex items-center gap-2 justify-end">
                     <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                        {navLinks.filter(l => l.label !== 'Home' && l.label !== 'Properties' && l.label !== 'Interiors').map((link) => (
+                        {navLinks.filter(l => l.href === '/professionals' || l.href === '/pricing').map((link) => (
                            <NavLink key={link.href} href={link.href} label={link.label} />
                         ))}
                         {user && isProfessional && !isVendor && (
