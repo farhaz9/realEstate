@@ -1,4 +1,3 @@
-
 'use client';
 
 import { CheckCircle2, Star, Verified } from 'lucide-react';
@@ -28,7 +27,7 @@ import { Loader2 } from 'lucide-react';
 declare const Razorpay: any;
 
 const benefits = [
-    'Verified Dealer Badge',
+    'Verified Badge',
     'Property appears at Top of Search Results',
     'Higher visibility & more leads',
     'Dealer name shown prominently',
@@ -275,7 +274,3 @@ export function PricingSection() {
     </section>
   );
 }
-
-    
-
-    
