@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle2, Star, Verified } from 'lucide-react';
@@ -135,7 +136,7 @@ export function PricingSection() {
                     newExpiryDate.setDate(newExpiryDate.getDate() + 30);
                 }
 
-                const newOrder = {
+                const newTransaction = {
                     paymentId: response.razorpay_payment_id,
                     amount: displayAmount,
                     date: new Date(),
@@ -143,7 +144,7 @@ export function PricingSection() {
                 };
                 
                 updateDocumentNonBlocking(userDocRef, {
-                    orders: arrayUnion(newOrder),
+                    transactions: arrayUnion(newTransaction),
                     isVerified: true,
                     verifiedUntil: newExpiryDate
                 });

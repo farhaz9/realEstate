@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -821,7 +822,7 @@ export function MyPropertiesTab() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: (listingPrice * 100).toString(),
         currency: "INR",
-        name: "Falcon Axe Homes Property Listing",
+        name: "Falcon Homes Property Listing",
         description: "One-time fee for one property listing.",
         image: "/logo.png",
         config: {
@@ -847,14 +848,14 @@ export function MyPropertiesTab() {
                 variant: "success",
             });
             if(userDocRef) {
-              const newOrder = {
+              const newTransaction = {
                 paymentId: response.razorpay_payment_id,
                 amount: listingPrice,
                 date: new Date(),
                 description: "1 Listing Credit Purchase",
               };
               updateDocumentNonBlocking(userDocRef, {
-                orders: arrayUnion(newOrder),
+                transactions: arrayUnion(newTransaction),
                 listingCredits: increment(1)
               });
             }
