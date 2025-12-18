@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useTransition } from 'react';
+import { useState, useMemo, useEffect, useTransition, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
 import {
@@ -73,8 +73,7 @@ const tabOptions = [
     { value: "commercial", label: "Commercial", icon: Building },
 ];
 
-
-export default function PropertiesPage() {
+function PropertiesPageContent() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -533,4 +532,32 @@ export default function PropertiesPage() {
       </AlertDialog>
     </div>
   );
+}
+
+
+function LoadingFallback() {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="flex flex-col space-y-3">
+                        <Skeleton className="relative h-56 w-full rounded-xl" />
+                        <div className="space-y-2 p-2">
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <Skeleton className="h-4 w-full" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+export default function PropertiesPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <PropertiesPageContent />
+        </Suspense>
+    )
 }
