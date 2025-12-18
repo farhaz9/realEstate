@@ -320,7 +320,7 @@ export default function Header() {
                     <SheetClose asChild>
                         <Button asChild variant="default" className="w-full h-12 text-base">
                             <Link href="/login">
-                                <Plus className="mr-2 h-5 w-5" />
+                                <LogIn className="mr-2 h-5 w-5" />
                                 Log In
                             </Link>
                         </Button>
