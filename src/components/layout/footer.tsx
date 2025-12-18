@@ -24,7 +24,7 @@ export default function Footer() {
                                 FALCON
                                 </div>
 
-                                <div className="mt-1 text-xs tracking-[0.4em] text-purple-700">
+                                <div className="text-xs tracking-[0.4em] text-purple-700">
                                 HOMES
                                 </div>
                             </div>
@@ -79,5 +79,3 @@ export default function Footer() {
         </footer>
     );
 }
-
-    

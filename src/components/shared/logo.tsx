@@ -8,12 +8,10 @@ export function Logo() {
         <div className="text-base font-semibold tracking-wide text-black">
           FALCON
         </div>
-        <div className="mt-1 text-[0.45rem] tracking-[0.2em] text-purple-700">
+        <div className="text-[0.45rem] tracking-[0.2em] text-purple-700">
           H O M E S
         </div>
     </div>
     </Link>
   );
 }
-
-    
