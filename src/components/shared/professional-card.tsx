@@ -43,6 +43,10 @@ function ProfessionalRating({ professional }: { professional: User }) {
             reviewCount: reviews.length
         };
     }, [reviews]);
+
+    if (reviewCount === 0) {
+        return null;
+    }
     
     return (
         <div className="flex items-center gap-1">
@@ -59,10 +63,8 @@ function ProfessionalRating({ professional }: { professional: User }) {
                     />
                 ))}
             </div>
-             {reviewCount > 0 ? (
+             {reviewCount > 0 && (
                 <span className="text-xs text-muted-foreground ml-1">({reviewCount})</span>
-            ) : (
-                <span className="text-xs text-muted-foreground ml-1">No reviews</span>
             )}
         </div>
     );
@@ -143,7 +145,7 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             </div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
             
-            <div className="mt-2 mb-4">
+            <div className="mt-2 mb-4 h-5">
                 <ProfessionalRating professional={professional} />
             </div>
             
