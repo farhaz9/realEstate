@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Suspense, useState, useEffect, useRef } from 'react';
@@ -315,10 +314,10 @@ function SettingsPageContent() {
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center">
                 <TabsList className="h-auto p-1.5 bg-muted rounded-xl">
-                    <TabsTrigger value="profile" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'profile' && "shadow-sm bg-primary text-primary-foreground")}>Profile</TabsTrigger>
-                    <TabsTrigger value="listings" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'listings' && "shadow-sm bg-primary text-primary-foreground")}>My Listings</TabsTrigger>
-                    <TabsTrigger value="wishlist" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'wishlist' && "shadow-sm bg-primary text-primary-foreground")}>Wishlist</TabsTrigger>
-                    <TabsTrigger value="transactions" className={cn("px-4 py-2.5 text-sm font-semibold rounded-lg transition-all", activeTab === 'transactions' && "shadow-sm bg-primary text-primary-foreground")}>Transactions</TabsTrigger>
+                    <TabsTrigger value="profile">Profile</TabsTrigger>
+                    <TabsTrigger value="listings">My Listings</TabsTrigger>
+                    <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
+                    <TabsTrigger value="transactions">Transactions</TabsTrigger>
                 </TabsList>
             </div>
             <TabsContent value="profile" className="mt-6">
