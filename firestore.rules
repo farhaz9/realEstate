@@ -44,8 +44,16 @@ service cloud.firestore {
       // Allow any authenticated user to create a new property.
       allow create: if request.auth != null;
       
-      // Only allow the user who owns the property or an admin to update or delete it.
-      allow update, delete: if isOwner(resource.data.userId) || isAdmin();
+      // Allow wishlist count updates by any authenticated user.
+      // Allow full updates/deletes by owner or admin.
+      allow update: if (isOwner(resource.data.userId) || isAdmin()) ||
+                       (request.auth != null &&
+                        request.resource.data.keys().hasOnly(['wishlistCount']) &&
+                        (request.resource.data.wishlistCount == resource.data.wishlistCount + 1 ||
+                         request.resource.data.wishlistCount == resource.data.wishlistCount - 1));
+
+      // Only allow the user who owns the property or an admin to delete it.
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
     }
     
     // Rules for the 'leads' collection
