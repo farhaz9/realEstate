@@ -25,14 +25,17 @@ function CreativePricing({
     description = "Edit, enhance, and go viral in minutes",
     tiers,
     onGetStarted,
+    isAnnual,
+    setIsAnnual,
 }: {
     tag?: string;
     title?: string;
     description?: string;
     tiers: PricingTier[];
     onGetStarted: (tier: PricingTier) => void;
+    isAnnual: boolean;
+    setIsAnnual: (isAnnual: boolean) => void;
 }) {
-    const [isAnnual, setIsAnnual] = useState(false);
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
@@ -62,7 +65,7 @@ function CreativePricing({
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {tiers.map((tier) => (
                     <div
                         key={tier.name}
@@ -142,15 +145,13 @@ function CreativePricing({
 
                             <Button
                                 onClick={() => onGetStarted(tier)}
-                                disabled={tier.price === 0}
                                 className={cn(
                                     "w-full h-12 text-lg relative",
                                     "border-2 border-zinc-900 dark:border-white",
                                     "transition-all duration-300",
                                     "shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
-                                    tier.price > 0 && "hover:shadow-[6px_6px_0px_0px] hover:translate-x-[-2px] hover:translate-y-[-2px]",
-                                    tier.price > 0 ? "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80"
-                                    : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed",
+                                    "hover:shadow-[6px_6px_0px_0px] hover:translate-x-[-2px] hover:translate-y-[-2px]",
+                                    "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
                                 )}
                             >
                                 {tier.price === 0 ? "Included" : "Get Started"}

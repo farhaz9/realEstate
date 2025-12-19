@@ -3,7 +3,27 @@
 
 import { useState } from 'react';
 import { CreativePricing, type PricingTier } from "@/components/ui/creative-pricing";
-import { Zap, Bot, Star, Building } from "lucide-react";
+import { Zap, Bot, Star, Building, Verified } from "lucide-react";
+import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
+import { doc, arrayUnion, increment } from 'firebase/firestore';
+import type { User, AppSettings } from '@/types';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { formatPrice } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+
+declare const Razorpay: any;
 
 const plans: PricingTier[] = [
     {
@@ -51,8 +71,108 @@ const plans: PricingTier[] = [
 
 
 export default function PricingPage() {
+    const [isAnnual, setIsAnnual] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState<PricingTier | null>(null);
+    const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
+
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const router = useRouter();
+    const { toast } = useToast();
+
+    const userDocRef = useMemoFirebase(() => {
+        if (!firestore || !user) return null;
+        return doc(firestore, 'users', user.uid);
+    }, [firestore, user]);
+
+    const { data: userProfile } = useDoc<User>(userDocRef);
+
+    const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+    
     const handlePlanSelection = (plan: PricingTier) => {
-        console.log("Selected plan:", plan.name);
+        if (plan.price === 0) {
+            toast({ title: "You are on the Free plan." });
+            return;
+        }
+
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        
+        if (isCurrentlyVerified) {
+            toast({ title: "You already have an active subscription.", variant: 'success' });
+            return;
+        }
+
+        setSelectedPlan(plan);
+        setIsPaymentAlertOpen(true);
+    };
+
+    const handlePayment = async () => {
+        if (!selectedPlan || !user || !userDocRef) {
+            toast({ title: "Error", description: "Could not initiate payment. Plan or user not found.", variant: "destructive" });
+            return;
+        }
+
+        if (typeof window === 'undefined' || !(window as any).Razorpay) {
+            toast({ title: "Payment Gateway Error", description: "Razorpay is not available.", variant: "destructive"});
+            return;
+        }
+
+        const amount = isAnnual ? selectedPlan.priceAnnual * 100 : selectedPlan.price * 100;
+        const displayAmount = isAnnual ? selectedPlan.priceAnnual : selectedPlan.price;
+        const description = `Payment for ${selectedPlan.name} - ${isAnnual ? 'Annual' : 'Monthly'} Subscription`;
+
+        const options = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: amount.toString(),
+            currency: "INR",
+            name: `Falcon Estates - ${selectedPlan.name}`,
+            description,
+            image: "/logo.png",
+            handler: (response: any) => {
+                toast({ title: "Payment Successful!", description: `Welcome to the ${selectedPlan.name} plan!`, variant: "success"});
+                
+                const newExpiryDate = new Date();
+                if (isAnnual) {
+                    newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                } else {
+                    newExpiryDate.setDate(newExpiryDate.getDate() + 30);
+                }
+
+                const newTransaction = {
+                    paymentId: response.razorpay_payment_id,
+                    amount: displayAmount,
+                    date: new Date(),
+                    description,
+                };
+                
+                let creditsToAdd = 0;
+                switch(selectedPlan.level) {
+                    case 'basic': creditsToAdd = 5; break;
+                    case 'pro': creditsToAdd = 15; break;
+                    case 'business': creditsToAdd = 999; break; // Represents "unlimited"
+                }
+
+                updateDocumentNonBlocking(userDocRef, {
+                    transactions: arrayUnion(newTransaction),
+                    listingCredits: increment(creditsToAdd),
+                    isVerified: true,
+                    verifiedUntil: newExpiryDate,
+                });
+
+                setIsPaymentAlertOpen(false);
+            },
+            prefill: {
+                name: userProfile?.fullName,
+                email: userProfile?.email,
+                contact: userProfile?.phone,
+            },
+            theme: { color: "#6D28D9" }
+        };
+        const rzp = new Razorpay(options);
+        rzp.open();
     };
 
     return (
@@ -63,7 +183,32 @@ export default function PricingPage() {
                 description="Choose the plan that's right for you and unlock powerful features to sell or rent your properties faster."
                 tiers={plans}
                 onGetStarted={handlePlanSelection}
+                isAnnual={isAnnual}
+                setIsAnnual={setIsAnnual}
             />
+            {selectedPlan && (
+                <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <div className="flex justify-center mb-4">
+                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <Verified className="w-8 h-8 text-primary" />
+                                </div>
+                            </div>
+                            <AlertDialogTitle className="text-center text-2xl">Confirm Your Subscription</AlertDialogTitle>
+                            <AlertDialogDescription className="text-center">
+                                You are about to purchase the <strong>{selectedPlan?.name}</strong> plan
+                                for <strong>{isAnnual ? formatPrice(selectedPlan.priceAnnual) + '/year' : formatPrice(selectedPlan.price) + '/month'}</strong>.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="sm:justify-center">
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handlePayment}>Proceed to Payment</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
         </div>
     );
 }
+
