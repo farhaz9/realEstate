@@ -47,6 +47,7 @@ import type { User as UserType, AppSettings } from '@/types';
 import { doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 const navLinks = [
@@ -331,56 +332,74 @@ export default function Header() {
 
         <div className="container p-2">
           <div className={cn(
-                "h-14 items-center rounded-full p-2 md:px-4 transition-all duration-300",
+                "h-14 flex items-center rounded-full p-2 md:px-4 transition-all duration-300",
                 isScrolled ? "bg-background shadow-md" : "bg-transparent shadow-none"
           )}>
-            {showStickySearch ? (
-              <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} searchAction={handleSearch}/>
-            ) : (
-            <div className="grid grid-cols-3 h-full items-center">
-                <div className="flex items-center gap-2">
-                    <SheetTrigger asChild>
-                        <Button variant="default" size="icon" className="rounded-full md:hidden">
-                        <TwoStripesIcon className="h-6 w-6" />
-                        <span className="sr-only">Toggle navigation menu</span>
-                        </Button>
-                    </SheetTrigger>
-                    
-                    <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                        {visibleNavLinks.filter(l => l.href !== '/' && l.href !== '/professionals' && l.href !== '/pricing').map((link) => (
-                           <NavLink key={link.href} href={link.href} label={link.label} />
-                        ))}
-                    </nav>
-                </div>
-                <div className="flex justify-center">
-                    <Logo />
-                </div>
-                <div className="flex items-center gap-2 justify-end">
-                    <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                        {navLinks.filter(l => l.href === '/professionals' || l.href === '/pricing').map((link) => (
-                           <NavLink key={link.href} href={link.href} label={link.label} />
-                        ))}
-                        {user && isProfessional && !isVendor && (
-                          <NavLink href="/settings?tab=listings" label="My Listings" />
-                        )}
-                    </nav>
-                    {isUserLoading ? (
-                        <Skeleton className="h-10 w-10 rounded-full" />
-                    ) : user ? (
-                        <>
-                        <UserNav />
-                        </>
-                    ) : (
-                        <Button asChild variant="ghost" size="icon" className="rounded-full">
-                        <Link href="/login">
-                            <LogIn />
-                            <span className="sr-only">Login</span>
-                        </Link>
-                        </Button>
-                    )}
-                    </div>
-                </div>
-            )}
+            <AnimatePresence mode="wait">
+              {showStickySearch ? (
+                <motion.div
+                  key="search"
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 20, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full"
+                >
+                  <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} searchAction={handleSearch}/>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="nav"
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 20, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid grid-cols-3 h-full items-center w-full"
+                >
+                  <div className="flex items-center gap-2">
+                      <SheetTrigger asChild>
+                          <Button variant="default" size="icon" className="rounded-full md:hidden">
+                          <TwoStripesIcon className="h-6 w-6" />
+                          <span className="sr-only">Toggle navigation menu</span>
+                          </Button>
+                      </SheetTrigger>
+                      
+                      <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                          {visibleNavLinks.filter(l => l.href !== '/' && l.href !== '/professionals' && l.href !== '/pricing').map((link) => (
+                             <NavLink key={link.href} href={link.href} label={link.label} />
+                          ))}
+                      </nav>
+                  </div>
+                  <div className="flex justify-center">
+                      <Logo />
+                  </div>
+                  <div className="flex items-center gap-2 justify-end">
+                      <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+                          {navLinks.filter(l => l.href === '/professionals' || l.href === '/pricing').map((link) => (
+                             <NavLink key={link.href} href={link.href} label={link.label} />
+                          ))}
+                          {user && isProfessional && !isVendor && (
+                            <NavLink href="/settings?tab=listings" label="My Listings" />
+                          )}
+                      </nav>
+                      {isUserLoading ? (
+                          <Skeleton className="h-10 w-10 rounded-full" />
+                      ) : user ? (
+                          <>
+                          <UserNav />
+                          </>
+                      ) : (
+                          <Button asChild variant="ghost" size="icon" className="rounded-full">
+                          <Link href="/login">
+                              <LogIn />
+                              <span className="sr-only">Login</span>
+                          </Link>
+                          </Button>
+                      )}
+                      </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </Sheet>
