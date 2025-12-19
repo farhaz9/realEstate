@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -44,7 +45,7 @@ export async function sendSubscriptionEmail(
 
   try {
     const data = await resend.emails.send({
-      from: 'Falcon Estates <onboarding@resend.dev>',
+      from: 'Falcon Estates <noreply@updates.falconaxe.com>',
       to: [email],
       subject: 'Welcome to the Falcon Estates Newsletter!',
       react: React.createElement(SubscriptionEmail, { email }),

@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -59,7 +60,7 @@ export async function sendEmail(
 
   try {
     const data = await resend.emails.send({
-      from: 'Contact Form <onboarding@resend.dev>',
+      from: 'Falcon Estates Contact <noreply@updates.falconaxe.com>',
       to: [toEmail],
       subject: `New Message from Falcon Estates: ${subject}`,
       reply_to: email,
