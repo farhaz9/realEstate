@@ -212,7 +212,7 @@ export default function UserDetailPage() {
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction | null>(null);
   const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
   const [reviewToEdit, setReviewToEdit] = useState<Review | null>(null);
-  const { isScrollingUp } = useOnScroll(100);
+  const { isScrolled } = useOnScroll(100);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const userRef = useMemoFirebase(() => {
@@ -368,10 +368,10 @@ export default function UserDetailPage() {
         <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => isScrollingUp ? router.back() : setIsSheetOpen(true)} 
+            onClick={() => !isScrolled ? router.back() : setIsSheetOpen(true)} 
             className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80 text-primary"
         >
-          {isScrollingUp ? <ArrowLeft className="h-5 w-5" /> : <TwoStripesIcon className="h-5 w-5" />}
+          {!isScrolled ? <ArrowLeft className="h-5 w-5" /> : <TwoStripesIcon className="h-5 w-5" />}
         </Button>
       </Sheet>
         <div className="container mx-auto px-4 py-8 pt-20">
