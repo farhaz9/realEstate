@@ -244,7 +244,7 @@ function SettingsPageContent() {
   
   const isLoading = isUserLoading || isProfileLoading;
   const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
-  const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+  const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
   const currentPlan = isCurrentlyVerified ? 'Business' : 'Free';
   const displayName = userProfile?.fullName ?? user?.displayName;
 

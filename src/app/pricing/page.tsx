@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -62,7 +63,7 @@ const plans: PricingTier[] = [
         price: 5500,
         priceAnnual: 19990,
         description: "For agencies and power users.",
-        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website"],
+        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
         icon: <Building className="w-6 h-6" />,
         color: "text-amber-500",
     },
@@ -145,7 +146,20 @@ export default function PricingPage() {
                     updateData.listingCredits = increment(credits);
                 }
 
-                toast({ title: "Payment Successful!", description: `Thank you for your purchase. You've received ${selectedPlan.level === 'business' ? 'unlimited' : credits} listing credits.`, variant: "success"});
+                // If the business plan is purchased, grant verification status
+                if (selectedPlan.level === 'business') {
+                    const newExpiryDate = new Date();
+                    if (isAnnual) {
+                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                    } else {
+                        newExpiryDate.setMonth(newExpiryDate.getMonth() + 1);
+                    }
+                    updateData.isVerified = true;
+                    updateData.verifiedUntil = newExpiryDate;
+                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member.`, variant: "success"});
+                } else {
+                    toast({ title: "Payment Successful!", description: `Thank you for your purchase. You've received ${credits} listing credits.`, variant: "success"});
+                }
                 
                 updateDocumentNonBlocking(userDocRef, updateData);
 
