@@ -87,7 +87,6 @@ export default function PricingPage() {
                 "15 Property Listings",
                 "Featured on Homepage",
                 "Priority Support",
-                "Verified Badge",
             ],
             popular: true,
         },
@@ -95,14 +94,14 @@ export default function PricingPage() {
             name: "Business",
             level: "business",
             icon: <Briefcase className="w-6 h-6" />,
-            price: 2500,
+            price: 5500,
             description: "For agencies and large teams.",
             color: "purple",
             features: [
                 "Unlimited Listings",
                 "Dedicated Account Manager",
                 "Advanced Analytics",
-                "Agent Profiles",
+                "Website",
             ],
         },
     ];
@@ -193,7 +192,7 @@ export default function PricingPage() {
 
   return (
     <>
-      <div className="py-16 bg-muted/20">
+      <div className="py-16 bg-purple-50 dark:bg-zinc-900">
         <CreativePricing 
             tag="Our Pricing"
             title="Flexible Plans for Everyone"
