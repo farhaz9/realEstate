@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
 import type { Property, User, Transaction, AppSettings, Lead } from '@/types';
-import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown, Handshake } from 'lucide-react';
+import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown, Handshake, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -67,6 +67,7 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Calendar as CalendarIcon } from '@/components/ui/calendar';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -392,6 +393,8 @@ export default function AdminPage() {
   const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [propertyToReject, setPropertyToReject] = useState<Property | null>(null);
+  const [propertyToEditExpiry, setPropertyToEditExpiry] = useState<Property | null>(null);
+  const [newExpiryDate, setNewExpiryDate] = useState<Date | undefined>(undefined);
 
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction>(null);
@@ -731,6 +734,15 @@ export default function AdminPage() {
     toast({ title: 'Rank Updated', description: `${selectedUser.fullName}'s rank is now ${rank}.`, variant: 'success' });
     setSelectedUser(null);
   }
+  
+  const handleExpiryDateChange = () => {
+    if (!firestore || !propertyToEditExpiry || !newExpiryDate) return;
+    const propertyRef = doc(firestore, 'properties', propertyToEditExpiry.id);
+    updateDocumentNonBlocking(propertyRef, { expiresAt: newExpiryDate });
+    toast({ title: 'Expiration Updated', description: `The expiration date for "${propertyToEditExpiry.title}" has been updated.`, variant: 'success' });
+    setPropertyToEditExpiry(null);
+    setNewExpiryDate(undefined);
+  };
 
   const handleSort = (setter: React.Dispatch<React.SetStateAction<{ key: string; direction: string; }>>, key: string) => {
     setter(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' }));
@@ -969,7 +981,7 @@ export default function AdminPage() {
               </CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><Table><TableHeader><TableRow>
                   <TableHead>Property</TableHead>
                   <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort(setPropertySort, 'dateListed')}><div className="flex items-center gap-2">Date Listed <ArrowUpDown className="h-4 w-4" /></div></TableHead>
-                  <TableHead className="hidden lg:table-cell">Expires In</TableHead>
+                  <TableHead className="hidden lg:table-cell">Expires At</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setPropertySort, 'status')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader><TableBody>{sortedAndFilteredProperties?.map(property => (
@@ -985,10 +997,24 @@ export default function AdminPage() {
                       </TableCell>
                       <TableCell className="hidden md:table-cell">{property.dateListed?.toDate ? format(property.dateListed.toDate(), 'PPP') : 'N/A'}</TableCell>
                        <TableCell className="hidden lg:table-cell">
-                        {property.expiresAt?.toDate() ? (
+                        {property.expiresAt?.toDate ? (
                           <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            <span>{formatDistanceToNow(property.expiresAt.toDate(), { addSuffix: true })}</span>
+                             <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="flex items-center gap-1 cursor-pointer">
+                                            <Clock className="h-4 w-4 text-muted-foreground" />
+                                            <span>{formatDistanceToNow(property.expiresAt.toDate(), { addSuffix: true })}</span>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{format(property.expiresAt.toDate(), 'PPP p')}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                             </TooltipProvider>
+                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { setPropertyToEditExpiry(property); setNewExpiryDate(property.expiresAt.toDate()); }}>
+                                <Pencil className="h-3 w-3" />
+                             </Button>
                           </div>
                         ) : 'N/A'}
                       </TableCell>
@@ -1442,6 +1468,27 @@ export default function AdminPage() {
             <DialogFooter>
                 <Button variant="outline" onClick={() => setPropertyToReject(null)}>Cancel</Button>
                 <Button variant="destructive" onClick={() => handlePropertyStatusChange(propertyToReject!.id, 'rejected', rejectionReason)}>Confirm Rejection</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!propertyToEditExpiry} onOpenChange={(isOpen) => !isOpen && setPropertyToEditExpiry(null)}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Update Expiration Date</DialogTitle>
+                <DialogDescription>Select a new expiration date for "{propertyToEditExpiry?.title}".</DialogDescription>
+            </DialogHeader>
+             <div className="flex justify-center">
+                <CalendarIcon
+                    mode="single"
+                    selected={newExpiryDate}
+                    onSelect={setNewExpiryDate}
+                    className="rounded-md border"
+                    disabled={(date) => date < new Date()}
+                />
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setPropertyToEditExpiry(null)}>Cancel</Button>
+                <Button onClick={handleExpiryDateChange} disabled={!newExpiryDate}>Update Date</Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
