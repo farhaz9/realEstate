@@ -348,12 +348,10 @@ export default function AddPropertyPage() {
       const isBusinessUser = userProfile?.category === 'business' && userProfile.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
       const expirationDate = new Date();
 
-      if (isBusinessUser) {
-          // If user is business, set expiry based on their subscription
-          expirationDate.setTime(userProfile.verifiedUntil.toDate().getTime());
+      if (isBusinessUser && userProfile.verifiedUntil?.toDate) {
+        expirationDate.setTime(userProfile.verifiedUntil.toDate().getTime());
       } else {
-          // Otherwise, always set to 30 days
-          expirationDate.setDate(expirationDate.getDate() + 30);
+        expirationDate.setDate(expirationDate.getDate() + 15);
       }
       
       const newPropertyData = {
