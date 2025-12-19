@@ -101,14 +101,6 @@ export default function PropertyDetailPage() {
     return doc(firestore, 'properties', propertyId);
   }, [firestore, propertyId]);
 
-  useEffect(() => {
-    if (propertyRef) {
-      updateDoc(propertyRef, {
-        viewCount: increment(1)
-      }).catch(err => console.error("Failed to increment view count:", err));
-    }
-  }, [propertyRef]);
-
   const { data: property, isLoading, error } = useDoc<Property>(propertyRef);
   
   const ownerRef = useMemoFirebase(() => {
@@ -540,3 +532,5 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
+
+    
