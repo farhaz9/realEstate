@@ -114,6 +114,11 @@ export default function AddPropertyPage() {
   
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
+    defaultValues: {
+      overlooking: '',
+      ageOfConstruction: '',
+      amenities: '',
+    },
   });
   
   useEffect(() => {
@@ -126,7 +131,9 @@ export default function AddPropertyPage() {
       form.reset({
         ...propertyToEdit,
         price: propertyToEdit.price,
-        amenities: propertyToEdit.amenities?.join(', '),
+        amenities: propertyToEdit.amenities?.join(', ') || '',
+        overlooking: propertyToEdit.overlooking || '',
+        ageOfConstruction: propertyToEdit.ageOfConstruction || '',
       });
       if (propertyToEdit.imageUrls) {
           setImagePreviews(propertyToEdit.imageUrls.map(url => ({ url, name: 'Existing Image', size: 0 })));
@@ -712,7 +719,7 @@ export default function AddPropertyPage() {
                                 <FormItem>
                                     <FormLabel>Amenities (Optional)</FormLabel>
                                     <FormControl>
-                                    <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} disabled={isSubmitting} />
+                                    <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     Enter a comma-separated list of amenities.
@@ -768,5 +775,3 @@ export default function AddPropertyPage() {
     </div>
   );
 }
-
-    
