@@ -18,14 +18,14 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.farhazhomes.com";
-const siteTitle = "Falcon Estates | Best Real Estate and Interior Design Company in Delhi";
-const siteDescription = "Discover Delhi's best real estate and interior design company. Falcon Estates offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
-
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://delhi-estate-luxe.com";
+const siteTitle = "Falcon Estates | Best Real Estate & Interior Design in Delhi Rohini";
+const siteDescription = "Discover luxury properties, plots, and bespoke interior design services in Delhi & Rohini with Falcon Estates. Your trusted partner for buying, selling, and renting real estate.";
 
 export const metadata: Metadata = {
   title: siteTitle,
   description: siteDescription,
+  keywords: ["real estate delhi", "property in rohini", "interior design delhi", "luxury apartments delhi", "buy property rohini", "sell property delhi", "falcon estates"],
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
         alt: 'Luxury real estate and interior design in Delhi by Falcon Estates',
       },
     ],
-    locale: 'en_US',
+    locale: 'en_IN',
     type: 'website',
   },
   twitter: {
@@ -57,6 +57,33 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: 'Falcon Estates',
+  url: siteUrl,
+  logo: `${siteUrl}/logo.png`,
+  description: siteDescription,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Vijay Vihar',
+    addressLocality: 'Rohini',
+    addressRegion: 'Delhi',
+    postalCode: '110085',
+    addressCountry: 'IN',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+91-9953414336',
+    contactType: 'customer service',
+  },
+  areaServed: {
+    '@type': 'Place',
+    name: 'Delhi',
+  },
+};
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +94,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body
         className={cn(
