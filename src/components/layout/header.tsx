@@ -160,10 +160,11 @@ export default function Header() {
   const router = useRouter();
   
   const isHomePage = pathname === '/';
+  const isPropertiesPage = pathname.startsWith('/properties');
   const isInteriorsPage = pathname === '/interiors';
   const isProfessionalsPage = pathname === '/professionals';
 
-  const { isScrolled } = useOnScroll(100); 
+  const { isScrolled } = useOnScroll("offers"); 
   
   const firestore = useFirestore();
 
@@ -182,6 +183,7 @@ export default function Header() {
     let targetPath = '/properties';
     if (isInteriorsPage) targetPath = '/interiors';
     if (isProfessionalsPage) targetPath = '/professionals';
+    if (isPropertiesPage) targetPath = '/properties';
 
     const params = new URLSearchParams();
     params.set('q', searchTerm);
@@ -223,7 +225,7 @@ export default function Header() {
     );
   };
 
-  const showStickySearch = isScrolled && (isHomePage || isInteriorsPage || isProfessionalsPage);
+  const showStickySearch = isScrolled && (isHomePage || isInteriorsPage || isProfessionalsPage || isPropertiesPage);
 
   return (
     <header className="sticky top-0 z-50 w-full">
