@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection, addDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit, serverTimestamp, increment } from 'firebase/firestore';
 import type { Property, User, Lead } from '@/types';
-import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays, Eye } from 'lucide-react';
+import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays, Eye, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PopularPropertyCard } from '@/components/shared/popular-property-card';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useOnScroll } from '@/hooks/use-on-scroll';
@@ -94,6 +94,7 @@ export default function PropertyDetailPage() {
   const { user } = useUser();
   const { toast } = useToast();
   const { isScrollingUp } = useOnScroll(100);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const propertyRef = useMemoFirebase(() => {
     if (!firestore || !propertyId) return null;
@@ -206,7 +207,6 @@ export default function PropertyDetailPage() {
           url: window.location.href,
         });
       } catch (error: any) {
-        // Silently catch AbortError or NotAllowedError when the user cancels the share dialog
         if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
           console.error('Share failed:', error);
           toast({
@@ -260,7 +260,23 @@ export default function PropertyDetailPage() {
     return placeholder ? placeholder.imageUrl : null;
   }
 
-  const mainImage = getImageUrl(property.imageUrls && property.imageUrls.length > 0 ? property.imageUrls[0] : null);
+  const imageUrls = property.imageUrls && property.imageUrls.length > 0 
+    ? property.imageUrls.map(getImageUrl).filter(Boolean) as string[]
+    : [PlaceHolderImages.find(p => p.id === 'default-property')?.imageUrl].filter(Boolean) as string[];
+
+  const mainImage = imageUrls[currentImageIndex];
+
+  const handleNextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % imageUrls.length);
+  };
+
+  const handlePrevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + imageUrls.length) % imageUrls.length);
+  };
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
 
@@ -293,13 +309,36 @@ export default function PropertyDetailPage() {
           <div className="lg:col-span-2 space-y-8">
             <Card>
               <CardContent className="p-0">
-                <div className="relative h-96 w-full bg-muted">
+                <div className="relative h-96 w-full bg-muted group/image">
                   {mainImage ? (
                     <Image src={mainImage} alt={property.title} data-ai-hint="property image" fill className="object-cover rounded-t-lg" priority />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-muted rounded-t-lg">
                       <ImageIcon className="h-24 w-24 text-gray-400" />
                     </div>
+                  )}
+                  {imageUrls.length > 1 && (
+                    <>
+                      <div className="absolute bottom-3 left-3 z-10 bg-black/50 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                        {currentImageIndex + 1} / {imageUrls.length}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/30 text-white opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-black/50"
+                        onClick={handlePrevImage}
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/30 text-white opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-black/50"
+                        onClick={handleNextImage}
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </Button>
+                    </>
                   )}
                 </div>
                 <div className="p-6">
