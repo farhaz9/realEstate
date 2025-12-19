@@ -13,64 +13,69 @@ export default function PrivacyPolicyPage() {
   }, []);
 
   return (
-    <div>
-      <PageHero
-        title="Privacy Policy"
-        subtitle="Your privacy is important to us. Here's how we protect it."
-        image={{
-          id: "contact-hero",
-          imageHint: "secure lock",
-        }}
-      />
+    <div className="bg-muted/40">
       <div className="container mx-auto px-4 py-16">
+         <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary">Privacy Policy</h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Your privacy is important to us. Here's how we collect, use, and protect your data.
+            </p>
+        </div>
         <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <div className="flex items-center gap-4">
-              <ShieldCheck className="h-8 w-8 text-primary" />
-              <CardTitle className="text-3xl">Privacy Policy for Falcon Estates</CardTitle>
-            </div>
+            <p className="text-sm text-muted-foreground">Last Updated: {lastUpdated}</p>
           </CardHeader>
-          <CardContent className="prose prose-lg max-w-none">
-            {lastUpdated && <p><strong>Last Updated: {lastUpdated}</strong></p>}
-
+          <CardContent className="prose prose-lg max-w-none marker:text-primary">
             <h2>1. Introduction</h2>
             <p>
-              Welcome to Falcon Estates ("we," "our," "us"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.
+              Welcome to Falcon Estates ("we," "our," "us"). We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services, particularly in relation to property listings and user accounts.
             </p>
 
             <h2>2. Information We Collect</h2>
             <p>
-              We may collect personal information that you provide to us directly, such as your name, email address, phone number, and user category when you create an account, list a property, or contact us. We also collect information automatically, like your IP address and browsing behavior.
+              We may collect the following types of information:
             </p>
+            <ul>
+                <li><strong>Personal Information:</strong> Name, email address, phone number, and professional category when you create an account.</li>
+                <li><strong>User-Generated Content:</strong> Information you provide in property listings, such as property details, descriptions, images, and contact numbers.</li>
+                <li><strong>Transaction Data:</strong> Details of purchases you make on our site, such as listing credits or "Pro Verified" subscriptions, including payment IDs and transaction amounts. We do not store your credit card details.</li>
+                <li><strong>Usage Data:</strong> Information automatically collected, such as your IP address, browser type, and browsing behavior on our site (e.g., viewed properties, wishlisted items).</li>
+            </ul>
 
             <h2>3. How We Use Your Information</h2>
             <p>We use the information we collect to:</p>
             <ul>
-              <li>Provide, operate, and maintain our services.</li>
+              <li>Provide, operate, and maintain our services, including displaying your property listings.</li>
+              <li>Process your transactions for listing credits and subscriptions.</li>
+              <li>Facilitate communication between property buyers and sellers/agents.</li>
               <li>Improve, personalize, and expand our services.</li>
-              <li>Communicate with you, for customer service, to provide you with updates and other information relating to the website, and for marketing purposes.</li>
-              <li>Process your transactions and manage your listings.</li>
-              <li>Find and prevent fraud.</li>
+              <li>Communicate with you for customer service, updates, and marketing purposes.</li>
+              <li>Monitor usage and prevent fraudulent activities.</li>
             </ul>
 
             <h2>4. Sharing Your Information</h2>
             <p>
-              We do not sell your personal information. We may share your information with third-party service providers to perform services on our behalf, such as payment processing and data analysis. We may also share information to comply with legal obligations or to protect our rights.
+              We may share your information in the following situations:
             </p>
+            <ul>
+                <li><strong>With the Public:</strong> Information you provide in a property listing (e.g., property details, contact number) will be publicly visible.</li>
+                <li><strong>With Service Providers:</strong> We may share data with third-party vendors that perform services for us, such as payment processing (e.g., Razorpay).</li>
+                <li><strong>For Legal Reasons:</strong> We may disclose your information if required by law or to protect the rights and safety of our users and our platform.</li>
+            </ul>
 
             <h2>5. Data Security</h2>
             <p>
-              We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable.
+              We implement a variety of security measures to maintain the safety of your personal information. However, please be aware that no security measures are perfect or impenetrable, and we cannot guarantee complete security.
             </p>
 
-            <h2>6. Your Rights</h2>
+            <h2>6. Your Rights and Choices</h2>
             <p>
-              You have the right to access, correct, or delete your personal information. You can manage your account information through your profile page or by contacting us directly.
+              You have the right to access, correct, or delete your personal information and property listings through your account settings. You can also opt-out of marketing communications.
             </p>
 
             <h2>7. Contact Us</h2>
             <p>
-              If you have any questions or concerns about this Privacy Policy, please contact us at contact@falconestates.com.
+              If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:contact@falconestates.com">contact@falconestates.com</a>.
             </p>
           </CardContent>
         </Card>

@@ -13,54 +13,52 @@ export default function RefundPolicyPage() {
   }, []);
 
   return (
-    <div>
-      <PageHero
-        title="Refund Policy"
-        subtitle="Our policy regarding refunds for services."
-        image={{
-          id: "contact-hero",
-          imageHint: "money transaction",
-        }}
-      />
+    <div className="bg-muted/40">
       <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary">Refund & Cancellation Policy</h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Our policy on refunds for digital services like listing credits and subscriptions.
+            </p>
+        </div>
         <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <div className="flex items-center gap-4">
-              <CircleDollarSign className="h-8 w-8 text-primary" />
-              <CardTitle className="text-3xl">Refund & Cancellation Policy</CardTitle>
-            </div>
+             <p className="text-sm text-muted-foreground">Last Updated: {lastUpdated}</p>
           </CardHeader>
-          <CardContent className="prose prose-lg max-w-none">
-            {lastUpdated && <p><strong>Last Updated: {lastUpdated}</strong></p>}
+          <CardContent className="prose prose-lg max-w-none marker:text-primary">
             
             <h2>1. General Policy</h2>
             <p>
-              At Falcon Estates, we strive to provide excellent service. This policy outlines the terms for refunds and cancellations for our premium services, such as featured listings.
+              At Falcon Estates, we offer digital services including, but not limited to, individual property listing credits and "Pro Verified" subscriptions. This policy outlines the terms for refunds and cancellations related to these services.
             </p>
 
-            <h2>2. Premium Listing Fees</h2>
+            <h2>2. Non-Refundable Services</h2>
             <p>
-              Fees paid for premium or featured listings are non-refundable. Once a listing is upgraded to a premium tier, the service is considered rendered, and the associated fee is earned by us.
+              All fees paid for our digital services are <strong>non-refundable</strong>. This includes:
             </p>
+            <ul>
+              <li><strong>Property Listing Credits:</strong> Once a listing credit is purchased, the sale is final. The service is considered rendered at the point of purchase as the credit is immediately available in your account.</li>
+              <li><strong>"Pro Verified" Subscriptions (Monthly & Annually):</strong> Fees for subscriptions are non-refundable. Once a subscription is activated, you gain immediate access to its benefits (e.g., verified badge, higher visibility).</li>
+            </ul>
 
-            <h2>3. No-Refund Policy for Digital Services</h2>
+            <h2>3. Why We Have This Policy</h2>
             <p>
-              Due to the nature of digital services, once a subscription or a one-time premium service is activated, we cannot offer a refund. The benefits of the service, such as increased visibility and placement, are immediately applied.
+              Our services are digital in nature and provide immediate value upon purchase. The benefits, such as enhanced visibility for a listing or a professional badge for a profile, are instantly applied and cannot be returned. This policy allows us to maintain fair pricing for all users.
             </p>
             
-            <h2>4. Cancellations</h2>
+            <h2>4. Subscription Cancellations</h2>
             <p>
-              You may cancel your premium subscription at any time. However, the cancellation will take effect at the end of the current billing cycle, and you will not be entitled to a refund for any fees already paid. Your listings will retain their premium status until the end of the paid period.
+              You may cancel your "Pro Verified" subscription at any time through your account settings. The cancellation will take effect at the end of your current billing cycle (monthly or annually). You will not be charged for the next cycle, but you will not receive a refund for any portion of the current paid period. Your subscription benefits will remain active until the end of the paid period.
             </p>
 
             <h2>5. Exceptional Circumstances</h2>
             <p>
-              In rare cases of technical errors from our side that prevent the delivery of the paid service, we may, at our sole discretion, offer a credit or a refund. Please contact our support team with detailed information if you believe this applies to you.
+              In the rare event of a billing error or a technical failure on our platform that prevents you from using the purchased service, we may, at our sole discretion, offer a credit or a refund. Please contact our support team with detailed evidence of the issue if you believe this applies to you.
             </p>
 
             <h2>6. Contact Us</h2>
             <p>
-              If you have any questions about our Refund Policy, please contact us at contact@falconestates.com.
+              If you have any questions about our Refund Policy, please contact us at <a href="mailto:contact@falconestates.com">contact@falconestates.com</a>.
             </p>
           </CardContent>
         </Card>
