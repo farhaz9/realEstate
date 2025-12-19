@@ -162,8 +162,7 @@ export default function Header() {
   const isInteriorsPage = pathname === '/interiors';
   const isProfessionalsPage = pathname === '/professionals';
 
-  const scrollTriggerId = isHomePage ? 'offers' : (isInteriorsPage ? 'top-designers' : (isProfessionalsPage ? 'professionals-search' : ''));
-  const { isScrolled } = useOnScroll(scrollTriggerId); 
+  const { isScrolled } = useOnScroll(100); 
   
   const firestore = useFirestore();
 
@@ -220,13 +219,14 @@ export default function Header() {
         )}>
           {label}
         </span>
-        <span className={cn(
-          "absolute bottom-0 left-1/2 h-0.5 bg-primary transition-all duration-300",
-          "w-0 group-hover:w-full group-hover:left-0"
-        )}></span>
+        {isActive && (
+          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-4 bg-primary rounded-full" />
+        )}
       </Link>
     );
   };
+
+  const showStickySearch = isScrolled && (isHomePage || isInteriorsPage || isProfessionalsPage);
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -331,10 +331,10 @@ export default function Header() {
 
         <div className="container p-2">
           <div className={cn(
-                "h-14 items-center rounded-full p-2 md:px-4",
-                "bg-background shadow-md",
+                "h-14 items-center rounded-full p-2 md:px-4 transition-all duration-300",
+                isScrolled ? "bg-background shadow-md" : "bg-transparent shadow-none"
           )}>
-            {(isHomePage || isInteriorsPage || isProfessionalsPage) && isScrolled ? (
+            {showStickySearch ? (
               <StickySearchHeader onMenuClick={() => setIsSheetOpen(true)} searchAction={handleSearch}/>
             ) : (
             <div className="grid grid-cols-3 h-full items-center">
@@ -345,9 +345,7 @@ export default function Header() {
                         <span className="sr-only">Toggle navigation menu</span>
                         </Button>
                     </SheetTrigger>
-                    <div className="hidden md:flex items-center gap-2">
-                        <Separator orientation="vertical" className="h-6" />
-                    </div>
+                    
                     <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
                         {visibleNavLinks.filter(l => l.href !== '/' && l.href !== '/professionals' && l.href !== '/pricing').map((link) => (
                            <NavLink key={link.href} href={link.href} label={link.label} />
