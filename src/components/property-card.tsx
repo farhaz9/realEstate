@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,14 +31,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { HighlightedText } from "./shared/highlighted-text";
 
 interface PropertyCardProps {
   property: Property;
   className?: string;
   showActiveBadge?: boolean;
+  searchTerm?: string;
 }
 
-export function PropertyCard({ property, className, showActiveBadge = false }: PropertyCardProps) {
+export function PropertyCard({ property, className, showActiveBadge = false, searchTerm = '' }: PropertyCardProps) {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -143,11 +144,15 @@ export function PropertyCard({ property, className, showActiveBadge = false }: P
           <div className="flex justify-between items-start">
             <div>
               <p className="text-2xl font-bold text-primary">{formatPrice(property.price)}</p>
-              <h3 className="mt-1 text-lg font-semibold leading-tight truncate text-foreground">{property.title}</h3>
-              <p className="mt-0.5 text-sm text-muted-foreground">{property.location.address}</p>
+              <h3 className="mt-1 text-lg font-semibold leading-tight truncate text-foreground">
+                <HighlightedText text={property.title} highlight={searchTerm} />
+              </h3>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                <HighlightedText text={property.location.address} highlight={searchTerm} />
+              </p>
             </div>
              <Badge variant="outline" className="capitalize shrink-0">
-                {property.propertyType}
+                <HighlightedText text={property.propertyType} highlight={searchTerm} />
             </Badge>
           </div>
           

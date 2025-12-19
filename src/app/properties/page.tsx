@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, useTransition, Suspense } from 'react';
@@ -91,6 +90,8 @@ function PropertiesPageContent() {
   const [isAiSearchPending, startAiSearchTransition] = useTransition();
   const [aiAnalysis, setAiAnalysis] = useState<SearchAnalysis | null>(null);
   const [isPaymentAlertOpen, setIsPaymentAlertOpen] = useState(false);
+  
+  const currentSearchTerm = searchParams.get('q') || '';
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -192,11 +193,14 @@ function PropertiesPageContent() {
   
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
-    const currentSearchTerm = searchTerm;
     const params = new URLSearchParams(window.location.search);
-    params.set('q', currentSearchTerm);
+    params.set('q', searchTerm);
     router.replace(`/properties?${params.toString()}`);
-
+  }
+  
+  useEffect(() => {
+    setSearchTerm(currentSearchTerm);
+    
     if (!currentSearchTerm) {
       setAiAnalysis(null);
       return;
@@ -225,7 +229,8 @@ function PropertiesPageContent() {
         setAiAnalysis(null);
       }
     });
-  }
+  }, [currentSearchTerm])
+
 
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -253,10 +258,9 @@ function PropertiesPageContent() {
     if (!properties) return [];
     
     let baseProperties = [...properties];
-    const currentSearchTerm = searchParams.get('q') || '';
 
     // Step 1: Filter by search term (either AI or fuzzy)
-    if (currentSearchTerm.trim() && fuse) {
+    if (currentSearchTerm.trim()) {
         if (aiAnalysis) {
             // AI-driven filtering
             baseProperties = baseProperties.filter(p => {
@@ -267,7 +271,7 @@ function PropertiesPageContent() {
                 const aiListingTypeMatch = !aiAnalysis.listingType || p.listingType === aiAnalysis.listingType;
                 return aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch && aiBathroomsMatch && aiListingTypeMatch;
             });
-        } else {
+        } else if (fuse) {
              // Fallback to regular fuzzy search
             baseProperties = fuse.search(currentSearchTerm).map(result => result.item);
         }
@@ -290,7 +294,7 @@ function PropertiesPageContent() {
       return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
 
-  }, [properties, searchParams, fuse, aiAnalysis, activeTab, location, pincode, bedrooms, bathrooms, priceRange]);
+  }, [properties, currentSearchTerm, fuse, aiAnalysis, activeTab, location, pincode, bedrooms, bathrooms, priceRange]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
@@ -481,7 +485,7 @@ function PropertiesPageContent() {
         ) : filteredProperties.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
+              <PropertyCard key={property.id} property={property} searchTerm={currentSearchTerm} />
             ))}
           </div>
         ) : (

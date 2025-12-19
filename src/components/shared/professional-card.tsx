@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { User, Review } from '@/types';
@@ -11,10 +10,12 @@ import { cn } from '@/lib/utils';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { useMemo } from 'react';
+import { HighlightedText } from './highlighted-text';
 
 interface ProfessionalCardProps {
   professional: User;
   variant?: 'default' | 'compact';
+  searchTerm?: string;
 }
 
 const categoryDisplay: Record<string, string> = {
@@ -71,7 +72,7 @@ function ProfessionalRating({ professional }: { professional: User }) {
 }
 
 
-export function ProfessionalCard({ professional, variant = 'default' }: ProfessionalCardProps) {
+export function ProfessionalCard({ professional, variant = 'default', searchTerm = '' }: ProfessionalCardProps) {
   const getInitials = (name: string) => {
     if (!name) return '';
     const names = name.split(' ');
@@ -104,10 +105,14 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
                 </Avatar>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                        <h3 className="font-bold text-base truncate">{cardTitle}</h3>
+                        <h3 className="font-bold text-base truncate">
+                            <HighlightedText text={cardTitle} highlight={searchTerm} />
+                        </h3>
                         {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
                     </div>
-                    <p className="text-xs text-muted-foreground truncate">{categoryDisplay[professional.category] || professional.category}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                        <HighlightedText text={categoryDisplay[professional.category] || professional.category} highlight={searchTerm} />
+                    </p>
                 </div>
             </Link>
             <div className="flex-shrink-0 ml-auto flex items-center gap-4">
@@ -140,10 +145,14 @@ export function ProfessionalCard({ professional, variant = 'default' }: Professi
             </Avatar>
             
             <div className="flex items-center gap-2 mt-4">
-            <h3 className="font-bold text-lg">{cardTitle}</h3>
+            <h3 className="font-bold text-lg">
+                <HighlightedText text={cardTitle} highlight={searchTerm} />
+            </h3>
             {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
             </div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryDisplay[professional.category] || professional.category}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <HighlightedText text={categoryDisplay[professional.category] || professional.category} highlight={searchTerm} />
+            </p>
             
             <div className="mt-2 mb-4 h-5">
                 <ProfessionalRating professional={professional} />

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
@@ -29,6 +28,8 @@ function ProfessionalsPageContent() {
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeTab, setActiveTab] = useState('all');
+
+  const currentSearchTerm = searchParams.get('q') || '';
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
@@ -74,7 +75,6 @@ function ProfessionalsPageContent() {
 
   const filteredProfessionals = useMemo(() => {
     const activeProfessionals = professionals?.filter(p => !p.isBlocked && p.isFeatured !== false) || [];
-    const currentSearchTerm = searchParams.get('q') || '';
 
     if (!currentSearchTerm.trim()) {
       return activeProfessionals;
@@ -85,7 +85,7 @@ function ProfessionalsPageContent() {
     }
 
     return fuse.search(currentSearchTerm).map(result => result.item);
-  }, [professionals, searchParams, fuse]);
+  }, [professionals, currentSearchTerm, fuse]);
 
 
   const renderContent = () => {
@@ -114,7 +114,7 @@ function ProfessionalsPageContent() {
       return (
          <div className="overflow-hidden">
           {filteredProfessionals.map((professional) => (
-            <ProfessionalCard key={professional.id} professional={professional} variant="compact" />
+            <ProfessionalCard key={professional.id} professional={professional} variant="compact" searchTerm={currentSearchTerm} />
           ))}
         </div>
       );
