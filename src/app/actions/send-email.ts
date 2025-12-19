@@ -4,6 +4,7 @@
 import { z } from 'zod';
 import { Resend } from 'resend';
 import ContactFormEmail from '@/emails/contact-form-email';
+import ContactFormReceiptEmail from '@/emails/contact-form-receipt-email';
 import React from 'react';
 import 'dotenv/config';
 
@@ -21,6 +22,7 @@ type ContactFormState = {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const toEmail = process.env.TO_EMAIL;
+const fromEmail = 'Falcon Estates <noreply@contact.falconaxe.com>';
 
 export async function sendEmail(
   prevState: ContactFormState,
@@ -59,8 +61,9 @@ export async function sendEmail(
   const { name, email, subject, message } = validatedFields.data;
 
   try {
-    const data = await resend.emails.send({
-      from: 'Falcon Estates Contact <noreply@contact.falconaxe.com>',
+    // Promise to send email to the admin
+    const sendToAdminPromise = resend.emails.send({
+      from: fromEmail,
       to: [toEmail],
       subject: `New Message from Falcon Estates: ${subject}`,
       reply_to: email,
@@ -71,10 +74,28 @@ export async function sendEmail(
       }),
     });
 
-    if (data.error) {
-       console.error('Resend API error:', data.error);
+    // Promise to send a confirmation email to the user
+    const sendToUserPromise = resend.emails.send({
+        from: fromEmail,
+        to: [email],
+        subject: "We've received your message | Falcon Estates",
+        react: React.createElement(ContactFormReceiptEmail, {
+            name: name,
+        }),
+    });
+
+    const [adminResult, userResult] = await Promise.all([sendToAdminPromise, sendToUserPromise]);
+
+    if (adminResult.error) {
+       console.error('Resend API error (to admin):', adminResult.error);
        return { success: false, message: 'Failed to send email due to a server error.' };
     }
+    
+    if (userResult.error) {
+        // Log the error but don't block success for the user if the admin email went through
+        console.error('Resend API error (to user):', userResult.error);
+    }
+
 
     return {
       success: true,
