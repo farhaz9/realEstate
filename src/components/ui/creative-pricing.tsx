@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ export interface PricingTier {
     name: string;
     icon: React.ReactNode;
     price: number;
+    priceAnnual: number;
     description: string;
     features: string[];
     popular?: boolean;
@@ -30,6 +32,8 @@ function CreativePricing({
     tiers: PricingTier[];
     onGetStarted: (tier: PricingTier) => void;
 }) {
+    const [isAnnual, setIsAnnual] = useState(false);
+
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
             <div className="text-center space-y-4 mb-12">
@@ -46,7 +50,19 @@ function CreativePricing({
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="flex justify-center items-center gap-4 mb-12">
+                <span className={cn("font-medium", !isAnnual && "text-primary")}>Monthly</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked={isAnnual} onChange={() => setIsAnnual(!isAnnual)} className="sr-only peer" />
+                    <div className="w-14 h-8 bg-muted peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1 after:left-[4px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-zinc-600 peer-checked:bg-primary"></div>
+                </label>
+                <span className={cn("font-medium", isAnnual && "text-primary")}>Annually</span>
+                <div className="hidden sm:inline-block ml-2 text-sm bg-primary/10 text-primary font-semibold px-3 py-1 rounded-full">
+                    Save 15%
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {tiers.map((tier) => (
                     <div
                         key={tier.name}
@@ -96,11 +112,11 @@ function CreativePricing({
                             {/* Price */}
                             <div className="mb-6">
                                 <span className="text-4xl font-bold text-zinc-900 dark:text-white">
-                                    {formatPrice(tier.price)}
+                                    {formatPrice(isAnnual ? tier.priceAnnual : tier.price)}
                                 </span>
                                 {tier.price > 0 && 
                                     <span className="text-zinc-600 dark:text-zinc-400">
-                                        /month
+                                        /{isAnnual ? 'year' : 'month'}
                                     </span>
                                 }
                             </div>
