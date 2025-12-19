@@ -29,8 +29,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ImageUp, Loader2, Minus, Plus, X, ArrowLeft, Info, FileText, Banknote, Home, BedDouble, Bath, MapPin, Phone, Star } from 'lucide-react';
-import type { Property, User, AppSettings } from '@/types';
-import React, { useState, useRef, useEffect } from 'react';
+import type { Property, User, AppSettings, Transaction } from '@/types';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -272,6 +272,16 @@ export default function AddPropertyPage() {
   const removeImagePreview = (index: number) => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
+  
+  const hasPremiumPlan = useMemo(() => {
+    if (!userProfile?.transactions) return false;
+    // Check if any transaction description includes 'basic', 'pro', or 'business'
+    const planLevels = ['basic', 'pro', 'business'];
+    return userProfile.transactions.some((transaction: Transaction) => 
+        planLevels.some(level => transaction.description?.toLowerCase().includes(level))
+    );
+  }, [userProfile]);
+
 
   async function onSubmit(data: PropertyFormValues) {
     if (!user || !userDocRef) {
@@ -348,7 +358,7 @@ export default function AddPropertyPage() {
       const isBusinessUser = !!(userProfile?.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date());
       const expirationDate = new Date();
 
-      if (isBusinessUser) {
+      if (hasPremiumPlan) {
         expirationDate.setDate(expirationDate.getDate() + 30);
       } else {
         expirationDate.setDate(expirationDate.getDate() + 15);
@@ -358,10 +368,10 @@ export default function AddPropertyPage() {
           ...propertyData,
           userId: user.uid,
           dateListed: serverTimestamp(),
-          listingTier: isBusinessUser ? 'premium' : 'free',
+          listingTier: hasPremiumPlan ? 'premium' : 'free',
           expiresAt: expirationDate,
           status: 'approved' as const,
-          isFeatured: isBusinessUser ?? false,
+          isFeatured: isBusinessUser,
       };
       
       addDocumentNonBlocking(propertiesCollection, newPropertyData);
@@ -824,7 +834,3 @@ export default function AddPropertyPage() {
     </div>
   );
 }
-
-    
-
-    
