@@ -1,14 +1,14 @@
 
 'use client';
 
-import { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef, useMemo } from 'react';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2, Gem } from 'lucide-react';
+import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2, Gem, Bot, Zap, Star, Building } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -56,6 +56,12 @@ const categoryDisplay: Record<string, string> = {
   'vendor': 'Vendor / Supplier'
 };
 
+const planDetails: Record<string, { name: string; icon: React.ElementType }> = {
+    free: { name: 'Free', icon: Bot },
+    basic: { name: 'Basic', icon: Zap },
+    pro: { name: 'Pro', icon: Star },
+    business: { name: 'Business', icon: Building },
+};
 
 function SettingsPageContent() {
   const { user, isUserLoading } = useUser();
@@ -87,6 +93,29 @@ function SettingsPageContent() {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
+
+  const currentPlan = useMemo(() => {
+    if (!userProfile?.transactions || userProfile.transactions.length === 0) {
+      return planDetails.free;
+    }
+
+    const planLevels = ['business', 'pro', 'basic'];
+    let highestPlan = 'free';
+
+    for (const transaction of userProfile.transactions) {
+        if (transaction.description) {
+            for (const level of planLevels) {
+                if (transaction.description.toLowerCase().includes(level)) {
+                    highestPlan = level;
+                    // Exit as soon as the highest possible plan is found
+                    if (highestPlan === 'business') return planDetails[highestPlan];
+                }
+            }
+        }
+    }
+    return planDetails[highestPlan] || planDetails.free;
+
+  }, [userProfile]);
 
   useEffect(() => {
     if (isCameraDialogOpen) {
@@ -245,8 +274,8 @@ function SettingsPageContent() {
   const isLoading = isUserLoading || isProfileLoading;
   const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
   const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
-  const currentPlan = isCurrentlyVerified ? 'Business' : 'Free';
   const displayName = userProfile?.fullName ?? user?.displayName;
+  const PlanIcon = currentPlan.icon;
 
   return (
     <>
@@ -304,10 +333,13 @@ function SettingsPageContent() {
                 {isLoading ? <Skeleton className="h-5 w-24 mt-1" /> : (userProfile && <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>)}
                 <div className={cn(
                     "mt-2 flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full",
-                    isCurrentlyVerified ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
+                    currentPlan.name === 'Business' ? "bg-amber-100 text-amber-800" :
+                    currentPlan.name === 'Pro' ? "bg-purple-100 text-purple-800" :
+                    currentPlan.name === 'Basic' ? "bg-blue-100 text-blue-800" :
+                    "bg-gray-100 text-gray-800"
                 )}>
-                    {isCurrentlyVerified ? <Gem className="h-3 w-3" /> : <User className="h-3 w-3" />}
-                    <span>{currentPlan} Plan</span>
+                    <PlanIcon className="h-3 w-3" />
+                    <span>{currentPlan.name} Plan</span>
                 </div>
                 {isCurrentlyVerified && userProfile?.verifiedUntil && (
                   <p className="text-xs text-green-600 font-semibold mt-1">

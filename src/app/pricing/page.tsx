@@ -152,11 +152,12 @@ export default function PricingPage() {
                     if (isAnnual) {
                         newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
                     } else {
-                        newExpiryDate.setMonth(newExpiryDate.getMonth() + 1);
+                        // For business plan, even monthly gives a year of verification as a perk
+                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
                     }
                     updateData.isVerified = true;
                     updateData.verifiedUntil = newExpiryDate;
-                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member.`, variant: "success"});
+                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member and have received a verified badge.`, variant: "success"});
                 } else {
                     toast({ title: "Payment Successful!", description: `Thank you for your purchase. You've received ${credits} listing credits.`, variant: "success"});
                 }
