@@ -4,9 +4,9 @@
 
 import { useParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase, useUser, useCollection, addDocumentNonBlocking } from '@/firebase';
-import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit, serverTimestamp } from 'firebase/firestore';
+import { doc, arrayUnion, arrayRemove, updateDoc, collection, query, where, limit, serverTimestamp, increment } from 'firebase/firestore';
 import type { Property, User, Lead } from '@/types';
-import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays } from 'lucide-react';
+import { Loader2, BedDouble, Bath, Building2, Check, Phone, Mail, ArrowLeft, Heart, Share2, Verified, Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Image as ImageIcon, CalendarDays, Eye } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PopularPropertyCard } from '@/components/shared/popular-property-card';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useOnScroll } from '@/hooks/use-on-scroll';
@@ -100,6 +100,14 @@ export default function PropertyDetailPage() {
     return doc(firestore, 'properties', propertyId);
   }, [firestore, propertyId]);
 
+  useEffect(() => {
+    if (propertyRef) {
+      updateDoc(propertyRef, {
+        viewCount: increment(1)
+      }).catch(err => console.error("Failed to increment view count:", err));
+    }
+  }, [propertyRef]);
+
   const { data: property, isLoading, error } = useDoc<Property>(propertyRef);
   
   const ownerRef = useMemoFirebase(() => {
@@ -131,7 +139,7 @@ export default function PropertyDetailPage() {
   const isInWishlist = userProfile?.wishlist?.includes(propertyId) ?? false;
   
   const handleWishlistToggle = async () => {
-    if (!user || !userDocRef) {
+    if (!user || !userDocRef || !propertyRef) {
       toast({ title: 'Please log in', description: 'You need to be logged in to manage your wishlist.', variant: 'destructive' });
       return;
     }
@@ -139,8 +147,14 @@ export default function PropertyDetailPage() {
     const updateData = {
       wishlist: isInWishlist ? arrayRemove(propertyId) : arrayUnion(propertyId),
     };
+
+    const propertyUpdate = {
+        wishlistCount: increment(isInWishlist ? -1 : 1)
+    };
     
     await updateDoc(userDocRef, updateData);
+    await updateDoc(propertyRef, propertyUpdate);
+
     toast({
       title: isInWishlist ? 'Removed from Wishlist' : 'Added to Wishlist',
       description: `${property?.title} has been ${isInWishlist ? 'removed from' : 'added to'} your wishlist.`,
@@ -233,8 +247,6 @@ export default function PropertyDetailPage() {
     { label: 'Bedrooms', value: property.bedrooms, icon: BedDouble },
     { label: 'Bathrooms', value: property.bathrooms, icon: Bath },
     { label: 'Area (sq. ft.)', value: squareFeet ? `${squareFeet.toLocaleString()}`: 'N/A', icon: Building2 },
-    { label: 'Property Type', value: property.propertyType, icon: Building2 },
-    { label: 'Listing Type', value: property.listingType, icon: Badge },
   ];
   
   const moreDetails = [
@@ -285,6 +297,18 @@ export default function PropertyDetailPage() {
                       </Button>
                     </div>
                   </div>
+
+                  <div className="flex items-center gap-6 mt-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                        <Eye className="h-4 w-4" />
+                        <span>{property.viewCount || 0} views</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Heart className="h-4 w-4" />
+                        <span>{property.wishlistCount || 0} wishlists</span>
+                    </div>
+                  </div>
+
 
                   <Separator className="my-6" />
                   

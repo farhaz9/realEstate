@@ -31,6 +31,8 @@ export type Property = {
   ageOfConstruction?: string;
   status: 'pending' | 'approved' | 'rejected';
   rejectionReason?: string;
+  viewCount?: number;
+  wishlistCount?: number;
 };
 
 export type Builder = {

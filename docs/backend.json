@@ -249,6 +249,14 @@
         "rejectionReason": {
             "type": "string",
             "description": "The reason a property was rejected by an admin."
+        },
+        "viewCount": {
+            "type": "number",
+            "description": "The number of times the property has been viewed."
+        },
+        "wishlistCount": {
+            "type": "number",
+            "description": "The number of users who have wishlisted the property."
         }
       },
       "required": [
