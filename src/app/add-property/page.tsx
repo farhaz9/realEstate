@@ -349,10 +349,10 @@ export default function AddPropertyPage() {
       const expirationDate = new Date();
 
       if (isBusinessUser) {
-          const verifiedDate = userProfile.verifiedUntil.toDate();
-          const diffTime = Math.abs(verifiedDate.getTime() - new Date().getTime());
-          expirationDate.setTime(expirationDate.getTime() + diffTime);
+          // If user is business, set expiry based on their subscription
+          expirationDate.setTime(userProfile.verifiedUntil.toDate().getTime());
       } else {
+          // Otherwise, always set to 30 days
           expirationDate.setDate(expirationDate.getDate() + 30);
       }
       
@@ -360,10 +360,10 @@ export default function AddPropertyPage() {
           ...propertyData,
           userId: user.uid,
           dateListed: serverTimestamp(),
-          isFeatured: isBusinessUser,
           listingTier: isBusinessUser ? 'premium' : 'free',
           expiresAt: expirationDate,
           status: 'approved' as const,
+          isFeatured: isBusinessUser,
       };
       
       addDocumentNonBlocking(propertiesCollection, newPropertyData);
