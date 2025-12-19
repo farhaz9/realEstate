@@ -70,12 +70,12 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased overflow-x-hidden",
           poppins.variable
         )}
         suppressHydrationWarning
       >
-        <div className="overflow-x-hidden">
+        <div>
           <Script
               id="razorpay-checkout-js"
               src="https://checkout.razorpay.com/v1/checkout.js"
@@ -94,5 +94,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
