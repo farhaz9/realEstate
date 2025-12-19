@@ -6,7 +6,7 @@ import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil, Info, ChevronLeft, ChevronRight, Camera, Calendar } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil, Info, ChevronLeft, ChevronRight, Camera, Calendar, Clock } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
@@ -215,6 +215,9 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
                   <Calendar className="h-3.5 w-3.5" />
                   <span>Listed on {format(dateListed, "do MMM, yyyy")}</span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>{format(dateListed, "p")}</span>
                 </div>
               )}
             </div>
