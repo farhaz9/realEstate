@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Html,
@@ -11,7 +12,6 @@ import {
   Hr,
   Button,
   Link,
-  Img
 } from '@react-email/components';
 
 interface SubscriptionEmailProps {
@@ -19,32 +19,47 @@ interface SubscriptionEmailProps {
 }
 
 export default function SubscriptionEmail({ email }: SubscriptionEmailProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   
+  const FalconLogo = () => (
+    <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+      <div style={{ fontSize: '24px', fontWeight: 'bold', letterSpacing: '0.1em', color: '#1a202c' }}>
+        FALCON
+      </div>
+      <div style={{ fontSize: '10px', letterSpacing: '0.4em', color: '#5A31F4', textTransform: 'uppercase' }}>
+        ESTATES
+      </div>
+    </div>
+  );
+
   return (
     <Html>
       <Head />
-      <Preview>Thank you for subscribing to Falcon Estates!</Preview>
+      <Preview>Welcome to the Falcon Estates Newsletter!</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={box}>
-            <Img src={`${baseUrl}/logo.png`} width="40" height="40" alt="Falcon Estates" style={logo}/>
-            <Heading style={heading}>Welcome Aboard!</Heading>
+            <FalconLogo />
+            <Heading style={heading}>You're on the list!</Heading>
             <Text style={paragraph}>
-              Thank you for subscribing to the Falcon Estates newsletter. You're now on the list to receive the latest property listings, exclusive offers, and news from the world of Delhi real estate and interior design.
-            </Text>
-            <Text style={paragraph}>
-              We're excited to have you with us. Whether you're looking to buy, sell, rent, or design, we're here to help you every step of the way.
+              Thank you for subscribing to the Falcon Estates newsletter. You're now set to receive the latest property listings, exclusive offers, and news from the world of Delhi real estate and interior design.
             </Text>
             <Button style={button} href={`${baseUrl}/properties`}>
-              Explore Properties
+              Explore Latest Properties
             </Button>
             <Hr style={hr} />
+            <Section style={{ textAlign: 'center', marginTop: '32px' }}>
+                <Link href="#" style={socialLink}>Facebook</Link>
+                <span style={dot}> &sdot; </span>
+                <Link href="#" style={socialLink}>Instagram</Link>
+                <span style={dot}> &sdot; </span>
+                <Link href="#" style={socialLink}>Twitter</Link>
+            </Section>
             <Text style={footer}>
-              You received this email because you subscribed to our newsletter. If you didn't subscribe, you can safely ignore this email.
+              You received this email because you subscribed to our newsletter. If you believe this was a mistake, you can safely ignore this email.
             </Text>
              <Text style={footer}>
-              Falcon Estates | Rohini, Vijay Vihar, Delhi 110085
+              &copy; {new Date().getFullYear()} Falcon Estates. All Rights Reserved.
             </Text>
           </Section>
         </Container>
@@ -61,21 +76,17 @@ const main = {
 
 const container = {
   backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '20px 0 48px',
+  margin: '40px auto',
+  padding: '40px',
   marginBottom: '64px',
-  borderRadius: '8px',
+  borderRadius: '12px',
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
   border: '1px solid #e2e8f0',
+  maxWidth: '600px',
 };
 
 const box = {
-  padding: '0 48px',
-};
-
-const logo = {
-    margin: '0 auto',
-    marginBottom: '24px',
+  padding: '0 24px',
 };
 
 const heading = {
@@ -83,6 +94,7 @@ const heading = {
   fontSize: '28px',
   fontWeight: 'bold',
   textAlign: 'center' as const,
+  marginBottom: '24px',
 };
 
 const hr = {
@@ -99,15 +111,15 @@ const paragraph = {
 
 const button = {
   backgroundColor: '#5A31F4',
-  borderRadius: '6px',
+  borderRadius: '8px',
   color: '#fff',
   fontSize: '16px',
-  fontWeight: 'bold',
+  fontWeight: '600',
   textDecoration: 'none',
   textAlign: 'center' as const,
   display: 'block',
   width: '100%',
-  padding: '14px 0',
+  padding: '16px 0',
   marginTop: '32px',
 };
 
@@ -117,3 +129,15 @@ const footer = {
   lineHeight: '16px',
   textAlign: 'center' as const,
 };
+
+const socialLink = {
+    color: '#5A31F4',
+    textDecoration: 'underline',
+    margin: '0 8px',
+    fontSize: '14px',
+};
+
+const dot = {
+    color: '#a0aec0',
+    margin: '0 4px',
+}
