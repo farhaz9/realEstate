@@ -85,11 +85,11 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
   const { data: userProfile } = useDoc<User>(userDocRef);
 
   const isOwner = user && user.uid === property.userId;
-  const showManagementControls = isAdmin || isOwner;
+  const showManagementControls = isOwner && pathname.startsWith('/settings');
 
   const isInWishlist = userProfile?.wishlist?.includes(property.id) ?? false;
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (!firestore) return;
@@ -138,7 +138,7 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
   const handleEdit = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    router.push(`/admin/edit/${property.id}`);
+    router.push(`/add-property?id=${property.id}`);
   };
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
@@ -232,9 +232,42 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
                     </div>
                 )}
               </div>
-              <Button size="sm" variant="default" className="rounded-lg md:w-auto w-10 h-10 p-0 md:px-3 md:py-2 md:h-9">
-                  <span className="hidden md:inline">View</span> <Info className="w-4 h-4 md:ml-2" />
-              </Button>
+               {showManagementControls ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.preventDefault()}>
+                              <MoreVertical className="h-4 w-4" />
+                          </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={handleEdit}>
+                              <Pencil className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                           <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                  <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-destructive focus:bg-destructive/10">
+                                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                  </div>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>This will permanently delete your property listing. This action cannot be undone.</AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                ) : (
+                  <Button size="sm" variant="default" className="rounded-lg md:w-auto w-10 h-10 p-0 md:px-3 md:py-2 md:h-9">
+                      <span className="hidden md:inline">View</span> <Info className="w-4 h-4 md:ml-2" />
+                  </Button>
+               )}
           </div>
         </div>
       </Link>
