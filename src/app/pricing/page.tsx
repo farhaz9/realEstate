@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -63,7 +62,7 @@ const plans: PricingTier[] = [
         price: 5500,
         priceAnnual: 19990,
         description: "For agencies and power users.",
-        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website"],
+        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
         icon: <Building className="w-6 h-6" />,
         color: "text-amber-500",
     },
@@ -100,7 +99,7 @@ export default function PricingPage() {
             return;
         }
         
-        if (isCurrentlyVerified) {
+        if (isCurrentlyVerified && plan.level === 'business') {
             toast({ title: "You already have an active subscription.", variant: 'success' });
             return;
         }
@@ -132,35 +131,33 @@ export default function PricingPage() {
             description,
             image: "/logo.png",
             handler: (response: any) => {
-                toast({ title: "Payment Successful!", description: `Welcome to the ${selectedPlan.name} plan!`, variant: "success"});
-                
-                const newExpiryDate = new Date();
-                if (isAnnual) {
-                    newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
-                } else {
-                    newExpiryDate.setDate(newExpiryDate.getDate() + 30);
-                }
-
                 const newTransaction = {
                     paymentId: response.razorpay_payment_id,
                     amount: displayAmount,
                     date: new Date(),
                     description,
                 };
-                
-                let creditsToAdd = 0;
-                switch(selectedPlan.level) {
-                    case 'basic': creditsToAdd = 5; break;
-                    case 'pro': creditsToAdd = 15; break;
-                    case 'business': creditsToAdd = 999; break; // Represents "unlimited"
+
+                let updateData: any = {
+                    transactions: arrayUnion(newTransaction),
+                };
+
+                if (selectedPlan.level === 'business') {
+                    const newExpiryDate = new Date();
+                    if (isAnnual) {
+                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                    } else {
+                        newExpiryDate.setDate(newExpiryDate.getDate() + 30);
+                    }
+                    updateData.isVerified = true;
+                    updateData.verifiedUntil = newExpiryDate;
+                    updateData.listingCredits = increment(999);
+                     toast({ title: "Payment Successful!", description: `Welcome to the ${selectedPlan.name} plan! You are now verified.`, variant: "success"});
+                } else {
+                     toast({ title: "Payment Successful!", description: `Thank you for your purchase.`, variant: "success"});
                 }
 
-                updateDocumentNonBlocking(userDocRef, {
-                    transactions: arrayUnion(newTransaction),
-                    listingCredits: increment(creditsToAdd),
-                    isVerified: true,
-                    verifiedUntil: newExpiryDate,
-                });
+                updateDocumentNonBlocking(userDocRef, updateData);
 
                 setIsPaymentAlertOpen(false);
             },
@@ -195,7 +192,7 @@ export default function PricingPage() {
                                     <Verified className="w-8 h-8 text-primary" />
                                 </div>
                             </div>
-                            <AlertDialogTitle className="text-center text-2xl">Confirm Your Subscription</AlertDialogTitle>
+                            <AlertDialogTitle className="text-center text-2xl">Confirm Your Purchase</AlertDialogTitle>
                             <AlertDialogDescription className="text-center">
                                 You are about to purchase the <strong>{selectedPlan?.name}</strong> plan
                                 for <strong>{isAnnual ? formatPrice(selectedPlan.priceAnnual) + '/year' : formatPrice(selectedPlan.price) + '/month'}</strong>.
@@ -211,4 +208,3 @@ export default function PricingPage() {
         </div>
     );
 }
-
