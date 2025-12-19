@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -264,13 +263,6 @@ export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: Pr
 
     if (filesToUpload.length > 0) {
       try {
-        const authRes = await fetch('/api/imagekit/auth');
-        const authBody = await authRes.json();
-
-        if (!authRes.ok) {
-            throw new Error(authBody.message || `Authentication failed with status: ${authRes.status}`);
-        }
-        
         const imagekit = new ImageKit({
             publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
             urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
@@ -280,6 +272,12 @@ export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: Pr
         const fileList = form.getValues('images') as FileList | null;
         
         const uploadPromises = filesToUpload.map(async (preview) => {
+            const authRes = await fetch('/api/imagekit/auth');
+            const authBody = await authRes.json();
+            if (!authRes.ok) {
+                throw new Error(authBody.message || `Authentication failed for one image with status: ${authRes.status}`);
+            }
+
             if (fileList) {
                 const file = Array.from(fileList).find(f => f.name === preview.name && f.size === preview.size);
                 if (file) {
@@ -299,7 +297,6 @@ export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: Pr
         uploadedImageUrls = [...uploadedImageUrls, ...newUrls];
 
       } catch (error: any) {
-        console.error("Image upload failed:", error);
         const errorMessage = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
         toast({
           title: "Image Upload Failed",
@@ -975,3 +972,5 @@ export function MyPropertiesTab() {
     </div>
   )
 }
+
+    
