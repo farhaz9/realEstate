@@ -6,11 +6,12 @@ import type { Property, User } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil, Info, ChevronLeft, ChevronRight, Camera } from "lucide-react";
+import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Image as ImageIcon, MoreVertical, MessageSquare, Pencil, Info, ChevronLeft, ChevronRight, Camera, Calendar } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
 import { doc, arrayUnion, arrayRemove, increment } from "firebase/firestore";
+import { format } from "date-fns";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -143,6 +144,8 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
   };
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
+  const dateListed = property.dateListed?.toDate ? property.dateListed.toDate() : null;
+
 
   return (
     <div className={cn("rounded-2xl bg-card text-card-foreground border overflow-hidden group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col", className)}>
@@ -208,6 +211,12 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
               <p className="mt-0.5 text-sm text-muted-foreground">
                 <HighlightedText text={property.location.address} highlight={searchTerm} />
               </p>
+               {dateListed && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span>Listed on {format(dateListed, "do MMM, yyyy")}</span>
+                </div>
+              )}
             </div>
              <Badge variant="outline" className="capitalize shrink-0">
                 <HighlightedText text={property.propertyType} highlight={searchTerm} />
