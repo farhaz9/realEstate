@@ -162,7 +162,7 @@ export default function Header() {
   const isHomePage = pathname === '/';
   const isPropertiesPage = pathname.startsWith('/properties');
   const isInteriorsPage = pathname === '/interiors';
-  const isProfessionalsPage = pathname === '/professionals';
+  const isProfessionalsPage = pathname.startsWith('/professionals');
 
   const { isScrolled } = useOnScroll("offers"); 
   
@@ -180,10 +180,15 @@ export default function Header() {
   const isVendor = userProfile?.category === 'vendor';
 
   const handleSearch = (searchTerm: string) => {
-    let targetPath = '/properties';
-    if (isInteriorsPage) targetPath = '/interiors';
-    if (isProfessionalsPage) targetPath = '/professionals';
-    if (isPropertiesPage) targetPath = '/properties';
+    let targetPath: string;
+
+    if (isProfessionalsPage) {
+      targetPath = '/professionals';
+    } else if (isInteriorsPage) {
+      targetPath = '/interiors';
+    } else {
+      targetPath = '/properties';
+    }
 
     const params = new URLSearchParams();
     params.set('q', searchTerm);
