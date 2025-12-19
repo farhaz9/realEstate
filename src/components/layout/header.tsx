@@ -367,7 +367,7 @@ export default function Header() {
                         )}
                     </nav>
                     {isUserLoading ? (
-                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <Skeleton className="h-10 w-10 rounded-full" />
                     ) : user ? (
                         <>
                         <UserNav />
