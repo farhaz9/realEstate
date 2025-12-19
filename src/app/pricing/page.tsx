@@ -60,7 +60,7 @@ const plans: PricingTier[] = [
     {
         name: "Business",
         level: "business",
-        price: 5500,
+        price: 4999,
         priceAnnual: 19990,
         description: "For agencies and power users.",
         features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
