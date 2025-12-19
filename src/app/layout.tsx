@@ -19,22 +19,30 @@ const poppins = Poppins({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://delhi-estate-luxe.com";
-const siteTitle = "Falcon Estates | Best Real Estate & Interior Design in Delhi Rohini";
-const siteDescription = "Discover luxury properties, plots, and bespoke interior design services in Delhi & Rohini with Falcon Estates. Your trusted partner for buying, selling, and renting real estate.";
+const siteTitle = "Falcon Estates | Buy, Sell & Rent Properties in Delhi, Rohini";
+const siteDescription = "Falcon Estates helps you buy, sell, and rent properties in Delhi & Rohini. Explore verified listings for apartments, plots, and homes with expert interior design services.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: siteTitle,
   description: siteDescription,
-  keywords: ["real estate delhi", "property in rohini", "interior design delhi", "luxury apartments delhi", "buy property rohini", "sell property delhi", "falcon estates"],
-  metadataBase: new URL(siteUrl),
-  alternates: {
-    canonical: '/',
-  },
+  keywords: [
+    "Falcon Estates",
+    "real estate in India",
+    "property in delhi",
+    "property in rohini",
+    "buy property",
+    "sell property",
+    "rent house",
+    "property listings",
+    "interior design delhi"
+  ],
   openGraph: {
     title: siteTitle,
-    description: siteDescription,
+    description: "Trusted real estate platform for buyers, sellers, and interior design in Delhi & Rohini.",
     url: siteUrl,
-    siteName: 'Falcon Estates',
+    siteName: "Falcon Estates",
+    type: "website",
     images: [
       {
         url: `/og-image.jpg`,
@@ -44,8 +52,8 @@ export const metadata: Metadata = {
       },
     ],
     locale: 'en_IN',
-    type: 'website',
   },
+  robots: "index, follow",
   twitter: {
     card: 'summary_large_image',
     title: siteTitle,

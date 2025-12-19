@@ -322,7 +322,7 @@ export default function PropertyDetailPage() {
               <CardContent className="p-0">
                 <div className="relative h-96 w-full bg-muted group/image">
                   {mainImage ? (
-                    <Image src={mainImage} alt={property.title} data-ai-hint="property image" fill className="object-cover rounded-t-lg" priority />
+                    <Image src={mainImage} alt={`${property.title} in ${property.location.address}`} fill className="object-cover rounded-t-lg" priority />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-muted rounded-t-lg">
                       <ImageIcon className="h-24 w-24 text-gray-400" />
