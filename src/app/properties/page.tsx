@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useTransition, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
 import {
   Select,
@@ -37,7 +37,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { LocationDisplay } from '@/components/shared/location-display';
 import { Separator } from '@/components/ui/separator';
@@ -193,7 +192,12 @@ function PropertiesPageContent() {
   
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!searchTerm) {
+    const currentSearchTerm = searchTerm;
+    const params = new URLSearchParams(window.location.search);
+    params.set('q', currentSearchTerm);
+    router.replace(`/properties?${params.toString()}`);
+
+    if (!currentSearchTerm) {
       setAiAnalysis(null);
       return;
     }
@@ -202,9 +206,9 @@ function PropertiesPageContent() {
         const recentSearchesRaw = localStorage.getItem('recentSearches');
         let recentSearches: string[] = recentSearchesRaw ? JSON.parse(recentSearchesRaw) : [];
         
-        recentSearches = recentSearches.filter((s) => s.toLowerCase() !== searchTerm.toLowerCase());
+        recentSearches = recentSearches.filter((s) => s.toLowerCase() !== currentSearchTerm.toLowerCase());
         
-        recentSearches.unshift(searchTerm);
+        recentSearches.unshift(currentSearchTerm);
         
         recentSearches = recentSearches.slice(0, 5);
         
@@ -214,7 +218,7 @@ function PropertiesPageContent() {
 
     startAiSearchTransition(async () => {
       try {
-        const analysis = await analyzeSearchQuery({ query: searchTerm });
+        const analysis = await analyzeSearchQuery({ query: currentSearchTerm });
         setAiAnalysis(analysis);
       } catch (error) {
         console.error('AI search failed:', error);
@@ -249,15 +253,16 @@ function PropertiesPageContent() {
     if (!properties) return [];
     
     let baseProperties = properties;
+    const currentSearchTerm = searchParams.get('q') || '';
 
-    if (searchTerm.trim() && fuse) {
+    if (currentSearchTerm.trim() && fuse) {
         // AI-driven search takes priority if analysis is available and the search term matches
-        if (aiAnalysis && searchTerm) {
-            const aiResults = fuse.search(searchTerm);
+        if (aiAnalysis && currentSearchTerm) {
+            const aiResults = fuse.search(currentSearchTerm);
             baseProperties = aiResults.map(result => result.item);
         } else {
             // Fallback to regular fuzzy search
-            const fuseResults = fuse.search(searchTerm);
+            const fuseResults = fuse.search(currentSearchTerm);
             baseProperties = fuseResults.map(result => result.item);
         }
     }
@@ -291,7 +296,7 @@ function PropertiesPageContent() {
                        (activeTab === 'commercial' && p.propertyType?.toLowerCase().includes('commercial'));
 
 
-      if (aiAnalysis && searchTerm) {
+      if (aiAnalysis && currentSearchTerm) {
         if (aiAnalysis.listingType) {
           tabMatch = p.listingType === aiAnalysis.listingType;
         }
@@ -312,18 +317,18 @@ function PropertiesPageContent() {
       
       const manualFiltersApplied = location !== 'all' || pincode || bedrooms > 0 || bathrooms > 0;
       
-      if (manualFiltersApplied && !searchTerm.trim()) {
+      if (manualFiltersApplied && !currentSearchTerm.trim()) {
         return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
       }
       
       // When there is a search term, filters apply to the searched results
-      if (searchTerm.trim()) {
+      if (currentSearchTerm.trim()) {
           return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
       }
 
       return tabMatch && priceMatch;
     });
-  }, [properties, activeTab, searchTerm, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, fuse]);
+  }, [properties, activeTab, searchParams, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, fuse]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];

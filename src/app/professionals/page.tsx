@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useTransition, Suspense } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -25,6 +25,8 @@ const filterTabs = [
 function ProfessionalsPageContent() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeTab, setActiveTab] = useState('all');
 
@@ -34,6 +36,9 @@ function ProfessionalsPageContent() {
 
    const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    const params = new URLSearchParams(window.location.search);
+    params.set('q', searchTerm);
+    router.replace(`/professionals?${params.toString()}`);
   };
 
   const professionalsQuery = useMemoFirebase(() => {
@@ -72,7 +77,8 @@ function ProfessionalsPageContent() {
 
     const activeProfessionals = professionals.filter(p => !p.isBlocked && p.isFeatured !== false);
 
-    if (searchTerm.trim() === '') {
+    const currentSearchTerm = searchParams.get('q') || '';
+    if (currentSearchTerm.trim() === '') {
         return activeProfessionals;
     }
 
@@ -80,8 +86,8 @@ function ProfessionalsPageContent() {
         return activeProfessionals;
     }
 
-    return fuse.search(searchTerm).map(result => result.item);
-  }, [professionals, searchTerm, fuse]);
+    return fuse.search(currentSearchTerm).map(result => result.item);
+  }, [professionals, searchParams, fuse]);
 
 
   const renderContent = () => {
