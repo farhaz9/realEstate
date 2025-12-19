@@ -131,9 +131,9 @@ export default function AddPropertyPage() {
       form.reset({
         ...propertyToEdit,
         price: propertyToEdit.price,
-        amenities: propertyToEdit.amenities?.join(', ') || '',
-        overlooking: propertyToEdit.overlooking || '',
-        ageOfConstruction: propertyToEdit.ageOfConstruction || '',
+        amenities: propertyToEdit.amenities?.join(', ') ?? '',
+        overlooking: propertyToEdit.overlooking ?? '',
+        ageOfConstruction: propertyToEdit.ageOfConstruction ?? '',
       });
       if (propertyToEdit.imageUrls) {
           setImagePreviews(propertyToEdit.imageUrls.map(url => ({ url, name: 'Existing Image', size: 0 })));
