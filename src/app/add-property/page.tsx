@@ -345,11 +345,11 @@ export default function AddPropertyPage() {
     } else {
       const propertiesCollection = collection(firestore, 'properties');
       
-      const isBusinessUser = userProfile?.category === 'business' && userProfile.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+      const isBusinessUser = userProfile?.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
       const expirationDate = new Date();
 
-      if (isBusinessUser && userProfile.verifiedUntil?.toDate) {
-        expirationDate.setTime(userProfile.verifiedUntil.toDate().getTime());
+      if (isBusinessUser) {
+        expirationDate.setDate(expirationDate.getDate() + 30);
       } else {
         expirationDate.setDate(expirationDate.getDate() + 15);
       }
@@ -824,3 +824,5 @@ export default function AddPropertyPage() {
     </div>
   );
 }
+
+    
