@@ -300,9 +300,10 @@ export function PropertyForm({ propertyToEdit, onSuccess, onCancel, isOpen }: Pr
 
       } catch (error: any) {
         console.error("Image upload failed:", error);
+        const errorMessage = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
         toast({
           title: "Image Upload Failed",
-          description: error.message || "There was a problem uploading your images. Please try again.",
+          description: `There was a problem uploading your images. Details: ${errorMessage}`,
           variant: "destructive",
         });
         setIsUploading(false);
