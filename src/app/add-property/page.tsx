@@ -235,14 +235,15 @@ export default function AddPropertyPage() {
         });
         
         const uploadPromises = filesToUpload.map(async (preview) => {
-            const authRes = await fetch('/api/imagekit/auth');
-            if (!authRes.ok) {
-                const errorBody = await authRes.json().catch(() => ({ message: 'Unknown authentication error' }));
-                throw new Error(errorBody.message || `Authentication failed with status: ${authRes.status}`);
-            }
-            const authBody = await authRes.json();
-
             if (preview.file) {
+                // Fetch auth params for each file right before uploading
+                const authRes = await fetch('/api/imagekit/auth');
+                 if (!authRes.ok) {
+                    const errorBody = await authRes.json().catch(() => ({ message: 'Unknown authentication error' }));
+                    throw new Error(`Authentication failed: ${errorBody.message || authRes.statusText}`);
+                }
+                const authBody = await authRes.json();
+
                 return imagekit.upload({
                     file: preview.file,
                     fileName: preview.file.name,
@@ -275,7 +276,7 @@ export default function AddPropertyPage() {
     const propertyData = {
       ...restOfData,
       amenities: amenitiesArray,
-      imageUrls: isEditMode ? uploadedImageUrls : uploadedImageUrls,
+      imageUrls: uploadedImageUrls,
       price: isEditMode ? propertyToEdit?.price : data.price,
     };
     
