@@ -198,7 +198,7 @@ export function MyPropertiesTab() {
             )}
       </div>
 
-      {userProfile && !isVendor && (!userProfile.listingCredits || userProfile.listingCredits === 0) && (
+      {userProfile && !isVendor && (
         <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
       )}
       
