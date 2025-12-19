@@ -203,7 +203,12 @@ export default function PropertyDetailPage() {
         title: property?.title,
         text: `Check out this property: ${property?.title}`,
         url: window.location.href,
-      }).catch(console.error);
+      }).catch((error) => {
+        // Silently catch AbortError or NotAllowedError when the user cancels the share dialog
+        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
+          console.error('Share failed:', error);
+        }
+      });
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast({ title: 'Link Copied!', description: 'Property link copied to your clipboard.' });
