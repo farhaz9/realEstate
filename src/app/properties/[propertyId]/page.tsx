@@ -197,21 +197,37 @@ export default function PropertyDetailPage() {
       }
   };
   
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: property?.title,
-        text: `Check out this property: ${property?.title}`,
-        url: window.location.href,
-      }).catch((error) => {
+      try {
+        await navigator.share({
+          title: property?.title,
+          text: `Check out this property: ${property?.title}`,
+          url: window.location.href,
+        });
+      } catch (error: any) {
         // Silently catch AbortError or NotAllowedError when the user cancels the share dialog
         if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
           console.error('Share failed:', error);
+          toast({
+            title: 'Share Failed',
+            description: 'Could not share this property.',
+            variant: 'destructive',
+          });
         }
-      });
+      }
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast({ title: 'Link Copied!', description: 'Property link copied to your clipboard.' });
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({ title: 'Link Copied!', description: 'Property link copied to your clipboard.' });
+      } catch (error) {
+        console.error('Copy failed:', error);
+        toast({
+          title: 'Copy Failed',
+          description: 'Could not copy link to clipboard.',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
