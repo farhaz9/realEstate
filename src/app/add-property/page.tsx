@@ -343,17 +343,32 @@ export default function AddPropertyPage() {
       toast({ title: 'Property Updated!', description: `Your property has been successfully updated.`, variant: 'success' });
     } else {
       const propertiesCollection = collection(firestore, 'properties');
-      const tier = 'premium';
-      const isFeatured = true;
+      
+      const isBusinessUser = userProfile?.category === 'business' && userProfile.isVerified;
       const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 90);
+
+      if(isBusinessUser && userProfile.verifiedUntil) {
+          const verifiedDate = userProfile.verifiedUntil.toDate();
+          // Check if verification is still valid
+          if(verifiedDate > new Date()) {
+              // Get difference in ms and add to today
+              const diffTime = Math.abs(verifiedDate.getTime() - new Date().getTime());
+              expirationDate.setTime(expirationDate.getTime() + diffTime);
+          } else {
+              expirationDate.setDate(expirationDate.getDate() + 30);
+          }
+      } else {
+          // Default for non-business or expired business users
+          expirationDate.setDate(expirationDate.getDate() + 30);
+      }
+
 
       const newPropertyData = {
           ...propertyData,
           userId: user.uid,
           dateListed: serverTimestamp(),
-          isFeatured,
-          listingTier: tier,
+          isFeatured: isBusinessUser,
+          listingTier: isBusinessUser ? 'premium' : 'free',
           expiresAt: expirationDate,
           status: 'approved' as const,
       };
