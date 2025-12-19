@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2 } from 'lucide-react';
+import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2, Gem } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -245,6 +245,7 @@ function SettingsPageContent() {
   const isLoading = isUserLoading || isProfileLoading;
   const displayAvatar = userProfile?.photoURL ?? user?.photoURL;
   const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+  const currentPlan = isCurrentlyVerified ? 'Business' : 'Free';
   const displayName = userProfile?.fullName ?? user?.displayName;
 
   return (
@@ -301,9 +302,16 @@ function SettingsPageContent() {
                   {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500" />}
                 </div>
                 {isLoading ? <Skeleton className="h-5 w-24 mt-1" /> : (userProfile && <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>)}
+                <div className={cn(
+                    "mt-2 flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full",
+                    isCurrentlyVerified ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
+                )}>
+                    {isCurrentlyVerified ? <Gem className="h-3 w-3" /> : <User className="h-3 w-3" />}
+                    <span>{currentPlan} Plan</span>
+                </div>
                 {isCurrentlyVerified && userProfile?.verifiedUntil && (
                   <p className="text-xs text-green-600 font-semibold mt-1">
-                    Pro Verified until {userProfile.verifiedUntil.toDate().toLocaleDateString()}
+                    Verified until {userProfile.verifiedUntil.toDate().toLocaleDateString()}
                   </p>
                 )}
             </div>
