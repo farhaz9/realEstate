@@ -345,18 +345,17 @@ export default function AddPropertyPage() {
     } else {
       const propertiesCollection = collection(firestore, 'properties');
       
-      const isBusinessUser = userProfile?.category === 'business' && userProfile.isVerified;
+      const isBusinessUser = userProfile?.category === 'business' && userProfile.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
       const expirationDate = new Date();
 
-      if(isBusinessUser && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date()) {
+      if (isBusinessUser) {
           const verifiedDate = userProfile.verifiedUntil.toDate();
           const diffTime = Math.abs(verifiedDate.getTime() - new Date().getTime());
           expirationDate.setTime(expirationDate.getTime() + diffTime);
       } else {
-          // Default for non-business or expired business users to 30 days
           expirationDate.setDate(expirationDate.getDate() + 30);
       }
-
+      
       const newPropertyData = {
           ...propertyData,
           userId: user.uid,
