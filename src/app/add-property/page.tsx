@@ -345,7 +345,7 @@ export default function AddPropertyPage() {
     } else {
       const propertiesCollection = collection(firestore, 'properties');
       
-      const isBusinessUser = userProfile?.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+      const isBusinessUser = !!(userProfile?.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date());
       const expirationDate = new Date();
 
       if (isBusinessUser) {
@@ -361,7 +361,7 @@ export default function AddPropertyPage() {
           listingTier: isBusinessUser ? 'premium' : 'free',
           expiresAt: expirationDate,
           status: 'approved' as const,
-          isFeatured: isBusinessUser,
+          isFeatured: isBusinessUser ?? false,
       };
       
       addDocumentNonBlocking(propertiesCollection, newPropertyData);
@@ -824,5 +824,7 @@ export default function AddPropertyPage() {
     </div>
   );
 }
+
+    
 
     
