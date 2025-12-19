@@ -115,6 +115,22 @@ export default function AddPropertyPage() {
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
     defaultValues: {
+      title: '',
+      description: '',
+      price: 0,
+      listingType: 'sale',
+      location: {
+        address: '',
+        pincode: '',
+        state: '',
+      },
+      contactNumber: '',
+      whatsappNumber: '',
+      propertyType: '',
+      bedrooms: 0,
+      bathrooms: 0,
+      squareYards: 0,
+      furnishing: 'unfurnished',
       overlooking: '',
       ageOfConstruction: '',
       amenities: '',
@@ -129,8 +145,22 @@ export default function AddPropertyPage() {
         return;
       }
       form.reset({
-        ...propertyToEdit,
-        price: propertyToEdit.price,
+        title: propertyToEdit.title ?? '',
+        description: propertyToEdit.description ?? '',
+        price: propertyToEdit.price ?? 0,
+        listingType: propertyToEdit.listingType ?? 'sale',
+        location: {
+          address: propertyToEdit.location?.address ?? '',
+          pincode: propertyToEdit.location?.pincode ?? '',
+          state: propertyToEdit.location?.state ?? '',
+        },
+        contactNumber: propertyToEdit.contactNumber ?? '',
+        whatsappNumber: propertyToEdit.whatsappNumber ?? '',
+        propertyType: propertyToEdit.propertyType ?? '',
+        bedrooms: propertyToEdit.bedrooms ?? 0,
+        bathrooms: propertyToEdit.bathrooms ?? 0,
+        squareYards: propertyToEdit.squareYards ?? 0,
+        furnishing: propertyToEdit.furnishing ?? 'unfurnished',
         amenities: propertyToEdit.amenities?.join(', ') ?? '',
         overlooking: propertyToEdit.overlooking ?? '',
         ageOfConstruction: propertyToEdit.ageOfConstruction ?? '',
@@ -241,28 +271,24 @@ export default function AddPropertyPage() {
             authenticationEndpoint: `${process.env.NEXT_PUBLIC_APP_URL}/api/imagekit/auth`
         });
         
-        const uploadPromises = filesToUpload.map(async (preview) => {
-            if (preview.file) {
-                const authRes = await fetch('/api/imagekit/auth');
-                 if (!authRes.ok) {
-                    const errorBody = await authRes.json().catch(() => ({ message: 'Unknown authentication error' }));
-                    throw new Error(`Authentication failed: ${errorBody.message || authRes.statusText}`);
-                }
-                const authBody = await authRes.json();
-
-                return imagekit.upload({
-                    file: preview.file,
-                    fileName: preview.file.name,
-                    ...authBody,
-                    folder: "/delhi-estate-luxe",
-                });
+        for (const preview of filesToUpload) {
+          if (preview.file) {
+            const authRes = await fetch('/api/imagekit/auth');
+            if (!authRes.ok) {
+              const errorBody = await authRes.json().catch(() => ({ message: 'Unknown authentication error' }));
+              throw new Error(`Authentication failed: ${errorBody.message || authRes.statusText}`);
             }
-            return null;
-        });
+            const authBody = await authRes.json();
 
-        const uploadResults = await Promise.all(uploadPromises);
-        const newUrls = uploadResults.filter(r => r).map(result => result!.url);
-        uploadedImageUrls.push(...newUrls);
+            const uploadResult = await imagekit.upload({
+              file: preview.file,
+              fileName: preview.file.name,
+              ...authBody,
+              folder: "/delhi-estate-luxe",
+            });
+            uploadedImageUrls.push(uploadResult.url);
+          }
+        }
 
       } catch (error: any) {
         const errorMessage = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
@@ -719,7 +745,7 @@ export default function AddPropertyPage() {
                                 <FormItem>
                                     <FormLabel>Amenities (Optional)</FormLabel>
                                     <FormControl>
-                                    <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} />
+                                    <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} value={field.value ?? ''} />
                                     </FormControl>
                                     <FormDescription>
                                     Enter a comma-separated list of amenities.
