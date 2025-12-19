@@ -98,7 +98,7 @@ export function MyPropertiesTab() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: (listingPrice * 100).toString(),
         currency: "INR",
-        name: "Falcon Homes Property Listing",
+        name: "Falcon Estates Property Listing",
         description: "One-time fee for one property listing.",
         image: "/logo.png",
         config: {

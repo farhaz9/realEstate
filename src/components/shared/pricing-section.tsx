@@ -103,7 +103,7 @@ export function PricingSection() {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: amount.toString(),
             currency: "INR",
-            name: "Falcon Homes - Pro Verified",
+            name: "Falcon Estates - Pro Verified",
             description: `Payment for ${isAnnual ? 'Annual' : 'Monthly'} Subscription`,
             image: "/logo.png",
             config: {

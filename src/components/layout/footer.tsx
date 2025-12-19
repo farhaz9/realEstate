@@ -25,7 +25,7 @@ export default function Footer() {
                                 </div>
 
                                 <div className="text-xs tracking-[0.4em] text-purple-700">
-                                HOMES
+                                ESTATES
                                 </div>
                             </div>
                         </div>
@@ -73,7 +73,7 @@ export default function Footer() {
             </div>
             <div className="border-t">
                  <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-                    &copy; {new Date().getFullYear()} Falcon Homes. All Rights Reserved.
+                    &copy; {new Date().getFullYear()} Falcon Estates. All Rights Reserved.
                 </div>
             </div>
         </footer>

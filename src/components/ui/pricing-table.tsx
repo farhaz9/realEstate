@@ -137,7 +137,7 @@ export function PricingTable({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: amount.toString(),
         currency: "INR",
-        name: `Falcon Homes - ${plan.name}`,
+        name: `Falcon Estates - ${plan.name}`,
         description,
         image: "/logo.png",
         handler: (response: any) => {

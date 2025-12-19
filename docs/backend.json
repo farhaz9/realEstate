@@ -5,7 +5,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user account in the Falcon Homes application.",
+      "description": "Represents a user account in the Falcon Estates application.",
       "properties": {
         "id": {
           "type": "string",
@@ -117,7 +117,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Property",
       "type": "object",
-      "description": "Represents a property listed on the Falcon Homes application.",
+      "description": "Represents a property listed on the Falcon Estates application.",
       "properties": {
         "id": {
           "type": "string",

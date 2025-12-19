@@ -265,7 +265,7 @@ export default function LoginPage() {
         
         toast({
           title: 'Sign Up Successful!',
-          description: 'Welcome to Falcon Homes! You have received 1 free listing credit.',
+          description: 'Welcome to Falcon Estates! You have received 1 free listing credit.',
           variant: 'success',
         });
         router.push('/');
@@ -297,7 +297,7 @@ export default function LoginPage() {
     });
     toast({
       title: 'Sign Up Successful!',
-      description: 'Welcome to Falcon Homes! You have received 1 free listing credit.',
+      description: 'Welcome to Falcon Estates! You have received 1 free listing credit.',
       variant: 'success',
     });
     router.push('/');

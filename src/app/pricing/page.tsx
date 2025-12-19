@@ -143,7 +143,7 @@ export default function PricingPage() {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: amount.toString(),
             currency: "INR",
-            name: `Falcon Axe Homes - ${selectedTier.name}`,
+            name: `Falcon Estates - ${selectedTier.name}`,
             description,
             image: "/logo.png",
             handler: (response: any) => {

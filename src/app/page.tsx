@@ -28,7 +28,7 @@ const faqs = [
     answer: "Yes, all of our interior designers are certified professionals with extensive experience in creating beautiful and functional spaces. We ensure they are equipped with the latest industry knowledge."
   },
   {
-    question: "What fees does Falcon Homes charge?",
+    question: "What fees does Falcon Estates charge?",
     answer: "Our fees vary depending on the service. For property sales, we charge a standard commission. For interior design, we offer project-based pricing. Please contact us for a detailed quote."
   },
   {
@@ -255,7 +255,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold">Why Choose Falcon Homes?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold">Why Choose Falcon Estates?</h2>
               <p className="mt-4 text-muted-foreground max-w-xl">
                 We are redefining the real estate experience by combining technology with human expertise.
               </p>
@@ -299,5 +299,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    

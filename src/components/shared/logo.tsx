@@ -9,7 +9,7 @@ export function Logo() {
           FALCON
         </div>
         <div className="text-[0.45rem] tracking-[0.2em] text-purple-700">
-          H O M E S
+          ESTATES
         </div>
     </div>
     </Link>

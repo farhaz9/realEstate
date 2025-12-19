@@ -15,7 +15,7 @@ const faqs = [
     answer: "Yes, all of our interior designers are certified professionals with extensive experience in creating beautiful and functional spaces. We ensure they are equipped with the latest industry knowledge."
   },
   {
-    question: "What fees does Falcon Axe Homes charge?",
+    question: "What fees does Falcon Estates charge?",
     answer: "Our fees vary depending on the service. For property sales, we charge a standard commission. For interior design, we offer project-based pricing. Please contact us for a detailed quote."
   },
   {
@@ -84,7 +84,7 @@ export default function SupportPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold">Email Us</h3>
-                    <p className="text-muted-foreground text-sm break-all">support@falconaxehomes.com</p>
+                    <p className="text-muted-foreground text-sm break-all">support@falconestates.com</p>
                   </div>
                 </div>
               </CardContent>

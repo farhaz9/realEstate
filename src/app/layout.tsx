@@ -19,8 +19,8 @@ const poppins = Poppins({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.farhazhomes.com";
-const siteTitle = "Falcon Homes | Best Real Estate and Interior Design Company in Delhi";
-const siteDescription = "Discover Delhi's best real estate and interior design company. Falcon Homes offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
+const siteTitle = "Falcon Estates | Best Real Estate and Interior Design Company in Delhi";
+const siteDescription = "Discover Delhi's best real estate and interior design company. Falcon Estates offers luxury properties, bespoke interiors, and complete construction solutions in Delhi.";
 
 
 export const metadata: Metadata = {
@@ -34,13 +34,13 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
     url: siteUrl,
-    siteName: 'Falcon Homes',
+    siteName: 'Falcon Estates',
     images: [
       {
         url: `/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Luxury real estate and interior design in Delhi by Falcon Homes',
+        alt: 'Luxury real estate and interior design in Delhi by Falcon Estates',
       },
     ],
     locale: 'en_US',

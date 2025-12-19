@@ -35,7 +35,7 @@ export default function RefundPolicyPage() {
             
             <h2>1. General Policy</h2>
             <p>
-              At Falcon Homes, we strive to provide excellent service. This policy outlines the terms for refunds and cancellations for our premium services, such as featured listings.
+              At Falcon Estates, we strive to provide excellent service. This policy outlines the terms for refunds and cancellations for our premium services, such as featured listings.
             </p>
 
             <h2>2. Premium Listing Fees</h2>
@@ -60,7 +60,7 @@ export default function RefundPolicyPage() {
 
             <h2>6. Contact Us</h2>
             <p>
-              If you have any questions about our Refund Policy, please contact us at contact@falconhomes.com.
+              If you have any questions about our Refund Policy, please contact us at contact@falconestates.com.
             </p>
           </CardContent>
         </Card>
@@ -68,5 +68,3 @@ export default function RefundPolicyPage() {
     </div>
   );
 }
-
-    
