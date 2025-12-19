@@ -54,7 +54,7 @@ function CreativePricing({
                     >
                         <div
                             className={cn(
-                                "absolute inset-0 bg-white dark:bg-zinc-900",
+                                "absolute inset-0 bg-purple-50 dark:bg-zinc-900",
                                 "border-2 border-zinc-900 dark:border-white",
                                 "rounded-lg shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
                                 "transition-all duration-300",
