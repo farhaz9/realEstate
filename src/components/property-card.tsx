@@ -100,6 +100,7 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
       description: "The property listing has been successfully removed.",
       variant: "destructive",
     });
+    router.push('/settings?tab=listings');
   };
 
   const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
