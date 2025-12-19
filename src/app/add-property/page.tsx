@@ -236,7 +236,6 @@ export default function AddPropertyPage() {
         
         const uploadPromises = filesToUpload.map(async (preview) => {
             if (preview.file) {
-                // Fetch auth params for each file right before uploading
                 const authRes = await fetch('/api/imagekit/auth');
                  if (!authRes.ok) {
                     const errorBody = await authRes.json().catch(() => ({ message: 'Unknown authentication error' }));
@@ -304,8 +303,8 @@ export default function AddPropertyPage() {
           status: 'approved' as const,
       };
       
-      await addDocumentNonBlocking(propertiesCollection, newPropertyData);
-      await updateDocumentNonBlocking(userDocRef, { listingCredits: increment(-1) });
+      addDocumentNonBlocking(propertiesCollection, newPropertyData);
+      updateDocumentNonBlocking(userDocRef, { listingCredits: increment(-1) });
       toast({ title: 'Property Listed!', description: `Your property has been successfully listed.`, variant: 'success' });
     }
 
@@ -769,3 +768,5 @@ export default function AddPropertyPage() {
     </div>
   );
 }
+
+    
