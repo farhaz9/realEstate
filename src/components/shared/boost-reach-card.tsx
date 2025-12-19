@@ -70,7 +70,7 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
                     </Button>
 
                      <p className="text-xs text-white/70 mt-4">
-                        Secure payment powered by Falcon Pay
+                        Secure payment powered by razorpay
                     </p>
 
                 </CardContent>
@@ -78,4 +78,3 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
         </div>
     );
 }
-
