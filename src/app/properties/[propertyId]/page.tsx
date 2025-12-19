@@ -25,6 +25,7 @@ import { useOnScroll } from '@/hooks/use-on-scroll';
 import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
+import { FirestorePermissionError, errorEmitter } from '@/firebase';
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -134,6 +135,7 @@ export default function PropertyDetailPage() {
   const handleWishlistToggle = async () => {
     if (!user || !userDocRef || !propertyRef) {
       toast({ title: 'Please log in', description: 'You need to be logged in to manage your wishlist.', variant: 'destructive' });
+      router.push('/login');
       return;
     }
     
@@ -145,8 +147,25 @@ export default function PropertyDetailPage() {
         wishlistCount: increment(isInWishlist ? -1 : 1)
     };
     
-    await updateDoc(userDocRef, updateData);
-    await updateDoc(propertyRef, propertyUpdate);
+    await updateDoc(userDocRef, updateData)
+      .catch(error => {
+        const contextualError = new FirestorePermissionError({
+          path: userDocRef.path,
+          operation: 'update',
+          requestResourceData: updateData,
+        });
+        errorEmitter.emit('permission-error', contextualError);
+      });
+
+    await updateDoc(propertyRef, propertyUpdate)
+      .catch(error => {
+        const contextualError = new FirestorePermissionError({
+          path: propertyRef.path,
+          operation: 'update',
+          requestResourceData: propertyUpdate,
+        });
+        errorEmitter.emit('permission-error', contextualError);
+      });
 
     toast({
       title: isInWishlist ? 'Removed from Wishlist' : 'Added to Wishlist',
@@ -532,5 +551,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    

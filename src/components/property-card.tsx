@@ -10,7 +10,7 @@ import { ArrowRight, Bath, BedDouble, Building2, Phone, Star, Trash2, Heart, Ima
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
-import { doc, arrayUnion, arrayRemove, increment } from "firebase/firestore";
+import { doc, arrayUnion, arrayRemove, increment, updateDoc } from "firebase/firestore";
 import { format } from "date-fns";
 import {
   AlertDialog,
@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { HighlightedText } from "./shared/highlighted-text";
 import { useState } from "react";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 interface PropertyCardProps {
   property: Property;
@@ -127,14 +129,27 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
         wishlistCount: increment(isInWishlist ? -1 : 1)
     };
 
+    // Use non-blocking update for the user's wishlist
     updateDocumentNonBlocking(userDocRef, updateData);
-    updateDocumentNonBlocking(propertyRef, propertyUpdate);
 
-    toast({
-        title: isInWishlist ? "Removed from Wishlist" : "Added to Wishlist",
-        description: `${property.title} has been ${isInWishlist ? 'removed from' : 'added to'} your wishlist.`,
-        variant: "success",
-    });
+    // Use blocking update for the property count to catch errors
+    updateDoc(propertyRef, propertyUpdate)
+      .then(() => {
+        toast({
+          title: isInWishlist ? "Removed from Wishlist" : "Added to Wishlist",
+          description: `${property.title} has been ${isInWishlist ? 'removed from' : 'added to'} your wishlist.`,
+          variant: "success",
+        });
+      })
+      .catch(error => {
+        // This is where we create and emit the contextual error
+        const contextualError = new FirestorePermissionError({
+            path: propertyRef.path,
+            operation: 'update',
+            requestResourceData: propertyUpdate
+        });
+        errorEmitter.emit('permission-error', contextualError);
+      });
   };
   
   const handleEdit = (e: React.MouseEvent<HTMLDivElement>) => {
