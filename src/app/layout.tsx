@@ -22,20 +22,27 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://delhi-estate-luxe.co
 const siteTitle = "Falcon Estates | Buy, Sell & Rent Properties in Delhi, Rohini";
 const siteDescription = "Falcon Estates helps you buy, sell, and rent properties in Delhi & Rohini. Explore verified listings for apartments, plots, and homes with expert interior design services.";
 
+// Favicon generation
+const faviconSvg = `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22hsl(262, 82%, 56%)%22></rect><text x=%2250%22 y=%2250%22 font-size=%2250%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Poppins, sans-serif%22 font-weight=%22600%22>FE</text></svg>`;
+const faviconDataUrl = `data:image/svg+xml,${faviconSvg}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: siteTitle,
+  title: {
+    default: siteTitle,
+    template: `%s | Falcon Estates`,
+  },
   description: siteDescription,
   keywords: [
     "Falcon Estates",
-    "real estate in India",
-    "property in delhi",
+    "real estate in Delhi",
     "property in rohini",
-    "buy property",
-    "sell property",
-    "rent house",
-    "property listings",
-    "interior design delhi"
+    "buy property delhi",
+    "sell property delhi",
+    "rent house rohini",
+    "apartments in rohini",
+    "plots in delhi",
+    "interior design delhi",
   ],
   openGraph: {
     title: siteTitle,
@@ -61,8 +68,14 @@ export const metadata: Metadata = {
     images: [`/og-image.jpg`],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: faviconDataUrl,
+    shortcut: faviconDataUrl,
+    apple: faviconDataUrl,
   },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)', color: '#1E2029' },
+  ],
 };
 
 const jsonLd = {
@@ -87,7 +100,7 @@ const jsonLd = {
   },
   areaServed: {
     '@type': 'Place',
-    name: 'Delhi',
+    name: 'Delhi, Rohini',
   },
 };
 
@@ -106,6 +119,8 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Falcon Estates" />
       </head>
       <body
         className={cn(
