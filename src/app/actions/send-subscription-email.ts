@@ -45,7 +45,7 @@ export async function sendSubscriptionEmail(
 
   try {
     const data = await resend.emails.send({
-      from: 'Falcon Estates <noreply@updates.falconaxe.com>',
+      from: 'Falcon Estates <noreply@contact.falconaxe.com>',
       to: [email],
       subject: 'Welcome to the Falcon Estates Newsletter!',
       react: React.createElement(SubscriptionEmail, { email }),
