@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -347,21 +348,14 @@ export default function AddPropertyPage() {
       const isBusinessUser = userProfile?.category === 'business' && userProfile.isVerified;
       const expirationDate = new Date();
 
-      if(isBusinessUser && userProfile.verifiedUntil) {
+      if(isBusinessUser && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date()) {
           const verifiedDate = userProfile.verifiedUntil.toDate();
-          // Check if verification is still valid
-          if(verifiedDate > new Date()) {
-              // Get difference in ms and add to today
-              const diffTime = Math.abs(verifiedDate.getTime() - new Date().getTime());
-              expirationDate.setTime(expirationDate.getTime() + diffTime);
-          } else {
-              expirationDate.setDate(expirationDate.getDate() + 30);
-          }
+          const diffTime = Math.abs(verifiedDate.getTime() - new Date().getTime());
+          expirationDate.setTime(expirationDate.getTime() + diffTime);
       } else {
-          // Default for non-business or expired business users
+          // Default for non-business or expired business users to 30 days
           expirationDate.setDate(expirationDate.getDate() + 30);
       }
-
 
       const newPropertyData = {
           ...propertyData,
