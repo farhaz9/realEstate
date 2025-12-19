@@ -160,9 +160,7 @@ export default function Header() {
   const router = useRouter();
   
   const isHomePage = pathname === '/';
-  const isPropertiesPage = pathname.startsWith('/properties');
-  const isInteriorsPage = pathname === '/interiors';
-  const isProfessionalsPage = pathname.startsWith('/professionals');
+  const canShowStickySearch = pathname.startsWith('/properties') || pathname.startsWith('/professionals') || pathname.startsWith('/interiors');
 
   const { isScrolled } = useOnScroll("offers"); 
   
@@ -180,20 +178,10 @@ export default function Header() {
   const isVendor = userProfile?.category === 'vendor';
 
   const handleSearch = (searchTerm: string) => {
-    let targetPath: string;
-
-    if (isProfessionalsPage) {
-      targetPath = '/professionals';
-    } else if (isInteriorsPage) {
-      targetPath = '/interiors';
-    } else {
-      targetPath = '/properties';
-    }
-
     const params = new URLSearchParams(window.location.search);
     params.set('q', searchTerm);
-    
-    router.replace(`${targetPath}?${params.toString()}`);
+    // Always search on the current page by replacing the URL query string
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   const handleSignOut = async () => {
@@ -230,7 +218,7 @@ export default function Header() {
     );
   };
 
-  const showStickySearch = isScrolled && (isHomePage || isInteriorsPage || isProfessionalsPage || isPropertiesPage);
+  const showStickySearch = isScrolled && (isHomePage || canShowStickySearch);
 
   return (
     <header className="sticky top-0 z-50 w-full">
