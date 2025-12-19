@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ImageUp, Loader2, Minus, Plus, X, ArrowLeft, Info, FileText, Banknote, Home, BedDouble, Bath } from 'lucide-react';
+import { ImageUp, Loader2, Minus, Plus, X, ArrowLeft, Info, FileText, Banknote, Home, BedDouble, Bath, MapPin, Phone, Star } from 'lucide-react';
 import type { Property, User, AppSettings } from '@/types';
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
@@ -86,6 +86,8 @@ interface ImagePreview {
   file?: File;
 }
 
+const TOTAL_FORM_FIELDS = 13; // Number of fields we are tracking for completion
+
 export default function AddPropertyPage() {
   const { user } = useUser();
   const firestore = useFirestore();
@@ -98,6 +100,7 @@ export default function AddPropertyPage() {
   const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [progress, setProgress] = useState(0);
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -136,6 +139,25 @@ export default function AddPropertyPage() {
       amenities: '',
     },
   });
+  
+  const watchedFields = form.watch();
+
+  useEffect(() => {
+    const filledFields = Object.values(watchedFields).filter(value => {
+        if (typeof value === 'object' && value !== null) {
+            return Object.values(value).some(v => v !== '' && v !== 0);
+        }
+        return value !== '' && value !== 0;
+    }).length;
+
+    const imageFilled = imagePreviews.length > 0;
+    const totalFilled = filledFields + (imageFilled ? 1 : 0);
+    
+    // Adjust total fields for calculation if images are included in tracking
+    const trackedFields = TOTAL_FORM_FIELDS + 1;
+
+    setProgress((totalFilled / trackedFields) * 100);
+  }, [watchedFields, imagePreviews]);
   
   useEffect(() => {
     if (isEditMode && propertyToEdit) {
@@ -353,6 +375,8 @@ export default function AddPropertyPage() {
       <Input {...field} {...props} placeholder={placeholder} className="pl-10" />
     </div>
   );
+  
+  const step = Math.floor(progress / 33) + 1;
 
   return (
     <div className="bg-muted/40 min-h-screen">
@@ -363,9 +387,9 @@ export default function AddPropertyPage() {
             </Button>
             
             <div className="mb-8">
-                <p className="text-sm font-semibold text-primary">STEP 1 OF 3</p>
+                <p className="text-sm font-semibold text-primary">STEP {Math.min(step, 3)} OF 3</p>
                 <h1 className="text-3xl font-bold mt-1">{isEditMode ? 'Edit Property' : 'List a New Property'}</h1>
-                <Progress value={33} className="mt-4 h-2" />
+                <Progress value={progress} className="mt-4 h-2" />
             </div>
 
             <Form {...form}>
@@ -469,225 +493,231 @@ export default function AddPropertyPage() {
                     </CardContent>
                 </Card>
                 
-                <div>
-                    <h3 className="text-xl font-semibold border-b pb-3 mb-6">Property Images</h3>
-                    {isEditMode ? (
-                        <Alert variant="destructive" className="mb-6">
-                            <Info className="h-4 w-4" />
-                            <AlertTitle>Important</AlertTitle>
-                            <AlertDescription>
-                                Property price and images cannot be changed after the initial listing. Please ensure all other details are correct before submitting.
-                            </AlertDescription>
-                        </Alert>
-                    ) : (
-                       <Alert className="mb-6">
-                            <Info className="h-4 w-4" />
-                            <AlertTitle>Please Note</AlertTitle>
-                            <AlertDescription>
-                                The price and images for your property cannot be changed after you submit the listing. Please fill these details carefully.
-                            </AlertDescription>
-                        </Alert>
-                    )}
-                    <FormField
-                    control={form.control}
-                    name="images"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Upload Images (up to 3, 1MB max each)</FormLabel>
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                className="w-full h-24 border-dashed text-lg"
-                                onClick={() => fileInputRef.current?.click()}
-                                disabled={isEditMode}
-                            >
-                                <ImageUp className="mr-2 h-6 w-6" />
-                                Click to Select Images
-                            </Button>
-                        <FormControl>
-                            <Input 
-                            type="file" 
-                            multiple
-                            accept="image/*"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            className="hidden"
-                            disabled={isSubmitting || imagePreviews.length >= 3 || isEditMode}
-                            />
-                        </FormControl>
-                        <FormDescription>
-                            {imagePreviews.length} / 3 selected.
-                        </FormDescription>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    
-                    {imagePreviews.length > 0 && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                            {imagePreviews.map((preview, index) => (
-                            <Card key={index} className="relative group overflow-hidden">
-                                <CardContent className="p-2 flex items-start gap-3">
-                                <Image
-                                    src={preview.url}
-                                    alt={`Preview ${index + 1}`}
-                                    width={64}
-                                    height={64}
-                                    className="w-16 h-16 object-cover rounded-md aspect-square bg-muted"
-                                />
-                                <div className="flex-1 truncate pt-1">
-                                    <p className="text-sm font-semibold truncate" title={preview.name}>{preview.name}</p>
-                                    {preview.size > 0 && (
-                                        <p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>
-                                    )}
+                <Card>
+                    <CardHeader>
+                         <CardTitle className="flex items-center gap-3"><ImageUp className="text-primary"/> Photos</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                       {isEditMode ? (
+                            <Alert variant="destructive" className="mb-6">
+                                <Info className="h-4 w-4" />
+                                <AlertTitle>Important</AlertTitle>
+                                <AlertDescription>
+                                    Property price and images cannot be changed after the initial listing.
+                                </AlertDescription>
+                            </Alert>
+                        ) : (
+                           <Alert className="mb-6">
+                                <Info className="h-4 w-4" />
+                                <AlertTitle>Please Note</AlertTitle>
+                                <AlertDescription>
+                                    The price and images for your property cannot be changed after you submit the listing.
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                        <FormField
+                        control={form.control}
+                        name="images"
+                        render={({ field }) => (
+                            <FormItem>
+                                <div 
+                                    className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:bg-muted"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                        <ImageUp className="h-6 w-6 text-primary" />
+                                    </div>
+                                    <p className="font-semibold">Click to upload or drag and drop</p>
+                                    <p className="text-xs text-muted-foreground">PNG, JPG, or GIF (max. 1MB each)</p>
                                 </div>
-                                {!isEditMode && (
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="absolute top-1 right-1 h-7 w-7 rounded-full shrink-0"
-                                        onClick={() => removeImagePreview(index)}
-                                        disabled={isSubmitting}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                )}
-                                </CardContent>
-                            </Card>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                
-                
-                <div className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="listingType"
-                        render={({ field }) => (
-                        <FormItem className="space-y-3">
-                            <FormLabel>Listing For</FormLabel>
                             <FormControl>
-                            <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                className="flex items-center space-x-4 pt-2"
-                                disabled={isSubmitting}
-                            >
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                    <RadioGroupItem value="sale" />
-                                </FormControl>
-                                <FormLabel className="font-normal">Sale</FormLabel>
-                                </FormItem>
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                    <RadioGroupItem value="rent" />
-                                </FormControl>
-                                <FormLabel className="font-normal">Rent</FormLabel>
-                                </FormItem>
-                            </RadioGroup>
+                                <Input 
+                                type="file" 
+                                multiple
+                                accept="image/*"
+                                ref={fileInputRef}
+                                onChange={handleImageChange}
+                                className="hidden"
+                                disabled={isSubmitting || imagePreviews.length >= 3 || isEditMode}
+                                />
                             </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                </div>
-                
-                <div>
-                    <h3 className="text-xl font-semibold border-b pb-3 mb-6">Location</h3>
-                    
-                    <div className="grid md:grid-cols-3 gap-8">
-                    <FormField
-                        control={form.control}
-                        name="location.address"
-                        render={({ field }) => (
-                            <FormItem className="md:col-span-3">
-                            <FormLabel>Full Address</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} disabled={isSubmitting} />
-                            </FormControl>
+                            <FormDescription className="text-center mt-2">
+                                {imagePreviews.length} / 3 selected.
+                            </FormDescription>
                             <FormMessage />
                             </FormItem>
                         )}
                         />
-                        <FormField
-                        control={form.control}
-                        name="location.pincode"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Pincode</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g., 110017" {...field} disabled={isSubmitting} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
+                        
+                        {imagePreviews.length > 0 && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                                {imagePreviews.map((preview, index) => (
+                                <Card key={index} className="relative group overflow-hidden">
+                                    <CardContent className="p-2 flex items-start gap-3">
+                                    <Image
+                                        src={preview.url}
+                                        alt={`Preview ${index + 1}`}
+                                        width={64}
+                                        height={64}
+                                        className="w-16 h-16 object-cover rounded-md aspect-square bg-muted"
+                                    />
+                                    <div className="flex-1 truncate pt-1">
+                                        <p className="text-sm font-semibold truncate" title={preview.name}>{preview.name}</p>
+                                        {preview.size > 0 && (
+                                            <p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>
+                                        )}
+                                    </div>
+                                    {!isEditMode && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="absolute top-1 right-1 h-7 w-7 rounded-full shrink-0"
+                                            onClick={() => removeImagePreview(index)}
+                                            disabled={isSubmitting}
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </Button>
+                                    )}
+                                    </CardContent>
+                                </Card>
+                                ))}
+                            </div>
                         )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="location.state"
-                        render={({ field }) => (
-                            <FormItem className="md:col-span-2">
-                            <FormLabel>State</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isSubmitting}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a state" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                {indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 className="text-xl font-semibold border-b pb-3 mb-6">Contact Details</h3>
-                    <div className="grid md:grid-cols-2 gap-8">
-                    <FormField
-                        control={form.control}
-                        name="contactNumber"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Contact Number</FormLabel>
-                            <FormControl>
-                                <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isSubmitting} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <FormField
-                        control={form.control}
-                        name="whatsappNumber"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>WhatsApp Number</FormLabel>
-                            <FormControl>
-                                <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isSubmitting} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
 
-                <div>
-                    <h3 className="text-xl font-semibold border-b pb-3 mb-6">Features & Amenities</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-end">
+                 <Card>
+                    <CardHeader>
+                         <CardTitle className="flex items-center gap-3"><MapPin className="text-primary"/> Location</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="location.address"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Full Address</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        <div className="grid md:grid-cols-3 gap-6">
+                            <FormField
+                            control={form.control}
+                            name="location.pincode"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Pincode</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., 110017" {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                            <FormField
+                            control={form.control}
+                            name="location.state"
+                            render={({ field }) => (
+                                <FormItem className="md:col-span-2">
+                                <FormLabel>State</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isSubmitting}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a state" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    {indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                         <CardTitle className="flex items-center gap-3"><Phone className="text-primary"/> Contact Details</CardTitle>
+                    </CardHeader>
+                     <CardContent className="grid md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="contactNumber"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Contact Number</FormLabel>
+                                <FormControl>
+                                    <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                            <FormField
+                            control={form.control}
+                            name="whatsappNumber"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>WhatsApp Number</FormLabel>
+                                <FormControl>
+                                    <Input type="tel" placeholder="e.g., 9876543210" {...field} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                         <CardTitle className="flex items-center gap-3"><Star className="text-primary"/> Features & Amenities</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="listingType"
+                            render={({ field }) => (
+                            <FormItem className="space-y-3">
+                                <FormLabel>Listing For</FormLabel>
+                                <FormControl>
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex items-center space-x-4 pt-2"
+                                    disabled={isSubmitting}
+                                >
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                        <RadioGroupItem value="sale" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Sale</FormLabel>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                        <RadioGroupItem value="rent" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Rent</FormLabel>
+                                    </FormItem>
+                                </RadioGroup>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="propertyType"
                             render={({ field }) => (
-                                <FormItem className="col-span-2 md:col-span-4">
+                                <FormItem>
                                 <FormLabel>Property Type</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value} disabled={isSubmitting}>
                                     <FormControl>
@@ -703,75 +733,74 @@ export default function AddPropertyPage() {
                                 </FormItem>
                             )}
                         />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-8 mt-6">
-                    <FormField
-                        control={form.control}
-                        name="furnishing"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Furnishing</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
-                            <FormControl>
-                                <SelectTrigger>
-                                <SelectValue placeholder="Select furnishing status" />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectItem value="unfurnished">Unfurnished</SelectItem>
-                                <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
-                                <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
-                            </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="amenities"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Amenities (Optional)</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                            <FormDescription>
-                            Enter a comma-separated list of amenities.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="overlooking"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Overlooking (Optional)</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} disabled={isSubmitting} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="ageOfConstruction"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Age of Construction (Optional)</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} disabled={isSubmitting} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    </div>
-                </div>
+                        <div className="grid md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="furnishing"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Furnishing</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                    <SelectValue placeholder="Select furnishing status" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="unfurnished">Unfurnished</SelectItem>
+                                    <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
+                                    <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
+                                </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="amenities"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Amenities (Optional)</FormLabel>
+                                <FormControl>
+                                <Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormDescription>
+                                Comma-separated list.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="overlooking"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Overlooking (Optional)</FormLabel>
+                                <FormControl>
+                                <Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="ageOfConstruction"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Age of Construction (Optional)</FormLabel>
+                                <FormControl>
+                                <Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} disabled={isSubmitting} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        </div>
+                    </CardContent>
+                </Card>
 
                 <div className="flex justify-end gap-4 pt-8">
                     <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting || form.formState.isSubmitting}>
