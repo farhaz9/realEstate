@@ -299,8 +299,9 @@ function PropertiesPageContent() {
         const aiLocationMatch = !aiAnalysis.location || p.location?.address?.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location?.state?.toLowerCase().includes(aiAnalysis.location.toLowerCase());
         const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType?.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
         const aiBedroomsMatch = !aiAnalysis.bedrooms || p.bedrooms >= aiAnalysis.bedrooms;
+        const aiBathroomsMatch = !aiAnalysis.bathrooms || p.bathrooms >= aiAnalysis.bathrooms;
         
-        return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch;
+        return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch && aiBathroomsMatch;
       }
       
       const locationMatch = location === 'all' || p.location?.state === location;

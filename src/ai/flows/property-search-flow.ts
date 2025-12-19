@@ -22,6 +22,7 @@ const SearchAnalysisSchema = z.object({
   propertyType: z.string().optional().describe('The type of property (e.g., "apartment", "villa", "plot").'),
   location: z.string().optional().describe('The geographical area, city, or neighborhood the user is interested in.'),
   bedrooms: z.number().optional().describe('The number of bedrooms the user is looking for.'),
+  bathrooms: z.number().optional().describe('The number of bathrooms the user is looking for.'),
 });
 export type SearchAnalysis = z.infer<typeof SearchAnalysisSchema>;
 
@@ -37,7 +38,8 @@ User Query: {{{query}}}
 - Identify if the user wants to "sale" (buy) or "rent".
 - Identify the type of property (e.g., "apartment", "villa", "house", "plot").
 - Identify the location (city, neighborhood, etc.).
-- Identify the number of bedrooms. The term 'BHK' means Bedroom, Hall, Kitchen. So, '3BHK' means 3 bedrooms.
+- Identify the number of bedrooms. The term 'BHK' means Bedroom, Hall, Kitchen. "2 beds" or "3BHK" means 2 or 3 bedrooms respectively.
+- Identify the number of bathrooms.
 
 Return only the extracted information in the specified JSON format. If a piece of information is not present, omit the key.`,
 });
