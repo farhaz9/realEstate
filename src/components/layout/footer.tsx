@@ -1,9 +1,14 @@
+'use client';
 
 import Link from "next/link";
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Send, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
+import { useActionState, useEffect, useRef } from "react";
+import { useFormStatus } from "react-dom";
+import { sendSubscriptionEmail } from "@/app/actions/send-subscription-email";
+import { useToast } from "@/hooks/use-toast";
 
 const socialLinks = [
     { name: "Facebook", icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" /></svg> },
@@ -12,7 +17,51 @@ const socialLinks = [
     { name: "Twitter", icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.634 4.212 3.791 4.649-.69.188-1.423.23-2.162.084.616 1.923 2.394 3.315 4.491 3.355-1.711 1.33-3.882 2.011-6.195 1.745 2.189 1.407 4.795 2.229 7.621 2.229 9.141 0 14.153-7.58 13.841-14.432 .865-.62 1.611-1.4 2.205-2.283z"/></svg> }
 ];
 
+function SubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button type="submit" disabled={pending}>
+            {pending ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Subscribing...
+                </>
+            ) : (
+                <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Subscribe
+                </>
+            )}
+        </Button>
+    )
+}
+
 export default function Footer() {
+    const initialState = { success: false, message: '' };
+    const [state, dispatch] = useActionState(sendSubscriptionEmail, initialState);
+    const formRef = useRef<HTMLFormElement>(null);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (state.message) {
+            if (state.success) {
+                toast({
+                    title: "Subscribed!",
+                    description: state.message,
+                    variant: 'success'
+                });
+                formRef.current?.reset();
+            } else {
+                toast({
+                    title: "Subscription Failed",
+                    description: state.message,
+                    variant: 'destructive'
+                });
+            }
+        }
+    }, [state, toast]);
+
     return (
         <footer className="bg-primary/5 border-t">
             <div className="container mx-auto px-4 py-16">
@@ -57,9 +106,9 @@ export default function Footer() {
                     <div className="lg:col-span-4 text-center lg:text-left">
                         <h3 className="font-bold mb-4">Subscribe to our Newsletter</h3>
                         <p className="text-muted-foreground text-sm mb-4">Get the latest properties and news delivered to your inbox.</p>
-                        <form className="flex items-center gap-2">
-                            <Input type="email" placeholder="Enter your email" className="flex-grow" />
-                            <Button type="submit">Subscribe</Button>
+                        <form ref={formRef} action={dispatch} className="flex items-center gap-2">
+                            <Input name="email" type="email" placeholder="Enter your email" className="flex-grow" required />
+                            <SubmitButton />
                         </form>
                          <div className="flex justify-center lg:justify-start gap-4 mt-6">
                             {socialLinks.map((link) => (
