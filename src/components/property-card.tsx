@@ -11,7 +11,7 @@ import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, deleteDocumentNonBlocking, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
 import { doc, arrayUnion, arrayRemove, increment, updateDoc } from "firebase/firestore";
-import { format } from "date-fns";
+import { format, formatDistanceToNow, differenceInDays } from "date-fns";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -160,6 +160,8 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
 
   const squareFeet = property.squareYards ? property.squareYards * 9 : 0;
   const dateListed = property.dateListed?.toDate ? property.dateListed.toDate() : null;
+  const expiresAtDate = property.expiresAt?.toDate ? property.expiresAt.toDate() : null;
+  const daysRemaining = expiresAtDate ? differenceInDays(expiresAtDate, new Date()) : null;
 
 
   return (
@@ -243,7 +245,18 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
           
           <div className="flex-grow mt-4" />
 
-          <div className="flex items-center justify-between pt-4 mt-4 text-muted-foreground border-t">
+          {showManagementControls && daysRemaining !== null && (
+            <div className={cn(
+                "mt-2 mb-2 p-2 rounded-md text-xs font-medium text-center",
+                daysRemaining <= 0 ? "bg-red-100 text-red-800" :
+                daysRemaining <= 7 ? "bg-amber-100 text-amber-800" :
+                "bg-green-100 text-green-800"
+            )}>
+                {daysRemaining <= 0 ? "Listing Expired" : `Expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-4 mt-auto text-muted-foreground border-t">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <BedDouble className="h-4 w-4" />
