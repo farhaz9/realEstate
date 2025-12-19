@@ -73,17 +73,15 @@ function ProfessionalsPageContent() {
   }, [professionals]);
 
   const filteredProfessionals = useMemo(() => {
-    if (!professionals) return [];
-
-    const activeProfessionals = professionals.filter(p => !p.isBlocked && p.isFeatured !== false);
-
+    const activeProfessionals = professionals?.filter(p => !p.isBlocked && p.isFeatured !== false) || [];
     const currentSearchTerm = searchParams.get('q') || '';
-    if (currentSearchTerm.trim() === '') {
-        return activeProfessionals;
+
+    if (!currentSearchTerm.trim()) {
+      return activeProfessionals;
     }
 
     if (!fuse) {
-        return activeProfessionals;
+      return activeProfessionals;
     }
 
     return fuse.search(currentSearchTerm).map(result => result.item);

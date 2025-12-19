@@ -252,62 +252,34 @@ function PropertiesPageContent() {
   const filteredProperties = useMemo(() => {
     if (!properties) return [];
     
-    let baseProperties = properties;
+    let baseProperties = [...properties];
     const currentSearchTerm = searchParams.get('q') || '';
 
+    // Step 1: Filter by search term (either AI or fuzzy)
     if (currentSearchTerm.trim() && fuse) {
-        // AI-driven search takes priority if analysis is available and the search term matches
-        if (aiAnalysis && currentSearchTerm) {
-            const aiResults = fuse.search(currentSearchTerm);
-            baseProperties = aiResults.map(result => result.item);
+        if (aiAnalysis) {
+            // AI-driven filtering
+            baseProperties = baseProperties.filter(p => {
+                const aiLocationMatch = !aiAnalysis.location || p.location?.address?.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location?.state?.toLowerCase().includes(aiAnalysis.location.toLowerCase());
+                const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType?.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
+                const aiBedroomsMatch = !aiAnalysis.bedrooms || p.bedrooms >= aiAnalysis.bedrooms;
+                const aiBathroomsMatch = !aiAnalysis.bathrooms || p.bathrooms >= aiAnalysis.bathrooms;
+                const aiListingTypeMatch = !aiAnalysis.listingType || p.listingType === aiAnalysis.listingType;
+                return aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch && aiBathroomsMatch && aiListingTypeMatch;
+            });
         } else {
-            // Fallback to regular fuzzy search
-            const fuseResults = fuse.search(currentSearchTerm);
-            baseProperties = fuseResults.map(result => result.item);
+             // Fallback to regular fuzzy search
+            baseProperties = fuse.search(currentSearchTerm).map(result => result.item);
         }
     }
     
-    let processedProperties = [...baseProperties];
-    
-    // Calculate distances if user location is available
-    if (location) {
-        processedProperties = processedProperties.map(p => {
-          if (p.location?.latitude && p.location?.longitude && (location as any).latitude) {
-            const distance = getDistance((location as any).latitude, (location as any).longitude, p.location.latitude, p.location.longitude);
-            return {
-              ...p,
-              distance: distance
-            };
-          }
-          return { ...p, distance: Infinity }; // Assign infinite distance if no coords
-        });
-    }
-
-    // Apply sorting
-    if (sortBy === 'nearby' && location) {
-      processedProperties.sort((a, b) => ((a as any).distance || Infinity) - ((b as any).distance || Infinity));
-    }
-
-    return processedProperties.filter(p => {
-      let tabMatch = activeTab === 'all' || 
+    // Step 2: Apply manual filters on the result of Step 1
+    return baseProperties.filter(p => {
+      const tabMatch = activeTab === 'all' || 
                        (activeTab === 'buy' && p.listingType === 'sale') ||
                        (activeTab === 'rent' && p.listingType === 'rent') ||
                        (activeTab === 'pg' && p.propertyType?.toLowerCase().includes('pg')) ||
                        (activeTab === 'commercial' && p.propertyType?.toLowerCase().includes('commercial'));
-
-
-      if (aiAnalysis && currentSearchTerm) {
-        if (aiAnalysis.listingType) {
-          tabMatch = p.listingType === aiAnalysis.listingType;
-        }
-
-        const aiLocationMatch = !aiAnalysis.location || p.location?.address?.toLowerCase().includes(aiAnalysis.location.toLowerCase()) || p.location?.state?.toLowerCase().includes(aiAnalysis.location.toLowerCase());
-        const aiPropertyTypeMatch = !aiAnalysis.propertyType || p.propertyType?.toLowerCase().includes(aiAnalysis.propertyType.toLowerCase());
-        const aiBedroomsMatch = !aiAnalysis.bedrooms || p.bedrooms >= aiAnalysis.bedrooms;
-        const aiBathroomsMatch = !aiAnalysis.bathrooms || p.bathrooms >= aiAnalysis.bathrooms;
-        
-        return tabMatch && aiLocationMatch && aiPropertyTypeMatch && aiBedroomsMatch && aiBathroomsMatch;
-      }
       
       const locationMatch = location === 'all' || p.location?.state === location;
       const pincodeMatch = !pincode || p.location?.pincode === pincode;
@@ -315,20 +287,10 @@ function PropertiesPageContent() {
       const bathroomsMatch = bathrooms === 0 || p.bathrooms >= bathrooms;
       const priceMatch = p.price >= priceRange[0] * 10000000 && p.price <= priceRange[1] * 10000000;
       
-      const manualFiltersApplied = location !== 'all' || pincode || bedrooms > 0 || bathrooms > 0;
-      
-      if (manualFiltersApplied && !currentSearchTerm.trim()) {
-        return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
-      }
-      
-      // When there is a search term, filters apply to the searched results
-      if (currentSearchTerm.trim()) {
-          return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
-      }
-
-      return tabMatch && priceMatch;
+      return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
     });
-  }, [properties, activeTab, searchParams, location, pincode, bedrooms, bathrooms, priceRange, aiAnalysis, sortBy, fuse]);
+
+  }, [properties, searchParams, fuse, aiAnalysis, activeTab, location, pincode, bedrooms, bathrooms, priceRange]);
   
   const uniqueLocations = useMemo(() => {
       if (!properties) return [];
