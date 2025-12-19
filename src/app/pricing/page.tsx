@@ -17,6 +17,16 @@ const plans: PricingTier[] = [
         color: "text-zinc-500",
     },
     {
+        name: "Basic",
+        level: "basic",
+        price: 499,
+        priceAnnual: 4990,
+        description: "For those with a few properties.",
+        features: ["5 Listings", "Basic Support", "Public Search"],
+        icon: <Zap className="w-6 h-6" />,
+        color: "text-blue-500",
+    },
+    {
         name: "Pro",
         level: "pro",
         price: 999,
