@@ -62,7 +62,7 @@ const plans: PricingTier[] = [
         price: 5500,
         priceAnnual: 19990,
         description: "For agencies and power users.",
-        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
+        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website"],
         icon: <Building className="w-6 h-6" />,
         color: "text-amber-500",
     },
@@ -85,8 +85,6 @@ export default function PricingPage() {
     }, [firestore, user]);
 
     const { data: userProfile } = useDoc<User>(userDocRef);
-
-    const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
     
     const handlePlanSelection = (plan: PricingTier) => {
         if (plan.price === 0) {
@@ -96,11 +94,6 @@ export default function PricingPage() {
 
         if (!user) {
             router.push('/login');
-            return;
-        }
-        
-        if (isCurrentlyVerified && plan.level === 'business') {
-            toast({ title: "You already have an active subscription.", variant: 'success' });
             return;
         }
 
@@ -142,21 +135,18 @@ export default function PricingPage() {
                     transactions: arrayUnion(newTransaction),
                 };
 
-                if (selectedPlan.level === 'business') {
-                    const newExpiryDate = new Date();
-                    if (isAnnual) {
-                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
-                    } else {
-                        newExpiryDate.setDate(newExpiryDate.getDate() + 30);
-                    }
-                    updateData.isVerified = true;
-                    updateData.verifiedUntil = newExpiryDate;
-                    updateData.listingCredits = increment(999);
-                     toast({ title: "Payment Successful!", description: `Welcome to the ${selectedPlan.name} plan! You are now verified.`, variant: "success"});
-                } else {
-                     toast({ title: "Payment Successful!", description: `Thank you for your purchase.`, variant: "success"});
+                const credits = {
+                    'basic': 5,
+                    'pro': 15,
+                    'business': 999, // Essentially unlimited
+                }[selectedPlan.level] || 0;
+                
+                if (credits > 0) {
+                    updateData.listingCredits = increment(credits);
                 }
 
+                toast({ title: "Payment Successful!", description: `Thank you for your purchase. You've received ${selectedPlan.level === 'business' ? 'unlimited' : credits} listing credits.`, variant: "success"});
+                
                 updateDocumentNonBlocking(userDocRef, updateData);
 
                 setIsPaymentAlertOpen(false);
