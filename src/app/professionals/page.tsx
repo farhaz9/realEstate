@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
+import Fuse from 'fuse.js';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -55,19 +56,33 @@ function ProfessionalsPageContent() {
 
   const { data: professionals, isLoading, error } = useCollection<User>(professionalsQuery);
 
-  const filteredProfessionals = professionals?.filter(p => {
-    const lowerCaseSearch = searchTerm.toLowerCase();
-    
-    if (p.isBlocked || p.isFeatured === false) {
-        return false;
+  const fuse = useMemo(() => {
+    if (!professionals) return null;
+    const options = {
+      keys: ['fullName', 'username', 'companyName', 'category', 'bio', 'servicesProvided'],
+      includeScore: true,
+      threshold: 0.4,
+      ignoreLocation: true,
+    };
+    return new Fuse(professionals.filter(p => !p.isBlocked && p.isFeatured !== false), options);
+  }, [professionals]);
+
+  const filteredProfessionals = useMemo(() => {
+    if (!professionals) return [];
+
+    const activeProfessionals = professionals.filter(p => !p.isBlocked && p.isFeatured !== false);
+
+    if (searchTerm.trim() === '') {
+        return activeProfessionals;
     }
 
-    return (
-        p.fullName.toLowerCase().includes(lowerCaseSearch) ||
-        (p.username && p.username.toLowerCase().includes(lowerCaseSearch)) ||
-        (p.companyName && p.companyName.toLowerCase().includes(lowerCaseSearch))
-    );
-  });
+    if (!fuse) {
+        return activeProfessionals;
+    }
+
+    return fuse.search(searchTerm).map(result => result.item);
+  }, [professionals, searchTerm, fuse]);
+
 
   const renderContent = () => {
     if (isLoading) {
@@ -122,7 +137,7 @@ function ProfessionalsPageContent() {
           <form id="professionals-search" className="relative mb-6 max-w-xl mx-auto" onSubmit={handleSearch}>
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
               <Input 
-                  placeholder="Search by name, category, or company"
+                  placeholder="Search by name, role, company or service"
                   className="pl-12 h-12 text-base rounded-full bg-background shadow-sm border-border"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
