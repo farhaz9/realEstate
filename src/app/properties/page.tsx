@@ -226,7 +226,7 @@ function PropertiesPageContent() {
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     let q: Query = collection(firestore, 'properties');
-    if (sortBy !== 'nearby') {
+    if (sortBy !== 'nearby' && sortBy !== 'relevance') {
       const [sortField, sortDirection] = sortBy.split('-');
       q = query(q, orderBy(sortField, sortDirection as 'asc' | 'desc'));
     }
@@ -250,12 +250,13 @@ function PropertiesPageContent() {
     
     let baseProperties = properties;
 
-    if (searchTerm && fuse) {
-        if (aiAnalysis) {
-            // AI-driven search takes priority if analysis is available
+    if (searchTerm.trim() && fuse) {
+        // AI-driven search takes priority if analysis is available and the search term matches
+        if (aiAnalysis && searchTerm) {
             const aiResults = fuse.search(searchTerm);
             baseProperties = aiResults.map(result => result.item);
         } else {
+            // Fallback to regular fuzzy search
             const fuseResults = fuse.search(searchTerm);
             baseProperties = fuseResults.map(result => result.item);
         }
@@ -310,8 +311,13 @@ function PropertiesPageContent() {
       
       const manualFiltersApplied = location !== 'all' || pincode || bedrooms > 0 || bathrooms > 0;
       
-      if (manualFiltersApplied) {
+      if (manualFiltersApplied && !searchTerm.trim()) {
         return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
+      }
+      
+      // When there is a search term, filters apply to the searched results
+      if (searchTerm.trim()) {
+          return tabMatch && locationMatch && pincodeMatch && bedroomsMatch && bathroomsMatch && priceMatch;
       }
 
       return tabMatch && priceMatch;
@@ -362,6 +368,7 @@ function PropertiesPageContent() {
                                         <SelectValue placeholder="Sort by" />
                                     </SelectTrigger>
                                     <SelectContent>
+                                        {searchTerm && <SelectItem value="relevance">Relevance</SelectItem>}
                                         <SelectItem value="dateListed-desc">Newest First</SelectItem>
                                         <SelectItem value="dateListed-asc">Oldest First</SelectItem>
                                         <SelectItem value="price-desc">Price: High to Low</SelectItem>
@@ -486,6 +493,7 @@ function PropertiesPageContent() {
                   <span className="text-muted-foreground">Sort by:</span><SelectValue />
               </SelectTrigger>
               <SelectContent>
+                  {searchTerm && <SelectItem value="relevance">Relevance</SelectItem>}
                   <SelectItem value="dateListed-desc">Newest</SelectItem>
                   <SelectItem value="price-desc">Price: High to Low</SelectItem>
                   <SelectItem value="price-asc">Price: Low to High</SelectItem>
