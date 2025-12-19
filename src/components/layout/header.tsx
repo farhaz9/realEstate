@@ -183,14 +183,10 @@ export default function Header() {
     if (isInteriorsPage) targetPath = '/interiors';
     if (isProfessionalsPage) targetPath = '/professionals';
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams();
     params.set('q', searchTerm);
     
-    if (pathname === targetPath) {
-      router.replace(`${targetPath}?${params.toString()}`);
-    } else {
-      router.push(`${targetPath}?${params.toString()}`);
-    }
+    router.push(`${targetPath}?${params.toString()}`);
   };
 
   const handleSignOut = async () => {
