@@ -146,14 +146,16 @@ export default function AboutUsPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.5 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="flex items-start gap-6 my-8"
+                  className="relative pl-12 pb-8"
                 >
-                  <div className="w-8 h-8 rounded-full bg-background border-2 border-primary flex items-center justify-center text-lg font-bold z-10 shadow-lg shrink-0 mt-1">
-                     <div className="w-3 h-3 rounded-full bg-primary" />
+                  <div className="absolute left-0 top-1">
+                    <div className="w-8 h-8 rounded-full bg-background border-2 border-primary flex items-center justify-center z-10 shadow-lg">
+                       <div className="w-3 h-3 rounded-full bg-primary" />
+                    </div>
                   </div>
-                  <div className="pt-1">
+                  <div>
                     <p className="text-base font-semibold text-primary">{event.year}</p>
-                    <h3 className="text-xl font-bold">{event.title}</h3>
+                    <h3 className="text-xl font-bold mt-1">{event.title}</h3>
                     <p className="text-muted-foreground mt-1">{event.description}</p>
                   </div>
                 </motion.div>
