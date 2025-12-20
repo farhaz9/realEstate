@@ -1,26 +1,19 @@
 
 import { MetadataRoute } from 'next';
-import { collection, getDocs, query } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase'; // Assuming a simplified init
 
 const URL = process.env.NEXT_PUBLIC_APP_URL || 'https://delhi-estate-luxe.com';
 
+// This function will be executed at build time on the server.
+// We cannot use client-side Firebase SDK here.
+// For a dynamic sitemap with Firestore data, you would need to use the Firebase Admin SDK.
+// Since this environment doesn't support the Admin SDK, we'll create a static sitemap
+// and can enhance it later if server-side data fetching is enabled.
+
 async function getDynamicPaths() {
-  const { firestore } = initializeFirebase();
-  
-  const propertiesSnapshot = await getDocs(query(collection(firestore, 'properties')));
-  const propertyPaths = propertiesSnapshot.docs.map(doc => ({
-    url: `${URL}/properties/${doc.id}`,
-    lastModified: doc.data().dateListed?.toDate() || new Date(),
-  }));
-
-  const professionalsSnapshot = await getDocs(query(collection(firestore, 'users')));
-  const professionalPaths = professionalsSnapshot.docs.map(doc => ({
-    url: `${URL}/professionals/${doc.id}`,
-    lastModified: doc.data().dateJoined?.toDate() || new Date(),
-  }));
-
-  return [...propertyPaths, ...professionalPaths];
+  // This is a placeholder. In a real scenario with server-side capabilities,
+  // you would fetch data from Firestore using the Admin SDK here.
+  // For now, it returns an empty array to prevent build errors.
+  return Promise.resolve([]);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -44,11 +37,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1 : 0.8,
   }));
   
-  try {
-    const dynamicRoutes = await getDynamicPaths();
-    return [...staticRoutes, ...dynamicRoutes];
-  } catch (error) {
-    console.error("Failed to generate dynamic sitemap paths:", error);
-    return staticRoutes;
-  }
+  // Since getDynamicPaths is a placeholder, we'll just return static routes for now.
+  // This resolves the build error.
+  const dynamicRoutes: MetadataRoute.Sitemap = await getDynamicPaths().catch(err => {
+      console.error("Sitemap generation for dynamic paths failed, returning static paths only. Error:", err);
+      return [];
+  });
+  
+  return [...staticRoutes, ...dynamicRoutes];
 }

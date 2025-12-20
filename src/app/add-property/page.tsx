@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import { ImageUp, Loader2, Minus, Plus, X, ArrowLeft, Info, FileText, Banknote, Home, BedDouble, Bath, MapPin, Phone, Star } from 'lucide-react';
 import type { Property, User, AppSettings, Transaction } from '@/types';
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, Suspense } from 'react';
 import Image from 'next/image';
 import ImageKit from 'imagekit-javascript';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -89,7 +89,7 @@ interface ImagePreview {
 
 const TOTAL_FORM_FIELDS = 13; // Number of fields we are tracking for completion
 
-export default function AddPropertyPage() {
+function AddPropertyForm() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -832,5 +832,13 @@ export default function AddPropertyPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AddPropertyPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AddPropertyForm />
+    </Suspense>
   );
 }
