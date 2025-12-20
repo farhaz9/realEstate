@@ -5,10 +5,10 @@ export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 w-fit">
        <div className="text-center">
-        <div className="text-base font-semibold tracking-wide text-black">
+        <div className="text-3xl font-semibold tracking-wide text-black">
           FALCON
         </div>
-        <div className="text-[0.45rem] tracking-[0.2em] text-purple-700">
+        <div className="text-xs tracking-[0.4em] text-purple-700">
           ESTATES
         </div>
     </div>
