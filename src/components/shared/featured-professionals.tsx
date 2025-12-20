@@ -8,7 +8,7 @@ import type { User } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -76,6 +76,14 @@ export function FeaturedProfessionals() {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+            <div className="mt-8 flex justify-center md:hidden">
+              <div className="bg-background border rounded-full p-1 flex items-center gap-1">
+                  <CarouselPrevious className="relative translate-y-0 left-0 top-0 h-10 w-10 hover:bg-primary/10 active:bg-primary/20" />
+                  <CarouselNext className="relative translate-y-0 right-0 top-0 h-10 w-10 hover:bg-primary/10 active:bg-primary/20" />
+              </div>
+            </div>
           </Carousel>
         )}
       </div>
