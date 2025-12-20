@@ -5,7 +5,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user account in the Delhi Estate Luxe application.",
+      "description": "Represents a user account in the Falcon Estates application.",
       "properties": {
         "id": {
           "type": "string",
@@ -117,7 +117,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Property",
       "type": "object",
-      "description": "Represents a property listed on the Delhi Estate Luxe application.",
+      "description": "Represents a property listed on the Falcon Estates application.",
       "properties": {
         "id": {
           "type": "string",
@@ -249,6 +249,14 @@
         "rejectionReason": {
             "type": "string",
             "description": "The reason a property was rejected by an admin."
+        },
+        "viewCount": {
+            "type": "number",
+            "description": "The number of times the property has been viewed."
+        },
+        "wishlistCount": {
+            "type": "number",
+            "description": "The number of users who have wishlisted the property."
         }
       },
       "required": [
@@ -287,6 +295,26 @@
           "date": { "type": "string", "description": "The date the review was submitted.", "format": "date-time" }
         },
         "required": ["id", "professionalId", "reviewerId", "reviewerName", "rating", "date"]
+    },
+    "Lead": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Lead",
+      "type": "object",
+      "description": "Represents an inquiry made by a user for a property.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the lead." },
+        "propertyId": { "type": "string", "description": "ID of the property being inquired about." },
+        "propertyTitle": { "type": "string", "description": "Title of the property." },
+        "agentId": { "type": "string", "description": "ID of the agent/owner of the property." },
+        "agentName": { "type": "string", "description": "Name of the agent/owner." },
+        "inquiringUserId": { "type": "string", "description": "ID of the user making the inquiry." },
+        "inquiringUserName": { "type": "string", "description": "Name of the inquiring user." },
+        "inquiringUserEmail": { "type": "string", "description": "Email of the inquiring user." },
+        "inquiringUserPhone": { "type": "string", "description": "Phone of the inquiring user." },
+        "leadDate": { "type": "string", "description": "The date the lead was generated.", "format": "date-time" },
+        "contactMethod": { "type": "string", "description": "How the user attempted to contact the agent.", "enum": ["call", "whatsapp", "email"] }
+      },
+      "required": ["id", "propertyId", "agentId", "inquiringUserId", "leadDate", "contactMethod"]
     },
     "AppSettings": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -399,6 +427,16 @@
                 "$ref": "#/entities/Property"
             },
             "description": "Public collection of all property listings."
+        }
+      },
+      {
+        "path": "/leads/{leadId}",
+        "definition": {
+            "entityName": "Lead",
+            "schema": {
+                "$ref": "#/entities/Lead"
+            },
+            "description": "Stores all lead generation interactions."
         }
       },
       {
