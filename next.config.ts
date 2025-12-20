@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
   },
   env: {
     NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
-      ? 'https://delhi-estate-luxe-416104.web.app' // Replace with your production URL
+      ? 'https://estates.falconaxe.com' // Use your custom domain
       : 'http://localhost:9002',
     NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: 'public_5T1+usknB76IO4KQynGBNsYlHMs=',
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: 'https://ik.imagekit.io/ei1qzvmub',

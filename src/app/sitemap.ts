@@ -1,7 +1,7 @@
 
 import { MetadataRoute } from 'next';
 
-const URL = process.env.NEXT_PUBLIC_APP_URL || 'https://delhi-estate-luxe.com';
+const URL = 'https://estates.falconaxe.com';
 
 // This function will be executed at build time on the server.
 // We cannot use client-side Firebase SDK here.
