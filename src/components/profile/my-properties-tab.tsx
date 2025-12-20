@@ -160,48 +160,51 @@ export function MyPropertiesTab() {
   };
   
   const isVendor = userProfile?.category === 'vendor';
+  const isLoading = isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings;
 
   return (
     <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            { (isUserLoading || arePropertiesLoading || isProfileLoading || isLoadingSettings) ? (
-                [...Array(3)].map((_, i) => (
-                    <Card key={i}>
-                        <Skeleton className="h-56 w-full" />
-                        <CardContent className="p-6">
-                            <Skeleton className="h-5 w-2/3 mb-2" />
-                            <Skeleton className="h-4 w-1/2" />
-                        </CardContent>
-                    </Card>
-                ))
-            ) : (
-                <>
-                    {!isVendor && (
-                      <Card 
-                          className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
-                          onClick={handleAddPropertyClick}
-                      >
-                          <CardContent className="p-6 text-center">
-                              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                  <Plus className="h-8 w-8 text-primary" />
-                              </div>
-                              <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
-                               <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
-                          </CardContent>
-                      </Card>
-                    )}
-                    
-                    {properties?.map((property) => (
-                      <PropertyCard key={property.id} property={property} showActiveBadge={true} />
-                    ))}
-                 </>
-            )}
-      </div>
+        <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                { isLoading ? (
+                    [...Array(3)].map((_, i) => (
+                        <Card key={i}>
+                            <Skeleton className="h-56 w-full" />
+                            <CardContent className="p-6">
+                                <Skeleton className="h-5 w-2/3 mb-2" />
+                                <Skeleton className="h-4 w-1/2" />
+                            </CardContent>
+                        </Card>
+                    ))
+                ) : (
+                    <>
+                        {!isVendor && (
+                          <Card 
+                              className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
+                              onClick={handleAddPropertyClick}
+                          >
+                              <CardContent className="p-6 text-center">
+                                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                      <Plus className="h-8 w-8 text-primary" />
+                                  </div>
+                                  <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
+                                   <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
+                              </CardContent>
+                          </Card>
+                        )}
+                        
+                        {properties?.map((property) => (
+                          <PropertyCard key={property.id} property={property} showActiveBadge={true} />
+                        ))}
+                     </>
+                )}
+            </div>
 
-      {userProfile && !isVendor && (
-        <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
-      )}
-      
+            {userProfile && !isVendor && (
+              <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
+            )}
+        </div>
+
       {isVendor && (
           <Alert>
               <Building className="h-4 w-4" />
