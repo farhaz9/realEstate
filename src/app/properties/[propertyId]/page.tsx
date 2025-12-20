@@ -311,10 +311,16 @@ export default function PropertyDetailPage() {
 
   return (
     <div className="bg-muted/40 pb-24 md:pb-8">
-       <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80">
-        <ArrowLeft className="h-5 w-5" />
-      </Button>
-      <div className="container mx-auto px-4 pt-8">
+       <div className="container mx-auto px-4 pt-8">
+        <div className="mb-6 hidden md:block">
+            <Button variant="ghost" onClick={() => router.back()}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+            </Button>
+        </div>
+        <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80 md:hidden">
+            <ArrowLeft className="h-5 w-5" />
+        </Button>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">

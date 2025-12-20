@@ -70,10 +70,13 @@ export default function AdminPropertyDetailPage() {
   
   return (
     <div className="bg-muted/40 min-h-screen">
-       <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80">
-        <ArrowLeft className="h-5 w-5" />
-      </Button>
-      <div className="container mx-auto px-4 py-8 pt-20">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+            <Button variant="ghost" onClick={() => router.back()}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+            </Button>
+        </div>
         {isEditing ? (
              <PropertyForm 
               propertyToEdit={property} 
