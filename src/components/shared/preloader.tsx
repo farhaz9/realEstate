@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Logo } from './logo';
-import { motion } from 'framer-motion';
+import { WaveLoader } from '@/components/ui/wave-loader';
 
 const Preloader = () => {
   const [loading, setLoading] = useState(true);
@@ -31,13 +31,8 @@ const Preloader = () => {
     >
       <div className="flex flex-col items-center gap-4">
         <Logo />
-        <div className="w-32 h-1 bg-muted rounded-full overflow-hidden mt-2">
-          <motion.div
-            className="h-full bg-primary"
-            initial={{ width: 0 }}
-            animate={{ width: loading ? '60%' : '100%' }}
-            transition={{ duration: loading ? 2 : 0.5, ease: 'easeInOut' }}
-          />
+        <div className="mt-4">
+            <WaveLoader />
         </div>
       </div>
     </div>
