@@ -219,7 +219,7 @@ export default function Header() {
     );
   };
 
-  const showStickySearch = isScrolled && (isHomePage || canShowStickySearch) && !isMobile;
+  const showStickySearch = isScrolled && (isHomePage || canShowStickySearch);
 
   return (
     <header className="sticky top-0 z-50 w-full">
