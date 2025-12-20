@@ -1,9 +1,10 @@
+
 "use client"
 
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
-import { X, CheckCircle2, AlertTriangle, Info } from "lucide-react"
+import { X, CheckCircle2, AlertTriangle, Info, Gem } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -136,7 +137,7 @@ const ToastIcon = ({ variant }: VariantProps<typeof toastVariants>) => {
     }
     return (
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
-            <Info className="h-6 w-6 text-secondary-foreground" />
+            <Gem className="h-5 w-5 text-secondary-foreground" />
         </div>
     );
 }

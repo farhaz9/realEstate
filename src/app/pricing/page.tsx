@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { CreativePricing, type PricingTier } from "@/components/ui/creative-pricing";
-import { Zap, Bot, Star, Building, Verified } from "lucide-react";
+import { Zap, Bot, Star, Building, Verified, Gem } from "lucide-react";
 import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion, increment } from 'firebase/firestore';
 import type { User, AppSettings } from '@/types';
@@ -101,11 +101,10 @@ export default function PricingPage() {
         if(userProfile?.category === 'user') {
             toast({
                 title: "Upgrade Required",
-                description: "Please upgrade to a professional account from your profile settings to purchase a plan.",
-                variant: 'destructive',
+                description: "Upgrade to a professional account to purchase a plan.",
                 action: (
-                    <Button onClick={() => router.push('/settings')}>Go to Settings</Button>
-                )
+                    <Button onClick={() => router.push('/settings')} className="mt-2">Go to Settings</Button>
+                ),
             });
             return;
         }
