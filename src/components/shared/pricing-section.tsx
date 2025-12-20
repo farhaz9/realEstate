@@ -210,35 +210,39 @@ export function PricingSection() {
                 <Loader2 className="h-10 w-10 animate-spin" />
             </Card>
          ) : (
-          <Card className="max-w-md w-full shadow-2xl shadow-primary/20 bg-gradient-to-br from-primary to-purple-500 relative overflow-hidden rounded-3xl border-0">
-            <CardHeader className="text-center pt-12">
+          <Card className="max-w-md w-full shadow-2xl shadow-primary/20 overflow-hidden rounded-3xl border-0">
+            <div className="bg-white pt-12 pb-8 text-center">
               <div className="flex justify-center items-center gap-2 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
-                      <Verified className="w-8 h-8 text-blue-400" />
+                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                      <Verified className="w-8 h-8 text-blue-500" />
                   </div>
               </div>
-              <CardTitle className="text-4xl font-extrabold text-white">
-                {isAnnual ? formatPrice(annualPrice) : formatPrice(monthlyPrice)}
-                <span className="text-lg font-medium text-white/80">/{isAnnual ? 'year' : 'month'}</span>
-              </CardTitle>
-              <CardDescription className="text-white/80">Get the visibility you deserve.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-4">
-                {[...benefits, `Valid for ${isAnnual ? '365' : '30'} days`].map((benefit, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-1">
-                      <CheckCircle2 className="h-5 w-5 text-green-300" />
-                    </div>
-                    <span className="font-medium text-white">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter className="p-6">
-                 <AlertDialog>
+              <h3 className="text-3xl font-bold text-foreground">
+                Pro Verified
+              </h3>
+              <p className="text-muted-foreground">Get the visibility you deserve.</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-primary to-purple-500 p-8 text-center text-white">
+                <CardTitle className="text-4xl font-extrabold text-white">
+                    {isAnnual ? formatPrice(annualPrice) : formatPrice(monthlyPrice)}
+                    <span className="text-lg font-medium text-white/80">/{isAnnual ? 'year' : 'month'}</span>
+                </CardTitle>
+
+                <ul className="space-y-4 text-left mt-8">
+                    {[...benefits, `Valid for ${isAnnual ? '365' : '30'} days`].map((benefit, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-1">
+                        <CheckCircle2 className="h-5 w-5 text-green-300" />
+                        </div>
+                        <span className="font-medium text-white">{benefit}</span>
+                    </li>
+                    ))}
+                </ul>
+
+                <AlertDialog>
                     <AlertDialogTrigger asChild>
-                         <Button size="lg" className="w-full h-12 text-lg bg-white text-primary hover:bg-white/90 shadow-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
+                         <Button size="lg" className="w-full h-12 text-lg mt-8 bg-white text-primary hover:bg-white/90 shadow-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
                             <Verified className="mr-2 h-5 w-5" />
                             {isCurrentlyVerified ? 'You are already Verified' : 'Get Verified Now'}
                         </Button>
@@ -262,7 +266,7 @@ export function PricingSection() {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
-            </CardFooter>
+            </div>
           </Card>
          )}
         </div>
