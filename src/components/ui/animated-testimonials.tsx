@@ -56,10 +56,10 @@ export const AnimatedTestimonials = ({
   };
 
   return (
-    <div className={cn("max-w-sm md:max-w-4xl mx-auto px-4 md:px-8 lg:px-12 py-20", className)}>
-      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-20">
-        <div>
-          <div className="relative h-80 w-full">
+    <div className={cn("max-w-sm md:max-w-4xl mx-auto px-4 md:px-8 lg:px-12 py-10 md:py-20", className)}>
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20">
+        <div className="flex items-center justify-center">
+          <div className="relative h-64 w-64 md:h-80 md:w-full">
             <AnimatePresence>
               {testimonials.map((testimonial, index) => (
                 <motion.div
@@ -78,7 +78,7 @@ export const AnimatedTestimonials = ({
                     zIndex: isActive(index)
                       ? 999
                       : testimonials.length + 2 - index,
-                    y: isActive(index) ? [0, -80, 0] : 0,
+                    y: isActive(index) ? [0, -40, 0] : 0,
                   }}
                   exit={{
                     opacity: 0,
@@ -131,7 +131,7 @@ export const AnimatedTestimonials = ({
             <p className="text-sm text-muted-foreground">
               {testimonials[active].designation}
             </p>
-            <motion.p className="text-lg text-muted-foreground mt-8">
+            <motion.p className="text-base text-muted-foreground mt-4 md:mt-8">
               {isClient && testimonials[active].quote.split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -157,7 +157,7 @@ export const AnimatedTestimonials = ({
               ))}
             </motion.p>
           </motion.div>
-          <div className="flex gap-4 pt-12 md:pt-0">
+          <div className="flex gap-4 pt-8 md:pt-0">
             <button
               onClick={handlePrev}
               className="h-7 w-7 rounded-full bg-secondary flex items-center justify-center group/button"
