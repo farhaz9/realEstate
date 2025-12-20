@@ -30,7 +30,7 @@ const Preloader = () => {
       }`}
     >
       <div className="flex flex-col items-center gap-4">
-        <Logo />
+        <Logo size="large" />
         <div className="mt-4">
             <WaveLoader />
         </div>

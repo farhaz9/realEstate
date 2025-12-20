@@ -1,14 +1,25 @@
 import Link from 'next/link';
-import { Building2 } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
-export function Logo() {
+interface LogoProps {
+  size?: 'default' | 'large';
+  className?: string;
+}
+
+export function Logo({ size = 'default', className }: LogoProps) {
   return (
-    <Link href="/" className="flex items-center gap-2 w-fit">
+    <Link href="/" className={cn("flex items-center gap-2 w-fit", className)}>
        <div className="text-center">
-        <div className="text-3xl font-semibold tracking-wide text-black">
+        <div className={cn(
+          "font-semibold tracking-wide text-black",
+          size === 'large' ? 'text-5xl' : 'text-xl'
+        )}>
           FALCON
         </div>
-        <div className="text-xs tracking-[0.4em] text-purple-700">
+        <div className={cn(
+          "tracking-[0.4em] text-purple-700",
+          size === 'large' ? 'text-sm' : 'text-[0.5rem]'
+        )}>
           ESTATES
         </div>
     </div>
