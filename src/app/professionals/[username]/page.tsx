@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, limit } from 'firebase/firestore';
 import type { User, Property } from '@/types';
 import { Loader2, ArrowLeft, Mail, MessageSquare, Verified, Building, Phone, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
