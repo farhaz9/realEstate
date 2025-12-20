@@ -10,6 +10,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import Script from "next/script";
 import { AuthGate } from "@/components/layout/auth-gate";
 import NotificationListener from "@/components/shared/notification-listener";
+import Preloader from "@/components/shared/preloader";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -134,6 +135,7 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
+        <Preloader />
         <div>
           <Script
               id="razorpay-checkout-js"
