@@ -5,6 +5,7 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Features } from "@/components/ui/features";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { Lightbulb, Rocket, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 const founders = [
   {
@@ -102,25 +103,43 @@ export default function AboutUsPage() {
                 <div className="absolute left-1/2 h-full w-0.5 bg-border -translate-x-1/2"></div>
                 {timelineEvents.map((event, index) => (
                     <div key={index} className="flex items-center justify-center my-16">
-                        <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'pl-8'}`}>
+                        <motion.div 
+                          initial={{ opacity: 0, x: -50 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true, amount: 0.5 }}
+                          transition={{ duration: 0.6 }}
+                          className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'pl-8'}`}
+                        >
                              {index % 2 === 0 && (
                                 <>
                                     <h3 className="text-xl font-bold text-primary">{event.title}</h3>
                                     <p className="text-muted-foreground mt-2">{event.description}</p>
                                 </>
                             )}
-                        </div>
-                        <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold z-10 shadow-lg shrink-0">
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, amount: 0.5 }}
+                          transition={{ duration: 0.5 }}
+                          className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold z-10 shadow-lg shrink-0"
+                        >
                             {event.year}
-                        </div>
-                         <div className={`w-5/12 ${index % 2 !== 0 ? 'pl-8' : 'text-left pr-8'}`}>
+                        </motion.div>
+                         <motion.div 
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.5 }}
+                            transition={{ duration: 0.6 }}
+                            className={`w-5/12 ${index % 2 !== 0 ? 'pl-8' : 'text-left pr-8'}`}
+                          >
                             {index % 2 !== 0 && (
                                 <>
                                     <h3 className="text-xl font-bold text-primary">{event.title}</h3>
                                     <p className="text-muted-foreground mt-2">{event.description}</p>
                                 </>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
                 ))}
             </div>
@@ -129,7 +148,14 @@ export default function AboutUsPage() {
             <div className="relative md:hidden">
               <div className="absolute left-8 top-0 h-full w-0.5 bg-border"></div>
               {timelineEvents.map((event, index) => (
-                <div key={index} className="flex items-start gap-6 my-8">
+                <motion.div 
+                  key={index} 
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="flex items-start gap-6 my-8"
+                >
                   <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold z-10 shadow-lg shrink-0">
                     {event.year}
                   </div>
@@ -137,7 +163,7 @@ export default function AboutUsPage() {
                     <h3 className="text-xl font-bold text-primary">{event.title}</h3>
                     <p className="text-muted-foreground mt-1">{event.description}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
         </div>
