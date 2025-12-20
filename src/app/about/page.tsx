@@ -6,19 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Lightbulb, Rocket, Users } from "lucide-react";
 import Image from "next/image";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 
 const founders = [
   {
+    quote: "An ECE graduate with a passion for technology and real estate, Shahbaz leads the company's vision and strategy, ensuring Falcon Estates stays at the forefront of innovation.",
     name: "Shahbaz",
-    role: "Co-Founder & CEO",
-    bio: "An ECE graduate with a passion for technology and real estate, Shahbaz leads the company's vision and strategy, ensuring Falcon Estates stays at the forefront of innovation.",
-    avatar: "https://placehold.co/100x100/6D28D9/FFFFFF/png?text=S"
+    designation: "Co-Founder & CEO",
+    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
+    quote: "Also an ECE graduate, Farhaz is the technical architect behind the Falcon Estates platform. He is dedicated to building a seamless and secure user experience.",
     name: "Farhaz",
-    role: "Co-Founder & CTO",
-    bio: "Also an ECE graduate, Farhaz is the technical architect behind the Falcon Estates platform. He is dedicated to building a seamless and secure user experience.",
-    avatar: "https://placehold.co/100x100/6D28D9/FFFFFF/png?text=F"
+    designation: "Co-Founder & CTO",
+    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   }
 ];
 
@@ -166,23 +167,7 @@ export default function AboutUsPage() {
               The driving force behind Falcon Estates, united by a shared vision.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {founders.map((founder) => (
-              <Card key={founder.name} className="overflow-hidden">
-                <div className="flex flex-col md:flex-row items-center p-6 gap-6">
-                  <Avatar className="h-24 w-24 border-4 border-primary/20">
-                    <AvatarImage src={founder.avatar} alt={founder.name} />
-                    <AvatarFallback className="text-3xl">{founder.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="text-center md:text-left">
-                    <h3 className="text-xl font-bold">{founder.name}</h3>
-                    <p className="text-sm font-semibold text-primary">{founder.role}</p>
-                    <p className="text-muted-foreground mt-2">{founder.bio}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <AnimatedTestimonials testimonials={founders} />
         </div>
       </section>
     </div>
