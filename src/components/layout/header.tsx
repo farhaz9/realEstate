@@ -163,7 +163,7 @@ export default function Header() {
   const isHomePage = pathname === '/';
   const canShowStickySearch = pathname.startsWith('/properties') || pathname.startsWith('/professionals') || pathname.startsWith('/interiors');
 
-  const { isScrolled } = useOnScroll(100); 
+  const { isScrolled } = useOnScroll(0); 
   
   const firestore = useFirestore();
 
