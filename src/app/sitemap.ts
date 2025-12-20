@@ -17,28 +17,77 @@ async function getDynamicPaths() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = [
-    '',
-    '/properties',
-    '/interiors',
-    '/professionals',
-    '/services',
-    '/contact',
-    '/pricing',
-    '/login',
-    '/about',
-    '/privacy-policy',
-    '/terms-and-conditions',
-    '/refund-policy',
-  ].map(route => ({
-    url: `${URL}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1 : 0.8,
-  }));
+  // Define static routes with their SEO priority and change frequency
+  const staticRoutes: MetadataRoute.Sitemap = [
+    {
+      url: `${URL}/`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1.0,
+    },
+    {
+      url: `${URL}/properties`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${URL}/interiors`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${URL}/professionals`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${URL}/services`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${URL}/pricing`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${URL}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${URL}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${URL}/privacy-policy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${URL}/terms-and-conditions`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${URL}/refund-policy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+  ];
   
-  // Since getDynamicPaths is a placeholder, we'll just return static routes for now.
-  // This resolves the build error.
+  // Placeholder for dynamic routes (e.g., individual properties, professionals)
   const dynamicRoutes: MetadataRoute.Sitemap = await getDynamicPaths().catch(err => {
       console.error("Sitemap generation for dynamic paths failed, returning static paths only. Error:", err);
       return [];
