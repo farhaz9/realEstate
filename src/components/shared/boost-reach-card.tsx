@@ -28,10 +28,6 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
             </div>
              <Card className="max-w-md w-full mx-auto shadow-2xl shadow-primary/20 bg-gradient-to-br from-primary to-purple-500 relative overflow-hidden rounded-3xl border-0">
                 <CardContent className="p-8 text-center text-white">
-                     <div className="absolute top-4 right-4 bg-black/20 text-white text-xs font-bold uppercase px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
-                        <Star className="w-3 h-3" /> PRO
-                    </div>
-
                     <div className="mb-6 flex justify-center">
                         <div className="w-20 h-20 rounded-full bg-black/20 flex items-center justify-center">
                              <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
