@@ -177,7 +177,7 @@ export function MyPropertiesTab() {
       ) : (
         <Tabs defaultValue="add" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="add">Add & Boost</TabsTrigger>
+                <TabsTrigger value="add">Add &amp; Purchase</TabsTrigger>
                 <TabsTrigger value="properties">Your Properties ({properties?.length || 0})</TabsTrigger>
             </TabsList>
             <TabsContent value="add" className="mt-6">
@@ -220,7 +220,7 @@ export function MyPropertiesTab() {
                     <div className="text-center py-16 border-2 border-dashed rounded-lg">
                         <Building className="mx-auto h-12 w-12 text-muted-foreground" />
                         <h3 className="mt-4 text-2xl font-semibold">No Properties Listed Yet</h3>
-                        <p className="text-muted-foreground mt-2">Click the "Add & Boost" tab to list your first property.</p>
+                        <p className="text-muted-foreground mt-2">Click the "Add &amp; Purchase" tab to list your first property.</p>
                     </div>
                 )}
             </TabsContent>
