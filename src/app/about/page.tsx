@@ -24,17 +24,17 @@ const founders = [
 
 const timelineEvents = [
   {
-    year: "2022",
-    title: "The Spark",
+    year: "2023",
+    title: "The Spark & Graduation",
     description: "As ECE graduates, co-founders Shahbaz and Farhaz identified a gap in the market for a tech-driven, transparent, and user-friendly real estate platform in Delhi."
   },
   {
-    year: "2023",
+    year: "2024",
     title: "Building the Foundation",
     description: "Months of dedicated development and market research culminate in the first version of the Falcon Estates platform, focusing on a robust and secure user experience."
   },
   {
-    year: "2024",
+    year: "2025",
     title: "Official Launch",
     description: "Falcon Estates officially launches, offering a curated selection of properties and connecting buyers, sellers, and professionals across Delhi with a modern, efficient solution."
   },
