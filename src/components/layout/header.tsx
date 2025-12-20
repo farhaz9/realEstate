@@ -48,6 +48,7 @@ import { doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 const navLinks = [
@@ -157,6 +158,7 @@ export default function Header() {
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const isMobile = useIsMobile();
   
   const isHomePage = pathname === '/';
   const canShowStickySearch = pathname.startsWith('/properties') || pathname.startsWith('/professionals') || pathname.startsWith('/interiors');
@@ -217,7 +219,7 @@ export default function Header() {
     );
   };
 
-  const showStickySearch = isScrolled && (isHomePage || canShowStickySearch);
+  const showStickySearch = isScrolled && (isHomePage || canShowStickySearch) && !isMobile;
 
   return (
     <header className="sticky top-0 z-50 w-full">
