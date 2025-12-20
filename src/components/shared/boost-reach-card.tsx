@@ -15,7 +15,7 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
     return (
         <div className="py-8">
             <div className="text-center mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold">Boost Your Reach</h2>
+                <h2 className="text-3xl md:text-4xl font-bold">Purchase Listing Credit</h2>
                 <p className="mt-2 text-muted-foreground max-w-lg mx-auto">
                     Purchase listing credits to post more properties.
                 </p>
