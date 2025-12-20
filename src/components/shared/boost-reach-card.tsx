@@ -20,38 +20,29 @@ export function BoostReachCard({ price, onPurchase }: BoostReachCardProps) {
                     Purchase listing credits to post more properties.
                 </p>
             </div>
-             <Card className="max-w-xs w-full mx-auto shadow-2xl shadow-primary/20 bg-gradient-to-br from-primary to-purple-500 relative overflow-hidden rounded-3xl border-0">
-                <CardContent className="p-8 text-center text-white">
-                    <div className="mb-4 flex justify-center">
-                        <div className="w-20 h-20 rounded-full bg-black/20 flex items-center justify-center">
-                             <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
-                                <Gem className="w-8 h-8" />
-                             </div>
+             <Card className="max-w-2xl w-full mx-auto shadow-2xl shadow-primary/20 bg-gradient-to-br from-primary to-purple-500 relative overflow-hidden rounded-xl border-0">
+                <CardContent className="p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="text-center md:text-left">
+                        <h3 className="text-2xl font-semibold">Buy a Listing Credit</h3>
+                        <p className="text-white/80">Get your property seen by more potential buyers.</p>
+                    </div>
+                    <div className="flex-shrink-0 flex flex-col items-center gap-4">
+                        <div className="text-center">
+                            <span className="text-5xl font-extrabold tracking-tighter">
+                                {formatPrice(price)}
+                            </span>
+                             <div className="text-sm font-medium">
+                                per listing
+                            </div>
                         </div>
+                        <Button 
+                            size="lg" 
+                            className="w-full h-12 text-base bg-white text-primary hover:bg-white/90 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all"
+                            onClick={onPurchase}
+                        >
+                            Purchase Now <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
                     </div>
-
-                    <h3 className="text-xl font-semibold">Buy Listing Credit</h3>
-                    <div className="my-2">
-                        <span className="text-5xl font-extrabold tracking-tighter">
-                            {formatPrice(price)}
-                        </span>
-                    </div>
-                     <div className="inline-block bg-black/20 text-sm font-medium px-4 py-1.5 rounded-full">
-                        per listing
-                    </div>
-
-                     <Button 
-                        size="lg" 
-                        className="w-full h-14 text-lg mt-8 bg-white text-primary hover:bg-white/90 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
-                        onClick={onPurchase}
-                    >
-                        Purchase Now <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-
-                     <p className="text-xs text-white/70 mt-4">
-                        Secure payment powered by Razorpay
-                    </p>
-
                 </CardContent>
             </Card>
         </div>
