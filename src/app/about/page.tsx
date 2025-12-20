@@ -2,11 +2,9 @@
 'use client';
 
 import { PageHero } from "@/components/shared/page-hero";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Lightbulb, Rocket, Users } from "lucide-react";
-import Image from "next/image";
+import { Features } from "@/components/ui/features";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import { Lightbulb, Rocket, Users } from "lucide-react";
 
 const founders = [
   {
@@ -46,6 +44,29 @@ const timelineEvents = [
   }
 ];
 
+const missionFeatures = [
+    {
+      id: 1,
+      icon: Lightbulb,
+      title: "Innovation",
+      description: "Leveraging technology to create seamless and intelligent real estate solutions.",
+      image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      id: 2,
+      icon: Users,
+      title: "Community",
+      description: "Building a network of trusted professionals and informed users.",
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      id: 3,
+      icon: Rocket,
+      title: "Excellence",
+      description: "Striving for the highest standards in everything we do, from listings to customer support.",
+      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=3540&auto=format&fit=crop",
+    },
+];
 
 export default function AboutUsPage() {
   return (
@@ -60,49 +81,12 @@ export default function AboutUsPage() {
       />
       
       <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Mission</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              To simplify the real estate experience in Delhi by providing a transparent, efficient, and trustworthy platform that connects people with their dream properties and the best professionals in the industry.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 mt-16 max-w-5xl mx-auto">
-            <Card className="text-center">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                  <Lightbulb className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle>Innovation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Leveraging technology to create seamless and intelligent real estate solutions.</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                  <Users className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle>Community</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Building a network of trusted professionals and informed users.</p>
-              </CardContent>
-            </Card>
-             <Card className="text-center">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                  <Rocket className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle>Excellence</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Striving for the highest standards in everything we do, from listings to customer support.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        <Features 
+            features={missionFeatures}
+            primaryColor="primary"
+            progressGradientLight="bg-gradient-to-r from-primary to-purple-500"
+            progressGradientDark="bg-gradient-to-r from-primary to-purple-500"
+        />
       </section>
 
       <section className="py-16 md:py-24 bg-primary/5">
