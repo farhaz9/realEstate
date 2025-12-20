@@ -162,7 +162,8 @@ function AddPropertyForm() {
   
   useEffect(() => {
     if (isEditMode && propertyToEdit) {
-      if (propertyToEdit.userId !== user?.uid) {
+      const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+      if (propertyToEdit.userId !== user?.uid && !isAdmin) {
         toast({ title: 'Unauthorized', description: 'You do not have permission to edit this property.', variant: 'destructive' });
         router.push('/settings?tab=listings');
         return;
