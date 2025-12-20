@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useUser, useAuth } from '@/firebase';
@@ -6,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays, AlertTriangle } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays, AlertTriangle, ArrowRight } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import {
   AlertDialog,
@@ -28,6 +29,7 @@ import { EditProfileForm } from './edit-profile-form';
 
 interface ProfileDetailsTabProps {
     userProfile: UserType | null;
+    onUpgradeAccount: () => void;
 }
 
 const categoryDisplay: Record<string, string> = {
@@ -37,7 +39,7 @@ const categoryDisplay: Record<string, string> = {
   'interior-designer': 'Interior Designer'
 };
 
-export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
+export function ProfileDetailsTab({ userProfile, onUpgradeAccount }: ProfileDetailsTabProps) {
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -65,9 +67,25 @@ export function ProfileDetailsTab({ userProfile }: ProfileDetailsTabProps) {
   );
   
   const isLoading = !userProfile;
+  const isBuyerTenant = userProfile?.category === 'user';
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+        {isBuyerTenant && (
+            <Card className="bg-primary/5 border-primary/20">
+                <CardHeader>
+                    <CardTitle>Become a Professional</CardTitle>
+                    <CardDescription>
+                        Unlock features like property listings and a public profile by upgrading your account.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button onClick={onUpgradeAccount}>
+                        Upgrade Account <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                </CardContent>
+            </Card>
+        )}
         <Card>
           <CardHeader>
             <CardTitle>Personal Details</CardTitle>

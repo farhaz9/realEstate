@@ -98,6 +98,18 @@ export default function PricingPage() {
             return;
         }
 
+        if(userProfile?.category === 'user') {
+            toast({
+                title: "Upgrade Required",
+                description: "Please upgrade to a professional account from your profile settings to purchase a plan.",
+                variant: 'destructive',
+                action: (
+                    <Button onClick={() => router.push('/settings')}>Go to Settings</Button>
+                )
+            });
+            return;
+        }
+
         setSelectedPlan(plan);
         setIsPaymentAlertOpen(true);
     };

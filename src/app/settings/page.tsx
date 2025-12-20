@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2, Gem, Bot, Zap, Star, Building } from 'lucide-react';
+import { User, Settings, ShoppingBag, Verified, Loader2, Camera, Upload, Edit, Trash2, Gem, Bot, Zap, Star, Building, HelpCircle, Briefcase, KeyRound, Home, CheckCircle2 } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -34,6 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -46,7 +47,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from '@/lib/utils';
-
+import { Label } from '@/components/ui/label';
 
 const categoryDisplay: Record<string, string> = {
   'user': 'Buyer / Tenant',
@@ -62,6 +63,58 @@ const planDetails: Record<string, { name: string; icon: React.ElementType }> = {
     pro: { name: 'Pro', icon: Star },
     business: { name: 'Business', icon: Building },
 };
+
+const professionalRoles = [
+    { id: 'listing-property', name: 'Property Owner', icon: KeyRound },
+    { id: 'real-estate-agent', name: 'Real Estate Agent', icon: Briefcase },
+    { id: 'interior-designer', name: 'Interior Designer', icon: Home },
+    { id: 'vendor', name: 'Vendor/Supplier', icon: Building },
+];
+
+function UpgradeRoleDialog({ open, onOpenChange, onConfirm }: { open: boolean; onOpenChange: (open: boolean) => void; onConfirm: (role: string) => void; }) {
+    const [selectedRole, setSelectedRole] = useState('listing-property');
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Upgrade to a Professional Account</DialogTitle>
+                    <DialogDescription>
+                        Select your professional role. This is a one-time change and cannot be undone.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                    <Label className="mb-2 block">Choose your new role:</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                        {professionalRoles.map((role) => (
+                            <label key={role.id} className="cursor-pointer relative group">
+                                <input
+                                    className="peer sr-only"
+                                    name="role-dialog"
+                                    type="radio"
+                                    value={role.id}
+                                    checked={selectedRole === role.id}
+                                    onChange={(e) => setSelectedRole(e.target.value)}
+                                />
+                                <div className="h-full p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:peer-checked:bg-primary/20 text-gray-500 dark:text-gray-400 flex flex-col items-center justify-center gap-2 transition-all duration-200 text-center">
+                                    <role.icon className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                                    <span className="text-sm font-semibold">{role.name}</span>
+                                </div>
+                                 <div className="absolute top-2 right-2 text-primary opacity-0 peer-checked:opacity-100 transition-opacity duration-200 scale-0 peer-checked:scale-100">
+                                    <CheckCircle2 className="h-5 w-5" />
+                                </div>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+                    <Button onClick={() => onConfirm(selectedRole)}>Confirm & Upgrade</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
 
 function SettingsPageContent() {
   const { user, isUserLoading } = useUser();
@@ -79,6 +132,9 @@ function SettingsPageContent() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [isUpgradeRoleDialogOpen, setIsUpgradeRoleDialogOpen] = useState(false);
+  const [isUpgradeConfirmationOpen, setIsUpgradeConfirmationOpen] = useState(false);
+  const [selectedNewRole, setSelectedNewRole] = useState('');
 
 
   const userDocRef = useMemoFirebase(() => {
@@ -257,6 +313,28 @@ function SettingsPageContent() {
       }
     };
 
+    const handleOpenUpgradeDialog = () => {
+        setIsUpgradeRoleDialogOpen(true);
+    }
+
+    const handleConfirmUpgrade = (role: string) => {
+        setSelectedNewRole(role);
+        setIsUpgradeRoleDialogOpen(false);
+        setIsUpgradeConfirmationOpen(true);
+    }
+
+    const handleFinalUpgrade = async () => {
+        if (!userDocRef || !selectedNewRole) return;
+        
+        await updateDoc(userDocRef, { category: selectedNewRole });
+        toast({
+            title: "Account Upgraded!",
+            description: `Your role has been changed to ${categoryDisplay[selectedNewRole]}.`,
+            variant: "success",
+        });
+        setIsUpgradeConfirmationOpen(false);
+    }
+
 
   const getInitials = (name: string) => {
     if (!name) return '';
@@ -276,6 +354,15 @@ function SettingsPageContent() {
   const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
   const displayName = userProfile?.fullName ?? user?.displayName;
   const PlanIcon = currentPlan.icon;
+  const isBuyerTenant = userProfile?.category === 'user';
+
+
+  const tabs = [
+    { id: 'profile', label: 'Profile' },
+    !isBuyerTenant && { id: 'listings', label: 'My Listings' },
+    { id: 'wishlist', label: 'Wishlist' },
+    !isBuyerTenant && { id: 'transactions', label: 'Transactions' },
+  ].filter(Boolean) as { id: string, label: string }[];
 
   return (
     <>
@@ -331,16 +418,18 @@ function SettingsPageContent() {
                   {isCurrentlyVerified && <Verified className="h-7 w-7 text-blue-500" />}
                 </div>
                 {isLoading ? <Skeleton className="h-5 w-24 mt-1" /> : (userProfile && <p className="text-muted-foreground">{categoryDisplay[userProfile.category]}</p>)}
-                <div className={cn(
-                    "mt-2 flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full",
-                    currentPlan.name === 'Business' ? "bg-amber-100 text-amber-800" :
-                    currentPlan.name === 'Pro' ? "bg-purple-100 text-purple-800" :
-                    currentPlan.name === 'Basic' ? "bg-blue-100 text-blue-800" :
-                    "bg-gray-100 text-gray-800"
-                )}>
-                    <PlanIcon className="h-3 w-3" />
-                    <span>{currentPlan.name} Plan</span>
-                </div>
+                {!isBuyerTenant && (
+                    <div className={cn(
+                        "mt-2 flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full",
+                        currentPlan.name === 'Business' ? "bg-amber-100 text-amber-800" :
+                        currentPlan.name === 'Pro' ? "bg-purple-100 text-purple-800" :
+                        currentPlan.name === 'Basic' ? "bg-blue-100 text-blue-800" :
+                        "bg-gray-100 text-gray-800"
+                    )}>
+                        <PlanIcon className="h-3 w-3" />
+                        <span>{currentPlan.name} Plan</span>
+                    </div>
+                )}
                 {isCurrentlyVerified && userProfile?.verifiedUntil && (
                   <p className="text-xs text-green-600 font-semibold mt-1">
                     Verified until {userProfile.verifiedUntil.toDate().toLocaleDateString()}
@@ -354,23 +443,26 @@ function SettingsPageContent() {
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center">
                 <TabsList className="h-auto p-1.5 bg-muted rounded-xl w-full max-w-lg md:w-auto overflow-x-auto hide-scrollbar">
-                    <TabsTrigger value="profile" className="px-3 sm:px-4">Profile</TabsTrigger>
-                    <TabsTrigger value="listings" className="px-3 sm:px-4">My Listings</TabsTrigger>
-                    <TabsTrigger value="wishlist" className="px-3 sm:px-4">Wishlist</TabsTrigger>
-                    <TabsTrigger value="transactions" className="px-3 sm:px-4">Transactions</TabsTrigger>
+                    {tabs.map(tab => (
+                        <TabsTrigger key={tab.id} value={tab.id} className="px-3 sm:px-4">{tab.label}</TabsTrigger>
+                    ))}
                 </TabsList>
             </div>
             <TabsContent value="profile" className="mt-6">
-                <ProfileDetailsTab userProfile={userProfile} />
+                <ProfileDetailsTab userProfile={userProfile} onUpgradeAccount={handleOpenUpgradeDialog} />
             </TabsContent>
-            <TabsContent value="listings" className="mt-6">
-                <MyPropertiesTab />
-            </TabsContent>
+            {!isBuyerTenant && (
+                <>
+                    <TabsContent value="listings" className="mt-6">
+                        <MyPropertiesTab />
+                    </TabsContent>
+                    <TabsContent value="transactions" className="mt-6">
+                        <TransactionTab />
+                    </TabsContent>
+                </>
+            )}
             <TabsContent value="wishlist" className="mt-6">
                 <WishlistTab />
-            </TabsContent>
-            <TabsContent value="transactions" className="mt-6">
-              <TransactionTab />
             </TabsContent>
         </Tabs>
       </div>
@@ -412,6 +504,25 @@ function SettingsPageContent() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <UpgradeRoleDialog
+        open={isUpgradeRoleDialogOpen}
+        onOpenChange={setIsUpgradeRoleDialogOpen}
+        onConfirm={handleConfirmUpgrade}
+      />
+       <AlertDialog open={isUpgradeConfirmationOpen} onOpenChange={setIsUpgradeConfirmationOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Role Change</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        You are about to change your role to <span className="font-bold">{categoryDisplay[selectedNewRole]}</span>. This is a one-time change and cannot be undone.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleFinalUpgrade}>Confirm and Upgrade</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </>
   );
 }
