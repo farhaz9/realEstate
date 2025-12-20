@@ -175,11 +175,28 @@ export function MyPropertiesTab() {
           </AlertDescription>
         </Alert>
       ) : (
-        <Tabs defaultValue="properties" className="w-full">
+        <Tabs defaultValue="add" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="properties">Your Properties ({properties?.length || 0})</TabsTrigger>
                 <TabsTrigger value="add">Add & Boost</TabsTrigger>
+                <TabsTrigger value="properties">Your Properties ({properties?.length || 0})</TabsTrigger>
             </TabsList>
+            <TabsContent value="add" className="mt-6">
+                <div className="space-y-8">
+                    <Card 
+                        className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
+                        onClick={handleAddPropertyClick}
+                    >
+                        <CardContent className="p-6 text-center">
+                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Plus className="h-8 w-8 text-primary" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
+                            <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
+                        </CardContent>
+                    </Card>
+                    <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
+                </div>
+            </TabsContent>
             <TabsContent value="properties" className="mt-6">
                  {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -206,23 +223,6 @@ export function MyPropertiesTab() {
                         <p className="text-muted-foreground mt-2">Click the "Add & Boost" tab to list your first property.</p>
                     </div>
                 )}
-            </TabsContent>
-            <TabsContent value="add" className="mt-6">
-                <div className="space-y-8">
-                    <Card 
-                        className="h-full flex items-center justify-center border-2 border-dashed bg-muted/50 hover:bg-muted/80 hover:border-primary transition-all cursor-pointer"
-                        onClick={handleAddPropertyClick}
-                    >
-                        <CardContent className="p-6 text-center">
-                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Plus className="h-8 w-8 text-primary" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-primary">Add New Property</h3>
-                            <p className="text-sm text-muted-foreground">You have {userProfile?.listingCredits || 0} credits remaining.</p>
-                        </CardContent>
-                    </Card>
-                    <BoostReachCard price={listingPrice} onPurchase={handlePayment} />
-                </div>
             </TabsContent>
         </Tabs>
       )}
