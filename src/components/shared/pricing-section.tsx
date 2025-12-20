@@ -97,13 +97,13 @@ export function PricingSection() {
 
         const amount = isAnnual ? annualPrice * 100 : monthlyPrice * 100; // amount in paise
         const displayAmount = isAnnual ? annualPrice : monthlyPrice;
-        const description = isAnnual ? "Annual Pro Verification" : "Monthly Pro Verification";
+        const description = isAnnual ? "Annual Premium Verification" : "Monthly Premium Verification";
 
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: amount.toString(),
             currency: "INR",
-            name: "Falcon Estates - Pro Verified",
+            name: "Falcon Estates - Premium Verified",
             description: `Payment for ${isAnnual ? 'Annual' : 'Monthly'} Subscription`,
             image: "/logo.png",
             config: {
@@ -125,7 +125,7 @@ export function PricingSection() {
             handler: function (response: any) {
                 toast({
                     title: "Payment Successful!",
-                    description: "Congratulations! You are now a Pro Verified member.",
+                    description: "Congratulations! You are now a Premium Verified member.",
                     variant: "success",
                 });
                 
@@ -170,7 +170,7 @@ export function PricingSection() {
               Become a Verified Professional
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-balance text-muted-foreground text-lg">
-              Gain trust, visibility, and more leads with our "Pro Verified" badge.
+              Gain trust, visibility, and more leads with our "Premium Verified" badge.
             </p>
             <div className="my-12">
               <div
@@ -210,39 +210,37 @@ export function PricingSection() {
                 <Loader2 className="h-10 w-10 animate-spin" />
             </Card>
          ) : (
-          <Card className="max-w-md w-full shadow-2xl shadow-primary/20 overflow-hidden rounded-3xl border-0">
-            <div className="bg-primary/10 pt-12 pb-8 text-center">
+          <Card className="max-w-md w-full shadow-2xl shadow-primary/20 overflow-hidden rounded-3xl border-0 bg-primary/5">
+            <div className="p-8 text-center text-primary-foreground">
               <div className="flex justify-center items-center gap-2 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-inner">
                       <Verified className="w-8 h-8 text-blue-500" />
                   </div>
               </div>
               <h3 className="text-3xl font-bold text-foreground">
-                Pro Verified
+                Premium Verified
               </h3>
               <p className="text-muted-foreground">Get the visibility you deserve.</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-primary to-purple-500 p-8 text-center text-white">
-                <CardTitle className="text-4xl font-extrabold text-white">
+           
+                <CardTitle className="text-4xl font-extrabold text-foreground mt-8">
                     {isAnnual ? formatPrice(annualPrice) : formatPrice(monthlyPrice)}
-                    <span className="text-lg font-medium text-white/80">/{isAnnual ? 'year' : 'month'}</span>
+                    <span className="text-lg font-medium text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
                 </CardTitle>
 
-                <ul className="space-y-4 text-left mt-8">
+                <ul className="space-y-4 text-left mt-8 text-foreground">
                     {[...benefits, `Valid for ${isAnnual ? '365' : '30'} days`].map((benefit, index) => (
                     <li key={index} className="flex items-start gap-3">
                         <div className="flex-shrink-0 mt-1">
-                        <CheckCircle2 className="h-5 w-5 text-green-300" />
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
                         </div>
-                        <span className="font-medium text-white">{benefit}</span>
+                        <span className="font-medium">{benefit}</span>
                     </li>
                     ))}
                 </ul>
 
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                         <Button size="lg" className="w-full h-12 text-lg mt-8 bg-white text-primary hover:bg-white/90 shadow-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
+                         <Button size="lg" className="w-full h-12 text-lg mt-8 shadow-lg" onClick={handleGetVerified} disabled={isCurrentlyVerified}>
                             <Verified className="mr-2 h-5 w-5" />
                             {isCurrentlyVerified ? 'You are already Verified' : 'Get Verified Now'}
                         </Button>
@@ -251,12 +249,12 @@ export function PricingSection() {
                         <AlertDialogHeader>
                             <div className="flex justify-center mb-4">
                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                                 <Verified className="w-8 h-8 text-primary" />
+                                 <Verified className="w-8 h-8 text-blue-500" />
                                </div>
                             </div>
                             <AlertDialogTitle className="text-center text-2xl">Confirm Your Subscription</AlertDialogTitle>
                             <AlertDialogDescription className="text-center">
-                                You are about to purchase the <strong>Pro Verified</strong> plan
+                                You are about to purchase the <strong>Premium Verified</strong> plan
                                 for <strong>{isAnnual ? formatPrice(annualPrice) + '/year' : formatPrice(monthlyPrice) + '/month'}</strong>.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
