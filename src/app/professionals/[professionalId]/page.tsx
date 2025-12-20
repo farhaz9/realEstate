@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -15,6 +16,7 @@ import { PropertyCard } from '@/components/property-card';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ReviewsSection } from '@/components/shared/reviews-section';
+import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -194,13 +196,13 @@ export default function ProfessionalDetailPage() {
                              <Separator className="my-6"/>
                              <div className="space-y-3">
                                 <Button asChild size="lg" className="w-full">
-                                    <a href={`mailto:${professional.email}`}>
-                                        <Mail className="mr-2 h-5 w-5" /> Contact Agent
+                                    <a href={`tel:${professional.phone}`}>
+                                        <Phone className="mr-2 h-5 w-5" /> Call Agent
                                     </a>
                                 </Button>
                                  <Button asChild size="lg" variant="outline" className="w-full">
                                     <a href={`https://wa.me/91${professional.phone}`} target="_blank" rel="noopener noreferrer">
-                                        <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
+                                        <WhatsAppIcon className="mr-2 h-6 w-6" /> WhatsApp
                                     </a>
                                 </Button>
                              </div>
