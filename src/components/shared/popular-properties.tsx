@@ -73,7 +73,7 @@ export function PopularProperties() {
             </CarouselContent>
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
-            <div className="mt-8 flex justify-center gap-4 md:hidden">
+            <div className="mt-8 flex justify-center md:hidden">
               <CarouselPrevious className="relative translate-y-0" />
               <CarouselNext className="relative translate-y-0" />
             </div>
