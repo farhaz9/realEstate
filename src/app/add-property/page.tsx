@@ -343,13 +343,12 @@ function AddPropertyForm() {
     const propertyData: Partial<Property> = {
       ...restOfData,
       amenities: amenitiesArray,
+      imageUrls: uploadedImageUrls,
     };
     
     if (isEditMode) {
-      propertyData.imageUrls = propertyToEdit?.imageUrls;
       propertyData.price = isAdmin ? data.price : propertyToEdit?.price;
     } else {
-      propertyData.imageUrls = uploadedImageUrls;
       propertyData.price = data.price;
     }
 
@@ -537,7 +536,7 @@ function AddPropertyForm() {
                          <CardTitle className="flex items-center gap-3"><ImageUp className="text-primary"/> Photos</CardTitle>
                     </CardHeader>
                     <CardContent>
-                       {isEditMode ? (
+                       {isEditMode && !isAdmin ? (
                             <Alert variant="destructive" className="mb-6">
                                 <Info className="h-4 w-4" />
                                 <AlertTitle>Important</AlertTitle>
@@ -545,7 +544,7 @@ function AddPropertyForm() {
                                     Property price and images cannot be changed after the initial listing.
                                 </AlertDescription>
                             </Alert>
-                        ) : (
+                        ) : !isEditMode && (
                            <Alert className="mb-6">
                                 <Info className="h-4 w-4" />
                                 <AlertTitle>Please Note</AlertTitle>
@@ -577,7 +576,7 @@ function AddPropertyForm() {
                                 ref={fileInputRef}
                                 onChange={handleImageChange}
                                 className="hidden"
-                                disabled={isSubmitting || imagePreviews.length >= 3 || isEditMode}
+                                disabled={isSubmitting || imagePreviews.length >= 3 || (isEditMode && !isAdmin)}
                                 />
                             </FormControl>
                             <FormDescription className="text-center mt-2">
@@ -606,7 +605,7 @@ function AddPropertyForm() {
                                             <p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>
                                         )}
                                     </div>
-                                    {!isEditMode && (
+                                    {(!isEditMode || isAdmin) && (
                                         <Button
                                             type="button"
                                             variant="ghost"
@@ -865,5 +864,3 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
-
-    
