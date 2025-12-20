@@ -75,10 +75,7 @@ export default function AboutUsPage() {
       <PageHero
         title="Our Story"
         subtitle="Discover the journey behind Falcon Estates and the values that drive us."
-        image={{
-          id: "services-hero",
-          imageHint: "construction site",
-        }}
+        imageUrl="https://images.unsplash.com/photo-1618220179428-22790b461013?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbnRlcmlvcnxlbnwwfHx8fDE3NjU2NDEwNjB8MA&ixlib=rb-4.1.0&q=80&w=1080"
       />
       
       <section className="py-16 md:py-24 bg-background">
