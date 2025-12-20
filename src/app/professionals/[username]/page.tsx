@@ -1,10 +1,8 @@
-
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, query, where } from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
 import type { User, Property } from '@/types';
 import { Loader2, ArrowLeft, Mail, MessageSquare, Verified, Building, Phone, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +15,7 @@ import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ReviewsSection } from '@/components/shared/reviews-section';
 import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
+import { useMemo } from 'react';
 
 const getInitials = (name: string) => {
     if (!name) return '';
@@ -94,16 +93,19 @@ function ProfessionalDetailSkeleton() {
 export default function ProfessionalDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const professionalId = params.professionalId as string;
+  const username = params.username as string;
   const firestore = useFirestore();
 
-  const professionalRef = useMemoFirebase(() => {
-    if (!firestore || !professionalId) return null;
-    return doc(firestore, 'users', professionalId);
-  }, [firestore, professionalId]);
+  const professionalQuery = useMemoFirebase(() => {
+    if (!firestore || !username) return null;
+    return query(collection(firestore, 'users'), where('username', '==', username), limit(1));
+  }, [firestore, username]);
 
-  const { data: professional, isLoading: isLoadingProfessional, error } = useDoc<User>(professionalRef);
+  const { data: professionals, isLoading: isLoadingProfessional, error } = useCollection<User>(professionalQuery);
   
+  const professional = useMemo(() => (professionals && professionals.length > 0 ? professionals[0] : null), [professionals]);
+  const professionalId = professional?.id;
+
   const propertiesQuery = useMemoFirebase(() => {
     if (!firestore || !professionalId) return null;
     return query(collection(firestore, 'properties'), where('userId', '==', professionalId));
@@ -111,7 +113,7 @@ export default function ProfessionalDetailPage() {
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(propertiesQuery);
   
-  const isLoading = isLoadingProfessional || isLoadingProperties;
+  const isLoading = isLoadingProfessional || (professionals && professionals.length > 0 && isLoadingProperties);
 
   if (isLoading) {
     return <ProfessionalDetailSkeleton />;
@@ -214,7 +216,7 @@ export default function ProfessionalDetailPage() {
                 </div>
                 
                 <div className="lg:col-span-2 space-y-8">
-                    <ReviewsSection professionalId={professionalId} />
+                    <ReviewsSection professionalId={professionalId!} />
 
                     <Card>
                         <CardHeader>

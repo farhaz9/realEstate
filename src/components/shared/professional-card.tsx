@@ -85,12 +85,13 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
   const cardTitle = professional.companyName || professional.fullName;
   const isCompany = !!professional.companyName;
   const isCurrentlyVerified = professional.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
+  const professionalUrl = `/professionals/${professional.username}`;
 
 
   if (variant === 'compact') {
       return (
         <div className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors w-full">
-            <Link href={`/professionals/${professional.id}`} className="flex items-center gap-4 flex-grow min-w-0">
+            <Link href={professionalUrl} className="flex items-center gap-4 flex-grow min-w-0">
                 <Avatar className={cn(
                     "h-12 w-12 border-2 border-primary/20",
                     isCompany ? "rounded-lg" : "rounded-full"
@@ -118,7 +119,7 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
             <div className="flex-shrink-0 ml-auto flex items-center gap-4">
                 <ProfessionalRating professional={professional} />
                 <Button asChild variant="ghost" size="icon" className="rounded-full h-9 w-9">
-                  <Link href={`/professionals/${professional.id}`}>
+                  <Link href={professionalUrl}>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                   </Link>
                 </Button>
@@ -161,7 +162,7 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
             <div className="flex-grow" />
 
             <Button asChild variant="default" className="w-full mt-6">
-                <Link href={`/professionals/${professional.id}`}>
+                <Link href={professionalUrl}>
                     <Info className="mr-2 h-4 w-4" />
                     View Profile
                 </Link>
