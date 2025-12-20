@@ -114,6 +114,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="egpm6NuUvbaWrSf-M6KuZ0kkE63bHrgLWdeHOfuo6jw" />
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
         <script
           type="application/ld+json"
