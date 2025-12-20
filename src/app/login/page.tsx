@@ -1,8 +1,7 @@
 
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,9 +10,9 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import Link from 'next/link';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, signOut, User as FirebaseUser } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, User as FirebaseUser } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench, Check, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
@@ -119,6 +118,35 @@ function RoleSelectionDialog({ open, onOpenChange, onRoleSelect }: { open: boole
     );
 }
 
+function PasswordStrengthIndicator({ password }: { password: string }) {
+    const checks = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+  
+    const strengthText = [
+      { text: 'At least 8 characters', valid: checks.length },
+      { text: 'One uppercase letter', valid: checks.uppercase },
+      { text: 'One lowercase letter', valid: checks.lowercase },
+      { text: 'One number', valid: checks.number },
+      { text: 'One special character', valid: checks.special },
+    ];
+  
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs mt-2">
+        {strengthText.map((item, index) => (
+          <div key={index} className={cn("flex items-center gap-1.5 transition-colors", item.valid ? "text-green-600" : "text-muted-foreground")}>
+            {item.valid ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-2.5 w-2.5 fill-current" />}
+            <span>{item.text}</span>
+          </div>
+        ))}
+      </div>
+    );
+}
+
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -126,6 +154,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('user');
   const [showPassword, setShowPassword] = useState(false);
@@ -160,7 +189,7 @@ export default function LoginPage() {
           errorMessage = 'An account already exists with this email.';
           break;
         case 'auth/weak-password':
-          errorMessage = 'Password is too weak. It must be at least 6 characters long.';
+          errorMessage = 'Password is too weak. Please meet all the requirements.';
           break;
         default:
           errorMessage = 'Authentication failed. Please try again.';
@@ -179,6 +208,8 @@ export default function LoginPage() {
     const randomPart = Math.floor(100 + Math.random() * 900);
     return `${namePart}${emailPart}${randomPart}`;
   };
+
+  const isProfessional = ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(category);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -224,6 +255,10 @@ export default function LoginPage() {
         toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out all required fields.' });
         return;
       }
+       if (isProfessional && !username) {
+        toast({ variant: 'destructive', title: 'Username Required', description: 'A username is required for professional accounts.' });
+        return;
+      }
        if (category === 'vendor' && (!companyName || !servicesProvided || !bio)) {
         toast({ variant: 'destructive', title: 'Missing Vendor Information', description: 'Please fill out all company details.' });
         return;
@@ -236,13 +271,12 @@ export default function LoginPage() {
 
         const userDocRef = doc(firestore, 'users', user.uid);
         
-        const username = generateUsername(fullName, user.email || '');
-        const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(category);
+        const finalUsername = isProfessional ? username : generateUsername(fullName, user.email || '');
 
         const userData: any = {
             id: user.uid,
             fullName: fullName,
-            username: username,
+            username: finalUsername,
             email: user.email,
             phone: phone,
             category: category,
@@ -277,7 +311,7 @@ export default function LoginPage() {
 
   const completeGoogleUserCreation = async (user: FirebaseUser, selectedRole: string) => {
     const userDocRef = doc(firestore, 'users', user.uid);
-    const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(selectedRole);
+    const isProfessionalRole = ['real-estate-agent', 'interior-designer', 'vendor', 'listing-property'].includes(selectedRole);
 
     const username = generateUsername(user.displayName || '', user.email || '');
     await setDoc(userDocRef, {
@@ -293,7 +327,7 @@ export default function LoginPage() {
       transactions: [],
       listingCredits: 1,
       isBlocked: false,
-      isFeatured: isProfessional,
+      isFeatured: isProfessionalRole,
     });
     toast({
       title: 'Sign Up Successful!',
@@ -397,7 +431,6 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full lg:w-1/2 min-h-screen flex flex-col overflow-y-auto bg-white dark:bg-background-dark relative">
-        <h1 className="sr-only">Login or Sign Up</h1>
         <div className="flex-1 flex items-center justify-center p-6 sm:p-12 md:p-16">
           <div className="w-full max-w-[480px] flex flex-col gap-6">
             <div className="flex flex-col gap-2 text-center sm:text-left">
@@ -452,10 +485,29 @@ export default function LoginPage() {
                     <div className="relative group">
                         <Input value={phone} onChange={(e) => setPhone(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="phone" placeholder="9876543210" type="tel"/>
                         <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
-                            <User className="h-[22px] w-[22px]" />
+                            <Phone className="h-[22px] w-[22px]" />
                         </div>
                     </div>
                 </div>
+                 {isProfessional && (
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="username">Username</Label>
+                    <div className="relative group">
+                      <Input
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_.-]/g, ''))}
+                        required={isProfessional}
+                        className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200"
+                        placeholder="e.g., johndoe_realty"
+                        type="text"
+                      />
+                      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
+                        <User className="h-[22px] w-[22px]" />
+                      </div>
+                    </div>
+                  </div>
+                 )}
                 </>
               )}
               
@@ -529,6 +581,7 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff className="h-[22px] w-[22px]" /> : <Eye className="h-[22px] w-[22px]" />}
                   </button>
                 </div>
+                 {!isLogin && password && <PasswordStrengthIndicator password={password} />}
               </div>
               
               {!isLogin && (
@@ -570,6 +623,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-
-    
