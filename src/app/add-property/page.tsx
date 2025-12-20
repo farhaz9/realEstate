@@ -340,13 +340,19 @@ function AddPropertyForm() {
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
     const { images, ...restOfData } = data;
     
-    const propertyData = {
+    const propertyData: Partial<Property> = {
       ...restOfData,
       amenities: amenitiesArray,
-      imageUrls: uploadedImageUrls,
-      price: isEditMode ? propertyToEdit?.price : data.price,
     };
     
+    if (isEditMode) {
+      propertyData.imageUrls = propertyToEdit?.imageUrls;
+      propertyData.price = isAdmin ? data.price : propertyToEdit?.price;
+    } else {
+      propertyData.imageUrls = uploadedImageUrls;
+      propertyData.price = data.price;
+    }
+
     if (!data.overlooking) delete (propertyData as Partial<typeof propertyData>).overlooking;
     if (!data.ageOfConstruction) delete (propertyData as Partial<typeof propertyData>).ageOfConstruction;
 
@@ -476,7 +482,7 @@ function AddPropertyForm() {
                                 <FormItem>
                                     <FormLabel>Price (in INR)</FormLabel>
                                     <FormControl>
-                                      <IconInput field={field} icon={Banknote} placeholder="Enter amount" type="number" disabled={isSubmitting || isEditMode} />
+                                      <IconInput field={field} icon={Banknote} placeholder="Enter amount" type="number" disabled={isSubmitting || (isEditMode && !isAdmin)} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -859,3 +865,5 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
+
+    
