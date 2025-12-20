@@ -211,9 +211,9 @@ export function PricingSection() {
             </Card>
          ) : (
           <Card className="max-w-md w-full shadow-2xl shadow-primary/20 overflow-hidden rounded-3xl border-0">
-            <div className="bg-white pt-12 pb-8 text-center">
+            <div className="bg-primary/10 pt-12 pb-8 text-center">
               <div className="flex justify-center items-center gap-2 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
                       <Verified className="w-8 h-8 text-blue-500" />
                   </div>
               </div>
