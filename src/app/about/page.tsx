@@ -76,8 +76,8 @@ export default function AboutUsPage() {
         title="Our Story"
         subtitle="Discover the journey behind Falcon Estates and the values that drive us."
         image={{
-          id: "contact-hero",
-          imageHint: "team meeting",
+          id: "services-hero",
+          imageHint: "construction site",
         }}
       />
       
