@@ -60,7 +60,6 @@ const navLinks = [
 
 const secondaryLinks = [
     { href: "/settings", label: "Settings", icon: Settings },
-    { href: "/support", label: "Support", icon: HelpCircle },
     { href: "/contact", label: "Contact", icon: Mail },
 ];
 
