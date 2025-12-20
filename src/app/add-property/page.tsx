@@ -142,6 +142,8 @@ function AddPropertyForm() {
   });
   
   const watchedFields = form.watch();
+  const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
 
   useEffect(() => {
     const filledFields = Object.values(watchedFields).filter(value => {
@@ -162,7 +164,6 @@ function AddPropertyForm() {
   
   useEffect(() => {
     if (isEditMode && propertyToEdit) {
-      const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
       if (propertyToEdit.userId !== user?.uid && !isAdmin) {
         toast({ title: 'Unauthorized', description: 'You do not have permission to edit this property.', variant: 'destructive' });
         router.push('/settings?tab=listings');
@@ -211,7 +212,7 @@ function AddPropertyForm() {
           amenities: 'Park, Gym, Reserved Parking'
       });
     }
-  }, [isEditMode, propertyToEdit, form, user, router, toast]);
+  }, [isEditMode, propertyToEdit, form, user, router, toast, isAdmin]);
 
   useEffect(() => {
     if (!isEditMode && userProfile && userProfile.listingCredits === 0) {
@@ -381,7 +382,12 @@ function AddPropertyForm() {
     }
 
     setIsSubmitting(false);
-    router.push('/settings?tab=listings');
+    
+    if (isAdmin) {
+        router.back();
+    } else {
+        router.push('/settings?tab=listings');
+    }
   }
 
   const IconInput = ({ field, icon: Icon, placeholder, ...props }: { field: any, icon: React.ElementType, placeholder: string, [x:string]: any }) => (
@@ -395,13 +401,23 @@ function AddPropertyForm() {
   
   const step = Math.floor(progress / 33) + 1;
 
+  const handleBackClick = () => {
+    router.back();
+  }
+
   return (
     <div className="bg-muted/40 min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-            <Button asChild variant="ghost" className="mb-6 -ml-4">
-                <Link href="/settings?tab=listings"><ArrowLeft className="mr-2 h-4 w-4"/> Back to My Listings</Link>
-            </Button>
+            {isAdmin ? (
+                <Button variant="ghost" className="mb-6 -ml-4" onClick={handleBackClick}>
+                    <ArrowLeft className="mr-2 h-4 w-4"/> Back to Dashboard
+                </Button>
+            ) : (
+                <Button asChild variant="ghost" className="mb-6 -ml-4">
+                    <Link href="/settings?tab=listings"><ArrowLeft className="mr-2 h-4 w-4"/> Back to My Listings</Link>
+                </Button>
+            )}
             
             <div className="mb-8">
                 <p className="text-sm font-semibold text-primary">STEP {Math.min(step, 3)} OF 3</p>
