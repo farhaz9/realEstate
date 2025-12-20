@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays, AlertTriangle, ArrowRight } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Briefcase, LogOut, Edit, Trash2, CalendarDays, AlertTriangle, ArrowRight, AtSign } from 'lucide-react';
 import type { User as UserType } from '@/types';
 import {
   AlertDialog,
@@ -92,6 +92,7 @@ export function ProfileDetailsTab({ userProfile, onUpgradeAccount }: ProfileDeta
           </CardHeader>
           <CardContent className="space-y-6">
               {renderDetailItem(UserIcon, "Full Name", isLoading ? null : userProfile.fullName)}
+              {userProfile?.username && renderDetailItem(AtSign, "Username", isLoading ? null : userProfile.username)}
               {renderDetailItem(Mail, "Email Address", isLoading ? null : userProfile.email)}
               {renderDetailItem(Phone, "Phone", isLoading ? null : userProfile.phone)}
               {renderDetailItem(Briefcase, "Role", isLoading ? null : categoryDisplay[userProfile.category])}
