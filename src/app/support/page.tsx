@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Phone, MessageSquare, Mail, Clock } from "lucide-react";
 import Link from "next/link";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 
 const faqs = [
   {
@@ -64,17 +65,17 @@ export default function SupportPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold">Call Us</h3>
-                    <p className="text-muted-foreground text-sm">+91 9953414336</p>
+                    <p className="text-muted-foreground text-sm">+91 8080248631</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-full">
-                    <MessageSquare className="h-5 w-5 text-primary" />
+                    <WhatsAppIcon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-semibold">WhatsApp</h3>
-                     <Link href="https://wa.me/919953414336" target="_blank" className="text-muted-foreground text-sm hover:text-primary transition-colors">
-                      +91 9953414336
+                     <Link href="https://wa.me/918080248631" target="_blank" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                      +91 8080248631
                     </Link>
                   </div>
                 </div>
@@ -84,7 +85,7 @@ export default function SupportPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold">Email Us</h3>
-                    <p className="text-muted-foreground text-sm break-all">support@falconestates.com</p>
+                    <p className="text-muted-foreground text-sm break-all">myfalconaxe@gmail.com</p>
                   </div>
                 </div>
               </CardContent>

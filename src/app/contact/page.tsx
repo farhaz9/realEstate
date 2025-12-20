@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { sendEmail } from '@/app/actions/send-email';
 import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -62,20 +63,20 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: "Email Us",
-      content: "contact@delhiestateluxe.com",
-      href: "mailto:contact@delhiestateluxe.com",
+      content: "myfalconaxe@gmail.com",
+      href: "mailto:myfalconaxe@gmail.com",
     },
     {
       icon: Phone,
       title: "Call Us",
-      content: "+91 9953414336",
-      href: "tel:+919953414336",
+      content: "+91 8080248631",
+      href: "tel:+918080248631",
     },
     {
-      icon: MessageSquare,
+      icon: WhatsAppIcon,
       title: "WhatsApp",
-      content: "+91 9953414336",
-      href: "https://wa.me/919953414336",
+      content: "+91 8080248631",
+      href: "https://wa.me/918080248631",
     },
   ];
 
@@ -129,7 +130,7 @@ export default function ContactPage() {
                         </div>
                         <div>
                             <h4 className="font-semibold text-lg">Delhi, India</h4>
-                            <p className="text-muted-foreground">Rohini, Vijay Vihar, Delhi 110085</p>
+                            <p className="text-muted-foreground">Rohini, Delhi-110085, India</p>
                         </div>
                     </div>
                 </div>
