@@ -353,11 +353,11 @@ function SettingsPageContent() {
       <div className="container mx-auto px-4 py-8 -mt-16">
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center">
-                <TabsList className="h-auto p-1.5 bg-muted rounded-xl">
-                    <TabsTrigger value="profile">Profile</TabsTrigger>
-                    <TabsTrigger value="listings">My Listings</TabsTrigger>
-                    <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
-                    <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                <TabsList className="h-auto p-1.5 bg-muted rounded-xl w-full max-w-lg md:w-auto overflow-x-auto hide-scrollbar">
+                    <TabsTrigger value="profile" className="px-3 sm:px-4">Profile</TabsTrigger>
+                    <TabsTrigger value="listings" className="px-3 sm:px-4">My Listings</TabsTrigger>
+                    <TabsTrigger value="wishlist" className="px-3 sm:px-4">Wishlist</TabsTrigger>
+                    <TabsTrigger value="transactions" className="px-3 sm:px-4">Transactions</TabsTrigger>
                 </TabsList>
             </div>
             <TabsContent value="profile" className="mt-6">
