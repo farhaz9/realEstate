@@ -162,6 +162,11 @@ export function PricingSection() {
         rzp.open();
     };
 
+    // Hide the section if the user is a buyer/tenant
+    if (userProfile && userProfile.category === 'user') {
+        return null;
+    }
+
   return (
     <section className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
