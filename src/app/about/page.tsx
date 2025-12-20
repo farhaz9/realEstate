@@ -71,6 +71,20 @@ const missionFeatures = [
 export default function AboutUsPage() {
   return (
     <div className="bg-muted/40 pt-16">
+       <section className="text-center py-16 md:py-24 bg-background">
+          <span
+            className={`text-primary font-semibold text-sm uppercase tracking-wider`}
+          >
+            Our Core Values
+          </span>
+          <h1 className="text-4xl md:text-5xl font-bold text-black dark:text-white mt-4 mb-6">
+            Our Mission
+          </h1>
+           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+              To simplify the real estate experience in Delhi by providing a transparent, efficient, and trustworthy platform that connects people with their dream properties and the best professionals in the industry.
+            </p>
+        </section>
+
       <section className="py-16 md:py-24 bg-background">
         <Features 
             features={missionFeatures}
@@ -92,47 +106,23 @@ export default function AboutUsPage() {
             <div className="relative hidden md:block">
                 <div className="absolute left-1/2 h-full w-0.5 bg-border -translate-x-1/2"></div>
                 {timelineEvents.map((event, index) => (
-                    <div key={index} className="flex items-center justify-between my-16">
-                        <motion.div 
-                          initial={{ opacity: 0, x: -50 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true, amount: 0.5 }}
-                          transition={{ duration: 0.6 }}
-                          className={`w-5/12 text-right pr-12`}
-                        >
-                             {index % 2 === 0 && (
-                                <>
-                                    <p className="text-lg font-semibold text-primary">{event.year}</p>
-                                    <h3 className="text-xl font-bold mt-1">{event.title}</h3>
-                                    <p className="text-muted-foreground mt-2">{event.description}</p>
-                                </>
-                            )}
-                        </motion.div>
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.5 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true, amount: 0.5 }}
-                          transition={{ duration: 0.5 }}
-                          className="w-6 h-6 rounded-full bg-background border-2 border-primary flex items-center justify-center z-10 shadow-lg shrink-0"
-                        >
+                    <motion.div 
+                      key={index}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.5 }}
+                      transition={{ duration: 0.6 }}
+                      className={`relative flex items-center w-full my-8 ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
+                    >
+                       <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-12' : 'text-left pl-12 order-3'}`}>
+                            <p className="text-lg font-semibold text-primary">{event.year}</p>
+                            <h3 className="text-xl font-bold mt-1">{event.title}</h3>
+                            <p className="text-muted-foreground mt-2">{event.description}</p>
+                        </div>
+                        <div className="absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-background border-2 border-primary flex items-center justify-center z-10 shadow-lg">
                             <div className="w-3 h-3 rounded-full bg-primary" />
-                        </motion.div>
-                         <motion.div 
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, amount: 0.5 }}
-                            transition={{ duration: 0.6 }}
-                            className={`w-5/12 pl-12`}
-                          >
-                            {index % 2 !== 0 && (
-                                <>
-                                    <p className="text-lg font-semibold text-primary">{event.year}</p>
-                                    <h3 className="text-xl font-bold mt-1">{event.title}</h3>
-                                    <p className="text-muted-foreground mt-2">{event.description}</p>
-                                </>
-                            )}
-                        </motion.div>
-                    </div>
+                        </div>
+                    </motion.div>
                 ))}
             </div>
 

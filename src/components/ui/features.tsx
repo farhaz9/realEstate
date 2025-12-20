@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -71,21 +72,6 @@ export function Features({
   return (
     <div className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <span
-            className={`text-primary font-semibold text-sm uppercase tracking-wider`}
-          >
-            Our Core Values
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mt-4 mb-6">
-            Our Mission
-          </h2>
-           <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-              To simplify the real estate experience in Delhi by providing a transparent, efficient, and trustworthy platform that connects people with their dream properties and the best professionals in the industry.
-            </p>
-        </div>
-
         <div className="grid lg:grid-cols-2 lg:gap-16 gap-8   items-center">
           {/* Left Side - Features with Progress Lines */}
           <div
