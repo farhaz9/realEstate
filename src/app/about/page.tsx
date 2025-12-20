@@ -11,13 +11,13 @@ const founders = [
     quote: "An ECE graduate with a passion for technology and real estate, Shahbaz leads the company's vision and strategy, ensuring Falcon Estates stays at the forefront of innovation.",
     name: "Shahbaz",
     designation: "Co-Founder & CEO",
-    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    src: "https://placehold.co/500x500/6D28D9/FFFFFF/png?text=S",
   },
   {
     quote: "Also an ECE graduate, Farhaz is the technical architect behind the Falcon Estates platform. He is dedicated to building a seamless and secure user experience.",
     name: "Farhaz",
     designation: "Co-Founder & CTO",
-    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    src: "https://placehold.co/500x500/1E2029/FFFFFF/png?text=F",
   }
 ];
 
