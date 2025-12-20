@@ -18,9 +18,9 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://delhi-estate-luxe.com";
-const siteTitle = "Falcon Estates | Buy, Sell & Rent Properties in Delhi, Rohini";
-const siteDescription = "Falcon Estates helps you buy, sell, and rent properties in Delhi & Rohini. Explore verified listings for apartments, plots, and homes with expert interior design services.";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://estates.falconaxe.com";
+const siteTitle = "Falcon Estates | Buy, Sell, Rent Properties in India | Real Estate & Interior Design";
+const siteDescription = "Your premier destination for real estate in India. Falcon Estates helps you buy, sell, and rent properties, with a special focus on Delhi. Explore verified listings for apartments, plots, and homes with expert interior design services.";
 
 // Favicon generation
 const faviconSvg = `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22hsl(262, 82%, 56%)%22></rect><text x=%2250%22 y=%2250%22 font-size=%2250%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Poppins, sans-serif%22 font-weight=%22600%22>FE</text></svg>`;
@@ -35,6 +35,10 @@ export const metadata: Metadata = {
   description: siteDescription,
   keywords: [
     "Falcon Estates",
+    "real estate India",
+    "buy property India",
+    "rent property India",
+    "property listings",
     "real estate in Delhi",
     "property in rohini",
     "buy property delhi",
@@ -46,7 +50,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: siteTitle,
-    description: "Trusted real estate platform for buyers, sellers, and interior design in Delhi & Rohini.",
+    description: "Trusted real estate platform for buyers, sellers, and interior design in India, with a focus on Delhi.",
     url: siteUrl,
     siteName: "Falcon Estates",
     type: "website",
@@ -55,7 +59,7 @@ export const metadata: Metadata = {
         url: `/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Luxury real estate and interior design in Delhi by Falcon Estates',
+        alt: 'Luxury real estate and interior design in India by Falcon Estates',
       },
     ],
     locale: 'en_IN',
@@ -99,8 +103,8 @@ const jsonLd = {
     contactType: 'customer service',
   },
   areaServed: {
-    '@type': 'Place',
-    name: 'Delhi, Rohini',
+    '@type': 'Country',
+    name: 'India',
   },
 };
 
