@@ -112,22 +112,48 @@ export default function AboutUsPage() {
                 From a shared vision to a growing platform.
               </p>
             </div>
-            <div className="relative">
+            {/* Desktop Timeline */}
+            <div className="relative hidden md:block">
                 <div className="absolute left-1/2 h-full w-0.5 bg-border -translate-x-1/2"></div>
                 {timelineEvents.map((event, index) => (
                     <div key={index} className="flex items-center justify-center my-16">
                         <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'pl-8'}`}>
-                            <h3 className="text-xl font-bold text-primary">{event.title}</h3>
-                            <p className="text-muted-foreground mt-2">{event.description}</p>
+                             {index % 2 === 0 && (
+                                <>
+                                    <h3 className="text-xl font-bold text-primary">{event.title}</h3>
+                                    <p className="text-muted-foreground mt-2">{event.description}</p>
+                                </>
+                            )}
                         </div>
-                        <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold z-10 shadow-lg">
+                        <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold z-10 shadow-lg shrink-0">
                             {event.year}
                         </div>
-                         <div className={`w-5/12 ${index % 2 === 0 ? 'pl-8' : 'text-left pr-8'}`}>
-                            {/* Placeholder for spacing */}
+                         <div className={`w-5/12 ${index % 2 !== 0 ? 'pl-8' : 'text-left pr-8'}`}>
+                            {index % 2 !== 0 && (
+                                <>
+                                    <h3 className="text-xl font-bold text-primary">{event.title}</h3>
+                                    <p className="text-muted-foreground mt-2">{event.description}</p>
+                                </>
+                            )}
                         </div>
                     </div>
                 ))}
+            </div>
+
+            {/* Mobile Timeline */}
+            <div className="relative md:hidden">
+              <div className="absolute left-8 top-0 h-full w-0.5 bg-border"></div>
+              {timelineEvents.map((event, index) => (
+                <div key={index} className="flex items-start gap-6 my-8">
+                  <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold z-10 shadow-lg shrink-0">
+                    {event.year}
+                  </div>
+                  <div className="pt-1">
+                    <h3 className="text-xl font-bold text-primary">{event.title}</h3>
+                    <p className="text-muted-foreground mt-1">{event.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
         </div>
       </section>
