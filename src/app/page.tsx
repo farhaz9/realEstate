@@ -16,6 +16,7 @@ import { FeaturedProfessionals } from "@/components/shared/featured-professional
 import { NewProjects } from "@/components/shared/new-projects";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PricingSection } from "@/components/shared/pricing-section";
+import { PropertySalesAnimation } from "@/components/lottie/property-sales-animation";
 
 
 const faqs = [
@@ -42,7 +43,8 @@ const coreServices = [
     icon: Handshake,
     title: "Property Sales",
     description: "Whether buying or selling, our expert agents guide you through market analysis, listings, and closing the best deal.",
-    href: "/properties"
+    href: "/properties",
+    animation: <PropertySalesAnimation />,
   },
   {
     icon: DraftingCompass,
@@ -156,7 +158,7 @@ export default function HomePage() {
               <Card key={service.title} className="flex flex-col text-center items-center p-8 h-full group transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 bg-background border">
                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mb-6 before:absolute before:inset-0 before:rounded-full before:border-2 before:border-primary/20 before:animate-pulse-loader">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-inner">
-                        <service.icon className="h-8 w-8 text-primary transition-colors" />
+                        {service.animation ? <div className="w-12 h-12">{service.animation}</div> : <service.icon className="h-8 w-8 text-primary transition-colors" />}
                     </div>
                 </div>
                 <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
