@@ -174,6 +174,8 @@ export default function LoginPage() {
   const firestore = getFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',');
+
 
   const handleAuthError = (error: unknown) => {
     console.error(error);
@@ -272,6 +274,8 @@ export default function LoginPage() {
         const userDocRef = doc(firestore, 'users', user.uid);
         
         const finalUsername = isProfessional ? username : generateUsername(fullName, user.email || '');
+        const isAdmin = user.email ? ADMIN_EMAILS.includes(user.email) : false;
+
 
         const userData: any = {
             id: user.uid,
@@ -284,7 +288,7 @@ export default function LoginPage() {
             photoURL: '',
             wishlist: [],
             transactions: [],
-            listingCredits: 1,
+            listingCredits: isAdmin ? 1000 : 1,
             isBlocked: false,
             isFeatured: isProfessional,
         };

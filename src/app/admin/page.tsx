@@ -69,7 +69,7 @@ import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Calendar as CalendarIcon } from '@/components/ui/calendar';
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',');
 
 type ConfirmationAction = {
   action: 'delete' | 'block' | 'verify';
@@ -430,7 +430,7 @@ export default function AdminPage() {
   const { data: leads, isLoading: isLoadingLeads } = useCollection<Lead>(allLeadsQuery);
   const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
 
-  const isAuthorizedAdmin = user?.email === ADMIN_EMAIL;
+  const isAuthorizedAdmin = user?.email ? ADMIN_EMAILS.includes(user.email) : false;
   
   const allTransactions = useMemo(() => {
     if (!users) return [];
@@ -1063,7 +1063,7 @@ export default function AdminPage() {
                   <TableHead>Feature</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort(setUserSort, 'isBlocked')}><div className="flex items-center gap-2">Status <ArrowUpDown className="h-4 w-4" /></div></TableHead>
                   <TableHead className="text-right">Actions</TableHead>
-              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email === ADMIN_EMAIL; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()); const verificationDaysLeft = isCurrentlyVerified ? differenceInDays(u.verifiedUntil.toDate(), new Date()) : null; const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(u.category); return (
+              </TableRow></TableHeader><TableBody>{sortedAndFilteredUsers?.map(u => { const isAdminUser = u.email ? ADMIN_EMAILS.includes(u.email) : false; const isCurrentlyVerified = (u.verifiedUntil && u.verifiedUntil.toDate() > new Date()); const verificationDaysLeft = isCurrentlyVerified ? differenceInDays(u.verifiedUntil.toDate(), new Date()) : null; const isProfessional = ['real-estate-agent', 'interior-designer', 'vendor'].includes(u.category); return (
                   <TableRow key={u.id} className={cn(u.isBlocked ? "bg-destructive/10" : "", isAdminUser && "bg-primary/10")}>
                     <TableCell>
                       <Link href={`/admin/users/${u.id}`} className="flex items-center gap-3 group">
