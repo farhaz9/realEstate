@@ -63,7 +63,7 @@ const plans: PricingTier[] = [
         price: 4999,
         priceAnnual: 19990,
         description: "For agencies and power users.",
-        features: ["Unlimited Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
+        features: ["100 Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
         icon: <Building className="w-6 h-6" />,
         color: "text-amber-500",
     },
@@ -150,7 +150,7 @@ export default function PricingPage() {
                 const credits = {
                     'basic': 5,
                     'pro': 15,
-                    'business': 999, // Essentially unlimited
+                    'business': 100, 
                 }[selectedPlan.level] || 0;
                 
                 if (credits > 0) {
