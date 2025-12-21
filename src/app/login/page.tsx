@@ -84,7 +84,7 @@ function RoleSelectionDialog({ open, onOpenChange, onRoleSelect }: { open: boole
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent dismissible={false}>
                 <DialogHeader>
                     <DialogTitle>Complete Your Profile</DialogTitle>
                     <DialogDescription>Please select your primary role on our platform to continue.</DialogDescription>
