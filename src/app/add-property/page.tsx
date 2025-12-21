@@ -368,7 +368,7 @@ function AddPropertyForm() {
       if (hasPremiumPlan) {
         expirationDate.setDate(expirationDate.getDate() + 30);
       } else {
-        expirationDate.setDate(expirationDate.getDate() + 15);
+        expirationDate.setDate(expirationDate.getDate() + 90);
       }
       
       const newPropertyData = {
