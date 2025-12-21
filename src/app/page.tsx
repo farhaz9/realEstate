@@ -159,13 +159,13 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {coreServices.map((service) => (
-              <Card key={service.title} className="flex flex-col text-center items-center p-8 h-full group transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 bg-background border">
-                 <div className="w-32 h-32 mb-6">
+              <Card key={service.title} className="flex flex-col text-center items-center p-8 h-full group transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 bg-background border-transparent hover:border-primary/20">
+                 <div className="w-48 h-48 mb-6">
                     {service.animation ? service.animation : <service.icon className="h-full w-full text-primary transition-colors" />}
                 </div>
                 <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
                 <p className="text-muted-foreground text-sm flex-grow mb-6">{service.description}</p>
-                <UIButton asChild className="mt-auto px-6">
+                <UIButton asChild className="mt-auto px-6 rounded-full font-bold h-11 text-base group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300">
                   <Link href={service.href}>
                     Learn more <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
