@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,8 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import Link from 'next/link';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, User as FirebaseUser, signOut } from 'firebase/auth';
-import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench, Check, Circle, Phone } from 'lucide-react';
+import { getFirestore, doc, setDoc, serverTimestamp, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench, Check, Circle, Phone, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
@@ -36,6 +36,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
+import { useDebounce } from 'use-debounce';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -171,11 +172,35 @@ export default function LoginPage() {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [googleUser, setGoogleUser] = useState<FirebaseUser | null>(null);
 
+  // Username validation state
+  const [debouncedUsername] = useDebounce(username, 500);
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle');
+
   const auth = useAuth();
   const firestore = getFirestore();
   const router = useRouter();
   const { toast } = useToast();
   const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',');
+  
+  const checkUsernameUniqueness = useCallback(async (uname: string) => {
+    if (!uname || uname.length < 3) {
+      setUsernameStatus('idle');
+      return true;
+    }
+    setUsernameStatus('checking');
+    const usersRef = collection(firestore, 'users');
+    const q = query(usersRef, where('username', '==', uname));
+    const querySnapshot = await getDocs(q);
+    const isAvailable = querySnapshot.empty;
+    setUsernameStatus(isAvailable ? 'available' : 'unavailable');
+    return isAvailable;
+  }, [firestore]);
+  
+  useEffect(() => {
+    if (!isLogin && isProfessional) {
+      checkUsernameUniqueness(debouncedUsername);
+    }
+  }, [debouncedUsername, isLogin, isProfessional, checkUsernameUniqueness]);
 
 
   const handleAuthError = (error: unknown) => {
@@ -262,6 +287,12 @@ export default function LoginPage() {
         toast({ variant: 'destructive', title: 'Username Required', description: 'A username is required for professional accounts.' });
         return;
       }
+
+      if (isProfessional && usernameStatus !== 'available') {
+        toast({ variant: 'destructive', title: 'Username Unavailable', description: 'Please choose a different username.' });
+        return;
+      }
+
        if (category === 'vendor' && (!companyName || !servicesProvided || !bio)) {
         toast({ variant: 'destructive', title: 'Missing Vendor Information', description: 'Please fill out all company details.' });
         return;
@@ -522,6 +553,13 @@ export default function LoginPage() {
                         <User className="h-[22px] w-[22px]" />
                       </div>
                     </div>
+                     {username.length > 2 && !isLogin && (
+                        <div className="text-xs flex items-center gap-2 mt-1.5">
+                            {usernameStatus === 'checking' && <><Loader2 className="h-4 w-4 animate-spin" /><span>Checking availability...</span></>}
+                            {usernameStatus === 'available' && <><CheckCircle2 className="h-4 w-4 text-green-600" /><span>Username is available!</span></>}
+                            {usernameStatus === 'unavailable' && <><AlertCircle className="h-4 w-4 text-destructive" /><span>Username is already taken.</span></>}
+                        </div>
+                    )}
                   </div>
                  )}
                 </>
@@ -639,3 +677,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
