@@ -35,25 +35,34 @@ export default function WelcomeEmail({ name }: WelcomeEmailProps) {
   return (
     <Html>
       <Head />
-      <Preview>Welcome to Falcon Estates!</Preview>
+      <Preview>Welcome to Falcon Estates! Your journey begins now.</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={box}>
             <FalconLogo />
-            <Heading style={heading}>Welcome Aboard, {name}!</Heading>
+            <Heading style={heading}>Welcome to the Nest, {name}!</Heading>
             <Text style={paragraph}>
               We are thrilled to have you join the Falcon Estates community. You're one step closer to finding your dream property or connecting with top-tier real estate professionals.
             </Text>
-            <Text style={paragraph}>
-                As a new member, you've received <strong>1 free property listing credit</strong> to get you started.
-            </Text>
-            <Button style={button} href={`${baseUrl}/properties`}>
-              Start Exploring Properties
+            
+            <Section style={highlightSection}>
+                <Text style={highlightText}>
+                    As a new member, you've received <strong>1 free property listing credit</strong> to get you started.
+                </Text>
+            </Section>
+
+            <Button style={button} href={`${baseUrl}/add-property`}>
+              List Your Property Now
             </Button>
-            <Hr style={hr} />
-            <Text style={paragraph}>
-                If you have any questions, don't hesitate to visit our <Link href={`${baseUrl}/contact`} style={link}>Contact Page</Link>.
+            
+            <Text style={paragraphSmall}>
+                Alternatively, you can start by exploring properties on our platform.
             </Text>
+            <Link href={`${baseUrl}/properties`} style={link}>
+                Browse Properties
+            </Link>
+
+            <Hr style={hr} />
              <Section style={{ textAlign: 'center', marginTop: '32px' }}>
                 <Link href="#" style={socialLink}>Facebook</Link>
                 <span style={dot}> &sdot; </span>
@@ -110,7 +119,16 @@ const paragraph = {
   fontSize: '16px',
   lineHeight: '26px',
   textAlign: 'center' as const,
+  marginBottom: '24px',
 };
+
+const paragraphSmall = {
+  ...paragraph,
+  fontSize: '14px',
+  marginTop: '16px',
+  marginBottom: '8px',
+};
+
 
 const button = {
   backgroundColor: '#5A31F4',
@@ -123,7 +141,7 @@ const button = {
   display: 'block',
   width: '100%',
   padding: '16px 0',
-  marginTop: '32px',
+  marginTop: '24px',
 };
 
 const footer = {
@@ -136,6 +154,9 @@ const footer = {
 const link = {
   color: '#5A31F4',
   textDecoration: 'underline',
+  textAlign: 'center' as const,
+  display: 'block',
+  fontSize: '14px',
 };
 
 const socialLink = {
@@ -148,4 +169,20 @@ const socialLink = {
 const dot = {
     color: '#a0aec0',
     margin: '0 4px',
-}
+};
+
+const highlightSection = {
+    backgroundColor: '#f7f3ff',
+    borderLeft: '4px solid #5A31F4',
+    padding: '16px',
+    borderRadius: '4px',
+    textAlign: 'center' as const,
+    marginBottom: '24px',
+};
+
+const highlightText = {
+    color: '#5A31F4',
+    fontSize: '16px',
+    lineHeight: '24px',
+    margin: 0,
+};
