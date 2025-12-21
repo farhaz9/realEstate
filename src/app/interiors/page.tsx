@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -10,7 +9,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
 import { ProfessionalCard } from '@/components/shared/professional-card';
-import { Loader2, Search } from 'lucide-react';
+import { Loader2, Search, Building, Brush, Sofa, DraftingCompass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -19,6 +18,30 @@ import { Input } from '@/components/ui/input';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
 import { Skeleton } from '@/components/ui/skeleton';
+
+const designServices = [
+  {
+    title: "01. Architecture",
+    description: "Architecture is the art and science of designing built environments that are both functional and inspiring. Through thoughtful planning, innovative design, and technical precision, we create structures that balance aesthetics, safety, sustainability, climate responsiveness, and economic feasibility—transforming space and light into meaningful experiences.",
+    icon: Building
+  },
+  {
+    title: "02. Interior Design",
+    description: "Our interior design approach blends creativity with technical expertise to craft spaces that are visually compelling and highly functional. By integrating architecture, furniture design, lighting, textiles, decorative arts, and graphic elements, we create interiors that reflect your lifestyle, evoke emotion, and enhance everyday living.",
+    icon: Brush
+  },
+  {
+    title: "03. Interior Styling",
+    description: "Interior styling focuses on the purposeful use of space to elevate comfort, efficiency, and visual harmony. From warm, inviting homes to productive workspaces and elegant public environments, we thoughtfully curate and execute designs that support how people live, work, and interact.",
+    icon: DraftingCompass
+  },
+  {
+    title: "04. Furniture Design",
+    description: "Furniture design is where functionality meets craftsmanship and aesthetics. We design bespoke furniture pieces that enhance usability while adding character and identity to a space. Each piece is carefully considered to complement the overall interior and contribute to a cohesive, refined environment.",
+    icon: Sofa
+  }
+];
+
 
 function InteriorsPageContent() {
   const firestore = useFirestore();
@@ -195,8 +218,37 @@ function InteriorsPageContent() {
            )}
         </div>
       </section>
-      
+
       <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Our Services</h2>
+            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+              A holistic approach to creating beautiful and functional spaces.
+            </p>
+          </div>
+          <div className="max-w-4xl mx-auto space-y-8">
+            {designServices.map((service) => {
+              const Icon = service.icon;
+              return (
+                <Card key={service.title} className="p-6 border-l-4 border-primary bg-primary/5">
+                  <div className="flex flex-col md:flex-row md:items-start gap-6">
+                     <div className="flex-shrink-0 bg-background rounded-full p-3 border shadow-sm">
+                        <Icon className="h-6 w-6 text-primary" />
+                     </div>
+                    <div>
+                      <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{service.description}</p>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+      
+      <section className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
            <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Meet Our Designers</h2>
@@ -232,7 +284,7 @@ function InteriorsPageContent() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-primary/5">
+      <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold">Explore Properties</h2>
