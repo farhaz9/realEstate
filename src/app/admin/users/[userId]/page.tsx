@@ -295,7 +295,15 @@ export default function UserDetailPage() {
   const handleUserDelete = () => {
     if (!firestore || !user) return;
     const userRef = doc(firestore, "users", user.id);
-    updateDocumentNonBlocking(userRef, { isBlocked: true, fullName: "Deleted User", email: `deleted-${user.id}@deleted.com` });
+    // Soft delete: keep the user document for historical data (e.g., transactions)
+    // but make it unusable.
+    updateDocumentNonBlocking(userRef, { 
+        isBlocked: true, 
+        fullName: "Deleted User", 
+        email: `deleted-${user.id}@deleted.com`,
+        phone: '0000000000',
+        photoURL: '',
+    });
     toast({ title: "User Deleted", description: "The user has been marked as deleted and blocked.", variant: "destructive" });
     setIsConfirmationDialogOpen(false);
     router.push('/admin');
@@ -657,7 +665,7 @@ export default function UserDetailPage() {
                 <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                    {confirmationAction === 'deleteUser' && `This will permanently delete the user "${user.fullName}".`}
+                    {confirmationAction === 'deleteUser' && `This will permanently mark the user "${user.fullName}" as deleted. Their data will be anonymized but retained for record-keeping.`}
                     {confirmationAction === 'blockUser' && `This will ${user.isBlocked ? 'unblock' : 'block'} the user "${user.fullName}".`}
                     {confirmationAction === 'verifyUser' && `This will ${isCurrentlyVerified ? 'revoke verification for' : 'grant verification to'} "${user.fullName}".`}
                     {confirmationAction === 'deleteReview' && `This will permanently delete the review from "${reviewToDelete?.reviewerName}".`}
@@ -673,5 +681,3 @@ export default function UserDetailPage() {
     </div>
   );
 }
-
-    

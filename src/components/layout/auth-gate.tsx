@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useUser, useAuth, useDoc, useMemoFirebase } from "@/firebase";
@@ -26,13 +25,14 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isUserLoading && user && userProfile?.isBlocked) {
       if (auth) {
-        signOut(auth);
-        toast({
-          variant: 'destructive',
-          title: 'Account Blocked',
-          description: 'Your account has been blocked by an administrator.',
+        signOut(auth).then(() => {
+            toast({
+              variant: 'destructive',
+              title: 'Account Blocked',
+              description: 'Your account has been blocked or deleted by an administrator.',
+            });
+            router.push('/login');
         });
-        router.push('/login');
       }
     }
   }, [user, userProfile, isUserLoading, auth, router, toast]);
