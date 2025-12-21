@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -165,56 +166,6 @@ function InteriorsPageContent() {
                 <h3 className="text-xl font-semibold">No designers found.</h3>
                 <p className="text-muted-foreground mt-2">Try adjusting your search.</p>
             </div>
-           )}
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 bg-primary/5">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Design Inspiration</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              Get inspired by our portfolio of stunning interior transformations.
-            </p>
-          </div>
-           {isLoadingProperties ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(6)].map((_, i) => (
-                    <div key={i} className="flex flex-col space-y-3">
-                        <div className="relative h-96 bg-muted rounded-xl animate-pulse" />
-                        <div className="space-y-2 p-2">
-                            <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
-                            <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
-                        </div>
-                    </div>
-                ))}
-             </div>
-           ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {interiorProperties?.map((property) => {
-                  const imageUrl = property.imageUrls?.[0] ?? PlaceHolderImages.find(p => p.id === 'default-property-listing')?.imageUrl ?? '';
-                  return (
-                    <Card key={property.id} className="overflow-hidden group relative rounded-xl">
-                      <Link href={`/properties/${property.id}`} className="block">
-                        <div className="relative h-96 w-full">
-                          <Image
-                            src={imageUrl}
-                            alt={property.title}
-                            data-ai-hint="modern interior"
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                          <h2 className="text-2xl font-bold text-white drop-shadow-md">{property.title}</h2>
-                          <p className="mt-1 text-sm text-neutral-200 line-clamp-2 drop-shadow-sm">{property.description}</p>
-                        </div>
-                      </Link>
-                    </Card>
-                  )
-                })}
-              </div>
            )}
         </div>
       </section>
