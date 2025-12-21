@@ -402,15 +402,6 @@ function AddPropertyForm() {
         router.push('/settings?tab=listings');
     }
   }
-
-  const IconInput = ({ field, icon: Icon, placeholder, ...props }: { field: any, icon: React.ElementType, placeholder: string, [x:string]: any }) => (
-    <div className="relative">
-      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-        <Icon className="h-5 w-5 text-muted-foreground" />
-      </div>
-      <Input {...field} {...props} placeholder={placeholder} className="pl-10" />
-    </div>
-  );
   
   const step = Math.floor(progress / 33) + 1;
 
@@ -489,7 +480,12 @@ function AddPropertyForm() {
                                 <FormItem>
                                     <FormLabel>Price (in INR)</FormLabel>
                                     <FormControl>
-                                      <IconInput field={field} icon={Banknote} placeholder="Enter amount" type="text" inputMode="numeric" disabled={isSubmitting || (isEditMode && !isAdmin)} />
+                                      <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                          <Banknote className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <Input {...field} placeholder="Enter amount" type="text" inputMode="numeric" disabled={isSubmitting || (isEditMode && !isAdmin)} className="pl-10" />
+                                      </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -503,7 +499,12 @@ function AddPropertyForm() {
                                 <FormItem>
                                     <FormLabel>Area (sq. yards)</FormLabel>
                                     <FormControl>
-                                      <IconInput field={field} icon={Home} placeholder="e.g., 250" type="text" inputMode="numeric" disabled={isSubmitting} />
+                                      <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                          <Home className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <Input {...field} placeholder="e.g., 250" type="text" inputMode="numeric" disabled={isSubmitting} className="pl-10" />
+                                      </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -516,7 +517,12 @@ function AddPropertyForm() {
                                     <FormItem>
                                         <FormLabel>Bedrooms</FormLabel>
                                         <FormControl>
-                                          <IconInput field={field} icon={BedDouble} placeholder="e.g., 3" type="text" inputMode="numeric" disabled={isSubmitting} />
+                                          <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                              <BedDouble className="h-5 w-5 text-muted-foreground" />
+                                            </div>
+                                            <Input {...field} placeholder="e.g., 3" type="text" inputMode="numeric" disabled={isSubmitting} className="pl-10" />
+                                          </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -529,7 +535,12 @@ function AddPropertyForm() {
                                     <FormItem>
                                         <FormLabel>Bathrooms</FormLabel>
                                         <FormControl>
-                                           <IconInput field={field} icon={Bath} placeholder="e.g., 2" type="text" inputMode="numeric" disabled={isSubmitting} />
+                                           <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                              <Bath className="h-5 w-5 text-muted-foreground" />
+                                            </div>
+                                            <Input {...field} placeholder="e.g., 2" type="text" inputMode="numeric" disabled={isSubmitting} className="pl-10" />
+                                          </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
