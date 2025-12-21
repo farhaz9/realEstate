@@ -35,6 +35,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { sendWelcomeEmail } from '@/app/actions/send-welcome-email';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -301,6 +302,11 @@ export default function LoginPage() {
 
         await setDoc(userDocRef, userData);
         
+        // Send welcome email
+        if (user.email && fullName) {
+          await sendWelcomeEmail({ name: fullName, email: user.email });
+        }
+        
         toast({
           title: 'Sign Up Successful!',
           description: 'Welcome to Falcon Estates! You have received 1 free listing credit.',
@@ -333,6 +339,12 @@ export default function LoginPage() {
       isBlocked: false,
       isFeatured: isProfessionalRole,
     });
+    
+    // Send welcome email for Google Sign-up
+    if (user.email && user.displayName) {
+      await sendWelcomeEmail({ name: user.displayName, email: user.email });
+    }
+
     toast({
       title: 'Sign Up Successful!',
       description: 'Welcome to Falcon Estates! You have received 1 free listing credit.',
