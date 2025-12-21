@@ -17,6 +17,8 @@ import { NewProjects } from "@/components/shared/new-projects";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PricingSection } from "@/components/shared/pricing-section";
 import { PropertySalesAnimation } from "@/components/lottie/property-sales-animation";
+import { InteriorDesignAnimation } from "@/components/lottie/interior-design-animation";
+import { ConstructionAnimation } from "@/components/lottie/construction-animation";
 
 
 const faqs = [
@@ -50,13 +52,15 @@ const coreServices = [
     icon: DraftingCompass,
     title: "Construction",
     description: "From ground-up development to renovations, we manage construction projects with precision and quality assurance.",
-    href: "/services"
+    href: "/services",
+    animation: <ConstructionAnimation />,
   },
   {
     icon: Armchair,
     title: "Interior Design",
     description: "Transform your space with our curated network of top-rated interior designers tailored to your style.",
-    href: "/interiors"
+    href: "/interiors",
+    animation: <InteriorDesignAnimation />,
   },
 ];
 
