@@ -57,7 +57,7 @@ const propertyFormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
   images: z.any().optional(),
-  price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
+  price: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, { message: 'Price must be a positive number.' }),
   listingType: z.enum(['sale', 'rent'], { required_error: 'You must select a listing type.' }),
   location: z.object({
     address: z.string().min(3, { message: 'Address is required.' }),
@@ -67,9 +67,9 @@ const propertyFormSchema = z.object({
   contactNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   whatsappNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   propertyType: z.string().min(2, { message: 'Property type is required.' }),
-  bedrooms: z.coerce.number().int().min(0, { message: 'Bedrooms must be a non-negative number.' }),
-  bathrooms: z.coerce.number().int().min(0, { message: 'Bathrooms must be a non-negative number.' }),
-  squareYards: z.coerce.number().positive({ message: 'Square yards must be a positive number.' }),
+  bedrooms: z.string().refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) >= 0, { message: 'Bedrooms must be a non-negative number.' }),
+  bathrooms: z.string().refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) >= 0, { message: 'Bathrooms must be a non-negative number.' }),
+  squareYards: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, { message: 'Square yards must be a positive number.' }),
   furnishing: z.enum(['unfurnished', 'semi-furnished', 'fully-furnished'], {
     required_error: 'Please select a furnishing status.',
   }),
@@ -121,7 +121,7 @@ function AddPropertyForm() {
     defaultValues: {
       title: '',
       description: '',
-      price: 0,
+      price: '',
       listingType: 'sale',
       location: {
         address: '',
@@ -131,9 +131,9 @@ function AddPropertyForm() {
       contactNumber: '',
       whatsappNumber: '',
       propertyType: '',
-      bedrooms: 0,
-      bathrooms: 0,
-      squareYards: 0,
+      bedrooms: '',
+      bathrooms: '',
+      squareYards: '',
       furnishing: 'unfurnished',
       overlooking: '',
       ageOfConstruction: '',
@@ -172,7 +172,7 @@ function AddPropertyForm() {
       form.reset({
         title: propertyToEdit.title ?? '',
         description: propertyToEdit.description ?? '',
-        price: propertyToEdit.price ?? 0,
+        price: propertyToEdit.price?.toString() ?? '',
         listingType: propertyToEdit.listingType ?? 'sale',
         location: {
           address: propertyToEdit.location?.address ?? '',
@@ -182,9 +182,9 @@ function AddPropertyForm() {
         contactNumber: propertyToEdit.contactNumber ?? '',
         whatsappNumber: propertyToEdit.whatsappNumber ?? '',
         propertyType: propertyToEdit.propertyType ?? '',
-        bedrooms: propertyToEdit.bedrooms ?? 0,
-        bathrooms: propertyToEdit.bathrooms ?? 0,
-        squareYards: propertyToEdit.squareYards ?? 0,
+        bedrooms: propertyToEdit.bedrooms?.toString() ?? '',
+        bathrooms: propertyToEdit.bathrooms?.toString() ?? '',
+        squareYards: propertyToEdit.squareYards?.toString() ?? '',
         furnishing: propertyToEdit.furnishing ?? 'unfurnished',
         amenities: propertyToEdit.amenities?.join(', ') ?? '',
         overlooking: propertyToEdit.overlooking ?? '',
@@ -197,15 +197,15 @@ function AddPropertyForm() {
       form.reset({
           title: 'Spacious 3BHK with Modern Amenities',
           description: 'A beautiful and well-maintained property in a prime location, perfect for families. Features include modular kitchen, ample sunlight, and 24/7 security.',
-          price: 5000000,
+          price: '5000000',
           listingType: 'sale',
           location: { address: '123, Sunshine Apartments, Sector 18', pincode: '110001', state: 'Delhi' },
           contactNumber: '9876543210',
           whatsappNumber: '9876543210',
           propertyType: 'Apartment',
-          bedrooms: 3,
-          bathrooms: 2,
-          squareYards: 200,
+          bedrooms: '3',
+          bathrooms: '2',
+          squareYards: '200',
           furnishing: 'semi-furnished',
           overlooking: 'Park',
           ageOfConstruction: '1-5 years',
@@ -338,18 +338,26 @@ function AddPropertyForm() {
     }
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
-    const { images, ...restOfData } = data;
     
     const propertyData: Partial<Property> = {
-      ...restOfData,
+      title: data.title,
+      description: data.description,
+      price: parseFloat(data.price),
+      listingType: data.listingType,
+      location: data.location,
+      contactNumber: data.contactNumber,
+      whatsappNumber: data.whatsappNumber,
+      propertyType: data.propertyType,
+      bedrooms: parseInt(data.bedrooms, 10),
+      bathrooms: parseInt(data.bathrooms, 10),
+      squareYards: parseFloat(data.squareYards),
+      furnishing: data.furnishing,
       amenities: amenitiesArray,
       imageUrls: uploadedImageUrls,
     };
     
     if (isEditMode) {
-      propertyData.price = isAdmin ? data.price : propertyToEdit?.price;
-    } else {
-      propertyData.price = data.price;
+      propertyData.price = isAdmin ? parseFloat(data.price) : propertyToEdit?.price;
     }
 
     if (!data.overlooking) delete (propertyData as Partial<typeof propertyData>).overlooking;
@@ -481,7 +489,7 @@ function AddPropertyForm() {
                                 <FormItem>
                                     <FormLabel>Price (in INR)</FormLabel>
                                     <FormControl>
-                                      <IconInput field={field} icon={Banknote} placeholder="Enter amount" type="number" disabled={isSubmitting || (isEditMode && !isAdmin)} />
+                                      <IconInput field={field} icon={Banknote} placeholder="Enter amount" type="text" inputMode="numeric" disabled={isSubmitting || (isEditMode && !isAdmin)} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -495,7 +503,7 @@ function AddPropertyForm() {
                                 <FormItem>
                                     <FormLabel>Area (sq. yards)</FormLabel>
                                     <FormControl>
-                                      <IconInput field={field} icon={Home} placeholder="e.g., 250" type="number" disabled={isSubmitting} />
+                                      <IconInput field={field} icon={Home} placeholder="e.g., 250" type="text" inputMode="numeric" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -508,7 +516,7 @@ function AddPropertyForm() {
                                     <FormItem>
                                         <FormLabel>Bedrooms</FormLabel>
                                         <FormControl>
-                                          <IconInput field={field} icon={BedDouble} placeholder="e.g., 3" type="number" disabled={isSubmitting} />
+                                          <IconInput field={field} icon={BedDouble} placeholder="e.g., 3" type="text" inputMode="numeric" disabled={isSubmitting} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -521,7 +529,7 @@ function AddPropertyForm() {
                                     <FormItem>
                                         <FormLabel>Bathrooms</FormLabel>
                                         <FormControl>
-                                           <IconInput field={field} icon={Bath} placeholder="e.g., 2" type="number" disabled={isSubmitting} />
+                                           <IconInput field={field} icon={Bath} placeholder="e.g., 2" type="text" inputMode="numeric" disabled={isSubmitting} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
