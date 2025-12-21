@@ -278,27 +278,27 @@
     },
     {
       "id": "service-architecture",
-      "description": "A physical architectural model of a building on a table.",
-      "imageUrl": "https://images.unsplash.com/photo-1511316672336-b482245a1331?q=80&w=2940&auto=format&fit=crop",
-      "imageHint": "architecture model"
+      "description": "View of a modern building's geometric facade.",
+      "imageUrl": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "modern architecture"
     },
     {
       "id": "service-interiors-page",
-      "description": "A beautifully designed modern living room with a neutral color palette.",
-      "imageUrl": "https://images.unsplash.com/photo-1615875605825-5eb9bb5c6046?q=80&w=2835&auto=format&fit=crop",
-      "imageHint": "living room"
+      "description": "An elegant and modern dining room setup.",
+      "imageUrl": "https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2835&auto=format&fit=crop",
+      "imageHint": "dining room"
     },
     {
       "id": "service-styling",
-      "description": "A close-up of home decor items like vases and books arranged on a shelf.",
-      "imageUrl": "https://images.unsplash.com/photo-1623091410944-e2e214194c26?q=80&w=2835&auto=format&fit=crop",
-      "imageHint": "home decor"
+      "description": "A close-up of beautifully arranged decor on a coffee table.",
+      "imageUrl": "https://images.unsplash.com/photo-1542037104857-ff80bcf5eb89?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "interior styling"
     },
     {
       "id": "service-furniture",
-      "description": "A stylish, modern armchair in a well-lit room.",
-      "imageUrl": "https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=2760&auto=format&fit=crop",
-      "imageHint": "modern armchair"
+      "description": "A sleek, modern sofa in a minimalist living room.",
+      "imageUrl": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "modern sofa"
     }
   ]
 }
