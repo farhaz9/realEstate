@@ -11,7 +11,7 @@ service cloud.firestore {
     // Helper function to check if the requesting user is the admin.
     // Ensure NEXT_PUBLIC_ADMIN_EMAIL is set in your environment.
     function isAdmin() {
-      return request.auth != null && request.auth.token.email in ["sk@gmail.com", "thegreatfarhaz07@gmail.com"];
+      return request.auth != null && request.auth.token.email in ["sk@gmail.com", "thegreatfarhaz07@gmail.com", "shahbazkhan19111@gmail.com"];
     }
 
     // Rules for the 'users' collection
