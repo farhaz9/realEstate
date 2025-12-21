@@ -192,11 +192,20 @@ function InteriorsPageContent() {
            ) : error ? (
               <div className="text-center text-destructive py-16">Error: {error.message}</div>
            ) : filteredDesigners && filteredDesigners.length > 0 ? (
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredDesigners.slice(0,3).map((designer) => (
-                <ProfessionalCard key={designer.id} professional={designer} />
-              ))}
-            </div>
+             <>
+                {/* Desktop View */}
+                <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredDesigners.slice(0, 3).map((designer) => (
+                    <ProfessionalCard key={designer.id} professional={designer} />
+                  ))}
+                </div>
+                {/* Mobile View */}
+                <div className="sm:hidden divide-y rounded-lg border overflow-hidden">
+                   {filteredDesigners.slice(0, 3).map((designer) => (
+                    <ProfessionalCard key={designer.id} professional={designer} variant="compact" />
+                  ))}
+                </div>
+             </>
            ) : (
              <div className="text-center py-16 border-2 border-dashed rounded-lg">
                 <h3 className="text-xl font-semibold">No designers found.</h3>
