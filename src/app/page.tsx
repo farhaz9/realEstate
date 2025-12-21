@@ -152,8 +152,9 @@ export default function HomePage() {
       <section id="offers" className="py-16 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Core Services</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest">What we offer</p>
+            <h2 className="text-3xl md:text-4xl font-bold mt-2">Our Core Services</h2>
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
               Comprehensive solutions for every step of your real estate journey.
             </p>
           </div>
