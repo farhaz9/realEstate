@@ -182,6 +182,8 @@ export default function LoginPage() {
   const { toast } = useToast();
   const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',');
   
+  const isProfessional = ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(category);
+
   const checkUsernameUniqueness = useCallback(async (uname: string) => {
     if (!uname || uname.length < 3) {
       setUsernameStatus('idle');
@@ -236,8 +238,6 @@ export default function LoginPage() {
     const randomPart = Math.floor(100 + Math.random() * 900);
     return `${namePart}${emailPart}${randomPart}`;
   };
-
-  const isProfessional = ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(category);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -677,5 +677,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
