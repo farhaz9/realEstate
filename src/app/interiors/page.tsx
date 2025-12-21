@@ -10,10 +10,9 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
 import { ProfessionalCard } from '@/components/shared/professional-card';
-import { Loader2, Search, Building, Brush, Sofa, DraftingCompass } from 'lucide-react';
+import { Loader2, Search, Building, Brush, Sofa, DraftingCompass, ArrowRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -22,27 +21,30 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const designServices = [
   {
-    title: "01. Architecture",
-    description: "Architecture is the art and science of designing built environments that are both functional and inspiring. Through thoughtful planning, innovative design, and technical precision, we create structures that balance aesthetics, safety, sustainability, climate responsiveness, and economic feasibility—transforming space and light into meaningful experiences.",
-    icon: Building
+    title: "Architecture",
+    description: "Creating structures that balance aesthetics, safety, sustainability, and economic feasibility—transforming space and light into meaningful experiences.",
+    icon: Building,
+    image: PlaceHolderImages.find(p => p.id === 'service-architecture')?.imageUrl || ''
   },
   {
-    title: "02. Interior Design",
-    description: "Our interior design approach blends creativity with technical expertise to craft spaces that are visually compelling and highly functional. By integrating architecture, furniture design, lighting, textiles, decorative arts, and graphic elements, we create interiors that reflect your lifestyle, evoke emotion, and enhance everyday living.",
-    icon: Brush
+    title: "Interior Design",
+    description: "Crafting spaces that are visually compelling and highly functional, reflecting your lifestyle and enhancing everyday living.",
+    icon: Brush,
+    image: PlaceHolderImages.find(p => p.id === 'service-interiors-page')?.imageUrl || ''
   },
   {
-    title: "03. Interior Styling",
-    description: "Interior styling focuses on the purposeful use of space to elevate comfort, efficiency, and visual harmony. From warm, inviting homes to productive workspaces and elegant public environments, we thoughtfully curate and execute designs that support how people live, work, and interact.",
-    icon: DraftingCompass
+    title: "Interior Styling",
+    description: "Purposeful use of space to elevate comfort, efficiency, and visual harmony, from warm homes to elegant public environments.",
+    icon: DraftingCompass,
+    image: PlaceHolderImages.find(p => p.id === 'service-styling')?.imageUrl || ''
   },
   {
-    title: "04. Furniture Design",
-    description: "Furniture design is where functionality meets craftsmanship and aesthetics. We design bespoke furniture pieces that enhance usability while adding character and identity to a space. Each piece is carefully considered to complement the overall interior and contribute to a cohesive, refined environment.",
-    icon: Sofa
+    title: "Furniture Design",
+    description: "Designing bespoke furniture pieces that enhance usability while adding character and identity to a space, ensuring a cohesive environment.",
+    icon: Sofa,
+    image: PlaceHolderImages.find(p => p.id === 'service-furniture')?.imageUrl || ''
   }
 ];
-
 
 function InteriorsPageContent() {
   const firestore = useFirestore();
@@ -133,7 +135,41 @@ function InteriorsPageContent() {
           </div>
       </PageHero>
       
-      <section id="top-designers" className="py-16 md:py-24 bg-background">
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest">What we offer</p>
+            <h2 className="text-3xl md:text-4xl font-bold mt-2">Explore Our Services</h2>
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+              From single-room makeovers to full-scale renovations, we have the expertise to handle projects of any size.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {designServices.map((service) => {
+              const Icon = service.icon;
+              return (
+                 <Card key={service.title} className="bg-card text-card-foreground border rounded-lg overflow-hidden group transition-shadow duration-300 hover:shadow-lg">
+                    <div className="relative h-48 bg-muted">
+                        <Image src={service.image} alt={service.title} fill className="object-cover" />
+                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow">
+                            <Icon className="h-5 w-5 text-primary" />
+                        </div>
+                    </div>
+                    <CardContent className="p-6">
+                        <h3 className="text-lg font-bold mb-2">{service.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
+                        <Link href="#" className="text-sm font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Learn more <ArrowRight className="h-4 w-4" />
+                        </Link>
+                    </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="top-designers" className="py-16 md:py-24 bg-primary/5">
         <div className="container mx-auto px-4">
            <div className="flex justify-between items-center mb-8">
              <h2 className="text-3xl md:text-4xl font-bold">Top Interior Designers</h2>
@@ -169,72 +205,7 @@ function InteriorsPageContent() {
            )}
         </div>
       </section>
-
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Our Services</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              A holistic approach to creating beautiful and functional spaces.
-            </p>
-          </div>
-          <div className="max-w-4xl mx-auto space-y-8">
-            {designServices.map((service) => {
-              const Icon = service.icon;
-              return (
-                <Card key={service.title} className="p-6 border-l-4 border-primary bg-primary/5">
-                  <div className="flex flex-col md:flex-row md:items-start gap-6">
-                     <div className="flex-shrink-0 bg-background rounded-full p-3 border shadow-sm">
-                        <Icon className="h-6 w-6 text-primary" />
-                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{service.description}</p>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
       
-      <section className="py-16 md:py-24 bg-primary/5">
-        <div className="container mx-auto px-4">
-           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Meet Our Designers</h2>
-            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              Connect with talented professionals who can bring your vision to life.
-            </p>
-          </div>
-          
-          {isLoading && (
-             <div className="flex items-center justify-center py-16">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          )}
-          
-          {error && (
-            <div className="text-center text-destructive py-16">Error: {error.message}</div>
-          )}
-          
-          {filteredDesigners && filteredDesigners.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredDesigners.map((designer) => (
-                <ProfessionalCard key={designer.id} professional={designer} />
-              ))}
-            </div>
-          )}
-
-          {filteredDesigners && filteredDesigners.length === 0 && !isLoading && (
-             <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                <h3 className="text-xl font-semibold">No designers found.</h3>
-                <p className="text-muted-foreground mt-2">Check back later to see our list of talented designers.</p>
-              </div>
-          )}
-        </div>
-      </section>
-
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">

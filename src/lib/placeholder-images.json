@@ -275,6 +275,30 @@
       "description": "Interior of a modern room with a wooden sideboard and a plant.",
       "imageUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxraXRjaGVufGVufDB8fHx8fDE3NjU2NDEyMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "room interior"
+    },
+    {
+      "id": "service-architecture",
+      "description": "A line drawing of a modern house on a beige background.",
+      "imageUrl": "https://images.unsplash.com/photo-1593349480503-68c6a53c0762?q=80&w=2696&auto=format&fit=crop",
+      "imageHint": "architecture drawing"
+    },
+    {
+      "id": "service-interiors-page",
+      "description": "A woman looks at swatches and samples in a bright, modern interior design studio.",
+      "imageUrl": "https://images.unsplash.com/photo-1572023023838-80e3027a8a0a?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "interior design"
+    },
+    {
+      "id": "service-styling",
+      "description": "A flat lay of interior design plans with a small plant.",
+      "imageUrl": "https://images.unsplash.com/photo-1542037104857-e6956041131b?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "design plans"
+    },
+    {
+      "id": "service-furniture",
+      "description": "A modern wooden and rattan sofa next to a side table with a plant.",
+      "imageUrl": "https://images.unsplash.com/photo-1617103993354-9833a6e3e589?q=80&w=2835&auto=format&fit=crop",
+      "imageHint": "modern furniture"
     }
   ]
 }
