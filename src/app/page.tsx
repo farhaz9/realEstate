@@ -160,7 +160,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {coreServices.map((service) => (
               <Card key={service.title} className="flex flex-col text-center items-center p-6 h-full group transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 bg-background border-transparent hover:border-primary/20">
-                 <div className="w-40 h-40 mb-4">
+                 <div className="w-full h-40 mb-4">
                     {service.animation ? service.animation : <service.icon className="h-full w-full text-primary transition-colors" />}
                 </div>
                 <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
