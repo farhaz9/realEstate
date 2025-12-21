@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { PropertyCard } from '@/components/property-card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const designServices = [
   {
@@ -236,11 +237,23 @@ function InteriorsPageContent() {
                 ))}
              </div>
            ) : (
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {interiorProperties?.slice(0,3).map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
-            </div>
+             <Carousel opts={{ align: 'start' }} className="w-full">
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {interiorProperties?.slice(0,3).map((property) => (
+                    <CarouselItem key={property.id} className="basis-[90%] sm:basis-1/2 lg:basis-1/3 pl-2 md:pl-4">
+                      <div className="h-full">
+                         <PropertyCard property={property} />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                 <div className="mt-8 flex justify-center md:hidden">
+                    <div className="bg-background border rounded-full p-1 flex items-center gap-1">
+                        <CarouselPrevious className="relative translate-y-0 left-0 top-0 h-10 w-10 hover:bg-primary/10 active:bg-primary/20" />
+                        <CarouselNext className="relative translate-y-0 right-0 top-0 h-10 w-10 hover:bg-primary/10 active:bg-primary/20" />
+                    </div>
+                </div>
+            </Carousel>
            )}
         </div>
       </section>
@@ -278,4 +291,6 @@ export default function InteriorsPage() {
     </Suspense>
   )
 }
+    
+
     
