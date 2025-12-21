@@ -20,6 +20,7 @@ export function FeaturedProfessionals() {
     return query(
         collection(firestore, 'users'), 
         where('category', 'in', ['real-estate-agent', 'interior-designer']),
+        where('isFeatured', '==', true),
         limit(8)
     );
   }, [firestore]);
@@ -29,9 +30,7 @@ export function FeaturedProfessionals() {
   const title = 'Connect with Professionals';
   const subtitle = 'Find top-rated agents and designers to help you with your journey.';
 
-  const filteredProfessionals = professionals?.filter(p => !p.isBlocked && p.isFeatured !== false);
-
-  if (!isLoading && (!filteredProfessionals || filteredProfessionals.length === 0)) {
+  if (!isLoading && (!professionals || professionals.length === 0)) {
     return null;
   }
   
@@ -68,8 +67,8 @@ export function FeaturedProfessionals() {
             className="w-full"
           >
             <CarouselContent>
-              {filteredProfessionals?.map((professional) => (
-                <CarouselItem key={professional.id} className="basis-[90%] sm:basis-1/2 md:basis-1/3 pl-2 md:pl-4">
+              {professionals?.map((professional) => (
+                <CarouselItem key={professional.id} className="basis-[90%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-2 md:pl-4">
                    <div className="h-full p-1">
                     <ProfessionalCard professional={professional} />
                    </div>
