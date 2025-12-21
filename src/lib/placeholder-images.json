@@ -278,27 +278,27 @@
     },
     {
       "id": "service-architecture",
-      "description": "A line drawing of a modern house on a beige background.",
-      "imageUrl": "https://images.unsplash.com/photo-1593349480503-68c6a53c0762?q=80&w=1280&auto=format&fit=crop",
-      "imageHint": "architecture drawing"
+      "description": "A physical architectural model of a building on a table.",
+      "imageUrl": "https://images.unsplash.com/photo-1511316672336-b482245a1331?q=80&w=2940&auto=format&fit=crop",
+      "imageHint": "architecture model"
     },
     {
       "id": "service-interiors-page",
-      "description": "A woman looks at swatches and samples in a bright, modern interior design studio.",
-      "imageUrl": "https://images.unsplash.com/photo-1572023023838-80e3027a8a0a?q=80&w=1280&auto=format&fit=crop",
-      "imageHint": "interior design"
+      "description": "A beautifully designed modern living room with a neutral color palette.",
+      "imageUrl": "https://images.unsplash.com/photo-1615875605825-5eb9bb5c6046?q=80&w=2835&auto=format&fit=crop",
+      "imageHint": "living room"
     },
     {
       "id": "service-styling",
-      "description": "A flat lay of interior design plans with a small plant.",
-      "imageUrl": "https://images.unsplash.com/photo-1542037104857-e6956041131b?q=80&w=1280&auto=format&fit=crop",
-      "imageHint": "design plans"
+      "description": "A close-up of home decor items like vases and books arranged on a shelf.",
+      "imageUrl": "https://images.unsplash.com/photo-1623091410944-e2e214194c26?q=80&w=2835&auto=format&fit=crop",
+      "imageHint": "home decor"
     },
     {
       "id": "service-furniture",
-      "description": "A modern wooden and rattan sofa next to a side table with a plant.",
-      "imageUrl": "https://images.unsplash.com/photo-1617103993354-9833a6e3e589?q=80&w=1280&auto=format&fit=crop",
-      "imageHint": "modern furniture"
+      "description": "A stylish, modern armchair in a well-lit room.",
+      "imageUrl": "https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=2760&auto=format&fit=crop",
+      "imageHint": "modern armchair"
     }
   ]
 }
