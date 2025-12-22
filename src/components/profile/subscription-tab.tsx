@@ -4,7 +4,7 @@
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { User } from '@/types';
-import { Loader2, Gem, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, Gem, CheckCircle2, XCircle, Verified, ShieldAlert, Bot, Zap, Star, Building, Coins } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import Link from 'next/link';
@@ -12,12 +12,14 @@ import { Skeleton } from '../ui/skeleton';
 import { useMemo } from 'react';
 import { Badge } from '../ui/badge';
 import { format, formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { Progress } from '../ui/progress';
 
-const planDetails: Record<string, { name: string; color: string }> = {
-    free: { name: 'Free Tier', color: 'bg-gray-100 text-gray-800' },
-    basic: { name: 'Basic Plan', color: 'bg-blue-100 text-blue-800' },
-    pro: { name: 'Pro Plan', color: 'bg-purple-100 text-purple-800' },
-    business: { name: 'Business Plan', color: 'bg-amber-100 text-amber-800' },
+const planDetails: Record<string, { name: string; color: string; icon: React.ElementType }> = {
+    free: { name: 'Free Tier', color: 'text-gray-800', icon: Bot },
+    basic: { name: 'Basic Plan', color: 'text-blue-800', icon: Zap },
+    pro: { name: 'Pro Plan', color: 'text-purple-800', icon: Star },
+    business: { name: 'Business Plan', color: 'text-amber-800', icon: Building },
 };
 
 export function SubscriptionTab() {
@@ -60,64 +62,109 @@ export function SubscriptionTab() {
       verificationExpiresAt: expiryDate,
     };
   }, [userProfile]);
+  
+  const PlanIcon = currentPlan.icon;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Gem className="text-primary" />
-          My Subscription
-        </CardTitle>
-        <CardDescription>
-            View your current plan details and verification status.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {isLoading ? (
-            <div className="space-y-4">
-                <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-12 w-full" />
-            </div>
-        ) : (
-          <>
-            <div className="p-4 rounded-lg bg-muted flex items-center justify-between">
-                <div>
-                    <p className="text-sm font-semibold text-muted-foreground">Current Plan</p>
-                    <p className={`text-xl font-bold ${currentPlan.color.split(' ')[1]}`}>{currentPlan.name}</p>
-                </div>
-                <Button asChild variant="outline">
-                    <Link href="/pricing">Change Plan</Link>
-                </Button>
-            </div>
-            
-             <div className="p-4 rounded-lg bg-muted">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-semibold text-muted-foreground">Verification Status</p>
-                        <div className="flex items-center gap-2 mt-1">
-                            {isVerified ? (
-                                <CheckCircle2 className="h-6 w-6 text-green-500" />
-                            ) : (
-                                <XCircle className="h-6 w-6 text-destructive" />
-                            )}
-                            <p className="text-xl font-bold">{isVerified ? 'Verified' : 'Not Verified'}</p>
-                        </div>
+    <div className="grid md:grid-cols-2 gap-6 items-start">
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                    <Gem className="text-primary" />
+                    My Plan
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                 {isLoading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-3/4" />
+                        <Skeleton className="h-8 w-1/2" />
                     </div>
-                     {!isVerified && (
-                        <Button asChild>
+                 ) : (
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 p-3 rounded-lg">
+                                <PlanIcon className={cn("h-6 w-6", currentPlan.color)} />
+                            </div>
+                            <div>
+                                <p className="font-bold text-lg">{currentPlan.name}</p>
+                                <p className="text-sm text-muted-foreground">Your current subscription</p>
+                            </div>
+                        </div>
+                        <Button asChild variant="outline" size="sm">
+                            <Link href="/pricing">Change Plan</Link>
+                        </Button>
+                    </div>
+                 )}
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                    <Verified className="text-blue-500" />
+                    Verification
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                 {isLoading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-3/4" />
+                        <Skeleton className="h-8 w-1/2" />
+                    </div>
+                 ) : isVerified ? (
+                    <div className="flex flex-col items-start gap-2">
+                        <div className="flex items-center gap-2">
+                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+                                <Verified className="h-3 w-3 mr-1.5"/>
+                                Verified
+                            </Badge>
+                             <p className="text-sm font-semibold">Your profile is verified.</p>
+                        </div>
+                        {verificationExpiresAt && (
+                           <p className="text-sm text-muted-foreground">
+                                Expires on <strong>{format(verificationExpiresAt, 'PPP')}</strong> ({formatDistanceToNow(verificationExpiresAt, { addSuffix: true })}).
+                            </p>
+                        )}
+                    </div>
+                 ) : (
+                    <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                            <ShieldAlert className="h-5 w-5 text-destructive" />
+                            <p className="font-semibold text-muted-foreground">Not Verified</p>
+                        </div>
+                        <Button asChild size="sm">
                             <Link href="/pricing">Get Verified</Link>
                         </Button>
-                    )}
-                </div>
-                {isVerified && verificationExpiresAt && (
-                   <p className="text-sm text-muted-foreground mt-2">
-                        Your verification expires on <strong>{format(verificationExpiresAt, 'PPP')}</strong> ({formatDistanceToNow(verificationExpiresAt, { addSuffix: true })}).
-                    </p>
-                )}
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
+                    </div>
+                 )}
+            </CardContent>
+        </Card>
+         <Card className="md:col-span-2">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                    <Coins className="text-amber-500" />
+                    Listing Credits
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                 {isLoading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-1/4" />
+                        <Skeleton className="h-8 w-1/2" />
+                    </div>
+                 ) : (
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-4xl font-bold">{userProfile?.listingCredits || 0}</p>
+                            <p className="text-sm text-muted-foreground">Credits remaining</p>
+                        </div>
+                        <Button asChild>
+                            <Link href="/settings?tab=listings">Purchase Credits</Link>
+                        </Button>
+                    </div>
+                 )}
+            </CardContent>
+        </Card>
+    </div>
   );
 }
