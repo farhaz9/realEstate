@@ -66,7 +66,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Calendar as CalendarIcon } from '@/components/ui/calendar';
 
 const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',');
@@ -404,6 +404,7 @@ export default function AdminPage() {
   const [propertyFilter, setPropertyFilter] = useState('all');
   const [transactionFilter, setTransactionFilter] = useState('all');
 
+  const isAuthorizedAdmin = user?.email ? ADMIN_EMAILS.includes(user.email) : false;
 
   const allPropertiesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -416,9 +417,9 @@ export default function AdminPage() {
   }, [firestore]);
   
   const allLeadsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !isAuthorizedAdmin) return null;
     return query(collection(firestore, 'leads'), orderBy('leadDate', 'desc'));
-  }, [firestore]);
+  }, [firestore, isAuthorizedAdmin]);
   
   const appSettingsRef = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -430,7 +431,6 @@ export default function AdminPage() {
   const { data: leads, isLoading: isLoadingLeads } = useCollection<Lead>(allLeadsQuery);
   const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
 
-  const isAuthorizedAdmin = user?.email ? ADMIN_EMAILS.includes(user.email) : false;
   
   useEffect(() => {
     if (isUserLoading) return;
