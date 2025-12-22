@@ -66,13 +66,12 @@ function ProfessionalsPageContent() {
 
   const { data: professionals, isLoading: areProfessionalsLoading, error } = useCollection<User>(professionalsQuery);
 
-  const userProfileQuery = useMemoFirebase(() => {
+  const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return query(collection(firestore, 'users'), where('id', '==', user.uid));
+    return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfileData } = useCollection<User>(userProfileQuery);
-  const userProfile = userProfileData?.[0];
+  const { data: userProfile } = useDoc<User>(userDocRef);
 
   const fuse = useMemo(() => {
     if (!professionals) return null;
@@ -164,8 +163,8 @@ function ProfessionalsPageContent() {
               />
           </form>
 
-          <div className="mb-8 flex flex-col sm:flex-row justify-center items-center gap-4 border-b">
-              <div className="flex justify-center">
+          <div className="mb-8">
+              <div className="flex justify-center border-b">
                 {filterTabs.map(tab => (
                     <button
                         key={tab.id}
@@ -183,10 +182,12 @@ function ProfessionalsPageContent() {
                 ))}
               </div>
               {!isUserLoading && isProfessionalUser && !isCurrentlyVerified && (
-                  <Button onClick={() => setIsVerificationModalOpen(true)} size="sm" className="sm:ml-auto">
-                      <Verified className="mr-2 h-4 w-4" />
-                      Get Verified
-                  </Button>
+                  <div className="mt-6 sm:hidden">
+                    <Button onClick={() => setIsVerificationModalOpen(true)} size="lg" className="w-full h-12 text-base">
+                        <Verified className="mr-2 h-5 w-5" />
+                        Get Verified as a Professional
+                    </Button>
+                  </div>
               )}
           </div>
 
@@ -228,3 +229,4 @@ export default function ProfessionalsPage() {
         </Suspense>
     )
 }
+
