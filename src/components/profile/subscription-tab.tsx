@@ -4,7 +4,7 @@
 import { useUser, useDoc, useMemoFirebase, useFirestore, updateDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion, increment } from 'firebase/firestore';
 import type { User, AppSettings } from '@/types';
-import { Loader2, Gem, CheckCircle2, XCircle, Verified, ShieldAlert, Bot, Zap, Star, Building, Coins, ShoppingBag } from 'lucide-react';
+import { Loader2, Gem, CheckCircle2, XCircle, Verified, ShieldAlert, Bot, Zap, Star, Building, Coins, ShoppingBag, Briefcase } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import Link from 'next/link';
@@ -33,8 +33,8 @@ declare const Razorpay: any;
 const planDetails: Record<string, { name: string; color: string; icon: React.ElementType }> = {
     free: { name: 'Free Tier', color: 'text-gray-800', icon: ShoppingBag },
     basic: { name: 'Basic Plan', color: 'text-blue-800', icon: Zap },
-    pro: { name: 'Pro Plan', color: 'text-purple-800', icon: Gem },
-    business: { name: 'Business Plan', color: 'text-amber-800', icon: Building },
+    pro: { name: 'Pro Plan', color: 'text-purple-800', icon: Star },
+    business: { name: 'Business Plan', color: 'text-amber-800', icon: Briefcase },
 };
 
 type PaymentAction = 'verify' | 'credit';

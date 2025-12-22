@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { CreativePricing, type PricingTier } from "@/components/ui/creative-pricing";
-import { Zap, Bot, Star, Building, Verified, Gem, ShoppingBag } from "lucide-react";
+import { Zap, Bot, Star, Building, Verified, Gem, ShoppingBag, Briefcase } from "lucide-react";
 import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion, increment } from 'firebase/firestore';
 import type { User, AppSettings } from '@/types';
@@ -53,7 +53,7 @@ const plans: PricingTier[] = [
         priceAnnual: 9990,
         description: "For professionals and serious sellers.",
         features: ["15 Listings", "Priority Support", "Featured Listings"],
-        icon: <Gem className="w-6 h-6" />,
+        icon: <Star className="w-6 h-6" />,
         popular: true,
         color: "text-primary",
     },
@@ -64,7 +64,7 @@ const plans: PricingTier[] = [
         priceAnnual: 19990,
         description: "For agencies and power users.",
         features: ["100 Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
-        icon: <Building className="w-6 h-6" />,
+        icon: <Briefcase className="w-6 h-6" />,
         color: "text-amber-500",
     },
 ];
@@ -124,10 +124,10 @@ export default function PricingPage() {
             return;
         }
 
-        const isAnnual = selectedPlanId === 'annual';
-        const amount = (isAnnual ? selectedPlan.priceAnnual : selectedPlan.price) * 100;
-        const displayAmount = isAnnual ? selectedPlan.priceAnnual : selectedPlan.price;
-        const description = `Payment for ${selectedPlan.name} - ${isAnnual ? 'Annual' : 'Monthly'} Subscription`;
+        const isAnnualPlan = isAnnual;
+        const amount = (isAnnualPlan ? selectedPlan.priceAnnual : selectedPlan.price) * 100;
+        const displayAmount = isAnnualPlan ? selectedPlan.priceAnnual : selectedPlan.price;
+        const description = `Payment for ${selectedPlan.name} - ${isAnnualPlan ? 'Annual' : 'Monthly'} Subscription`;
 
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -158,11 +158,10 @@ export default function PricingPage() {
                     updateData.listingCredits = increment(credits);
                 }
 
-                // If the business plan is purchased, grant verification status
                 if (selectedPlan.level === 'business') {
                     const newExpiryDate = new Date();
-                    const validityPeriod = isAnnual ? "1 year" : "30 days";
-                    if (isAnnual) {
+                    const validityPeriod = isAnnualPlan ? "1 year" : "30 days";
+                    if (isAnnualPlan) {
                         newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
                     } else {
                         newExpiryDate.setDate(newExpiryDate.getDate() + 30);
@@ -189,7 +188,7 @@ export default function PricingPage() {
         const rzp = new Razorpay(options);
         rzp.open();
     };
-    const selectedPlanId = isAnnual ? 'annual' : 'monthly';
+    
     return (
         <div className="py-16 md:py-24 bg-background">
             <CreativePricing 
@@ -226,4 +225,3 @@ export default function PricingPage() {
         </div>
     );
 }
-
