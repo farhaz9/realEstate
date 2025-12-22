@@ -213,7 +213,7 @@ export default function LoginPage() {
         case 'auth/user-not-found':
         case 'auth/wrong-password':
         case 'auth/invalid-credential':
-          errorMessage = 'Invalid email or password.';
+          errorMessage = 'Invalid username or password.';
           break;
         case 'auth/email-already-in-use':
           errorMessage = 'An account already exists with this email.';
@@ -244,32 +244,43 @@ export default function LoginPage() {
     if (!auth) return;
 
     if (isLogin) {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+        let finalEmail = email;
+        try {
+            // If input is not an email, assume it's a username and fetch the email
+            if (!email.includes('@')) {
+                const usersRef = collection(firestore, 'users');
+                const q = query(usersRef, where('username', '==', email.toLowerCase()));
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    throw new FirebaseError('auth/user-not-found', 'No user found with this username.');
+                }
+                finalEmail = querySnapshot.docs[0].data().email;
+            }
 
-        // Check if user is blocked
-        const userDocRef = doc(firestore, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists() && userDoc.data().isBlocked) {
-          await signOut(auth);
-          toast({
-            variant: 'destructive',
-            title: 'Account Blocked',
-            description: 'Your account has been blocked by an administrator.',
-          });
-          return;
+            const userCredential = await signInWithEmailAndPassword(auth, finalEmail, password);
+            const user = userCredential.user;
+
+            const userDocRef = doc(firestore, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists() && userDoc.data().isBlocked) {
+            await signOut(auth);
+            toast({
+                variant: 'destructive',
+                title: 'Account Blocked',
+                description: 'Your account has been blocked by an administrator.',
+            });
+            return;
+            }
+
+            toast({
+            title: 'Login Successful',
+            description: `Welcome back, ${user.displayName}!`,
+            variant: 'success',
+            });
+            router.push('/');
+        } catch (error) {
+            handleAuthError(error);
         }
-
-        toast({
-          title: 'Login Successful',
-          description: `Welcome back, ${user.displayName}!`,
-          variant: 'success',
-        });
-        router.push('/');
-      } catch (error) {
-        handleAuthError(error);
-      }
     } else { // Sign up
       if (password !== confirmPassword) {
         toast({
@@ -584,11 +595,11 @@ export default function LoginPage() {
               )}
 
               <div className="flex flex-col gap-1.5">
-                <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="email">Email Address</Label>
+                <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="email">{isLogin ? 'Email or Username' : 'Email Address'}</Label>
                 <div className="relative group">
-                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="email" placeholder="name@example.com" type="email"/>
+                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="email" placeholder={isLogin ? "your@email.com or username" : "name@example.com"} type="text"/>
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
-                    <Mail className="h-[22px] w-[22px]" />
+                    <User className="h-[22px] w-[22px]" />
                   </div>
                 </div>
               </div>
@@ -678,4 +689,3 @@ export default function LoginPage() {
   );
 }
 
-    
