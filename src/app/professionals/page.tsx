@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
 import { Loader2, Search, Verified } from 'lucide-react';
@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import Fuse from 'fuse.js';
+import { VerificationModal } from '@/components/shared/verification-modal';
 
 const filterTabs = [
   { id: 'all', label: 'All' },
@@ -26,9 +27,11 @@ function ProfessionalsPageContent() {
   const firestore = useFirestore();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user, isUserLoading } = useUser();
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeTab, setActiveTab] = useState('all');
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
   const currentSearchTerm = searchParams.get('q') || '';
 
@@ -61,7 +64,15 @@ function ProfessionalsPageContent() {
 
   }, [firestore, activeTab]);
 
-  const { data: professionals, isLoading, error } = useCollection<User>(professionalsQuery);
+  const { data: professionals, isLoading: areProfessionalsLoading, error } = useCollection<User>(professionalsQuery);
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return where('id', '==', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfileData } = useCollection<User>(userDocRef ? query(collection(firestore, 'users'), userDocRef) : null);
+  const userProfile = userProfileData?.[0];
 
   const fuse = useMemo(() => {
     if (!professionals) return null;
@@ -87,7 +98,11 @@ function ProfessionalsPageContent() {
 
     return fuse.search(currentSearchTerm).map(result => result.item);
   }, [professionals, currentSearchTerm, fuse]);
+  
+  const isProfessionalUser = userProfile && ['real-estate-agent', 'interior-designer', 'vendor'].includes(userProfile.category);
+  const isCurrentlyVerified = userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
 
+  const isLoading = isUserLoading || areProfessionalsLoading;
 
   const renderContent = () => {
     if (isLoading) {
@@ -149,27 +164,36 @@ function ProfessionalsPageContent() {
               />
           </form>
 
-          <div className="mb-8 flex justify-center border-b">
-              {filterTabs.map(tab => (
-                  <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={cn(
-                          "relative px-4 py-2.5 text-sm font-semibold transition-all text-muted-foreground hover:text-primary",
-                          activeTab === tab.id && "text-primary"
-                      )}
-                  >
-                      {tab.label}
-                      {activeTab === tab.id && (
-                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                      )}
-                  </button>
-              ))}
+          <div className="mb-8 flex flex-col sm:flex-row justify-center items-center gap-4 border-b">
+              <div className="flex justify-center">
+                {filterTabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                            "relative px-4 py-2.5 text-sm font-semibold transition-all text-muted-foreground hover:text-primary",
+                            activeTab === tab.id && "text-primary"
+                        )}
+                    >
+                        {tab.label}
+                        {activeTab === tab.id && (
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                        )}
+                    </button>
+                ))}
+              </div>
+              {!isUserLoading && isProfessionalUser && !isCurrentlyVerified && (
+                  <Button onClick={() => setIsVerificationModalOpen(true)} size="sm" className="sm:ml-auto">
+                      <Verified className="mr-2 h-4 w-4" />
+                      Get Verified
+                  </Button>
+              )}
           </div>
 
           {renderContent()}
         </div>
       </div>
+      <VerificationModal open={isVerificationModalOpen} onOpenChange={setIsVerificationModalOpen} />
     </>
   );
 }
