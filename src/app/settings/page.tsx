@@ -59,7 +59,7 @@ const categoryDisplay: Record<string, string> = {
 };
 
 const planDetails: Record<string, { name: string; icon: React.ElementType }> = {
-    free: { name: 'Free', icon: Bot },
+    free: { name: 'Free Tier', icon: Bot },
     basic: { name: 'Basic', icon: Zap },
     pro: { name: 'Pro', icon: Star },
     business: { name: 'Business', icon: Building },
@@ -444,7 +444,7 @@ function SettingsPageContent() {
       <div className="container mx-auto px-4 py-8 -mt-16">
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center">
-                <TabsList className="h-auto p-1.5 bg-muted rounded-xl w-full max-w-lg md:w-auto overflow-x-auto hide-scrollbar">
+                <TabsList className="h-auto p-1.5 bg-muted rounded-xl grid grid-cols-3 sm:inline-flex sm:w-auto w-full max-w-lg">
                     {tabs.map(tab => (
                         <TabsTrigger key={tab.id} value={tab.id} className="px-3 sm:px-4">{tab.label}</TabsTrigger>
                     ))}
