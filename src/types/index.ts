@@ -104,6 +104,7 @@ export type AppSettings = {
         text: string;
         audience: 'all' | 'verified';
         timestamp: string;
+        duration?: number;
     }
 };
 

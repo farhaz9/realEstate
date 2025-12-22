@@ -32,7 +32,7 @@ export default function NotificationListener() {
 
   useEffect(() => {
     if (appSettings?.notification) {
-      const { text, audience, timestamp } = appSettings.notification;
+      const { text, audience, timestamp, duration } = appSettings.notification;
 
       if (!text || !timestamp) return;
 
@@ -60,7 +60,7 @@ export default function NotificationListener() {
           toast({
             title: 'New Notification',
             description: text,
-            duration: 10000, // Show for 10 seconds
+            duration: duration ? duration * 1000 : 10000, // Use admin-set duration, or default to 10s
           });
           localStorage.setItem(LAST_SEEN_NOTIFICATION_KEY, timestamp);
         }

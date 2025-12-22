@@ -95,6 +95,7 @@ type AnnouncementFormValues = z.infer<typeof announcementFormSchema>;
 const notificationFormSchema = z.object({
     audience: z.enum(['all', 'verified']),
     message: z.string().min(1, 'Notification message cannot be empty.'),
+    duration: z.coerce.number().int().min(1, "Duration must be at least 1 second."),
 });
 type NotificationFormValues = z.infer<typeof notificationFormSchema>;
 
@@ -372,6 +373,7 @@ export default function AdminPage() {
     defaultValues: {
         audience: 'all',
         message: '',
+        duration: 10,
     },
   });
 
@@ -754,6 +756,7 @@ export default function AdminPage() {
         text: data.message,
         audience: data.audience,
         timestamp: new Date().toISOString(),
+        duration: data.duration,
     };
     
     try {
@@ -1418,6 +1421,20 @@ export default function AdminPage() {
                                         </FormItem>
                                     )}
                                  />
+                                  <FormField
+                                    control={notificationForm.control}
+                                    name="duration"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Visibility Duration (seconds)</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} />
+                                            </FormControl>
+                                            <FormDescription>How long the toast notification should be visible to users.</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                  />
                                  <Button type="submit" disabled={isSendingNotification}>
                                     {isSendingNotification && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     <Send className="mr-2 h-4 w-4" />
