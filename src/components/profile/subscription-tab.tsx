@@ -74,7 +74,9 @@ export function SubscriptionTab() {
     let planLevel = 'free';
     if (userProfile.transactions && userProfile.transactions.length > 0) {
         const planKeywords = ['business', 'pro', 'basic'];
-        for (const transaction of userProfile.transactions) {
+        // Sort transactions by date descending to find the latest one
+        const sortedTransactions = [...userProfile.transactions].sort((a, b) => b.date.toMillis() - a.date.toMillis());
+        for (const transaction of sortedTransactions) {
             const description = transaction.description?.toLowerCase() || '';
             const foundKeyword = planKeywords.find(keyword => description.includes(keyword));
             if (foundKeyword) {
@@ -168,6 +170,7 @@ export function SubscriptionTab() {
   const PlanIcon = currentPlan.icon;
   const verificationPrice = appSettings?.verifiedPriceMonthly ?? 99;
   const creditPrice = appSettings?.listingPrice ?? 99;
+  const isBusinessPlan = currentPlan.name === 'Business Plan';
 
   return (
     <>
@@ -184,7 +187,13 @@ export function SubscriptionTab() {
                 </div>
                 <div>
                     <h3 className="text-xl font-bold">{currentPlan.name}</h3>
-                    <p className="text-sm opacity-80">Your current plan. Level up for more benefits!</p>
+                    {isBusinessPlan && verificationExpiresAt ? (
+                        <p className="text-sm font-semibold text-green-200">
+                          Active until {verificationExpiresAt.toLocaleDateString()}
+                        </p>
+                    ) : (
+                       <p className="text-sm opacity-80">Your current plan. Level up for more benefits!</p>
+                    )}
                 </div>
             </div>
             <Button asChild variant="secondary" className="w-full mt-6 h-12 text-base font-bold bg-white text-primary hover:bg-white/90">
