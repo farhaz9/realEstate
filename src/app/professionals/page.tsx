@@ -66,12 +66,12 @@ function ProfessionalsPageContent() {
 
   const { data: professionals, isLoading: areProfessionalsLoading, error } = useCollection<User>(professionalsQuery);
 
-  const userDocRef = useMemoFirebase(() => {
+  const userProfileQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return where('id', '==', user.uid);
+    return query(collection(firestore, 'users'), where('id', '==', user.uid));
   }, [firestore, user]);
 
-  const { data: userProfileData } = useCollection<User>(userDocRef ? query(collection(firestore, 'users'), userDocRef) : null);
+  const { data: userProfileData } = useCollection<User>(userProfileQuery);
   const userProfile = userProfileData?.[0];
 
   const fuse = useMemo(() => {
