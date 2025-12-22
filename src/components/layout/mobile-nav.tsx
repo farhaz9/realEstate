@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, User, Building, Mail, Armchair, Briefcase } from "lucide-react";
+import { Home, User, Building, Mail, Armchair, Briefcase, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function MobileNav() {
@@ -14,7 +14,7 @@ export default function MobileNav() {
     { href: "/interiors", label: "Interiors", icon: Armchair },
     { href: "/", label: "Home", icon: Home },
     { href: "/professionals", label: "Pro's", icon: User },
-    { href: "/contact", label: "Contact", icon: Mail },
+    { href: "/settings?tab=wishlist", label: "Wishlist", icon: Heart },
   ];
 
   return (
