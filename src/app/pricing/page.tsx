@@ -63,7 +63,7 @@ const plans: PricingTier[] = [
         price: 4999,
         priceAnnual: 19990,
         description: "For agencies and power users.",
-        features: ["100 Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
+        features: ["100 Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge (1-Year)"],
         icon: <Building className="w-6 h-6" />,
         color: "text-amber-500",
     },
@@ -160,15 +160,11 @@ export default function PricingPage() {
                 // If the business plan is purchased, grant verification status
                 if (selectedPlan.level === 'business') {
                     const newExpiryDate = new Date();
-                    if (isAnnual) {
-                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
-                    } else {
-                        // For business plan, even monthly gives a year of verification as a perk
-                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
-                    }
+                    newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                    
                     updateData.isVerified = true;
                     updateData.verifiedUntil = newExpiryDate;
-                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member and have received a verified badge.`, variant: "success"});
+                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member and have received a verified badge, valid for 1 year.`, variant: "success"});
                 } else {
                     toast({ title: "Payment Successful!", description: `Thank you for your purchase. You've received ${credits} listing credits.`, variant: "success"});
                 }

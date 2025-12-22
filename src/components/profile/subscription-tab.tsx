@@ -204,7 +204,13 @@ export function SubscriptionTab() {
               </div>
               <div>
                   <h3 className="text-xl font-bold">Premium Verification</h3>
-                  <p className="text-sm text-muted-foreground">Unlock exclusive benefits and trust.</p>
+                   {isVerified && verificationExpiresAt ? (
+                      <p className="text-sm text-green-600 font-semibold">
+                          Valid until {verificationExpiresAt.toLocaleDateString()}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Unlock exclusive benefits and trust.</p>
+                    )}
               </div>
             </div>
              <Button className="w-full mt-6 h-12 text-base font-bold" onClick={() => { setPaymentAction('verify'); setIsPaymentAlertOpen(true); }} disabled={isVerified}>
