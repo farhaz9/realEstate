@@ -89,7 +89,7 @@ export default function PricingPage() {
     
     const handlePlanSelection = (plan: PricingTier) => {
         if (plan.price === 0) {
-            toast({ title: "You are on the Free plan." });
+            toast({ title: "You are on the Free plan.", variant: "success" });
             return;
         }
 
@@ -127,7 +127,7 @@ export default function PricingPage() {
         const isAnnualPlan = isAnnual;
         const amount = (isAnnualPlan ? selectedPlan.priceAnnual : selectedPlan.price) * 100;
         const displayAmount = isAnnualPlan ? selectedPlan.priceAnnual : selectedPlan.price;
-        const description = `Payment for ${selectedPlan.name} - ${isAnnualPlan ? 'Annual' : 'Monthly'} Subscription`;
+        let description = `Payment for ${selectedPlan.name} - ${isAnnualPlan ? 'Annual' : 'Monthly'} Subscription`;
 
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
