@@ -63,7 +63,7 @@ const plans: PricingTier[] = [
         price: 4999,
         priceAnnual: 19990,
         description: "For agencies and power users.",
-        features: ["100 Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge (1-Year)"],
+        features: ["100 Listings", "Premium Support", "Analytics Dashboard", "Custom Branding", "Website", "Verified Badge"],
         icon: <Building className="w-6 h-6" />,
         color: "text-amber-500",
     },
