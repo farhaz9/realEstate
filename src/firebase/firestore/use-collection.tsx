@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import {
   Query,
-  getDocs,
   DocumentData,
   FirestoreError,
   QuerySnapshot,
   CollectionReference,
+  onSnapshot,
 } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -38,7 +38,7 @@ export interface InternalQuery extends Query<DocumentData> {
 }
 
 /**
- * React hook to fetch a Firestore collection or query once.
+ * React hook to fetch a Firestore collection or query in real-time.
  * Handles nullable references/queries.
  *
  * IMPORTANT! YOU MUST MEMOIZE the inputted memoizedTargetRefOrQuery or BAD THINGS WILL HAPPEN
@@ -57,7 +57,7 @@ export function useCollection<T = any>(
   type StateDataType = ResultItemType[] | null;
 
   const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Start loading until first snapshot
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
@@ -68,19 +68,21 @@ export function useCollection<T = any>(
       return;
     }
 
-    const fetchData = async () => {
-        setIsLoading(true);
-        setError(null);
+    setIsLoading(true);
+    setError(null);
 
-        try {
-            const snapshot = await getDocs(memoizedTargetRefOrQuery);
+    const unsubscribe = onSnapshot(
+        memoizedTargetRefOrQuery,
+        (snapshot: QuerySnapshot<DocumentData>) => {
             const results: ResultItemType[] = [];
-            for (const doc of snapshot.docs) {
+            snapshot.forEach(doc => {
               results.push({ ...(doc.data() as T), id: doc.id });
-            }
+            });
             setData(results);
             setError(null);
-        } catch (error: any) {
+            setIsLoading(false);
+        },
+        (err: FirestoreError) => {
             const path: string =
             memoizedTargetRefOrQuery.type === 'collection'
                 ? (memoizedTargetRefOrQuery as CollectionReference).path
@@ -89,19 +91,18 @@ export function useCollection<T = any>(
             const contextualError = new FirestorePermissionError({
               operation: 'list',
               path,
-            })
+            });
 
-            setError(contextualError)
-            setData(null)
+            setError(contextualError);
+            setData(null);
+            setIsLoading(false);
 
             // trigger global error propagation
             errorEmitter.emit('permission-error', contextualError);
-        } finally {
-            setIsLoading(false);
         }
-    };
+    );
 
-    fetchData();
+    return () => unsubscribe(); // Cleanup subscription on unmount
 
   }, [memoizedTargetRefOrQuery]); // Re-run if the target query/reference changes.
   
