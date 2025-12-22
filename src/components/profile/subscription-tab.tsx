@@ -196,15 +196,14 @@ export function SubscriptionTab() {
          <Card className="p-6 rounded-2xl">
            <div className="flex items-center gap-4">
               <div className="relative">
-                <ShieldAlert className={cn("h-12 w-12", isVerified ? 'text-blue-500' : 'text-destructive')} />
-                 {!isVerified && (
-                     <div className="absolute -bottom-1 -right-2 text-xs font-bold bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 border-2 border-card">
-                         Not
-                     </div>
-                 )}
+                {isVerified ? (
+                    <Verified className="h-12 w-12 text-blue-500" />
+                ) : (
+                    <ShieldAlert className="h-12 w-12 text-destructive" />
+                )}
               </div>
               <div>
-                  <h3 className="text-xl font-bold">Get Verified for Pro Status!</h3>
+                  <h3 className="text-xl font-bold">Premium Verification</h3>
                   <p className="text-sm text-muted-foreground">Unlock exclusive benefits and trust.</p>
               </div>
             </div>
