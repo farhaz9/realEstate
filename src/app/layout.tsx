@@ -24,7 +24,7 @@ const siteTitle = "Falcon Estates | Buy, Sell, Rent Properties in India | Real E
 const siteDescription = "Your premier destination for real estate in India. Falcon Estates helps you buy, sell, and rent properties, with a special focus on Delhi. Explore verified listings for apartments, plots, and homes with expert interior design services.";
 
 // Favicon generation
-const faviconSvg = `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22hsl(262, 82%, 56%)%22></rect><text x=%2250%22 y=%2250%22 font-size=%2250%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Poppins, sans-serif%22 font-weight=%22600%22>FE</text></svg>`;
+const faviconSvg = `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22white%22></rect><text x=%2250%22 y=%2250%22 font-size=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Poppins, sans-serif%22 font-weight=%22600%22><tspan fill=%22black%22>F</tspan><tspan fill=%22%236D28D9%22>E</tspan></text></svg>`;
 const faviconDataUrl = `data:image/svg+xml,${faviconSvg}`;
 
 export const metadata: Metadata = {
