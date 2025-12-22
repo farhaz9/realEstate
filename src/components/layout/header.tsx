@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
@@ -33,6 +33,10 @@ import {
   Shield,
   LogOut,
   Tag,
+  Verified,
+  ShoppingBag,
+  Zap,
+  Star,
 } from "lucide-react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from 'firebase/auth';
@@ -70,6 +74,13 @@ const categoryDisplay: Record<string, string> = {
   'real-estate-agent': 'Real Estate Agent',
   'interior-designer': 'Interior Designer',
   'vendor': 'Vendor / Supplier'
+};
+
+const planDetails: Record<string, { name: string; icon: React.ElementType }> = {
+    free: { name: 'Free Tier', icon: ShoppingBag },
+    basic: { name: 'Basic', icon: Zap },
+    pro: { name: 'Pro', icon: Star },
+    business: { name: 'Business', icon: Briefcase },
 };
 
 
@@ -177,6 +188,29 @@ export default function Header() {
   const isProfessional = userProfile?.category && ['listing-property', 'real-estate-agent', 'interior-designer', 'vendor'].includes(userProfile.category);
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   const isVendor = userProfile?.category === 'vendor';
+  const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+
+  const currentPlan = useMemo(() => {
+    if (!userProfile?.transactions || userProfile.transactions.length === 0) {
+      return planDetails.free;
+    }
+    const planLevels = ['business', 'pro', 'basic'];
+    let highestPlan = 'free';
+    for (const transaction of userProfile.transactions) {
+        if (transaction.description) {
+            for (const level of planLevels) {
+                if (transaction.description.toLowerCase().includes(level)) {
+                    highestPlan = level;
+                    if (highestPlan === 'business') return planDetails[highestPlan];
+                }
+            }
+        }
+    }
+    return planDetails[highestPlan] || planDetails.free;
+  }, [userProfile]);
+
+  const PlanIcon = currentPlan.icon;
+
 
   const handleSearch = (searchTerm: string) => {
     const params = new URLSearchParams(window.location.search);
@@ -245,10 +279,25 @@ export default function Header() {
                                 {user.displayName?.split(' ').map(n => n[0]).join('') || <UserIcon />}
                             </AvatarFallback>
                         </Avatar>
-                        <p className="text-lg font-bold mt-3">{user.displayName}</p>
+                        <div className="flex items-center gap-2 mt-3">
+                            <p className="text-lg font-bold">{user.displayName}</p>
+                            {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
+                        </div>
                         <p className="text-sm text-muted-foreground">{user.email}</p>
                         {userProfile?.category && (
                             <p className="text-xs font-semibold text-primary mt-1">{categoryDisplay[userProfile.category]}</p>
+                        )}
+                        {userProfile?.category !== 'user' && (
+                            <div className={cn(
+                                "mt-2 flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full",
+                                currentPlan.name === 'Business' ? "bg-amber-100 text-amber-800" :
+                                currentPlan.name === 'Pro' ? "bg-purple-100 text-purple-800" :
+                                currentPlan.name === 'Basic' ? "bg-blue-100 text-blue-800" :
+                                "bg-gray-100 text-gray-800"
+                            )}>
+                                <PlanIcon className="h-3 w-3" />
+                                <span>{currentPlan.name}</span>
+                            </div>
                         )}
                     </Link>
                  ) : (
