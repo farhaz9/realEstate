@@ -7,6 +7,7 @@ import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { AppSettings, User } from '@/types';
 import { Bell } from 'lucide-react';
+import { differenceInHours } from 'date-fns';
 
 const LAST_SEEN_NOTIFICATION_KEY = 'lastSeenNotificationTimestamp';
 
@@ -35,6 +36,14 @@ export default function NotificationListener() {
 
       if (!text || !timestamp) return;
 
+      const notificationDate = new Date(timestamp);
+      const hoursSinceNotification = differenceInHours(new Date(), notificationDate);
+
+      // Only show notifications posted in the last 24 hours
+      if (hoursSinceNotification > 24) {
+        return;
+      }
+      
       const lastSeenTimestamp = localStorage.getItem(LAST_SEEN_NOTIFICATION_KEY);
 
       if (timestamp !== lastSeenTimestamp) {
