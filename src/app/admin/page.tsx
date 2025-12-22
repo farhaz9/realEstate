@@ -432,6 +432,14 @@ export default function AdminPage() {
 
   const isAuthorizedAdmin = user?.email ? ADMIN_EMAILS.includes(user.email) : false;
   
+  useEffect(() => {
+    if (isUserLoading) return;
+    if (!user) {
+      toast({ title: "Authentication Required", description: "You must be logged in to view this page.", variant: "destructive" });
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router, toast]);
+
   const allTransactions = useMemo(() => {
     if (!users) return [];
     return users.flatMap(u => {
@@ -634,17 +642,6 @@ export default function AdminPage() {
         return 0;
     });
   }, [allTransactions, transactionSearchTerm, transactionFuse, transactionSort, transactionFilter]);
-
-  useEffect(() => {
-    if (isUserLoading) return;
-    if (!user) {
-      toast({ title: "Authentication Required", description: "You must be logged in to view this page.", variant: "destructive" });
-      router.push('/login');
-    } else if (!isAuthorizedAdmin) {
-       toast({ title: "Access Denied", description: "You are not authorized to view this page.", variant: "destructive" });
-      router.push('/');
-    }
-  }, [user, isUserLoading, router, toast, isAuthorizedAdmin]);
   
   const handlePropertyDelete = (propertyId: string) => {
     if (!firestore) return;
@@ -805,16 +802,24 @@ export default function AdminPage() {
 
   const renderContent = () => {
     if (isUserLoading) {
-      return <div className="flex items-center justify-center py-16"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
+      return (
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      );
     }
     if (!isAuthorizedAdmin) {
       return (
-        <Card className="max-w-md mx-auto">
-          <CardHeader><CardTitle>Access Denied</CardTitle></CardHeader>
-          <CardContent>
-            <Alert variant="destructive"><ShieldAlert className="h-4 w-4" /><AlertTitle>Not Authorized</AlertTitle><AlertDescription>You do not have permission to access this page.</AlertDescription></Alert>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center">
+            <div className="bg-destructive/10 p-6 rounded-full">
+                <ShieldAlert className="h-16 w-16 text-destructive" />
+            </div>
+            <h1 className="mt-8 text-3xl font-bold">Access Denied</h1>
+            <p className="mt-2 text-muted-foreground">You do not have permission to view this page.</p>
+            <Button asChild className="mt-6">
+                <Link href="/">Go to Homepage</Link>
+            </Button>
+        </div>
       );
     }
     return (
