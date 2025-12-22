@@ -121,3 +121,10 @@ export type Lead = {
     leadDate: Date | any;
     contactMethod: 'call' | 'whatsapp' | 'email';
 }
+
+export type NotificationMessage = {
+    id: string;
+    audience: 'all' | 'verified';
+    message: string;
+    timestamp: Date | any;
+}

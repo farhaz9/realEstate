@@ -377,6 +377,10 @@
                         "type": "string",
                         "description": "The ISO 8601 timestamp of when the notification was sent.",
                         "format": "date-time"
+                    },
+                    "duration": {
+                        "type": "number",
+                        "description": "The duration in seconds for which the notification toast should be visible."
                     }
                 }
             }
@@ -388,6 +392,33 @@
             "verifiedPriceAnnually",
             "listingValidityDays"
         ]
+    },
+    "NotificationMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "NotificationMessage",
+      "type": "object",
+      "description": "Represents a historical record of a notification sent by an admin.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the notification message."
+        },
+        "audience": {
+          "type": "string",
+          "description": "The target audience for the notification.",
+          "enum": ["all", "verified"]
+        },
+        "message": {
+          "type": "string",
+          "description": "The content of the notification message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The ISO 8601 timestamp of when the notification was sent.",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "audience", "message", "timestamp"]
     }
   },
   "auth": {
@@ -447,6 +478,16 @@
                 "$ref": "#/entities/AppSettings"
             },
             "description": "Stores global application settings. Contains a single document."
+        }
+      },
+      {
+        "path": "/notifications/{notificationId}",
+        "definition": {
+          "entityName": "NotificationMessage",
+          "schema": {
+            "$ref": "#/entities/NotificationMessage"
+          },
+          "description": "Stores a historical log of all notifications sent by admins."
         }
       }
     ]

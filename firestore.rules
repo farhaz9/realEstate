@@ -71,5 +71,11 @@ service cloud.firestore {
       // Only allow admins to write/update the settings.
       allow write: if isAdmin();
     }
+
+    // Rules for the 'notifications' collection
+    match /notifications/{notificationId} {
+        // Only admins can read and write notifications.
+        allow read, write: if isAdmin();
+    }
   }
 }

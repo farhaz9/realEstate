@@ -2,12 +2,12 @@
 
 'use client';
 
-import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, useDoc, addDocumentNonBlocking } from '@/firebase';
 import { collection, query, orderBy, Query, where, increment, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useMemo, useState } from 'react';
-import type { Property, User, Transaction, AppSettings, Lead } from '@/types';
+import type { Property, User, Transaction, AppSettings, Lead, NotificationMessage } from '@/types';
 import { Loader2, ShieldAlert, Users, Building, Receipt, Tag, ArrowUpDown, Pencil, Trash2, LayoutDashboard, Crown, Verified, Ban, UserCheck, UserX, Search, Coins, Minus, Plus, ShoppingCart, Info, FileText, Edit, Settings, BadgeDollarSign, UserRoundCheck, CheckCircle, XCircle, Megaphone, Send, Upload, MoreVertical, Filter, Mail, Clock, Menu, ChevronDown, Handshake, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -428,11 +428,16 @@ export default function AdminPage() {
     return doc(firestore, 'app_settings', 'config');
   }, [firestore]);
 
+  const notificationsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'notifications'), orderBy('timestamp', 'desc'));
+  }, [firestore]);
+
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(allPropertiesQuery);
   const { data: users, isLoading: isLoadingUsers } = useCollection<User>(allUsersQuery);
   const { data: leads, isLoading: isLoadingLeads } = useCollection<Lead>(allLeadsQuery);
   const { data: appSettings, isLoading: isLoadingSettings } = useDoc<AppSettings>(appSettingsRef);
-
+  const { data: notifications, isLoading: areNotificationsLoading } = useCollection<NotificationMessage>(notificationsQuery);
   
   useEffect(() => {
     if (isUserLoading) return;
@@ -752,18 +757,30 @@ export default function AdminPage() {
     if (!firestore || !appSettingsRef) return;
     setIsSendingNotification(true);
     
-    const notificationData = {
+    const liveNotificationData = {
         text: data.message,
         audience: data.audience,
         timestamp: new Date().toISOString(),
         duration: data.duration,
     };
     
+    const historicalNotificationData = {
+        audience: data.audience,
+        message: data.message,
+        timestamp: serverTimestamp(),
+    };
+
     try {
-        await setDoc(appSettingsRef, { notification: notificationData }, { merge: true });
+        // Update live notification
+        await setDoc(appSettingsRef, { notification: liveNotificationData }, { merge: true });
+        
+        // Save historical record
+        const notificationsCollection = collection(firestore, 'notifications');
+        await addDocumentNonBlocking(notificationsCollection, historicalNotificationData);
+
         toast({
             title: "Notification Sent!",
-            description: "Your notification has been sent to the targeted users.",
+            description: "Your notification has been sent and saved to history.",
             variant: "success",
         });
         notificationForm.reset();
@@ -777,6 +794,14 @@ export default function AdminPage() {
         setIsSendingNotification(false);
     }
   };
+
+  const handleNotificationDelete = (notificationId: string) => {
+    if (!firestore) return;
+    const notificationRef = doc(firestore, "notifications", notificationId);
+    deleteDocumentNonBlocking(notificationRef);
+    toast({ title: "Notification Deleted", description: "The notification has been removed from history.", variant: "destructive" });
+  };
+
 
   const handleConfirmationAction = () => {
     if (!confirmationAction) return;
@@ -1369,11 +1394,11 @@ export default function AdminPage() {
               </Card>
           </TabsContent>
           <TabsContent value="notifications" className="mt-6">
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid md:grid-cols-2 gap-8 items-start">
                     <Card>
                         <CardHeader>
                             <CardTitle>Send Notification</CardTitle>
-                            <CardDescription>Send a global message to your users.</CardDescription>
+                            <CardDescription>Send a global message to your users. This will also be saved to history.</CardDescription>
                         </CardHeader>
                         <CardContent>
                            <Form {...notificationForm}>
@@ -1444,7 +1469,56 @@ export default function AdminPage() {
                            </Form>
                         </CardContent>
                     </Card>
-                    <AnnouncementForm settings={appSettings} />
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Sent Messages ({notifications?.length || 0})</CardTitle>
+                            <CardDescription>A history of all notifications sent.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                             {areNotificationsLoading ? (
+                                <div className="flex justify-center items-center h-48">
+                                    <Loader2 className="h-8 w-8 animate-spin" />
+                                </div>
+                             ) : notifications && notifications.length > 0 ? (
+                                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                                    {notifications.map(notification => (
+                                        <div key={notification.id} className="p-4 border rounded-lg bg-muted/50">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="text-sm">{notification.message}</p>
+                                                    <div className="text-xs text-muted-foreground mt-2 flex items-center gap-4">
+                                                        <span>To: <Badge variant="secondary" className="capitalize">{notification.audience}</Badge></span>
+                                                        <span>{notification.timestamp?.toDate ? formatDistanceToNow(notification.timestamp.toDate(), { addSuffix: true }) : 'Just now'}</span>
+                                                    </div>
+                                                </div>
+                                                 <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                            <AlertDialogDescription>This will permanently delete this notification from history.</AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleNotificationDelete(notification.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                             ) : (
+                                <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-lg">
+                                    <p>No notifications sent yet.</p>
+                                </div>
+                             )}
+                        </CardContent>
+                    </Card>
                 </div>
           </TabsContent>
           <TabsContent value="settings" className="mt-6">
@@ -1460,7 +1534,10 @@ export default function AdminPage() {
                       </CardContent>
                   </Card>
               ) : (
+                <div className="space-y-8">
                   <AppSettingsForm settings={appSettings} />
+                  <AnnouncementForm settings={appSettings} />
+                </div>
               )}
           </TabsContent>
       </Tabs>
