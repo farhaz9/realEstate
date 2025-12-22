@@ -157,14 +157,19 @@ export default function PricingPage() {
                     updateData.listingCredits = increment(credits);
                 }
 
-                // If the business plan is purchased, grant verification status for 1 year
+                // If the business plan is purchased, grant verification status
                 if (selectedPlan.level === 'business') {
                     const newExpiryDate = new Date();
-                    newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                    const validityPeriod = isAnnual ? "1 year" : "30 days";
+                    if (isAnnual) {
+                        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+                    } else {
+                        newExpiryDate.setDate(newExpiryDate.getDate() + 30);
+                    }
                     
                     updateData.isVerified = true;
                     updateData.verifiedUntil = newExpiryDate;
-                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member and have received a verified badge, valid for 1 year.`, variant: "success"});
+                     toast({ title: "Payment Successful!", description: `Congratulations! You are now a Business member and have received a verified badge, valid for ${validityPeriod}.`, variant: "success"});
                 } else {
                     toast({ title: "Payment Successful!", description: `Thank you for your purchase. You've received ${credits} listing credits.`, variant: "success"});
                 }

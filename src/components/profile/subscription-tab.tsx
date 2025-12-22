@@ -206,7 +206,7 @@ export function SubscriptionTab() {
                   <h3 className="text-xl font-bold">Premium Verification</h3>
                    {isVerified && verificationExpiresAt ? (
                       <p className="text-sm text-green-600 font-semibold">
-                          Valid until {verificationExpiresAt.toLocaleDateString()}
+                          Valid until {verificationExpiresAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                       </p>
                     ) : (
                       <p className="text-sm text-muted-foreground">Unlock exclusive benefits and trust.</p>
