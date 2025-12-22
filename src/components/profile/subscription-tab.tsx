@@ -171,105 +171,65 @@ export function SubscriptionTab() {
 
   return (
     <>
-      <div className="grid md:grid-cols-2 gap-6 items-start">
-          <Card>
-              <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                      <Gem className="text-primary" />
-                      My Plan
-                  </CardTitle>
-              </CardHeader>
-              <CardContent>
+      <div className="space-y-6">
+        {/* Current Plan Card */}
+        <Card className="bg-primary text-primary-foreground p-6 rounded-2xl shadow-lg relative overflow-hidden">
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 -z-10 animate-gradient-pan bg-gradient-to-br from-primary via-purple-500 to-fuchsia-500 bg-[200%_200%]"
+            />
+            <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-4 rounded-full">
+                    <PlanIcon className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold">{currentPlan.name}</h3>
+                    <p className="text-sm opacity-80">Your current plan. Level up for more benefits!</p>
+                </div>
+            </div>
+            <Button asChild variant="secondary" className="w-full mt-6 h-12 text-base font-bold bg-white text-primary hover:bg-white/90">
+                <Link href="/pricing">Change Plan</Link>
+            </Button>
+        </Card>
+
+        {/* Verification Card */}
+         <Card className="p-6 rounded-2xl">
+           <div className="flex items-center gap-4">
+              <div className="relative">
+                <ShieldAlert className={cn("h-12 w-12", isVerified ? 'text-blue-500' : 'text-destructive')} />
+                 {!isVerified && (
+                     <div className="absolute -bottom-1 -right-2 text-xs font-bold bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 border-2 border-card">
+                         Not
+                     </div>
+                 )}
+              </div>
+              <div>
+                  <h3 className="text-xl font-bold">Get Verified for Pro Status!</h3>
+                  <p className="text-sm text-muted-foreground">Unlock exclusive benefits and trust.</p>
+              </div>
+            </div>
+             <Button className="w-full mt-6 h-12 text-base font-bold" onClick={() => { setPaymentAction('verify'); setIsPaymentAlertOpen(true); }} disabled={isVerified}>
+                {isVerified ? 'You are Verified' : 'Get Verified'}
+            </Button>
+        </Card>
+        
+        {/* Listing Credits Card */}
+        <Card className="p-6 rounded-2xl">
+           <div className="flex items-center gap-4">
+               <Coins className="h-12 w-12 text-amber-500" />
+               <div>
+                  <h3 className="text-xl font-bold">Boost Your Listings!</h3>
                   {isLoading ? (
-                      <div className="space-y-4">
-                          <Skeleton className="h-10 w-3/4" />
-                          <Skeleton className="h-8 w-1/2" />
-                      </div>
+                    <Skeleton className="h-4 w-40 mt-1" />
                   ) : (
-                      <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                              <div className="bg-primary/10 p-3 rounded-lg">
-                                  <PlanIcon className={cn("h-6 w-6", currentPlan.color)} />
-                              </div>
-                              <div>
-                                  <p className="font-bold text-lg">{currentPlan.name}</p>
-                                  <p className="text-sm text-muted-foreground">Your current subscription</p>
-                              </div>
-                          </div>
-                          <Button asChild variant="outline" size="sm">
-                              <Link href="/pricing">Change Plan</Link>
-                          </Button>
-                      </div>
+                    <p className="text-sm text-muted-foreground">{userProfile?.listingCredits || 0} Credit{userProfile?.listingCredits !== 1 && 's'} remaining. Purchase more to reach buyers.</p>
                   )}
-              </CardContent>
-          </Card>
-          <Card>
-              <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                      <Verified className="text-blue-500" />
-                      Verification
-                  </CardTitle>
-              </CardHeader>
-              <CardContent>
-                  {isLoading ? (
-                      <div className="space-y-4">
-                          <Skeleton className="h-10 w-3/4" />
-                          <Skeleton className="h-8 w-1/2" />
-                      </div>
-                  ) : isVerified ? (
-                      <div className="flex flex-col items-start gap-2">
-                          <div className="flex items-center gap-2">
-                              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                                  <Verified className="h-3 w-3 mr-1.5"/>
-                                  Verified
-                              </Badge>
-                              <p className="text-sm font-semibold">Your profile is verified.</p>
-                          </div>
-                          {verificationExpiresAt && (
-                            <p className="text-sm text-muted-foreground">
-                                  Expires on <strong>{format(verificationExpiresAt, 'PPP')}</strong> ({formatDistanceToNow(verificationExpiresAt, { addSuffix: true })}).
-                              </p>
-                          )}
-                      </div>
-                  ) : (
-                      <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                              <ShieldAlert className="h-5 w-5 text-destructive" />
-                              <p className="font-semibold text-muted-foreground">Not Verified</p>
-                          </div>
-                          <Button size="sm" onClick={() => { setPaymentAction('verify'); setIsPaymentAlertOpen(true); }}>
-                              Get Verified
-                          </Button>
-                      </div>
-                  )}
-              </CardContent>
-          </Card>
-          <Card className="md:col-span-2">
-              <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                      <Coins className="text-amber-500" />
-                      Listing Credits
-                  </CardTitle>
-              </CardHeader>
-              <CardContent>
-                  {isLoading ? (
-                      <div className="space-y-4">
-                          <Skeleton className="h-10 w-1/4" />
-                          <Skeleton className="h-8 w-1/2" />
-                      </div>
-                  ) : (
-                      <div className="flex items-center justify-between">
-                          <div>
-                              <p className="text-4xl font-bold">{userProfile?.listingCredits || 0}</p>
-                              <p className="text-sm text-muted-foreground">Credits remaining</p>
-                          </div>
-                          <Button onClick={() => { setPaymentAction('credit'); setIsPaymentAlertOpen(true); }}>
-                            Purchase Credits
-                          </Button>
-                      </div>
-                  )}
-              </CardContent>
-          </Card>
+               </div>
+            </div>
+            <Button className="w-full mt-6 h-12 text-base font-bold" onClick={() => { setPaymentAction('credit'); setIsPaymentAlertOpen(true); }}>
+                Purchase Credits
+            </Button>
+        </Card>
       </div>
 
       <AlertDialog open={isPaymentAlertOpen} onOpenChange={setIsPaymentAlertOpen}>
