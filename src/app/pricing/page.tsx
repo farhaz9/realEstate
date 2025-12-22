@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { CreativePricing, type PricingTier } from "@/components/ui/creative-pricing";
-import { Zap, Bot, Star, Building, Verified, Gem } from "lucide-react";
+import { Zap, Bot, Star, Building, Verified, Gem, ShoppingBag } from "lucide-react";
 import { useUser, useFirestore, useDoc, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { doc, arrayUnion, increment } from 'firebase/firestore';
 import type { User, AppSettings } from '@/types';
@@ -33,7 +33,7 @@ const plans: PricingTier[] = [
         priceAnnual: 0,
         description: "For individuals starting out.",
         features: ["1 Property Listing", "Basic Support", "Public Search"],
-        icon: <Bot className="w-6 h-6" />,
+        icon: <ShoppingBag className="w-6 h-6" />,
         color: "text-zinc-500",
     },
     {
@@ -53,7 +53,7 @@ const plans: PricingTier[] = [
         priceAnnual: 9990,
         description: "For professionals and serious sellers.",
         features: ["15 Listings", "Priority Support", "Featured Listings"],
-        icon: <Star className="w-6 h-6" />,
+        icon: <Gem className="w-6 h-6" />,
         popular: true,
         color: "text-primary",
     },
@@ -124,7 +124,8 @@ export default function PricingPage() {
             return;
         }
 
-        const amount = isAnnual ? selectedPlan.priceAnnual * 100 : selectedPlan.price * 100;
+        const isAnnual = selectedPlanId === 'annual';
+        const amount = (isAnnual ? selectedPlan.priceAnnual : selectedPlan.price) * 100;
         const displayAmount = isAnnual ? selectedPlan.priceAnnual : selectedPlan.price;
         const description = `Payment for ${selectedPlan.name} - ${isAnnual ? 'Annual' : 'Monthly'} Subscription`;
 
@@ -188,7 +189,7 @@ export default function PricingPage() {
         const rzp = new Razorpay(options);
         rzp.open();
     };
-
+    const selectedPlanId = isAnnual ? 'annual' : 'monthly';
     return (
         <div className="py-16 md:py-24 bg-background">
             <CreativePricing 
@@ -225,3 +226,4 @@ export default function PricingPage() {
         </div>
     );
 }
+
