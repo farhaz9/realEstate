@@ -59,10 +59,10 @@ const categoryDisplay: Record<string, string> = {
 };
 
 const planDetails: Record<string, { name: string; icon: React.ElementType }> = {
-    free: { name: 'Free Tier', icon: Bot },
+    free: { name: 'Free Tier', icon: ShoppingBag },
     basic: { name: 'Basic', icon: Zap },
     pro: { name: 'Pro', icon: Star },
-    business: { name: 'Business', icon: Building },
+    business: { name: 'Business', icon: Briefcase },
 };
 
 const professionalRoles = [
@@ -534,5 +534,3 @@ export default function SettingsPage() {
     </Suspense>
   )
 }
-
-    
