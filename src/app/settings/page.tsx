@@ -432,11 +432,6 @@ function SettingsPageContent() {
                         <span>{currentPlan.name} Plan</span>
                     </div>
                 )}
-                {isCurrentlyVerified && userProfile?.verifiedUntil && (
-                  <p className="text-xs text-green-600 font-semibold mt-1">
-                    Verified until {userProfile.verifiedUntil.toDate().toLocaleDateString()}
-                  </p>
-                )}
             </div>
         </div>
       </div>
@@ -539,3 +534,5 @@ export default function SettingsPage() {
     </Suspense>
   )
 }
+
+    
