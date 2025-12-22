@@ -25,25 +25,25 @@ const designServices = [
     title: "Architecture",
     description: "Creating structures that balance aesthetics, safety, sustainability, and economic feasibility—transforming space and light into meaningful experiences.",
     icon: Building,
-    image: PlaceHolderImages.find(p => p.id === 'service-architecture')?.imageUrl || ''
+    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2940&auto=format&fit=crop"
   },
   {
     title: "Interior Design",
     description: "Crafting spaces that are visually compelling and highly functional, reflecting your lifestyle and enhancing everyday living.",
     icon: Brush,
-    image: PlaceHolderImages.find(p => p.id === 'service-interiors-page')?.imageUrl || ''
+    image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2835&auto=format&fit=crop"
   },
   {
     title: "Interior Styling",
     description: "Purposeful use of space to elevate comfort, efficiency, and visual harmony, from warm homes to elegant public environments.",
     icon: DraftingCompass,
-    image: PlaceHolderImages.find(p => p.id === 'service-styling')?.imageUrl || ''
+    image: "https://images.unsplash.com/photo-1542037104857-ff80bcf5eb89?q=80&w=2940&auto=format&fit=crop"
   },
   {
     title: "Furniture Design",
     description: "Designing bespoke furniture pieces that enhance usability while adding character and identity to a space, ensuring a cohesive environment.",
     icon: Sofa,
-    image: PlaceHolderImages.find(p => p.id === 'service-furniture')?.imageUrl || ''
+    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2940&auto=format&fit=crop"
   }
 ];
 
