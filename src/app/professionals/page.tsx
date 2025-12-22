@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
@@ -5,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { User } from '@/types';
-import { Loader2, Search } from 'lucide-react';
+import { Loader2, Search, Verified } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ProfessionalCard } from '@/components/shared/professional-card';
 import { Button } from '@/components/ui/button';

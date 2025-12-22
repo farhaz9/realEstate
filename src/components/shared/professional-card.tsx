@@ -8,10 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { User as UserIcon, Mail, Verified, Phone, Star, Info, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { HighlightedText } from './highlighted-text';
+import { VerificationModal } from './verification-modal';
+
 
 interface ProfessionalCardProps {
   professional: User;
@@ -74,6 +76,9 @@ function ProfessionalRating({ professional }: { professional: User }) {
 
 
 export function ProfessionalCard({ professional, variant = 'default', searchTerm = '' }: ProfessionalCardProps) {
+  const { user } = useUser();
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+
   const getInitials = (name: string) => {
     if (!name) return '';
     const names = name.split(' ');
@@ -88,9 +93,11 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
   const isCurrentlyVerified = professional.verifiedUntil && professional.verifiedUntil.toDate() > new Date();
   const professionalUrl = `/professionals/${professional.username}`;
 
+  const isOwner = user?.uid === professional.id;
 
   if (variant === 'compact') {
       return (
+        <>
         <div className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors w-full">
             <Link href={professionalUrl} className="flex items-center gap-4 flex-grow min-w-0">
                 <Avatar className={cn(
@@ -111,6 +118,11 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
                             <HighlightedText text={cardTitle} highlight={searchTerm} />
                         </h3>
                         {isCurrentlyVerified && <Verified className="h-4 w-4 text-blue-500 flex-shrink-0" />}
+                        {isOwner && !isCurrentlyVerified && (
+                           <Button variant="ghost" size="icon" className="h-6 w-6 text-blue-500 hover:bg-blue-100" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsVerificationModalOpen(true);}}>
+                               <Verified className="h-4 w-4" />
+                           </Button>
+                        )}
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
                         <HighlightedText text={categoryDisplay[professional.category] || professional.category} highlight={searchTerm} />
@@ -126,11 +138,14 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
                 </Button>
             </div>
         </div>
+        {isOwner && <VerificationModal open={isVerificationModalOpen} onOpenChange={setIsVerificationModalOpen} />}
+        </>
       );
   }
 
 
   return (
+    <>
     <Card className="h-full overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1">
     <CardContent className="p-6 flex flex-col items-center text-center h-full">
             <Avatar className={cn(
@@ -151,6 +166,11 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
                 <HighlightedText text={cardTitle} highlight={searchTerm} />
             </h3>
             {isCurrentlyVerified && <Verified className="h-5 w-5 text-blue-500" />}
+            {isOwner && !isCurrentlyVerified && (
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:bg-blue-100" onClick={() => setIsVerificationModalOpen(true)}>
+                    <Verified className="h-5 w-5" />
+                </Button>
+            )}
             </div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 <HighlightedText text={categoryDisplay[professional.category] || professional.category} highlight={searchTerm} />
@@ -170,5 +190,7 @@ export function ProfessionalCard({ professional, variant = 'default', searchTerm
             </Button>
     </CardContent>
     </Card>
+     {isOwner && <VerificationModal open={isVerificationModalOpen} onOpenChange={setIsVerificationModalOpen} />}
+    </>
   );
 }
