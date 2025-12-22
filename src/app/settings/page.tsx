@@ -16,6 +16,7 @@ import { ProfileDetailsTab } from '@/components/profile/profile-details-tab';
 import { MyPropertiesTab } from '@/components/profile/my-properties-tab';
 import { WishlistTab } from '@/components/profile/wishlist-tab';
 import { TransactionTab } from '@/components/profile/transactions-tab';
+import { SubscriptionTab } from '@/components/profile/subscription-tab';
 import ImageKit from 'imagekit-javascript';
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -360,6 +361,7 @@ function SettingsPageContent() {
   const tabs = [
     { id: 'profile', label: 'Profile' },
     !isBuyerTenant && { id: 'listings', label: 'My Listings' },
+    !isBuyerTenant && { id: 'subscription', label: 'Subscription' },
     { id: 'wishlist', label: 'Wishlist' },
     !isBuyerTenant && { id: 'transactions', label: 'Transactions' },
   ].filter(Boolean) as { id: string, label: string }[];
@@ -455,6 +457,9 @@ function SettingsPageContent() {
                 <>
                     <TabsContent value="listings" className="mt-6">
                         <MyPropertiesTab />
+                    </TabsContent>
+                     <TabsContent value="subscription" className="mt-6">
+                        <SubscriptionTab />
                     </TabsContent>
                     <TabsContent value="transactions" className="mt-6">
                         <TransactionTab />
