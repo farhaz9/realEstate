@@ -157,7 +157,7 @@ export default function PricingPage() {
                     updateData.listingCredits = increment(credits);
                 }
 
-                // If the business plan is purchased, grant verification status
+                // If the business plan is purchased, grant verification status for 1 year
                 if (selectedPlan.level === 'business') {
                     const newExpiryDate = new Date();
                     newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
