@@ -311,19 +311,18 @@ function PropertiesPageContent() {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center gap-4">
             <form onSubmit={handleSearch} className="relative flex-grow flex items-center bg-muted rounded-full border-transparent focus-within:bg-background focus-within:border-primary border transition-colors">
-              <Button variant="ghost" size="sm" className="flex items-center gap-1 rounded-full ml-2 text-primary">
-                <MapPin className="h-4 w-4" />
-                Delhi
-              </Button>
-              <Separator orientation="vertical" className="h-6 mx-2" />
-              <Search className="absolute left-[88px] top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                id="search"
-                placeholder={placeholder}
-                className="pl-12 pr-14 text-foreground h-12 rounded-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+                <div className="pl-2">
+                    <LocationDisplay />
+                </div>
+                <Separator orientation="vertical" className="h-6 mx-2" />
+                <Search className="absolute left-[135px] md:left-[150px] top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                    id="search"
+                    placeholder={placeholder}
+                    className="pl-12 pr-14 text-foreground h-12 rounded-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
               <Sheet>
                 <SheetTrigger asChild>
                   <Button size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full flex-shrink-0 shadow-sm bg-primary text-primary-foreground">
