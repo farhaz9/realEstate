@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useMemo, useEffect, useTransition, Suspense } from 'react';
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown, LayoutGrid, ShoppingCart, Home, User, Building, X, Minus, Plus } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown, LayoutGrid, ShoppingCart, Home, User, Building, X, Minus, Plus, MapPin } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
 import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp, increment } from 'firebase/firestore';
@@ -309,13 +310,17 @@ function PropertiesPageContent() {
       <section className="bg-background border-b sticky top-14 z-40">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center gap-4">
-            <LocationDisplay />
-            <form onSubmit={handleSearch} className="relative flex-grow">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <form onSubmit={handleSearch} className="relative flex-grow flex items-center bg-muted rounded-full border-transparent focus-within:bg-background focus-within:border-primary border transition-colors">
+              <Button variant="ghost" size="sm" className="flex items-center gap-1 rounded-full ml-2 text-primary">
+                <MapPin className="h-4 w-4" />
+                Delhi
+              </Button>
+              <Separator orientation="vertical" className="h-6 mx-2" />
+              <Search className="absolute left-[88px] top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 id="search"
                 placeholder={placeholder}
-                className="pl-12 pr-14 text-foreground h-12 rounded-full bg-muted border-transparent focus:bg-background focus:border-primary"
+                className="pl-12 pr-14 text-foreground h-12 rounded-full bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
