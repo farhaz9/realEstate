@@ -1,3 +1,4 @@
+
 'use client';
 
 import { PageHero } from "@/components/shared/page-hero";
@@ -9,6 +10,7 @@ export default function TermsAndConditionsPage() {
   const [lastUpdated, setLastUpdated] = useState('');
 
   useEffect(() => {
+    // This code now runs only on the client, after the initial render.
     setLastUpdated(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
   }, []);
 
@@ -23,7 +25,11 @@ export default function TermsAndConditionsPage() {
             </div>
             <Card className="max-w-4xl mx-auto">
                  <CardHeader>
-                    <p className="text-sm text-muted-foreground">Last Updated: {lastUpdated}</p>
+                    {lastUpdated ? (
+                        <p className="text-sm text-muted-foreground">Last Updated: {lastUpdated}</p>
+                    ) : (
+                        <div className="h-5 w-48 bg-muted rounded-md animate-pulse" />
+                    )}
                 </CardHeader>
                 <CardContent className="prose prose-lg max-w-none marker:text-primary">
                     <h2>1. Agreement to Terms</h2>
