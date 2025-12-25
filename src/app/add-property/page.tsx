@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -151,7 +152,6 @@ function AddPropertyForm() {
     },
   });
   
-  const watchedFields = form.watch();
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   
   useEffect(() => {
@@ -276,7 +276,7 @@ function AddPropertyForm() {
     );
   }, [userProfile]);
 
-  async function handleFormSubmit() {
+  async function handleFormSubmit(data: PropertyFormValues) {
     if (!user || !userDocRef) {
       toast({ title: 'Authentication Error', description: 'Please log in to list a property.', variant: 'destructive' });
       router.push('/login');
@@ -284,7 +284,6 @@ function AddPropertyForm() {
     }
     
     setIsSubmitting(true);
-    const data = form.getValues();
 
     let uploadedImageUrls: string[] = imagePreviews.filter(p => !p.file).map(p => p.url);
     
@@ -435,7 +434,7 @@ function AddPropertyForm() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                             {imagePreviews.map((preview, index) => (
                             <div key={index} className="relative aspect-video rounded-lg overflow-hidden">
-                                <Image src={preview.url} alt={`Preview ${index + 1}`} layout="fill" className="object-cover" />
+                                <Image src={preview.url} alt={`Preview ${index + 1}`} fill className="object-cover" />
                             </div>
                             ))}
                         </div>
