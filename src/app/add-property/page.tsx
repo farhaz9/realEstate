@@ -393,6 +393,7 @@ function AddPropertyForm() {
   useEffect(() => {
     if (showSuccess) {
       const timer = setTimeout(() => {
+        // This toast will appear *after* the animation has been visible for 2 seconds
         if ((userProfile?.listingCredits ?? 0) <= 1 && !isEditMode) {
           toast({
             title: "You've used your last credit!",
@@ -400,12 +401,20 @@ function AddPropertyForm() {
             variant: "default",
           });
         }
-        if (isAdmin) {
-          router.back();
-        } else {
-          router.push('/settings?tab=listings');
-        }
-      }, 2000); // 2-second delay to show animation before redirect/toast
+  
+        // The redirection happens *after* the toast has had time to be seen.
+        // This is a simple delay, more complex scenarios might need a toast `onClose` callback.
+        const redirectTimer = setTimeout(() => {
+          if (isAdmin) {
+            router.back();
+          } else {
+            router.push('/settings?tab=listings');
+          }
+        }, 1500); // Wait 1.5 seconds after toast before redirecting
+  
+        return () => clearTimeout(redirectTimer);
+      }, 2000); // 2-second delay for the success animation
+  
       return () => clearTimeout(timer);
     }
   }, [showSuccess, userProfile, isEditMode, isAdmin, router, toast]);
@@ -468,13 +477,17 @@ function AddPropertyForm() {
                         <p className="text-muted-foreground">{formData.location.address}</p>
                     </div>
 
-                    {imagePreviews.length > 0 && (
+                    {imagePreviews.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                             {imagePreviews.map((preview, index) => (
                             <div key={index} className="relative aspect-video rounded-lg overflow-hidden">
                                 <Image src={preview.url} alt={`Preview ${index + 1}`} fill className="object-cover" />
                             </div>
                             ))}
+                        </div>
+                    ) : (
+                         <div className="relative aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                            <Image src="https://images-r-eal-estae.vercel.app/default%20imagy%20(1)%20(1).png" alt="Default Property Image" fill className="object-cover" />
                         </div>
                     )}
                     
@@ -907,3 +920,5 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
+
+    
