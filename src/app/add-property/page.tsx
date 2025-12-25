@@ -70,7 +70,7 @@ const propertyFormSchema = z.object({
     state: z.string().min(2, { message: 'State is required.' }),
   }),
   contactNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
-  whatsappNumber: zstring().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
+  whatsappNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   propertyType: z.string().min(2, { message: 'Property type is required.' }),
   bedrooms: z.string().refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) >= 0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.string().refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) >= 0, { message: 'Bathrooms must be a non-negative number.' }),
