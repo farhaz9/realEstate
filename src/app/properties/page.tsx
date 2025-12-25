@@ -323,6 +323,17 @@ function PropertiesPageContent() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </form>
+               <Button
+                variant="default"
+                className="rounded-full h-12 hidden md:flex items-center shadow-sm relative"
+                onClick={handlePostAdClick}
+               >
+                <Plus className="mr-2 h-4 w-4" />
+                Post Property
+                <div className="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase shadow-md">
+                    Free
+                </div>
+              </Button>
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon" className="h-12 w-12 rounded-full flex-shrink-0 shadow-sm">
