@@ -331,6 +331,10 @@ function AddPropertyForm() {
         return;
       }
     }
+
+    if (uploadedImageUrls.length === 0) {
+        uploadedImageUrls.push('https://images-r-eal-estae.vercel.app/default%20imagy%20(1)%20(1).png');
+    }
     
     const amenitiesArray = data.amenities ? data.amenities.split(',').map(a => a.trim()).filter(a => a) : [];
     
@@ -589,12 +593,13 @@ function AddPropertyForm() {
                 <Stepper value={currentStep}>
                   {steps.map((step, index) => {
                       const StepIcon = step.icon;
+                      const isCompleted = index + 1 < currentStep;
                       return (
-                        <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
+                        <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1" completed={isCompleted}>
                           <StepperTrigger asChild>
                             <div className="flex items-center gap-2 p-1 cursor-default">
                                 <StepperIndicator>
-                                    <StepIcon className="h-4 w-4" />
+                                    {isCompleted ? <Check className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}
                                 </StepperIndicator>
                                 <div className="flex-col items-start hidden sm:flex">
                                     <StepperTitle>{step.title}</StepperTitle>
@@ -895,3 +900,4 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
+
