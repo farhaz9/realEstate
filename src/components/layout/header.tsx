@@ -24,7 +24,6 @@ import {
   Armchair,
   Briefcase,
   HelpCircle,
-  Plus,
   Settings,
   X,
   User as UserIcon,
@@ -172,7 +171,7 @@ export default function Header() {
   const isMobile = useIsMobile();
   
   const isHomePage = pathname === '/';
-  const canShowStickySearch = pathname.startsWith('/properties') || pathname.startsWith('/professionals') || pathname.startsWith('/interiors');
+  const canShowStickySearch = pathname.startsWith('/professionals') || pathname.startsWith('/interiors');
 
   const { isScrolled } = useOnScroll(0); 
   
