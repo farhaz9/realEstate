@@ -303,7 +303,7 @@ export default function Header() {
                                 "bg-gray-100 text-gray-800"
                             )}>
                                 <PlanIcon className="h-3 w-3" />
-                                <span>{currentPlan.name}</span>
+                                <span>{currentPlan.name} Plan</span>
                             </div>
                         )}
                     </Link>
@@ -371,7 +371,7 @@ export default function Header() {
                 </div>
                 <SheetFooter className="p-4 mt-auto border-t">
                   {user ? (
-                      <Button variant="outline" className="w-full h-12 text-base" onClick={handleSignOut}>
+                      <Button variant="destructive" className="w-full h-12 text-base" onClick={handleSignOut}>
                           <LogOut className="mr-2 h-5 w-5" />
                           Log Out
                       </Button>
