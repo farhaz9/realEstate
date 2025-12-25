@@ -36,6 +36,7 @@ import {
   ShoppingBag,
   Zap,
   Star,
+  Plus,
 } from "lucide-react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from 'firebase/auth';
@@ -58,8 +59,6 @@ const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/properties", label: "Properties", icon: Building },
   { href: "/interiors", label: "Interiors", icon: Armchair },
-  { href: "/professionals", label: "Professionals", icon: UserIcon },
-  { href: "/pricing", label: "Pricing", icon: Tag },
 ];
 
 const secondaryLinks = [
@@ -426,6 +425,8 @@ export default function Header() {
                           {navLinks.map((link) => (
                              <NavLink key={link.href} href={link.href} label={link.label} />
                           ))}
+                          <NavLink href="/professionals" label="Professionals" />
+                          <NavLink href="/pricing" label="Pricing" />
                       </nav>
                   </div>
                   <div className="flex justify-center">
@@ -446,6 +447,7 @@ export default function Header() {
                             className="rounded-full h-10 hidden md:flex items-center shadow-sm"
                             onClick={handlePostPropertyClick}
                            >
+                            <Plus className="mr-2 h-4 w-4" />
                             Post Property
                             {userProfile?.listingCredits !== undefined && userProfile.listingCredits > 0 && (
                                <span className="ml-2 bg-primary-foreground/20 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
@@ -464,7 +466,7 @@ export default function Header() {
                             className="rounded-full h-10 hidden md:flex"
                             onClick={handlePostPropertyClick}
                            >
-                            Post Property
+                            <Plus className="mr-2 h-4 w-4" /> Post Property
                           </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
