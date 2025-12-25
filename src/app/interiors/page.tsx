@@ -4,7 +4,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHero } from "@/components/shared/page-hero";
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
@@ -212,43 +212,33 @@ function InteriorsPageContent() {
               From single-room makeovers to full-scale renovations, we have the expertise to handle projects of any size.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {designServices.map((service) => {
-              const Icon = service.icon;
               const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
               return (
-                 <Card key={service.title} className="bg-card text-card-foreground border rounded-lg overflow-hidden group transition-shadow duration-300 hover:shadow-lg">
+                 <Card key={service.title} className="bg-card text-card-foreground border rounded-lg overflow-hidden group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <CardHeader className="p-0 relative h-56">
+                        {serviceImage && (
+                            <Image
+                                src={serviceImage.imageUrl}
+                                alt={service.title}
+                                data-ai-hint={serviceImage.imageHint}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                        )}
+                    </CardHeader>
                     <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                            <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-                                {serviceImage && (
-                                    <Image
-                                        src={serviceImage.imageUrl}
-                                        alt={service.title}
-                                        data-ai-hint={serviceImage.imageHint}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                )}
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                     <div className="bg-primary/10 p-2 rounded-full flex-shrink-0">
-                                        <Icon className="h-5 w-5 text-primary" />
-                                    </div>
-                                    <h3 className="text-lg font-bold">{service.title}</h3>
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
-                                <ul className="space-y-2">
-                                    {service.features.map((feature, i) => (
-                                        <li key={i} className="flex items-center gap-2 text-sm">
-                                            <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                                            <span>{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                        <h3 className="text-lg font-bold mb-2">{service.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-4 h-10">{service.description}</p>
+                        <ul className="space-y-2">
+                            {service.features.map((feature, i) => (
+                                <li key={i} className="flex items-center gap-2 text-sm">
+                                    <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                    <span>{feature}</span>
+                                </li>
+                            ))}
+                        </ul>
                     </CardContent>
                 </Card>
               );
