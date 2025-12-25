@@ -424,7 +424,7 @@ export default function Header() {
                       </SheetTrigger>
                       
                       <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                          {visibleNavLinks.filter(l => l.href !== '/' && l.href !== '/professionals' && l.href !== '/pricing').map((link) => (
+                          {visibleNavLinks.filter(l => l.href !== '/').map((link) => (
                              <NavLink key={link.href} href={link.href} label={link.label} />
                           ))}
                       </nav>
@@ -434,9 +434,6 @@ export default function Header() {
                   </div>
                   <div className="flex items-center gap-2 justify-end">
                       <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                          {navLinks.filter(l => l.href === '/professionals' || l.href === '/pricing').map((link) => (
-                             <NavLink key={link.href} href={link.href} label={link.label} />
-                          ))}
                           {user && isProfessional && !isVendor && (
                             <NavLink href="/settings?tab=listings" label="My Listings" />
                           )}
