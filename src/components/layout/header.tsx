@@ -453,16 +453,14 @@ export default function Header() {
                           <>
                            <Button
                             variant="default"
-                            className="rounded-full h-10 hidden md:flex items-center shadow-sm"
+                            className="rounded-full h-10 hidden md:flex items-center relative pr-14 shadow-sm"
                             onClick={handlePostPropertyClick}
                            >
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Post Property
-                            {userProfile?.listingCredits !== undefined && userProfile.listingCredits > 0 && (
-                               <span className="ml-2 bg-primary-foreground/20 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
-                                {userProfile.listingCredits}
-                               </span>
-                            )}
+                            <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
+                                Free
+                            </div>
                           </Button>
                           <UserNav />
                           </>
@@ -472,10 +470,13 @@ export default function Header() {
                              <Link href="/login">Login</Link>
                           </Button>
                            <Button
-                            className="rounded-full h-10 hidden md:flex items-center"
+                            className="rounded-full h-10 hidden md:flex items-center relative pr-14"
                             onClick={handlePostPropertyClick}
                            >
                             <PlusCircle className="mr-2 h-4 w-4" /> Post Property
+                            <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
+                                Free
+                            </div>
                           </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
