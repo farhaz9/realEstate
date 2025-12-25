@@ -1,6 +1,8 @@
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { Dumbbell, ParkingSquare, Wifi, Tv, Trees, Wind, Droplets, Utensils, Refrigerator, Building2 } from 'lucide-react';
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -25,3 +27,22 @@ export function formatPrice(price: number, inCrores: boolean = false, isMax: boo
     return `₹${price.toLocaleString('en-IN')}`;
   }
 }
+
+const amenityIcons: { [key: string]: React.ElementType } = {
+  'gym': Dumbbell,
+  'swimming pool': Droplets,
+  'parking': ParkingSquare,
+  'wifi': Wifi,
+  'tv': Tv,
+  'park': Trees,
+  'air conditioning': Wind,
+  'kitchen': Utensils,
+  'refrigerator': Refrigerator,
+};
+
+export const getAmenityIcon = (amenity: string) => {
+  const normalizedAmenity = amenity.toLowerCase();
+  // Find a matching key in our icon map
+  const iconKey = Object.keys(amenityIcons).find(key => normalizedAmenity.includes(key));
+  return iconKey ? amenityIcons[iconKey] : Building2; // Return a default icon if no match
+};
