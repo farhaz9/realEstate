@@ -335,7 +335,7 @@ export default function Header() {
                                 className={cn(
                                   "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-all",
                                   isActive
-                                    ? "bg-primary/10 text-primary"
+                                    ? "text-primary"
                                     : "text-foreground hover:bg-muted"
                                 )}
                               >
@@ -441,7 +441,7 @@ export default function Header() {
                           <Skeleton className="h-10 w-10 rounded-full" />
                       ) : user ? (
                           <>
-                           <PostPropertyButton className="rounded-full h-10 hidden md:flex items-center relative pr-14 shadow-sm" />
+                           <PostPropertyButton className="rounded-full h-10 hidden md:flex items-center relative" />
                           <UserNav />
                           </>
                       ) : (
@@ -449,7 +449,7 @@ export default function Header() {
                           <Button asChild variant="outline" className="rounded-full h-10 hidden md:flex">
                              <Link href="/login">Login</Link>
                           </Button>
-                           <PostPropertyButton className="rounded-full h-10 hidden md:flex items-center relative pr-14" />
+                           <PostPropertyButton className="rounded-full h-10 hidden md:flex items-center relative" />
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
                               <LogIn />
