@@ -516,7 +516,7 @@ function AddPropertyForm() {
   };
 
   return (
-    <div className="bg-muted/40 min-h-screen">
+    <div className="bg-muted/40 min-h-screen pt-24">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto">
             <Button variant="ghost" className="mb-6 -ml-4" onClick={handleBackClick}>
@@ -541,7 +541,7 @@ function AddPropertyForm() {
                   ))}
                 </Stepper>
             </div>
-               <div className="overflow-hidden relative min-h-[500px]">
+               <div className="overflow-hidden relative">
                  <AnimatePresence initial={false} custom={direction}>
                     <motion.div
                       key={currentStep}
@@ -551,7 +551,7 @@ function AddPropertyForm() {
                       animate="center"
                       exit="exit"
                       transition={{ type: "spring", stiffness: 300, damping: 30, duration: 0.3 }}
-                      className="absolute w-full"
+                      className="w-full"
                     >
                     {currentStep === 1 && (
                          <Card>
