@@ -344,7 +344,7 @@ export default function Header() {
                       <SheetClose asChild>
                         <Button
                           variant="default"
-                          className="w-full h-12 text-base font-bold"
+                          className="w-full h-12 text-base font-bold bg-primary/10 text-primary hover:bg-primary/20"
                           onClick={handlePostPropertyClick}
                         >
                           <Plus className="mr-2 h-5 w-5" /> Post Property
@@ -443,6 +443,13 @@ export default function Header() {
                       ) : user ? (
                           <>
                            <Button
+                            variant="ghost"
+                            className="rounded-full h-10 flex items-center gap-2 shadow-sm md:hidden"
+                            onClick={handlePostPropertyClick}
+                           >
+                            <Plus className="h-4 w-4" /> Post
+                          </Button>
+                           <Button
                             variant="default"
                             className="rounded-full h-10 hidden md:flex items-center gap-2 shadow-sm"
                             onClick={handlePostPropertyClick}
@@ -466,6 +473,13 @@ export default function Header() {
                             onClick={handlePostPropertyClick}
                            >
                             Post Property
+                          </Button>
+                           <Button
+                            variant="ghost"
+                            className="rounded-full h-10 flex items-center gap-2 md:hidden"
+                            onClick={handlePostPropertyClick}
+                           >
+                            <Plus className="h-4 w-4" /> Post
                           </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
