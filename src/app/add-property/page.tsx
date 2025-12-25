@@ -388,23 +388,28 @@ function AddPropertyForm() {
 
     setIsSubmitting(false);
     setShowSuccess(true);
-    
-    setTimeout(() => {
-        if ((userProfile?.listingCredits ?? 0) <= 1 && !isEditMode) {
-            toast({
-                title: "You've used your last credit!",
-                description: "Purchase more to list another property.",
-                variant: "default",
-            });
-        }
-        if (isAdmin) {
-            router.back();
-        } else {
-            router.push('/settings?tab=listings');
-        }
-    }, 2000);
   }
   
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => {
+        if ((userProfile?.listingCredits ?? 0) <= 1 && !isEditMode) {
+          toast({
+            title: "You've used your last credit!",
+            description: "Purchase more to list another property.",
+            variant: "default",
+          });
+        }
+        if (isAdmin) {
+          router.back();
+        } else {
+          router.push('/settings?tab=listings');
+        }
+      }, 2000); // 2-second delay to show animation before redirect/toast
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess, userProfile, isEditMode, isAdmin, router, toast]);
+
   const nextStep = async () => {
     let isValid = true;
     if (currentStep <= steps.length) {
@@ -902,4 +907,3 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
-
