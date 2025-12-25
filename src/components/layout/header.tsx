@@ -443,14 +443,6 @@ export default function Header() {
                       ) : user ? (
                           <>
                            <Button
-                            variant="secondary"
-                            className="rounded-full h-10 flex flex-col justify-center items-center md:hidden font-semibold px-2 text-xs leading-tight bg-primary/10 text-primary"
-                            onClick={handlePostPropertyClick}
-                           >
-                            <div>Post</div>
-                            <div>Property</div>
-                          </Button>
-                           <Button
                             variant="default"
                             className="rounded-full h-10 hidden md:flex items-center shadow-sm"
                             onClick={handlePostPropertyClick}
@@ -475,14 +467,6 @@ export default function Header() {
                            >
                             Post Property
                           </Button>
-                           <Button
-                            variant="secondary"
-                            className="rounded-full h-10 flex flex-col justify-center items-center md:hidden font-semibold px-2 text-xs leading-tight bg-primary/10 text-primary"
-                            onClick={handlePostPropertyClick}
-                           >
-                             <div>Post</div>
-                             <div>Property</div>
-                           </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
                               <LogIn />
