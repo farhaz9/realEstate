@@ -189,7 +189,7 @@
     {
       "id": "contact-hero",
       "description": "A team working together in a modern office",
-      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2940&auto=format&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&amp;w=2940&amp;auto=format&amp;fit=crop",
       "imageHint": "business meeting"
     },
     {
@@ -201,7 +201,7 @@
     {
       "id": "service-construction",
       "description": "A building under construction with cranes",
-      "imageUrl": "https://images.unsplash.com/photo-1679542307176-4affc76c9adb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxUdXJua2V5JTIwSW50ZXJpb3IlMjBTb2x1dGlvbnN8ZW58MHx8fHwxNzY2NjQzMTAwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1679542307176-4affc76c9adb?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxUdXJua2V5JTIwSW50ZXJpb3IlMjBTb2x1dGlvbnN8ZW58MHx8fHwxNzY2NjQzMTAwfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
       "imageHint": "building construction"
     },
     {
@@ -219,7 +219,7 @@
     {
       "id": "service-consultancy",
       "description": "Two professionals in a meeting discussing blueprints",
-      "imageUrl": "https://images.unsplash.com/flagged/photo-1573168710465-7f7da9a23a15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxSZW5vdmF0aW9uJTIwfGVufDB8fHx8MTc2NjY0Mjk1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1573168710465-7f7da9a23a15?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxSZW5vdmF0aW9uJTIwfGVufDB8fHx8MTc2NjY0Mjk1N3ww&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
       "imageHint": "business meeting"
     },
     {
@@ -255,49 +255,49 @@
     {
       "id": "why-us-1",
       "description": "Exterior of a modern building with a wooden facade.",
-      "imageUrl": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2792&auto=format&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&amp;w=2792&amp;auto=format&amp;fit=crop",
       "imageHint": "modern building"
     },
     {
       "id": "why-us-2",
       "description": "Two professionals in a meeting discussing blueprints.",
-      "imageUrl": "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxDb25zdWx0YXRpb258ZW58MHx8fHwxNzY2NjQzMjU3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxDb25zdWx0YXRpb258ZW58MHx8fHwxNzY2NjQzMjU3fDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
       "imageHint": "interior"
     },
     {
       "id": "why-us-3",
       "description": "Exterior of a large modern house with a pristine lawn.",
-      "imageUrl": "https://images.unsplash.com/photo-1503174971373-b1f69850bded?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNHx8aW50ZXJpb3IlMjBEZXNpZ24lMjB8ZW58MHx8fHwxNzY2NjQzNDAwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1503174971373-b1f69850bded?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNHx8aW50ZXJpb3IlMjBEZXNpZ24lMjB8ZW58MHx8fHwxNzY2NjQzNDAwfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
       "imageHint": "modern house"
     },
     {
       "id": "why-us-4",
       "description": "Interior of a modern room with a wooden sideboard and a plant.",
-      "imageUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxraXRjaGVufGVufDB8fHx8fDE3NjU2NDEyMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxraXRjaGVufGVufDB8fHx8fDE3NjU2NDEyMjJ8MA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
       "imageHint": "room interior"
     },
     {
       "id": "service-architecture",
       "description": "View of a modern building's geometric facade.",
-      "imageUrl": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2940&auto=format&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&amp;w=2940&amp;auto=format&amp;fit=crop",
       "imageHint": "modern architecture"
     },
     {
       "id": "service-interiors-page",
       "description": "An elegant and modern dining room setup.",
-      "imageUrl": "https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2835&auto=format&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&amp;w=2835&amp;auto=format&amp;fit=crop",
       "imageHint": "dining room"
     },
     {
       "id": "service-styling",
       "description": "A close-up of beautifully arranged decor on a coffee table.",
-      "imageUrl": "https://images.unsplash.com/photo-1606170033648-5d55a3edf314?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxMaWdodGluZyUyMHxlbnwwfHx8fDE3NjY2NDI4NjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "interior styling"
+      "imageUrl": "https://images.unsplash.com/photo-1598714805247-5dd440d87124?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHwlMjBob3VzZSUyMHdpdGglMjBnYXJkZW58ZW58MHx8fHwxNzY2NjcxMjc0fDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
+      "imageHint": "house garden"
     },
     {
       "id": "service-furniture",
       "description": "A sleek, modern sofa in a minimalist living room.",
-      "imageUrl": "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxDdXN0b20lMjBGdXJuaXR1cmUlMjB8ZW58MHx8fHwxNzY2NjQ1MzgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxDdXN0b20lMjBGdXJuaXR1cmUlMjB8ZW58MHx8fHwxNzY2NjQ1MzgxfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
       "imageHint": "modern sofa"
     }
   ]
