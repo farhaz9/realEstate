@@ -347,7 +347,7 @@ export default function Header() {
                           className="w-full h-12 text-base font-bold bg-primary/10 text-primary hover:bg-primary/20"
                           onClick={handlePostPropertyClick}
                         >
-                          <Plus className="mr-2 h-5 w-5" /> Post Property
+                           Post Property
                         </Button>
                       </SheetClose>
                      <Separator className="my-4" />
@@ -444,10 +444,11 @@ export default function Header() {
                           <>
                            <Button
                             variant="secondary"
-                            className="rounded-full h-10 flex items-center md:hidden font-semibold px-2 text-xs"
+                            className="rounded-full h-10 flex flex-col justify-center items-center md:hidden font-semibold px-2 text-xs leading-tight"
                             onClick={handlePostPropertyClick}
                            >
-                            Post Property
+                            <div>Post</div>
+                            <div>Property</div>
                           </Button>
                            <Button
                             variant="default"
@@ -476,10 +477,11 @@ export default function Header() {
                           </Button>
                            <Button
                             variant="secondary"
-                            className="rounded-full h-10 flex items-center md:hidden font-semibold px-2 text-xs"
+                            className="rounded-full h-10 flex flex-col justify-center items-center md:hidden font-semibold px-2 text-xs leading-tight"
                             onClick={handlePostPropertyClick}
                            >
-                            Post Property
+                             <div>Post</div>
+                             <div>Property</div>
                            </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
