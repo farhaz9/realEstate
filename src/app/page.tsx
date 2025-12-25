@@ -150,19 +150,20 @@ export default function HomePage() {
       </section>
       
       <section className="py-8 bg-background">
-          <div className="container mx-auto px-4">
-              <div className="bg-primary/10 border border-primary/20 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-                  <div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-primary">Post your Property for FREE</h2>
-                      <p className="text-muted-foreground mt-1">List your property in minutes and reach thousands of potential buyers.</p>
-                  </div>
-                  <UIButton asChild className="h-12 px-8 text-base font-semibold rounded-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex-shrink-0">
-                      <Link href="/add-property">
-                          Post Property
-                      </Link>
-                  </UIButton>
-              </div>
-          </div>
+        <div className="container mx-auto px-4">
+            <div className="text-center">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground">Post Property</h2>
+                <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative">
+                    <Link href="/add-property">
+                        <Plus className="mr-2 h-5 w-5" />
+                        Post Property
+                        <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
+                          Free
+                        </div>
+                    </Link>
+                </UIButton>
+            </div>
+        </div>
       </section>
 
       <section id="offers" className="py-16 bg-primary/5">
