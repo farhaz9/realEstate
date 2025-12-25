@@ -10,7 +10,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
 import { ProfessionalCard } from '@/components/shared/professional-card';
-import { Loader2, Search, Building, Brush, Sofa, DraftingCompass, ArrowRight } from 'lucide-react';
+import { Loader2, Search, Building, Brush, Sofa, DraftingCompass, ArrowRight, Home, Briefcase, Bot, Lightbulb, Handshake, CheckCircle2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from '@/components/ui/badge';
@@ -22,28 +22,48 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const designServices = [
   {
-    title: "Architecture",
-    description: "Creating structures that balance aesthetics, safety, sustainability, and economic feasibility—transforming space and light into meaningful experiences.",
-    icon: Building,
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2940&auto=format&fit=crop"
+    title: "Residential Interior Design",
+    description: "Personalized home interiors designed around how you live.",
+    icon: Home,
+    features: [
+        "Living rooms & family spaces",
+        "Bedrooms & wardrobes",
+        "Kitchens & dining areas",
+        "Villas, apartments & homes",
+    ]
   },
   {
-    title: "Interior Design",
-    description: "Crafting spaces that are visually compelling and highly functional, reflecting your lifestyle and enhancing everyday living.",
-    icon: Brush,
-    image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?q=80&w=2835&auto=format&fit=crop"
+    title: "Commercial Interior Design",
+    description: "Professional spaces that enhance productivity and brand identity.",
+    icon: Briefcase,
+    features: [
+        "Offices & corporate spaces",
+        "Retail stores & showrooms",
+        "Restaurants, cafés & hotels",
+        "Clinics & wellness centers",
+    ]
   },
   {
-    title: "Interior Styling",
-    description: "Purposeful use of space to elevate comfort, efficiency, and visual harmony, from warm homes to elegant public environments.",
-    icon: DraftingCompass,
-    image: "https://images.unsplash.com/photo-1542037104857-ff80bcf5eb89?q=80&w=2940&auto=format&fit=crop"
+    title: "Concept Design & Space Planning",
+    description: "A strong foundation for every project.",
+    icon: Lightbulb,
+    features: [
+        "Layout planning & zoning",
+        "Mood boards & color schemes",
+        "Furniture planning",
+        "Lighting concepts",
+    ]
   },
   {
-    title: "Furniture Design",
-    description: "Designing bespoke furniture pieces that enhance usability while adding character and identity to a space, ensuring a cohesive environment.",
-    icon: Sofa,
-    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2940&auto=format&fit=crop"
+    title: "Turnkey Interior Solutions",
+    description: "End-to-end execution with a stress-free experience.",
+    icon: Handshake,
+    features: [
+        "Design + execution",
+        "Material selection",
+        "On-site supervision",
+        "Final styling & handover",
+    ]
   }
 ];
 
@@ -145,23 +165,29 @@ function InteriorsPageContent() {
               From single-room makeovers to full-scale renovations, we have the expertise to handle projects of any size.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {designServices.map((service) => {
               const Icon = service.icon;
               return (
                  <Card key={service.title} className="bg-card text-card-foreground border rounded-lg overflow-hidden group transition-shadow duration-300 hover:shadow-lg">
-                    <div className="relative h-48 bg-muted">
-                        <Image src={service.image} alt={service.title} fill className="object-cover" />
-                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow">
-                            <Icon className="h-5 w-5 text-primary" />
-                        </div>
-                    </div>
                     <CardContent className="p-6">
-                        <h3 className="text-lg font-bold mb-2">{service.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
-                        <Link href="#" className="text-sm font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
-                            Learn more <ArrowRight className="h-4 w-4" />
-                        </Link>
+                        <div className="flex items-start gap-4">
+                            <div className="bg-primary/10 p-3 rounded-xl flex-shrink-0">
+                                <Icon className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-bold mb-2">{service.title}</h3>
+                                <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
+                                <ul className="space-y-2">
+                                    {service.features.map((feature, i) => (
+                                        <li key={i} className="flex items-center gap-2 text-sm">
+                                            <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
               );
