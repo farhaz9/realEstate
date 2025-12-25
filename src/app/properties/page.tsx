@@ -315,6 +315,7 @@ function PropertiesPageContent() {
                   className="rounded-full h-10 flex items-center relative pr-14"
                   onClick={handlePostAdClick}
                 >
+                  <PlusCircle className="mr-2 h-5 w-5" />
                   Post Property
                   <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
                     Free
@@ -554,6 +555,7 @@ export default function PropertiesPage() {
         </Suspense>
     )
 }
+
 
 
 
