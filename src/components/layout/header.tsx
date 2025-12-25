@@ -444,7 +444,7 @@ export default function Header() {
                           <>
                            <Button
                             variant="secondary"
-                            className="rounded-full h-10 flex items-center gap-2 md:hidden font-semibold px-3 text-sm"
+                            className="rounded-full h-10 flex items-center md:hidden font-semibold px-2 text-xs"
                             onClick={handlePostPropertyClick}
                            >
                             Post Property
@@ -476,7 +476,7 @@ export default function Header() {
                           </Button>
                            <Button
                             variant="secondary"
-                            className="rounded-full h-10 flex items-center gap-2 md:hidden font-semibold px-3 text-sm"
+                            className="rounded-full h-10 flex items-center md:hidden font-semibold px-2 text-xs"
                             onClick={handlePostPropertyClick}
                            >
                             Post Property
