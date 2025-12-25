@@ -309,7 +309,7 @@ function PropertiesPageContent() {
     <div>
       <section className="bg-background border-b sticky top-16 z-40">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center justify-between mb-3">
               <LocationDisplay />
               <Button
                   className="rounded-full h-10 flex items-center relative pr-14"
@@ -555,6 +555,7 @@ export default function PropertiesPage() {
         </Suspense>
     )
 }
+
 
 
 
