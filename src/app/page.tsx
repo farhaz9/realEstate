@@ -52,7 +52,7 @@ const coreServices = [
     icon: DraftingCompass,
     title: "Construction",
     description: "From ground-up development to renovations, we manage construction projects with precision and quality assurance.",
-    href: "/services",
+    href: "/construction",
     animation: <ConstructionAnimation />,
   },
   {
