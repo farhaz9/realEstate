@@ -348,7 +348,6 @@ export default function Header() {
                           className="w-full h-12 text-base font-bold relative"
                           onClick={handlePostPropertyClick}
                         >
-                           <Plus className="mr-2 h-5 w-5" />
                            Post Property
                            <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
                             Free
