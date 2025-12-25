@@ -16,12 +16,18 @@ service cloud.firestore {
 
     // Rules for the 'users' collection
     match /users/{userId} {
-      // Anyone can read user profiles, but only specific fields.
-      // This allows public profiles without exposing private data.
+      // Anyone can read user profiles.
       allow read: if true;
 
-      // Allow write if the user is the owner OR if the user is an admin.
-      allow write: if isOwner(userId) || isAdmin();
+      // Allow a user to create their own document.
+      allow create: if isOwner(userId);
+      
+      // Allow a user to update their own profile, or an admin to update any profile.
+      // Also specifically allow updating listingCredits and transactions by the owner.
+      allow update: if isOwner(userId) || isAdmin();
+
+      // Only admins can delete user documents.
+      allow delete: if isAdmin();
 
       // Rules for the 'reviews' subcollection
       match /reviews/{reviewId} {
