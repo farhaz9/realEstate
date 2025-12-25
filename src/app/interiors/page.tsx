@@ -10,7 +10,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
 import type { Property, User } from '@/types';
 import { ProfessionalCard } from '@/components/shared/professional-card';
-import { Loader2, Search, Building, Brush, Sofa, DraftingCompass, ArrowRight, Home, Briefcase, Bot, Lightbulb, Handshake, CheckCircle2 } from 'lucide-react';
+import { Loader2, Search, Building, Brush, Sofa, DraftingCompass, ArrowRight, Home, Briefcase, Bot, Lightbulb, Handshake, CheckCircle2, Ruler, Wrench, Lamp } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +30,8 @@ const designServices = [
         "Bedrooms & wardrobes",
         "Kitchens & dining areas",
         "Villas, apartments & homes",
-    ]
+    ],
+    imageId: "service-interiors-page",
   },
   {
     title: "Commercial Interior Design",
@@ -41,7 +42,8 @@ const designServices = [
         "Retail stores & showrooms",
         "Restaurants, cafés & hotels",
         "Clinics & wellness centers",
-    ]
+    ],
+    imageId: "service-architecture",
   },
   {
     title: "Concept Design & Space Planning",
@@ -52,7 +54,8 @@ const designServices = [
         "Mood boards & color schemes",
         "Furniture planning",
         "Lighting concepts",
-    ]
+    ],
+    imageId: "why-us-3",
   },
   {
     title: "Turnkey Interior Solutions",
@@ -63,7 +66,51 @@ const designServices = [
         "Material selection",
         "On-site supervision",
         "Final styling & handover",
-    ]
+    ],
+     imageId: "service-construction",
+  },
+  {
+    title: "Custom Furniture & Joinery",
+    description: "Bespoke pieces tailored to your space.",
+    icon: Sofa,
+    features: [
+        "Modular kitchens & wardrobes",
+        "Custom sofas, beds & cabinets",
+        "Storage solutions",
+    ],
+    imageId: "service-furniture",
+  },
+  {
+    title: "Lighting & False Ceiling Design",
+    description: "Enhancing mood, depth, and functionality.",
+    icon: Lamp,
+    features: [
+        "Ambient, task & accent lighting",
+        "False ceilings & feature designs",
+    ],
+    imageId: "service-styling",
+  },
+  {
+    title: "Renovation & Remodeling",
+    description: "Upgrade your space without starting from scratch.",
+    icon: Wrench,
+    features: [
+        "Home renovations",
+        "Office redesigns",
+        "Space optimization",
+    ],
+    imageId: "service-consultancy",
+  },
+  {
+    title: "Design Consultation",
+    description: "Perfect for clients who need expert guidance.",
+    icon: Ruler,
+    features: [
+        "Design advice & styling tips",
+        "Material & color consultation",
+        "Budget planning support",
+    ],
+    imageId: "why-us-2",
   }
 ];
 
@@ -168,15 +215,29 @@ function InteriorsPageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {designServices.map((service) => {
               const Icon = service.icon;
+              const serviceImage = PlaceHolderImages.find(p => p.id === service.imageId);
               return (
                  <Card key={service.title} className="bg-card text-card-foreground border rounded-lg overflow-hidden group transition-shadow duration-300 hover:shadow-lg">
                     <CardContent className="p-6">
                         <div className="flex items-start gap-4">
-                            <div className="bg-primary/10 p-3 rounded-xl flex-shrink-0">
-                                <Icon className="h-6 w-6 text-primary" />
+                            <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                                {serviceImage && (
+                                    <Image
+                                        src={serviceImage.imageUrl}
+                                        alt={service.title}
+                                        data-ai-hint={serviceImage.imageHint}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                )}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-lg font-bold mb-2">{service.title}</h3>
+                                <div className="flex items-center gap-2 mb-2">
+                                     <div className="bg-primary/10 p-2 rounded-full flex-shrink-0">
+                                        <Icon className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <h3 className="text-lg font-bold">{service.title}</h3>
+                                </div>
                                 <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
                                 <ul className="space-y-2">
                                     {service.features.map((feature, i) => (
@@ -317,6 +378,8 @@ export default function InteriorsPage() {
     </Suspense>
   )
 }
+    
+
     
 
     
