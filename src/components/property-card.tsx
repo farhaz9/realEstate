@@ -164,7 +164,11 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
 
 
   return (
-    <div className={cn("rounded-2xl bg-card text-card-foreground border overflow-hidden group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col", className)}>
+    <div className={cn(
+        "rounded-2xl bg-card text-card-foreground border overflow-hidden group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col",
+        property.status === 'rejected' && "opacity-60 grayscale hover:opacity-100 hover:grayscale-0",
+        className
+    )}>
       <Link href={`/properties/${property.id}`} className="block flex flex-col flex-grow">
         <div className="relative h-56 flex-shrink-0 bg-muted group/image">
           {imageUrls.length > 0 && (
