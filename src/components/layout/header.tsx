@@ -235,6 +235,14 @@ export default function Header() {
     if (link.label === "My Listings" && !user) return false;
     return true;
   });
+  
+  const handlePostPropertyClick = () => {
+    if (!user) {
+        router.push('/login');
+        return;
+    }
+    router.push('/settings?tab=listings');
+  }
 
   const NavLink = ({ href, label }: { href: string, label: string }) => {
     const isActive = pathname === href;
@@ -333,6 +341,16 @@ export default function Header() {
                         })}
                     </nav>
                      <Separator className="my-4" />
+                      <SheetClose asChild>
+                        <Button
+                          variant="default"
+                          className="w-full h-12 text-base font-bold"
+                          onClick={handlePostPropertyClick}
+                        >
+                          <Plus className="mr-2 h-5 w-5" /> Post Property
+                        </Button>
+                      </SheetClose>
+                     <Separator className="my-4" />
                      <nav className="flex flex-col gap-1">
                       {secondaryLinks.map((link) => (
                         <SheetClose asChild key={link.href}>
@@ -427,15 +445,38 @@ export default function Header() {
                           <Skeleton className="h-10 w-10 rounded-full" />
                       ) : user ? (
                           <>
+                           <Button
+                            variant="default"
+                            className="rounded-full h-10 hidden md:flex items-center gap-2 shadow-sm"
+                            onClick={handlePostPropertyClick}
+                           >
+                            <Plus className="h-4 w-4" /> Post Property
+                            {userProfile?.listingCredits !== undefined && userProfile.listingCredits > 0 && (
+                               <span className="ml-1 bg-primary-foreground/20 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                                {userProfile.listingCredits}
+                               </span>
+                            )}
+                          </Button>
                           <UserNav />
                           </>
                       ) : (
-                          <Button asChild variant="ghost" size="icon" className="rounded-full">
+                        <>
+                          <Button asChild variant="outline" className="rounded-full h-10 hidden md:flex">
+                             <Link href="/login">Login</Link>
+                          </Button>
+                           <Button
+                            className="rounded-full h-10 hidden md:flex"
+                            onClick={handlePostPropertyClick}
+                           >
+                            Post Property
+                          </Button>
+                          <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
                               <LogIn />
                               <span className="sr-only">Login</span>
                           </Link>
                           </Button>
+                        </>
                       )}
                       </div>
                 </motion.div>
