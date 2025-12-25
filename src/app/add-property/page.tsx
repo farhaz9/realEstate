@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -588,9 +587,11 @@ function AddPropertyForm() {
                   {steps.map((step, index) => (
                     <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
                       <StepperTrigger asChild>
-                        <div className="flex flex-col items-center gap-1.5 text-center">
+                         <div className="flex items-center gap-2 p-1">
                             <StepperIndicator />
-                            <StepperTitle className="text-xs sm:text-sm">{step.title}</StepperTitle>
+                            <div className="hidden sm:flex flex-col items-start">
+                                <StepperTitle>{step.title}</StepperTitle>
+                            </div>
                         </div>
                       </StepperTrigger>
                       {index < steps.length - 1 && <StepperSeparator />}
@@ -886,4 +887,3 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
-
