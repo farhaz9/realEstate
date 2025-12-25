@@ -20,7 +20,7 @@ const services = [
     title: "Construction",
     description: "End-to-end construction services, managed with precision and a commitment to architectural excellence.",
     imageId: "service-construction",
-    href: "#"
+    href: "/construction"
   },
   {
     icon: DraftingCompass,

@@ -37,6 +37,7 @@ import {
   Zap,
   Star,
   Plus,
+  HardHat,
 } from "lucide-react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from 'firebase/auth';
@@ -59,6 +60,7 @@ const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/properties", label: "Properties", icon: Building },
   { href: "/interiors", label: "Interiors", icon: Armchair },
+  { href: "/construction", label: "Construction", icon: HardHat },
 ];
 
 const secondaryLinks = [
