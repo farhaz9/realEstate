@@ -34,6 +34,9 @@ const Preloader = () => {
         <div className="mt-4">
             <WaveLoader />
         </div>
+        <p className="mt-4 text-lg font-semibold text-primary">
+          Unlocking your horizon
+        </p>
       </div>
     </div>
   );
