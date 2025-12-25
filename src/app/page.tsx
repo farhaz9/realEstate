@@ -147,11 +147,13 @@ export default function HomePage() {
             <div className="absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
           </div>
            <div className="mt-8">
-            <UIButton asChild variant="outline" className="h-12 text-base font-semibold border-2 border-primary/20 hover:bg-primary/5 hover:border-primary/40 text-primary rounded-full shadow-lg hover:shadow-primary/20 transition-all duration-300 group">
+            <UIButton asChild className="h-12 px-6 text-base font-semibold rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group">
                 <Link href="/add-property">
-                    <Plus className="mr-2 h-5 w-5 transition-transform group-hover:rotate-90" />
-                    Post Property
-                    <span className="ml-2 bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">FREE</span>
+                    <div className="flex items-center justify-center">
+                        <Plus className="mr-2 h-5 w-5 transition-transform group-hover:rotate-90" />
+                        Post Property
+                        <span className="ml-2 bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">FREE</span>
+                    </div>
                 </Link>
             </UIButton>
           </div>
