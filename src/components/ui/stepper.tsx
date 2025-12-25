@@ -1,3 +1,4 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -80,7 +81,7 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
         <div
           ref={ref}
           className={cn(
-            "group/stepper inline-flex data-[orientation=horizontal]:w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
+            "group/stepper inline-flex items-center data-[orientation=horizontal]:w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
             className,
           )}
           data-orientation={orientation}
@@ -177,7 +178,7 @@ const StepperIndicator = React.forwardRef<HTMLDivElement, StepperIndicatorProps>
       <div
         ref={ref}
         className={cn(
-          "relative flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground transition-all duration-300 data-[state=active]:scale-110 data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground",
+          "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground transition-all duration-300 data-[state=active]:scale-110 data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground",
           className,
         )}
         data-state={state}
@@ -199,7 +200,7 @@ const StepperIndicator = React.forwardRef<HTMLDivElement, StepperIndicatorProps>
               <span className="absolute transition-all">
                 <LoaderCircle
                   className="animate-spin"
-                  size={14}
+                  size={16}
                   strokeWidth={2}
                   aria-hidden="true"
                 />
@@ -237,7 +238,7 @@ const StepperSeparator = React.forwardRef<HTMLDivElement, React.HTMLAttributes<H
       <div
         ref={ref}
         className={cn(
-          "m-0.5 bg-muted group-data-[orientation=horizontal]/stepper:h-0.5 group-data-[orientation=vertical]/stepper:h-12 group-data-[orientation=horizontal]/stepper:w-full group-data-[orientation=vertical]/stepper:w-0.5 group-data-[orientation=horizontal]/stepper:flex-1 group-data-[state=completed]/step:bg-primary",
+          "bg-muted group-data-[orientation=horizontal]/stepper:h-0.5 group-data-[orientation=vertical]/stepper:h-full group-data-[orientation=horizontal]/stepper:w-full group-data-[orientation=vertical]/stepper:w-0.5 group-data-[orientation=horizontal]/stepper:flex-1 group-data-[state=completed]/step:bg-primary transition-colors duration-300",
           className,
         )}
         {...props}
