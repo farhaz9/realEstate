@@ -152,7 +152,6 @@ export default function HomePage() {
       <section className="py-8 bg-background">
         <div className="container mx-auto px-4">
             <div className="text-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground">Post Property</h2>
                 <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative">
                     <Link href="/add-property">
                         <Plus className="mr-2 h-5 w-5" />
