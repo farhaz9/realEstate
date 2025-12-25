@@ -319,6 +319,20 @@ export default function Header() {
              </SheetHeader>
 
                 <div className="flex-1 space-y-2 p-4 overflow-y-auto">
+                    {user && (
+                         <SheetClose asChild>
+                            <Button
+                            variant="default"
+                            className="w-full h-12 text-base font-bold relative mb-2"
+                            onClick={handlePostPropertyClick}
+                            >
+                            Post Property
+                            <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
+                                Free
+                            </div>
+                            </Button>
+                        </SheetClose>
+                    )}
                     <nav className="flex flex-col gap-1">
                       {visibleNavLinks.map((link) => {
                           const isActive = pathname === link.href;
@@ -363,24 +377,10 @@ export default function Header() {
                 </div>
                 <SheetFooter className="p-4 mt-auto border-t space-y-2">
                   {user ? (
-                    <>
-                      <SheetClose asChild>
-                        <Button
-                          variant="default"
-                          className="w-full h-12 text-base font-bold relative"
-                          onClick={handlePostPropertyClick}
-                        >
-                          Post Property
-                          <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
-                            Free
-                          </div>
-                        </Button>
-                      </SheetClose>
                       <Button variant="destructive" className="w-full h-12 text-base" onClick={handleSignOut}>
                         <LogOut className="mr-2 h-5 w-5" />
                         Log Out
                       </Button>
-                    </>
                   ) : (
                     <SheetClose asChild>
                         <Button asChild variant="default" className="w-full h-12 text-base">
