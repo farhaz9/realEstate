@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -34,8 +33,8 @@ const Preloader = () => {
         <div className="mt-4">
             <WaveLoader />
         </div>
-        <p className="mt-4 text-lg font-semibold text-primary">
-          Unlocking your horizon
+        <p className="mt-4 text-lg font-semibold text-primary uppercase tracking-widest">
+          Unlocking New Horizons
         </p>
       </div>
     </div>
