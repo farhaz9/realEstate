@@ -167,36 +167,13 @@ const StepperIndicator = React.forwardRef<HTMLDivElement, StepperIndicatorProps>
       <div
         ref={ref}
         className={cn(
-          "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground transition-all duration-300 data-[state=active]:scale-110 data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground",
+          "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-all duration-300 data-[state=active]:scale-110 data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground",
           className,
         )}
         data-state={state}
         {...props}
       >
-        {asChild ? (
-          children
-        ) : (
-          <>
-            <span className="transition-all group-data-[loading=true]/step:scale-0 group-data-[state=completed]/step:scale-0 group-data-[loading=true]/step:opacity-0 group-data-[state=completed]/step:opacity-0 group-data-[loading=true]/step:transition-none">
-              {step}
-            </span>
-            <CheckIcon
-              className="absolute scale-0 opacity-0 transition-all group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100"
-              width={16}
-              height={16}
-            />
-            {isLoading && (
-              <span className="absolute transition-all">
-                <LoaderCircle
-                  className="animate-spin"
-                  size={16}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-              </span>
-            )}
-          </>
-        )}
+        {children}
       </div>
     );
   },
