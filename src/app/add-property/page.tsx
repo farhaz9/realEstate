@@ -92,12 +92,12 @@ interface ImagePreview {
 }
 
 const steps = [
-    { title: "Basics", fields: ["title", "description"] },
-    { title: "Details", fields: ["price", "squareYards", "bedrooms", "bathrooms"] },
-    { title: "Location", fields: ["location.address", "location.pincode", "location.state", "contactNumber", "whatsappNumber"] },
-    { title: "Features", fields: ["listingType", "propertyType", "furnishing", "amenities", "overlooking", "ageOfConstruction"] },
-    { title: "Photos", fields: [] },
-    { title: "Preview" },
+    { title: "Basics", fields: ["title", "description"], icon: FileText },
+    { title: "Details", fields: ["price", "squareYards", "bedrooms", "bathrooms"], icon: Home },
+    { title: "Location", fields: ["location.address", "location.pincode", "location.state", "contactNumber", "whatsappNumber"], icon: MapPin },
+    { title: "Features", fields: ["listingType", "propertyType", "furnishing", "amenities", "overlooking", "ageOfConstruction"], icon: Star },
+    { title: "Photos", fields: [], icon: Upload },
+    { title: "Preview", icon: Eye },
 ];
 
 function AddPropertyForm() {
@@ -584,19 +584,24 @@ function AddPropertyForm() {
             
             <div className="mb-8">
                 <Stepper value={currentStep}>
-                  {steps.map((step, index) => (
-                    <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
-                      <StepperTrigger asChild>
-                         <div className="flex items-center gap-2 p-1">
-                            <StepperIndicator />
-                            <div className="flex flex-col items-start">
-                                <StepperTitle>{step.title}</StepperTitle>
+                  {steps.map((step, index) => {
+                      const StepIcon = step.icon;
+                      return (
+                        <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
+                          <StepperTrigger asChild>
+                            <div className="flex items-center gap-2 p-1 cursor-default">
+                                <StepperIndicator>
+                                    <StepIcon className="h-4 w-4" />
+                                </StepperIndicator>
+                                <div className="flex-col items-start hidden sm:flex">
+                                    <StepperTitle>{step.title}</StepperTitle>
+                                </div>
                             </div>
-                        </div>
-                      </StepperTrigger>
-                      {index < steps.length - 1 && <StepperSeparator />}
-                    </StepperItem>
-                  ))}
+                          </StepperTrigger>
+                          {index < steps.length - 1 && <StepperSeparator />}
+                        </StepperItem>
+                      )
+                  })}
                 </Stepper>
             </div>
                <div className="overflow-hidden relative">
