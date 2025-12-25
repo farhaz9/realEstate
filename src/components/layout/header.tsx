@@ -342,19 +342,6 @@ export default function Header() {
                         })}
                     </nav>
                      <Separator className="my-4" />
-                      <SheetClose asChild>
-                        <Button
-                          variant="default"
-                          className="w-full h-12 text-base font-bold relative"
-                          onClick={handlePostPropertyClick}
-                        >
-                           Post Property
-                           <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
-                            Free
-                           </div>
-                        </Button>
-                      </SheetClose>
-                     <Separator className="my-4" />
                      <nav className="flex flex-col gap-1">
                       {secondaryLinks.map((link) => (
                         <SheetClose asChild key={link.href}>
@@ -374,9 +361,21 @@ export default function Header() {
                       )}
                     </nav>
                 </div>
-                <SheetFooter className="p-4 mt-auto border-t">
+                <SheetFooter className="p-4 mt-auto border-t space-y-2">
+                    <SheetClose asChild>
+                        <Button
+                          variant="default"
+                          className="w-full h-12 text-base font-bold relative"
+                          onClick={handlePostPropertyClick}
+                        >
+                           Post Property
+                           <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
+                            Free
+                           </div>
+                        </Button>
+                      </SheetClose>
                   {user ? (
-                      <Button variant="destructive" className="w-full h-12 text-base" onClick={handleSignOut}>
+                      <Button variant="outline" className="w-full h-12 text-base" onClick={handleSignOut}>
                           <LogOut className="mr-2 h-5 w-5" />
                           Log Out
                       </Button>
