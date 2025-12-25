@@ -342,7 +342,7 @@ export default function Header() {
                       <SheetClose asChild>
                         <Button
                           variant="default"
-                          className="w-full h-12 text-base font-bold bg-primary/10 text-primary hover:bg-primary/20"
+                          className="w-full h-12 text-base font-bold"
                           onClick={handlePostPropertyClick}
                         >
                            Post Property
