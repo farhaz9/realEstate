@@ -424,7 +424,7 @@ export default function Header() {
                       </SheetTrigger>
                       
                       <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-                          {visibleNavLinks.filter(l => l.href !== '/').map((link) => (
+                          {navLinks.map((link) => (
                              <NavLink key={link.href} href={link.href} label={link.label} />
                           ))}
                       </nav>
