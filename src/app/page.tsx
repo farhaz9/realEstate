@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair, Send } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair, Send, Plus } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -145,6 +145,15 @@ export default function HomePage() {
             </div>
             <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none sm:hidden" />
             <div className="absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
+          </div>
+           <div className="mt-8">
+            <UIButton asChild variant="outline" className="h-12 text-base font-semibold border-2 border-primary/20 hover:bg-primary/5 hover:border-primary/40 text-primary rounded-full shadow-lg hover:shadow-primary/20 transition-all duration-300 group">
+                <Link href="/add-property">
+                    <Plus className="mr-2 h-5 w-5 transition-transform group-hover:rotate-90" />
+                    Post Property
+                    <span className="ml-2 bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">FREE</span>
+                </Link>
+            </UIButton>
           </div>
         </div>
       </section>
