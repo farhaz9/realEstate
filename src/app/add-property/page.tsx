@@ -363,7 +363,7 @@ function AddPropertyForm() {
     } else {
       const propertiesCollection = collection(firestore, 'properties');
       
-      const isBusinessUser = !!(userProfile?.isVerified && userProfile.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date());
+      const isBusinessUser = !!(userProfile?.isVerified && userProfile.verifiedUntil && new Date(userProfile.verifiedUntil.seconds * 1000) > new Date());
       const expirationDate = new Date();
 
       if (hasPremiumPlan) {
@@ -572,7 +572,7 @@ function AddPropertyForm() {
   }
 
   return (
-    <div className="bg-muted/40 min-h-screen pt-20">
+    <div className="bg-muted/40 min-h-screen">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto">
             <Button variant="ghost" className="mb-6 -ml-4" onClick={handleBackClick}>
