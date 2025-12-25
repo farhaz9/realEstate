@@ -55,7 +55,7 @@ const constructionServices = [
         "2D working drawings & approvals",
         "Soil testing & foundation planning",
     ],
-    imageId: "why-us-2",
+    imageId: "why-us-3",
   },
   {
     title: "Turnkey Construction",
@@ -90,7 +90,7 @@ const constructionServices = [
         "Risk & safety management",
         "Quality audits & reporting",
     ],
-    imageId: "why-us-3",
+    imageId: "why-us-2",
   },
   {
     title: "Legal & Approval Support",
