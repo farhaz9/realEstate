@@ -343,7 +343,7 @@ export default function Header() {
                                 className={cn(
                                   "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-all",
                                   isActive
-                                    ? "bg-primary/10 text-primary"
+                                    ? "text-primary"
                                     : "text-foreground hover:bg-muted"
                                 )}
                               >
