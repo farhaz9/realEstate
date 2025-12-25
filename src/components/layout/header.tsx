@@ -63,6 +63,7 @@ const navLinks = [
 
 const secondaryLinks = [
     { href: "/settings", label: "Settings", icon: Settings },
+    { href: "/pricing", label: "Pricing", icon: Tag },
     { href: "/contact", label: "Contact", icon: Mail },
 ];
 
