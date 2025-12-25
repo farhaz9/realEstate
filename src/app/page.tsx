@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair, Send, Plus } from "lucide-react";
+import { ArrowRight, Building, Palette, Sparkles, Handshake, Construction, DraftingCompass, Briefcase, KeyRound, Building2, ConciergeBell, Verified, Headset, Wallet, Tag, Armchair, Send, Plus, PlusCircle } from "lucide-react";
 import { Button as UIButton } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -154,7 +154,7 @@ export default function HomePage() {
             <div className="text-center">
                 <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative md:hidden">
                     <Link href="/add-property">
-                        <Plus className="mr-2 h-5 w-5" />
+                        <PlusCircle className="mr-2 h-5 w-5" />
                         Post Property
                         <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
                           Free
@@ -163,7 +163,7 @@ export default function HomePage() {
                 </UIButton>
                  <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group items-center justify-center relative hidden md:flex">
                     <Link href="/add-property">
-                        <Plus className="mr-2 h-5 w-5" />
+                        <PlusCircle className="mr-2 h-5 w-5" />
                         Post Property
                         <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
                           Free

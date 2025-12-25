@@ -38,6 +38,7 @@ import {
   Star,
   Plus,
   HardHat,
+  PlusCircle,
 } from "lucide-react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from 'firebase/auth';
@@ -323,9 +324,10 @@ export default function Header() {
                          <SheetClose asChild>
                             <Button
                             variant="default"
-                            className="w-full h-12 text-base font-bold relative mb-2"
+                            className="w-full h-12 text-base font-bold relative mb-2 justify-start pl-4"
                             onClick={handlePostPropertyClick}
                             >
+                            <PlusCircle className="mr-3 h-5 w-5" />
                             Post Property
                             <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
                                 Free
@@ -343,7 +345,7 @@ export default function Header() {
                                 className={cn(
                                   "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-all",
                                   isActive
-                                    ? "text-primary"
+                                    ? "bg-muted text-primary"
                                     : "text-foreground hover:bg-muted"
                                 )}
                               >
@@ -454,7 +456,7 @@ export default function Header() {
                             className="rounded-full h-10 hidden md:flex items-center shadow-sm"
                             onClick={handlePostPropertyClick}
                            >
-                            <Plus className="mr-2 h-4 w-4" />
+                            <PlusCircle className="mr-2 h-4 w-4" />
                             Post Property
                             {userProfile?.listingCredits !== undefined && userProfile.listingCredits > 0 && (
                                <span className="ml-2 bg-primary-foreground/20 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
@@ -470,10 +472,10 @@ export default function Header() {
                              <Link href="/login">Login</Link>
                           </Button>
                            <Button
-                            className="rounded-full h-10 hidden md:flex"
+                            className="rounded-full h-10 hidden md:flex items-center"
                             onClick={handlePostPropertyClick}
                            >
-                            <Plus className="mr-2 h-4 w-4" /> Post Property
+                            <PlusCircle className="mr-2 h-4 w-4" /> Post Property
                           </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
