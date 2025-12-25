@@ -42,6 +42,7 @@ import { Stepper, StepperItem, StepperIndicator, StepperSeparator, StepperTrigge
 import { formatPrice } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { getAmenityIcon } from '@/lib/utils';
+import { AnimatePresence, motion } from "framer-motion";
 
 
 const indianStates = [
@@ -94,7 +95,7 @@ interface ImagePreview {
 const steps = [
     { title: "Basics", fields: ["title", "description"] },
     { title: "Details", fields: ["price", "squareYards", "bedrooms", "bathrooms"] },
-    { title: "Location & Contact", fields: ["location.address", "location.pincode", "location.state", "contactNumber", "whatsappNumber"] },
+    { title: "Location", fields: ["location.address", "location.pincode", "location.state", "contactNumber", "whatsappNumber"] },
     { title: "Features", fields: ["listingType", "propertyType", "furnishing", "amenities", "overlooking", "ageOfConstruction"] },
     { title: "Photos", fields: [] },
     { title: "Preview" },
@@ -113,6 +114,7 @@ function AddPropertyForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState(1);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -402,17 +404,34 @@ function AddPropertyForm() {
         }
     }
     if (isValid) {
+      setDirection(1);
       setCurrentStep(prev => prev + 1);
     }
   };
 
   const prevStep = () => {
+    setDirection(-1);
     setCurrentStep(prev => prev - 1);
   };
 
   const handleBackClick = () => {
     router.back();
   }
+  
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 50 : -50,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? 50 : -50,
+      opacity: 0,
+    }),
+  };
 
   const PreviewSection = () => {
     const formData = form.getValues();
@@ -499,7 +518,7 @@ function AddPropertyForm() {
                   {steps.map((step, index) => (
                     <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
                       <StepperTrigger>
-                        <div className="flex flex-col items-center gap-2">
+                        <div className="flex flex-col items-center gap-1 md:gap-2">
                             <StepperIndicator>{index + 1}</StepperIndicator>
                             <div className="text-center">
                                 <StepperTitle className="text-xs md:text-sm">{step.title}</StepperTitle>
@@ -514,253 +533,269 @@ function AddPropertyForm() {
 
             <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-12">
-                <div className={currentStep === 1 ? 'block' : 'hidden'}>
-                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-3"><FileText className="text-primary"/> Basic Information</CardTitle>
-                            <CardDescription>Start with the title and a compelling description of your property.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <FormField control={form.control} name="title" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Property Title</FormLabel>
-                                <FormControl><Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} /></FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="description" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Description</FormLabel>
-                                <FormControl><Textarea placeholder="Describe your property in detail..." rows={5} {...field} /></FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                        </CardContent>
-                    </Card>
-                </div>
-                 <div className={currentStep === 2 ? 'block' : 'hidden'}>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-3"><Home className="text-primary"/> Property Details</CardTitle>
-                            <CardDescription>Provide essential details like price, size, and room count.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid md:grid-cols-2 gap-6">
-                            <FormField control={form.control} name="price" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Price (in INR)</FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                    <Banknote className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                    <Input {...field} placeholder="Enter amount" type="text" inputMode="numeric" disabled={isEditMode && !isAdmin} className="pl-10" />
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                             <FormField control={form.control} name="squareYards" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Area (sq. yards)</FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                    <Map className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                    <Input {...field} placeholder="e.g., 250" type="text" inputMode="numeric" className="pl-10" />
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                             <FormField control={form.control} name="bedrooms" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Bedrooms</FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                    <BedDouble className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                    <Input {...field} placeholder="e.g., 3" type="text" inputMode="numeric" className="pl-10" />
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="bathrooms" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Bathrooms</FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                    <Bath className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                    <Input {...field} placeholder="e.g., 2" type="text" inputMode="numeric" className="pl-10" />
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                        </CardContent>
-                    </Card>
-                </div>
-                 <div className={currentStep === 3 ? 'block' : 'hidden'}>
-                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-3"><MapPin className="text-primary"/> Location & Contact</CardTitle>
-                            <CardDescription>Help potential buyers find and contact you.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <FormField control={form.control} name="location.address" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Full Address</FormLabel>
-                                <FormControl><Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} /></FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="location.pincode" render={({ field }) => (
+               <div className="overflow-hidden relative min-h-[500px]">
+                 <AnimatePresence initial={false} custom={direction}>
+                    <motion.div
+                      key={currentStep}
+                      custom={direction}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ type: "spring", stiffness: 300, damping: 30, duration: 0.3 }}
+                      className="absolute w-full"
+                    >
+                    {currentStep === 1 && (
+                         <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-3"><FileText className="text-primary"/> Basic Information</CardTitle>
+                                <CardDescription>Start with the title and a compelling description of your property.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <FormField control={form.control} name="title" render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Pincode</FormLabel>
-                                    <FormControl><Input placeholder="e.g., 110017" {...field} /></FormControl>
+                                    <FormLabel>Property Title</FormLabel>
+                                    <FormControl><Input placeholder="e.g., Luxury 3-BHK Apartment" {...field} /></FormControl>
                                     <FormMessage />
                                     </FormItem>
                                 )} />
-                                <FormField control={form.control} name="location.state" render={({ field }) => (
+                                <FormField control={form.control} name="description" render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>State</FormLabel>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl><Textarea placeholder="Describe your property in detail..." rows={5} {...field} /></FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                            </CardContent>
+                        </Card>
+                    )}
+                     {currentStep === 2 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-3"><Home className="text-primary"/> Property Details</CardTitle>
+                                <CardDescription>Provide essential details like price, size, and room count.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid md:grid-cols-2 gap-6">
+                                <FormField control={form.control} name="price" render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Price (in INR)</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                        <Banknote className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                        <Input {...field} placeholder="Enter amount" type="text" inputMode="numeric" disabled={isEditMode && !isAdmin} className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                                 <FormField control={form.control} name="squareYards" render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Area (sq. yards)</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                        <Map className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                        <Input {...field} placeholder="e.g., 250" type="text" inputMode="numeric" className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                                 <FormField control={form.control} name="bedrooms" render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Bedrooms</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                        <BedDouble className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                        <Input {...field} placeholder="e.g., 3" type="text" inputMode="numeric" className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="bathrooms" render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Bathrooms</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                        <Bath className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                        <Input {...field} placeholder="e.g., 2" type="text" inputMode="numeric" className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                            </CardContent>
+                        </Card>
+                    )}
+                     {currentStep === 3 && (
+                         <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-3"><MapPin className="text-primary"/> Location & Contact</CardTitle>
+                                <CardDescription>Help potential buyers find and contact you.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <FormField control={form.control} name="location.address" render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Full Address</FormLabel>
+                                    <FormControl><Input placeholder="e.g., 123, ABC Society, South Delhi" {...field} /></FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField control={form.control} name="location.pincode" render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Pincode</FormLabel>
+                                        <FormControl><Input placeholder="e.g., 110017" {...field} /></FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="location.state" render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>State</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                            <FormControl><SelectTrigger><SelectValue placeholder="Select a state" /></SelectTrigger></FormControl>
+                                            <SelectContent>{indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}</SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </div>
+                                <Separator />
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField control={form.control} name="contactNumber" render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Contact Number</FormLabel>
+                                        <FormControl><Input type="tel" placeholder="e.g., 9876543210" {...field} /></FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="whatsappNumber" render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>WhatsApp Number</FormLabel>
+                                        <FormControl><Input type="tel" placeholder="e.g., 9876543210" {...field} /></FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                     {currentStep === 4 && (
+                         <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-3"><Star className="text-primary"/> Features & Amenities</CardTitle>
+                                <CardDescription>Highlight the unique features of your property.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <FormField control={form.control} name="listingType" render={({ field }) => (
+                                    <FormItem className="space-y-3">
+                                    <FormLabel>Listing For</FormLabel>
+                                    <FormControl><RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex items-center space-x-4 pt-2">
+                                        <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sale" /></FormControl><FormLabel className="font-normal">Sale</FormLabel></FormItem>
+                                        <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="rent" /></FormControl><FormLabel className="font-normal">Rent</FormLabel></FormItem>
+                                    </RadioGroup></FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="propertyType" render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Property Type</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                                        <FormControl><SelectTrigger><SelectValue placeholder="Select a state" /></SelectTrigger></FormControl>
-                                        <SelectContent>{indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}</SelectContent>
+                                        <FormControl><SelectTrigger><SelectValue placeholder="Select a property type" /></SelectTrigger></FormControl>
+                                        <SelectContent>{propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent>
                                     </Select>
                                     <FormMessage />
                                     </FormItem>
                                 )} />
-                            </div>
-                            <Separator />
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="contactNumber" render={({ field }) => (
+                                <FormField control={form.control} name="furnishing" render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Contact Number</FormLabel>
-                                    <FormControl><Input type="tel" placeholder="e.g., 9876543210" {...field} /></FormControl>
+                                    <FormLabel>Furnishing</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormControl><SelectTrigger><SelectValue placeholder="Select furnishing status" /></SelectTrigger></FormControl>
+                                        <SelectContent>
+                                        <SelectItem value="unfurnished">Unfurnished</SelectItem>
+                                        <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
+                                        <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                     </FormItem>
                                 )} />
-                                <FormField control={form.control} name="whatsappNumber" render={({ field }) => (
+                                <FormField control={form.control} name="amenities" render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>WhatsApp Number</FormLabel>
-                                    <FormControl><Input type="tel" placeholder="e.g., 9876543210" {...field} /></FormControl>
+                                    <FormLabel>Amenities (Optional)</FormLabel>
+                                    <FormControl><Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} value={field.value ?? ''} /></FormControl>
+                                    <FormDescription>Comma-separated list.</FormDescription>
                                     <FormMessage />
                                     </FormItem>
                                 )} />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-                 <div className={currentStep === 4 ? 'block' : 'hidden'}>
-                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-3"><Star className="text-primary"/> Features & Amenities</CardTitle>
-                            <CardDescription>Highlight the unique features of your property.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <FormField control={form.control} name="listingType" render={({ field }) => (
-                                <FormItem className="space-y-3">
-                                <FormLabel>Listing For</FormLabel>
-                                <FormControl><RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex items-center space-x-4 pt-2">
-                                    <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="sale" /></FormControl><FormLabel className="font-normal">Sale</FormLabel></FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="rent" /></FormControl><FormLabel className="font-normal">Rent</FormLabel></FormItem>
-                                </RadioGroup></FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="propertyType" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Property Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="Select a property type" /></SelectTrigger></FormControl>
-                                    <SelectContent>{propertyTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent>
-                                </Select>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="furnishing" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Furnishing</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="Select furnishing status" /></SelectTrigger></FormControl>
-                                    <SelectContent>
-                                    <SelectItem value="unfurnished">Unfurnished</SelectItem>
-                                    <SelectItem value="semi-furnished">Semi-furnished</SelectItem>
-                                    <SelectItem value="fully-furnished">Fully-furnished</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="amenities" render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Amenities (Optional)</FormLabel>
-                                <FormControl><Input placeholder="e.g., Swimming Pool, Gym, Park" {...field} value={field.value ?? ''} /></FormControl>
-                                <FormDescription>Comma-separated list.</FormDescription>
-                                <FormMessage />
-                                </FormItem>
-                            )} />
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="overlooking" render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Overlooking (Optional)</FormLabel>
-                                    <FormControl><Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} /></FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )} />
-                                <FormField control={form.control} name="ageOfConstruction" render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Age of Construction (Optional)</FormLabel>
-                                    <FormControl><Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} /></FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )} />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className={currentStep === 5 ? 'block' : 'hidden'}>
-                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-3"><Upload className="text-primary"/> Upload Photos</CardTitle>
-                            <CardDescription>A picture is worth a thousand words. Upload up to 3 images.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                           {isEditMode && !isAdmin && (
-                                <Alert variant="destructive" className="mb-6">
-                                    <Info className="h-4 w-4" />
-                                    <AlertTitle>Important</AlertTitle>
-                                    <AlertDescription>Property images cannot be changed after the initial listing.</AlertDescription>
-                                </Alert>
-                            )}
-                            <div className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:bg-muted" onClick={() => fileInputRef.current?.click()}>
-                                <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4"><ImageUp className="h-6 w-6 text-primary" /></div>
-                                <p className="font-semibold">Click to upload or drag and drop</p>
-                                <p className="text-xs text-muted-foreground">PNG, JPG, or GIF (max. 1MB each)</p>
-                            </div>
-                            <Input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" disabled={isSubmitting || imagePreviews.length >= 3 || (isEditMode && !isAdmin)} />
-                            <FormDescription className="text-center mt-2">{imagePreviews.length} / 3 selected.</FormDescription>
-                            
-                            {imagePreviews.length > 0 && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                                    {imagePreviews.map((preview, index) => (
-                                    <Card key={index} className="relative group overflow-hidden">
-                                        <CardContent className="p-2 flex items-start gap-3">
-                                        <Image src={preview.url} alt={`Preview ${index + 1}`} width={64} height={64} className="w-16 h-16 object-cover rounded-md aspect-square bg-muted" />
-                                        <div className="flex-1 truncate pt-1">
-                                            <p className="text-sm font-semibold truncate" title={preview.name}>{preview.name}</p>
-                                            {preview.size > 0 && (<p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>)}
-                                        </div>
-                                        {(!isEditMode || isAdmin) && (<Button type="button" variant="ghost" size="icon" className="absolute top-1 right-1 h-7 w-7 rounded-full shrink-0" onClick={() => removeImagePreview(index)} disabled={isSubmitting}><X className="h-4 w-4" /></Button>)}
-                                        </CardContent>
-                                    </Card>
-                                    ))}
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField control={form.control} name="overlooking" render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Overlooking (Optional)</FormLabel>
+                                        <FormControl><Input placeholder="e.g., Park, Main Road" {...field} value={field.value ?? ''} /></FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="ageOfConstruction" render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Age of Construction (Optional)</FormLabel>
+                                        <FormControl><Input placeholder="e.g., 1-5 years" {...field} value={field.value ?? ''} /></FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )} />
                                 </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {currentStep === 5 && (
+                         <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-3"><Upload className="text-primary"/> Upload Photos</CardTitle>
+                                <CardDescription>A picture is worth a thousand words. Upload up to 3 images.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                               {isEditMode && !isAdmin && (
+                                    <Alert variant="destructive" className="mb-6">
+                                        <Info className="h-4 w-4" />
+                                        <AlertTitle>Important</AlertTitle>
+                                        <AlertDescription>Property images cannot be changed after the initial listing.</AlertDescription>
+                                    </Alert>
+                                )}
+                                <div className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:bg-muted" onClick={() => fileInputRef.current?.click()}>
+                                    <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4"><ImageUp className="h-6 w-6 text-primary" /></div>
+                                    <p className="font-semibold">Click to upload or drag and drop</p>
+                                    <p className="text-xs text-muted-foreground">PNG, JPG, or GIF (max. 1MB each)</p>
+                                </div>
+                                <Input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" disabled={isSubmitting || imagePreviews.length >= 3 || (isEditMode && !isAdmin)} />
+                                <FormDescription className="text-center mt-2">{imagePreviews.length} / 3 selected.</FormDescription>
+                                
+                                {imagePreviews.length > 0 && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                                        {imagePreviews.map((preview, index) => (
+                                        <Card key={index} className="relative group overflow-hidden">
+                                            <CardContent className="p-2 flex items-start gap-3">
+                                            <Image src={preview.url} alt={`Preview ${index + 1}`} width={64} height={64} className="w-16 h-16 object-cover rounded-md aspect-square bg-muted" />
+                                            <div className="flex-1 truncate pt-1">
+                                                <p className="text-sm font-semibold truncate" title={preview.name}>{preview.name}</p>
+                                                {preview.size > 0 && (<p className="text-xs text-muted-foreground">{(preview.size / 1024).toFixed(1)} KB</p>)}
+                                            </div>
+                                            {(!isEditMode || isAdmin) && (<Button type="button" variant="ghost" size="icon" className="absolute top-1 right-1 h-7 w-7 rounded-full shrink-0" onClick={() => removeImagePreview(index)} disabled={isSubmitting}><X className="h-4 w-4" /></Button>)}
+                                            </CardContent>
+                                        </Card>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
+                     {currentStep === 6 && (
+                        <PreviewSection />
+                    )}
+                    </motion.div>
+                </AnimatePresence>
                 </div>
-                 <div className={currentStep === 6 ? 'block' : 'hidden'}>
-                    <PreviewSection />
-                </div>
+
 
                 <div className="flex justify-between items-center pt-8">
                     <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 1 || isSubmitting}>
@@ -792,3 +827,4 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
+
