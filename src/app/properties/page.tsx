@@ -313,7 +313,7 @@ function PropertiesPageContent() {
               <LocationDisplay />
               <Button
                 variant="outline"
-                className="rounded-full h-10 hidden md:flex items-center"
+                className="rounded-full h-10 flex items-center"
                 onClick={handlePostAdClick}
               >
                 <PlusCircle className="mr-2 h-4 w-4" />
@@ -553,5 +553,6 @@ export default function PropertiesPage() {
         </Suspense>
     )
 }
+
 
 
