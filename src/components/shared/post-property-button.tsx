@@ -25,8 +25,8 @@ export function PostPropertyButton({ className, ...props }: PostPropertyButtonPr
 
     const { data: userProfile } = useDoc<User>(userDocRef);
     
-    // Show badge if user is not logged in (optimistic) or has credits.
-    const showFreeBadge = !user || (userProfile?.listingCredits ?? 0) > 0;
+    // Show badge if user is logged in and has exactly 1 credit (the initial free one)
+    const showFreeBadge = user && userProfile && (userProfile.listingCredits ?? 0) === 1 && (userProfile.transactions?.length ?? 0) === 0;
     
     // Don't show the button at all on these pages for unauthenticated users,
     // as it's a primary CTA on those pages already.
@@ -45,7 +45,11 @@ export function PostPropertyButton({ className, ...props }: PostPropertyButtonPr
     return (
         <Button
             variant="default"
-            className={cn("font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative", className)}
+            className={cn(
+                "font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative", 
+                showFreeBadge && "pr-14", // Add padding on the right if the badge is shown
+                className
+            )}
             onClick={handlePostPropertyClick}
             {...props}
         >
