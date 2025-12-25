@@ -175,7 +175,7 @@ function PropertiesPageContent() {
     }
     
     if (userProfile && userProfile.listingCredits && userProfile.listingCredits > 0) {
-      router.push('/settings?tab=listings');
+      router.push('/add-property');
     } else {
       setIsPaymentAlertOpen(true);
     }
