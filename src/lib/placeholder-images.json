@@ -194,9 +194,9 @@
     },
     {
       "id": "service-properties",
-      "description": "Exterior of a modern luxury apartment building",
-      "imageUrl": "https://ik.imagekit.io/farhaz/service-properties_H4s-UrQ5W.jpg",
-      "imageHint": "luxury apartment"
+      "description": "A modern residential house under construction.",
+      "imageUrl": "https://images.unsplash.com/photo-1593012671976-1422185230fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxSZXNpZGVudGlhbCUyMENvbnN0cnVjdGlvbnxlbnwwfHx8fDE3NjY2NzE0MDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "house construction"
     },
     {
       "id": "service-construction",
@@ -290,8 +290,8 @@
     },
     {
       "id": "service-styling",
-      "description": "A close-up of beautifully arranged decor on a coffee table.",
-      "imageUrl": "https://images.unsplash.com/photo-1598714805247-5dd440d87124?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHwlMjBob3VzZSUyMHdpdGglMjBnYXJkZW58ZW58MHx8fHwxNzY2NjcxMjc0fDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080",
+      "description": "A house with a lush green garden in front.",
+      "imageUrl": "https://images.unsplash.com/photo-1598714805247-5dd440d87124?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHwlMjBob3VzZSUyMHdpdGglMjBnYXJkZW58ZW58MHx8fHwxNzY2NjcxMjc0fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "house garden"
     },
     {
