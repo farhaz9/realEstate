@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -92,11 +93,11 @@ interface ImagePreview {
 }
 
 const steps = [
-    { title: "Basics", fields: ["title", "description"], icon: FileText },
-    { title: "Details", fields: ["price", "squareYards", "bedrooms", "bathrooms"], icon: Home },
-    { title: "Location", fields: ["location.address", "location.pincode", "location.state", "contactNumber", "whatsappNumber"], icon: MapPin },
-    { title: "Features", fields: ["listingType", "propertyType", "furnishing", "amenities", "overlooking", "ageOfConstruction"], icon: Star },
-    { title: "Photos", fields: [], icon: Upload },
+    { title: "Basics", icon: FileText, fields: ["title", "description"] },
+    { title: "Details", icon: Home, fields: ["price", "squareYards", "bedrooms", "bathrooms"] },
+    { title: "Location", icon: MapPin, fields: ["location.address", "location.pincode", "location.state", "contactNumber", "whatsappNumber"] },
+    { title: "Features", icon: Star, fields: ["listingType", "propertyType", "furnishing", "amenities", "overlooking", "ageOfConstruction"] },
+    { title: "Photos", icon: Upload },
     { title: "Preview", icon: Eye },
 ];
 
@@ -424,10 +425,6 @@ function AddPropertyForm() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
-
-  const handleBackClick = () => {
-    router.back();
-  }
   
   const variants = {
     enter: (direction: number) => ({
@@ -575,8 +572,14 @@ function AddPropertyForm() {
     <div className="bg-muted/40 min-h-screen">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto">
-            <Button variant="ghost" className="mb-6 -ml-4" onClick={handleBackClick}>
-                <ArrowLeft className="mr-2 h-4 w-4"/> Back
+            <div className="mb-6 hidden md:block">
+                <Button variant="ghost" onClick={() => router.back()}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back
+                </Button>
+            </div>
+             <Button variant="ghost" size="icon" onClick={() => router.back()} className="fixed top-4 left-4 z-50 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80 md:hidden">
+                <ArrowLeft className="h-5 w-5" />
             </Button>
             
             <Form {...form}>
