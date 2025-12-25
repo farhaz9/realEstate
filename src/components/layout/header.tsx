@@ -444,10 +444,10 @@ export default function Header() {
                           <>
                            <Button
                             variant="secondary"
-                            className="rounded-full h-10 flex items-center gap-2 shadow-sm md:hidden font-semibold px-4"
+                            className="rounded-full h-10 flex items-center gap-2 md:hidden font-semibold px-3 text-sm"
                             onClick={handlePostPropertyClick}
                            >
-                            Post
+                            Post Property
                           </Button>
                            <Button
                             variant="default"
@@ -476,11 +476,11 @@ export default function Header() {
                           </Button>
                            <Button
                             variant="secondary"
-                            className="rounded-full h-10 flex items-center gap-2 md:hidden font-semibold px-4"
+                            className="rounded-full h-10 flex items-center gap-2 md:hidden font-semibold px-3 text-sm"
                             onClick={handlePostPropertyClick}
                            >
-                            Post
-                          </Button>
+                            Post Property
+                           </Button>
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
                               <LogIn />
