@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SlidersHorizontal, Search, ArrowUpDown, LayoutGrid, ShoppingCart, Home, User, Building, X, Minus, Plus, MapPin } from 'lucide-react';
+import { SlidersHorizontal, Search, ArrowUpDown, LayoutGrid, ShoppingCart, Home, User, Building, X, Minus, Plus, MapPin, PlusCircle } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser, useDoc, updateDocumentNonBlocking } from '@/firebase';
 import type { Property, User } from '@/types';
 import { collection, query, orderBy, Query, where, doc, arrayUnion, serverTimestamp, increment } from 'firebase/firestore';
@@ -307,12 +307,20 @@ function PropertiesPageContent() {
 
   return (
     <div>
-      <section className="bg-background border-b sticky top-14 z-40">
+      <section className="bg-background border-b sticky top-16 z-40">
         <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4 mb-3">
+              <LocationDisplay />
+              <Button
+                variant="outline"
+                className="rounded-full h-10 hidden md:flex items-center"
+                onClick={handlePostAdClick}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Post Free Property
+              </Button>
+          </div>
           <div className="flex items-center gap-4">
-              <div className="hidden md:block">
-                  <LocationDisplay />
-              </div>
               <form onSubmit={handleSearch} className="relative flex-grow">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
                 <Input
@@ -328,7 +336,7 @@ function PropertiesPageContent() {
                 className="rounded-full h-12 hidden md:flex items-center shadow-sm relative"
                 onClick={handlePostAdClick}
                >
-                <Plus className="mr-2 h-4 w-4" />
+                <PlusCircle className="mr-2 h-4 w-4" />
                 Post Property
                 <div className="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase shadow-md">
                     Free
