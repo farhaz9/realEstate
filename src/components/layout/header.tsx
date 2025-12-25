@@ -362,23 +362,25 @@ export default function Header() {
                     </nav>
                 </div>
                 <SheetFooter className="p-4 mt-auto border-t space-y-2">
-                    <SheetClose asChild>
+                  {user ? (
+                    <>
+                      <SheetClose asChild>
                         <Button
                           variant="default"
                           className="w-full h-12 text-base font-bold relative"
                           onClick={handlePostPropertyClick}
                         >
-                           Post Property
-                           <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
+                          Post Property
+                          <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
                             Free
-                           </div>
+                          </div>
                         </Button>
                       </SheetClose>
-                  {user ? (
-                      <Button variant="outline" className="w-full h-12 text-base" onClick={handleSignOut}>
-                          <LogOut className="mr-2 h-5 w-5" />
-                          Log Out
+                      <Button variant="destructive" className="w-full h-12 text-base" onClick={handleSignOut}>
+                        <LogOut className="mr-2 h-5 w-5" />
+                        Log Out
                       </Button>
+                    </>
                   ) : (
                     <SheetClose asChild>
                         <Button asChild variant="default" className="w-full h-12 text-base">
