@@ -211,15 +211,10 @@ function AddPropertyForm() {
   }, [isEditMode, propertyToEdit, form, user, router, toast, isAdmin]);
 
   useEffect(() => {
-    if (!isEditMode && userProfile && userProfile.listingCredits === 0) {
-      toast({
-        title: "No Listing Credits",
-        description: "Please purchase a listing credit to post a property.",
-        variant: "destructive"
-      });
+    if (!isEditMode && userProfile && (userProfile.listingCredits ?? 0) <= 0) {
       router.push('/settings?tab=listings');
     }
-  }, [userProfile, router, toast, isEditMode]);
+  }, [userProfile, router, isEditMode]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -395,6 +390,13 @@ function AddPropertyForm() {
     setShowSuccess(true);
     
     setTimeout(() => {
+        if ((userProfile?.listingCredits ?? 0) <= 1 && !isEditMode) {
+            toast({
+                title: "You've used your last credit!",
+                description: "Purchase more to list another property.",
+                variant: "default",
+            });
+        }
         if (isAdmin) {
             router.back();
         } else {
@@ -574,7 +576,7 @@ function AddPropertyForm() {
 
   return (
     <div className="bg-muted/40 min-h-screen">
-      <div className="container mx-auto px-4 py-8 md:py-16">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
             <div className="mb-6 hidden md:block">
                 <Button variant="ghost" onClick={() => router.back()}>
