@@ -146,20 +146,25 @@ export default function HomePage() {
             <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none sm:hidden" />
             <div className="absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
           </div>
-           <div className="mt-8">
-            <UIButton asChild className="h-12 px-6 text-base font-semibold rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group">
-                <Link href="/add-property">
-                    <div className="flex items-center justify-center">
-                        <Plus className="mr-2 h-5 w-5 transition-transform group-hover:rotate-90" />
-                        Post Property
-                        <span className="ml-2 bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">FREE</span>
-                    </div>
-                </Link>
-            </UIButton>
-          </div>
         </div>
       </section>
       
+      <section className="py-8 bg-background">
+          <div className="container mx-auto px-4">
+              <div className="bg-primary/10 border border-primary/20 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+                  <div>
+                      <h2 className="text-2xl md:text-3xl font-bold text-primary">Post your Property for FREE</h2>
+                      <p className="text-muted-foreground mt-1">List your property in minutes and reach thousands of potential buyers.</p>
+                  </div>
+                  <UIButton asChild className="h-12 px-8 text-base font-semibold rounded-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex-shrink-0">
+                      <Link href="/add-property">
+                          Post Property
+                      </Link>
+                  </UIButton>
+              </div>
+          </div>
+      </section>
+
       <section id="offers" className="py-16 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
