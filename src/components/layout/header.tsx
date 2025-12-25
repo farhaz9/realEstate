@@ -452,12 +452,12 @@ export default function Header() {
                           </Button>
                            <Button
                             variant="default"
-                            className="rounded-full h-10 hidden md:flex items-center gap-2 shadow-sm"
+                            className="rounded-full h-10 hidden md:flex items-center shadow-sm"
                             onClick={handlePostPropertyClick}
                            >
-                            <Plus className="h-4 w-4" /> Post Property
+                            Post Property
                             {userProfile?.listingCredits !== undefined && userProfile.listingCredits > 0 && (
-                               <span className="ml-1 bg-primary-foreground/20 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                               <span className="ml-2 bg-primary-foreground/20 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
                                 {userProfile.listingCredits}
                                </span>
                             )}
