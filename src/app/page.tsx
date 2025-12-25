@@ -149,10 +149,19 @@ export default function HomePage() {
         </div>
       </section>
       
-      <section className="py-8 bg-background">
+      <section className="pb-8 bg-background">
         <div className="container mx-auto px-4">
             <div className="text-center">
-                <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative">
+                <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group flex items-center justify-center relative md:hidden">
+                    <Link href="/add-property">
+                        <Plus className="mr-2 h-5 w-5" />
+                        Post Property
+                        <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
+                          Free
+                        </div>
+                    </Link>
+                </UIButton>
+                 <UIButton asChild className="h-14 mt-4 w-full max-w-sm mx-auto text-lg font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 group items-center justify-center relative hidden md:flex">
                     <Link href="/add-property">
                         <Plus className="mr-2 h-5 w-5" />
                         Post Property
