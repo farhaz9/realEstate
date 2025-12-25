@@ -92,7 +92,7 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
 
   const isInWishlist = userProfile?.wishlist?.includes(property.id) ?? false;
 
-  const handleDelete = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (!firestore) return;
@@ -103,7 +103,6 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
       description: "The property listing has been successfully removed.",
       variant: "destructive",
     });
-    router.push('/settings?tab=listings');
   };
 
   const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -287,11 +286,13 @@ export function PropertyCard({ property, className, showActiveBadge = false, sea
                           <DropdownMenuSeparator />
                            <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                  <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-destructive focus:bg-destructive/10">
+                                  <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-destructive focus:bg-destructive/10"
+                                      onClick={(e) => e.stopPropagation()} // Prevent dropdown from closing
+                                  >
                                       <Trash2 className="mr-2 h-4 w-4" /> Delete
                                   </div>
                               </AlertDialogTrigger>
-                              <AlertDialogContent>
+                              <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                   <AlertDialogDescription>This will permanently delete your property listing. This action cannot be undone.</AlertDialogDescription>
