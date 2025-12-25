@@ -70,7 +70,7 @@ const propertyFormSchema = z.object({
     state: z.string().min(2, { message: 'State is required.' }),
   }),
   contactNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
-  whatsappNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
+  whatsappNumber: zstring().regex(/^[6-9]\d{9}$/, { message: 'Must be a valid 10-digit Indian mobile number.' }),
   propertyType: z.string().min(2, { message: 'Property type is required.' }),
   bedrooms: z.string().refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) >= 0, { message: 'Bedrooms must be a non-negative number.' }),
   bathrooms: z.string().refine(val => !isNaN(parseInt(val, 10)) && parseInt(val, 10) >= 0, { message: 'Bathrooms must be a non-negative number.' }),
@@ -109,6 +109,7 @@ function AddPropertyForm() {
   const searchParams = useSearchParams();
   const propertyId = searchParams.get('id');
   const isEditMode = !!propertyId;
+  const formRef = useRef<HTMLFormElement>(null);
   
   const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -279,6 +280,11 @@ function AddPropertyForm() {
   }, [userProfile]);
 
   async function handleFormSubmit(data: PropertyFormValues) {
+    if (currentStep < steps.length) {
+      nextStep();
+      return;
+    }
+
     if (!user || !userDocRef) {
       toast({ title: 'Authentication Error', description: 'Please log in to list a property.', variant: 'destructive' });
       router.push('/login');
@@ -406,6 +412,7 @@ function AddPropertyForm() {
     if (isValid) {
       setDirection(1);
       setCurrentStep(prev => prev + 1);
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -513,16 +520,17 @@ function AddPropertyForm() {
                 <ArrowLeft className="mr-2 h-4 w-4"/> Back
             </Button>
             
+            <Form {...form}>
+            <form ref={formRef} onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-12">
+
             <div className="mb-8">
                 <Stepper value={currentStep} onValueChange={setCurrentStep} className="mb-4">
                   {steps.map((step, index) => (
                     <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
                       <StepperTrigger>
-                        <div className="flex flex-col items-center gap-1 md:gap-2">
+                        <div className="flex flex-col items-center gap-1.5 text-center">
                             <StepperIndicator>{index + 1}</StepperIndicator>
-                            <div className="text-center">
-                                <StepperTitle className="text-xs md:text-sm">{step.title}</StepperTitle>
-                            </div>
+                            <StepperTitle className="text-xs sm:text-sm">{step.title}</StepperTitle>
                         </div>
                       </StepperTrigger>
                       {index < steps.length - 1 && <StepperSeparator />}
@@ -530,9 +538,6 @@ function AddPropertyForm() {
                   ))}
                 </Stepper>
             </div>
-
-            <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-12">
                <div className="overflow-hidden relative min-h-[500px]">
                  <AnimatePresence initial={false} custom={direction}>
                     <motion.div
@@ -801,16 +806,10 @@ function AddPropertyForm() {
                     <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 1 || isSubmitting}>
                         Back
                     </Button>
-                    {currentStep < steps.length ? (
-                        <Button type="button" onClick={nextStep} disabled={isSubmitting}>
-                            Next
-                        </Button>
-                    ) : (
-                         <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                            {isSubmitting ? 'Submitting...' : (isEditMode ? 'Save Changes' : 'List My Property')}
-                        </Button>
-                    )}
+                    <Button type="submit" disabled={isSubmitting}>
+                        {currentStep === steps.length ? (isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null) : null}
+                        {currentStep === steps.length ? (isSubmitting ? 'Submitting...' : (isEditMode ? 'Save Changes' : 'List My Property')) : 'Next'}
+                    </Button>
                 </div>
             </form>
             </Form>
@@ -827,4 +826,3 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
-
