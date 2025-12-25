@@ -371,10 +371,10 @@ function SettingsPageContent() {
       <div className="bg-muted/40 pb-12">
         <div className="container mx-auto px-4 py-6">
             <div className="relative flex justify-center items-center">
-                <h1 className="text-xl font-bold">Profile</h1>
-                 <Button asChild variant="ghost" size="icon" className="absolute right-0">
-                    <Link href="#"><Settings /></Link>
-                </Button>
+                <h1 className="text-xl font-bold flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Settings
+                </h1>
             </div>
              <div className="flex flex-col items-center mt-6">
                 <div className="relative group">
@@ -534,3 +534,5 @@ export default function SettingsPage() {
     </Suspense>
   )
 }
+
+    
