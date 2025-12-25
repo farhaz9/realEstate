@@ -41,6 +41,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { LocationDisplay } from '@/components/shared/location-display';
 import { Separator } from '@/components/ui/separator';
+import { PostPropertyButton } from '@/components/shared/post-property-button';
 
 declare const Razorpay: any;
 
@@ -310,17 +311,15 @@ function PropertiesPageContent() {
       <section className="bg-background border-b sticky top-16 z-40">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
               <LocationDisplay />
-              <Button
-                  className="rounded-full h-10 flex items-center relative pr-14"
-                  onClick={handlePostAdClick}
-                >
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  Post Property
-                  <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
-                    Free
-                  </div>
-                </Button>
+            </div>
+             <div className="flex md:hidden items-center">
+                <PostPropertyButton />
+             </div>
+             <div className="hidden md:flex items-center">
+                <PostPropertyButton />
+            </div>
           </div>
           <div className="flex items-center gap-4">
               <form onSubmit={handleSearch} className="relative flex-grow">
@@ -555,6 +554,7 @@ export default function PropertiesPage() {
         </Suspense>
     )
 }
+
 
 
 

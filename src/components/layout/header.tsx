@@ -55,6 +55,7 @@ import { useFirestore } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PostPropertyButton } from "@/components/shared/post-property-button";
 
 
 const navLinks = [
@@ -191,6 +192,7 @@ export default function Header() {
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   const isVendor = userProfile?.category === 'vendor';
   const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
+  const hasFreeCredit = user ? (userProfile?.listingCredits ?? 0) > 0 : true;
 
   const currentPlan = useMemo(() => {
     if (!userProfile?.transactions || userProfile.transactions.length === 0) {
@@ -321,19 +323,7 @@ export default function Header() {
 
                 <div className="flex-1 space-y-2 p-4 overflow-y-auto">
                     {user && (
-                         <SheetClose asChild>
-                            <Button
-                            variant="default"
-                            className="w-full h-12 text-base font-bold relative mb-2 justify-start pl-4"
-                            onClick={handlePostPropertyClick}
-                            >
-                            <PlusCircle className="mr-3 h-5 w-5" />
-                            Post Property
-                            <div className="absolute right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full uppercase">
-                                Free
-                            </div>
-                            </Button>
-                        </SheetClose>
+                        <PostPropertyButton className="w-full h-12 text-base font-bold relative mb-2 justify-start pl-4" />
                     )}
                     <nav className="flex flex-col gap-1">
                       {visibleNavLinks.map((link) => {
@@ -345,7 +335,7 @@ export default function Header() {
                                 className={cn(
                                   "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-all",
                                   isActive
-                                    ? "bg-muted text-primary"
+                                    ? "bg-primary/10 text-primary"
                                     : "text-foreground hover:bg-muted"
                                 )}
                               >
@@ -451,17 +441,7 @@ export default function Header() {
                           <Skeleton className="h-10 w-10 rounded-full" />
                       ) : user ? (
                           <>
-                           <Button
-                            variant="default"
-                            className="rounded-full h-10 hidden md:flex items-center relative pr-14 shadow-sm"
-                            onClick={handlePostPropertyClick}
-                           >
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Post Property
-                            <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
-                                Free
-                            </div>
-                          </Button>
+                           <PostPropertyButton className="rounded-full h-10 hidden md:flex items-center relative pr-14 shadow-sm" />
                           <UserNav />
                           </>
                       ) : (
@@ -469,15 +449,7 @@ export default function Header() {
                           <Button asChild variant="outline" className="rounded-full h-10 hidden md:flex">
                              <Link href="/login">Login</Link>
                           </Button>
-                           <Button
-                            className="rounded-full h-10 hidden md:flex items-center relative pr-14"
-                            onClick={handlePostPropertyClick}
-                           >
-                            <PlusCircle className="mr-2 h-4 w-4" /> Post Property
-                            <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
-                                Free
-                            </div>
-                          </Button>
+                           <PostPropertyButton className="rounded-full h-10 hidden md:flex items-center relative pr-14" />
                           <Button asChild variant="ghost" size="icon" className="rounded-full md:hidden">
                           <Link href="/login">
                               <LogIn />
