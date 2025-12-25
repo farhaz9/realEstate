@@ -312,13 +312,14 @@ function PropertiesPageContent() {
           <div className="flex items-center justify-between gap-4 mb-3">
               <LocationDisplay />
               <Button
-                variant="outline"
-                className="rounded-full h-10 flex items-center"
-                onClick={handlePostAdClick}
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Post Free Property
-              </Button>
+                  className="rounded-full h-10 flex items-center relative pr-14"
+                  onClick={handlePostAdClick}
+                >
+                  Post Property
+                  <div className="absolute right-1.5 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase">
+                    Free
+                  </div>
+                </Button>
           </div>
           <div className="flex items-center gap-4">
               <form onSubmit={handleSearch} className="relative flex-grow">
@@ -553,6 +554,7 @@ export default function PropertiesPage() {
         </Suspense>
     )
 }
+
 
 
 
