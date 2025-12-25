@@ -280,11 +280,6 @@ function AddPropertyForm() {
   }, [userProfile]);
 
   async function handleFormSubmit(data: PropertyFormValues) {
-    if (currentStep < steps.length) {
-      nextStep();
-      return;
-    }
-
     if (!user || !userDocRef) {
       toast({ title: 'Authentication Error', description: 'Please log in to list a property.', variant: 'destructive' });
       router.push('/login');
@@ -410,15 +405,23 @@ function AddPropertyForm() {
         }
     }
     if (isValid) {
-      setDirection(1);
-      setCurrentStep(prev => prev + 1);
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (currentStep < steps.length) {
+        setDirection(1);
+        setCurrentStep(prev => prev + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // This is the final step, so submit the form.
+        form.handleSubmit(handleFormSubmit)();
+      }
     }
   };
 
   const prevStep = () => {
-    setDirection(-1);
-    setCurrentStep(prev => prev - 1);
+    if(currentStep > 1) {
+        setDirection(-1);
+        setCurrentStep(prev => prev - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleBackClick = () => {
@@ -514,7 +517,7 @@ function AddPropertyForm() {
 
   return (
     <div className="bg-muted/40 min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto">
             <Button variant="ghost" className="mb-6 -ml-4" onClick={handleBackClick}>
                 <ArrowLeft className="mr-2 h-4 w-4"/> Back
@@ -806,7 +809,7 @@ function AddPropertyForm() {
                     <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 1 || isSubmitting}>
                         Back
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <Button type="button" onClick={nextStep} disabled={isSubmitting}>
                         {currentStep === steps.length ? (isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null) : null}
                         {currentStep === steps.length ? (isSubmitting ? 'Submitting...' : (isEditMode ? 'Save Changes' : 'List My Property')) : 'Next'}
                     </Button>
