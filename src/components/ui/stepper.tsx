@@ -134,36 +134,25 @@ const StepperItem = React.forwardRef<HTMLDivElement, StepperItemProps>(
 StepperItem.displayName = "StepperItem";
 
 // StepperTrigger
-interface StepperTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface StepperTriggerProps extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
 }
 
-const StepperTrigger = React.forwardRef<HTMLButtonElement, StepperTriggerProps>(
+const StepperTrigger = React.forwardRef<HTMLDivElement, StepperTriggerProps>(
   ({ asChild = false, className, children, ...props }, ref) => {
-    const { setActiveStep } = useStepper();
-    const { step, isDisabled } = useStepItem();
-
-    if (asChild) {
-      return <div className={className}>{children}</div>;
-    }
-
     return (
-      <button
+      <div
         ref={ref}
-        className={cn(
-          "inline-flex items-center gap-3 disabled:pointer-events-none disabled:opacity-50",
-          className,
-        )}
-        onClick={() => setActiveStep(step)}
-        disabled={isDisabled}
+        className={cn("inline-flex items-center gap-3", className)}
         {...props}
       >
         {children}
-      </button>
+      </div>
     );
   },
 );
 StepperTrigger.displayName = "StepperTrigger";
+
 
 // StepperIndicator
 interface StepperIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {

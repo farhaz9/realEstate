@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ImageUp, Loader2, Minus, Plus, X, ArrowLeft, Info, FileText, Banknote, Home, BedDouble, Bath, MapPin, Phone, Star, Building, Upload, Map, Eye } from 'lucide-react';
+import { ImageUp, Loader2, Minus, Plus, X, ArrowLeft, Info, FileText, Banknote, Home, BedDouble, Bath, MapPin, Phone, Star, Building, Upload, Map, Eye, Check } from 'lucide-react';
 import type { Property, User, AppSettings, Transaction } from '@/types';
 import React, { useState, useRef, useEffect, useMemo, Suspense } from 'react';
 import Image from 'next/image';
@@ -116,6 +116,7 @@ function AddPropertyForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -359,8 +360,7 @@ function AddPropertyForm() {
 
     if (isEditMode && propertyToEditRef) {
       const finalData = { ...propertyToEdit, ...propertyData };
-      setDocumentNonBlocking(propertyToEditRef, finalData, { merge: true });
-      toast({ title: 'Property Updated!', description: `Your property has been successfully updated.`, variant: 'success' });
+      await setDocumentNonBlocking(propertyToEditRef, finalData, { merge: true });
     } else {
       const propertiesCollection = collection(firestore, 'properties');
       
@@ -383,18 +383,20 @@ function AddPropertyForm() {
           isFeatured: isBusinessUser,
       };
       
-      addDocumentNonBlocking(propertiesCollection, newPropertyData);
-      updateDocumentNonBlocking(userDocRef, { listingCredits: increment(-1) });
-      toast({ title: 'Property Listed!', description: `Your property has been successfully listed.`, variant: 'success' });
+      await addDocumentNonBlocking(propertiesCollection, newPropertyData);
+      await updateDocumentNonBlocking(userDocRef, { listingCredits: increment(-1) });
     }
 
     setIsSubmitting(false);
+    setShowSuccess(true);
     
-    if (isAdmin) {
-        router.back();
-    } else {
-        router.push('/settings?tab=listings');
-    }
+    setTimeout(() => {
+        if (isAdmin) {
+            router.back();
+        } else {
+            router.push('/settings?tab=listings');
+        }
+    }, 2000);
   }
   
   const nextStep = async () => {
@@ -514,6 +516,61 @@ function AddPropertyForm() {
         </Card>
     );
   };
+  
+  if (showSuccess) {
+    return (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
+            <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative flex h-32 w-32 items-center justify-center"
+            >
+                <motion.svg
+                    className="absolute h-full w-full"
+                    viewBox="0 0 100 100"
+                    initial={{ strokeDasharray: "0, 283", stroke: "hsl(var(--primary))" }}
+                    animate={{ strokeDasharray: "283, 283" }}
+                    transition={{ duration: 0.6, ease: "easeInOut", delay: 0.2 }}
+                >
+                    <circle cx="50" cy="50" r="45" fill="none" strokeWidth="4" />
+                </motion.svg>
+                <motion.svg
+                    className="absolute h-16 w-16"
+                    viewBox="0 0 24 24"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.7 }}
+                >
+                    <path
+                        d="M20 6L9 17L4 12"
+                        fill="none"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </motion.svg>
+            </motion.div>
+            <motion.h2
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 1, duration: 0.3 }}
+                className="mt-4 text-xl font-semibold"
+            >
+                Property Listed!
+            </motion.h2>
+             <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 1.1, duration: 0.3 }}
+                className="text-muted-foreground"
+            >
+                Redirecting you to your listings...
+            </motion.p>
+        </div>
+    );
+  }
 
   return (
     <div className="bg-muted/40 min-h-screen">
@@ -524,15 +581,15 @@ function AddPropertyForm() {
             </Button>
             
             <Form {...form}>
-            <form ref={formRef} onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-12">
-
+            <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="space-y-12">
+            
             <div className="mb-8">
-                <Stepper value={currentStep} onValueChange={setCurrentStep} className="mb-4">
+                <Stepper value={currentStep}>
                   {steps.map((step, index) => (
                     <StepperItem key={index + 1} step={index + 1} className="[&:not(:last-child)]:flex-1">
-                      <StepperTrigger>
+                      <StepperTrigger asChild>
                         <div className="flex flex-col items-center gap-1.5 text-center">
-                            <StepperIndicator>{index + 1}</StepperIndicator>
+                            <StepperIndicator />
                             <StepperTitle className="text-xs sm:text-sm">{step.title}</StepperTitle>
                         </div>
                       </StepperTrigger>
@@ -541,8 +598,8 @@ function AddPropertyForm() {
                   ))}
                 </Stepper>
             </div>
-               <div className="overflow-hidden relative min-h-[500px]">
-                 <AnimatePresence initial={false} custom={direction}>
+               <div className="overflow-hidden relative">
+                 <AnimatePresence initial={false} custom={direction} mode="wait">
                     <motion.div
                       key={currentStep}
                       custom={direction}
@@ -829,3 +886,4 @@ export default function AddPropertyPage() {
     </Suspense>
   );
 }
+
