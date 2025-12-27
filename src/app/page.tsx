@@ -128,6 +128,9 @@ export default function HomePage() {
 
       <section className="py-12 bg-background overflow-hidden">
         <div className="container mx-auto px-4 text-center">
+            <div className="mb-12">
+                <PostPropertyButton className="h-14 w-full max-w-sm mx-auto text-lg" />
+            </div>
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
             Quick Actions
           </p>
@@ -147,14 +150,6 @@ export default function HomePage() {
             <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none sm:hidden" />
             <div className="absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
           </div>
-        </div>
-      </section>
-      
-      <section className="pb-8 bg-background">
-        <div className="container mx-auto px-4">
-            <div className="text-center">
-                <PostPropertyButton className="h-14 mt-4 w-full max-w-sm mx-auto text-lg" />
-            </div>
         </div>
       </section>
 
