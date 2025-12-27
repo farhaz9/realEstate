@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -16,7 +15,6 @@ export function PostPropertyButton({ className, ...props }: PostPropertyButtonPr
     const { user } = useUser();
     const firestore = useFirestore();
     const router = useRouter();
-    const pathname = usePathname();
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !user) return null;
@@ -25,14 +23,8 @@ export function PostPropertyButton({ className, ...props }: PostPropertyButtonPr
 
     const { data: userProfile } = useDoc<User>(userDocRef);
     
-    // Show badge if user is logged in and has exactly 1 credit (the initial free one)
-    const showFreeBadge = user && userProfile && (userProfile.listingCredits ?? 0) === 1 && (userProfile.transactions?.length ?? 0) === 0;
-    
-    // Don't show the button at all on these pages for unauthenticated users,
-    // as it's a primary CTA on those pages already.
-    if (!user && (pathname === '/' || pathname === '/properties')) {
-        return null;
-    }
+    // Show badge if user is not logged in, or if they are a new user with their initial free credit.
+    const showFreeBadge = !user || (!!userProfile && (userProfile.listingCredits ?? 0) === 1 && (userProfile.transactions?.length ?? 0) === 0);
 
     const handlePostPropertyClick = () => {
         if (!user) {
