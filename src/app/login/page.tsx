@@ -204,6 +204,9 @@ export default function LoginPage() {
     }
   }, [debouncedUsername, isLogin, isProfessional, checkUsernameUniqueness]);
 
+  const isPasswordStrong = (password: string) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password);
+  };
 
   const handleAuthError = (error: unknown) => {
     console.error(error);
@@ -287,6 +290,14 @@ export default function LoginPage() {
             variant: 'destructive',
             title: 'Passwords do not match',
             description: 'Please ensure both password fields are identical.',
+        });
+        return;
+      }
+      if (!isPasswordStrong(password)) {
+        toast({
+            variant: 'destructive',
+            title: 'Weak Password',
+            description: 'Please create a stronger password that meets all the requirements.',
         });
         return;
       }
@@ -597,7 +608,7 @@ export default function LoginPage() {
               <div className="flex flex-col gap-1.5">
                 <Label className="text-sm font-semibold text-[#374151] dark:text-gray-300" htmlFor="email">{isLogin ? 'Email or Username' : 'Email Address'}</Label>
                 <div className="relative group">
-                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="email" placeholder={isLogin ? "your@email.com or username" : "name@example.com"} type="text"/>
+                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-11 rounded-xl border border-[#e5e7eb] dark:border-gray-700 bg-white dark:bg-gray-800 px-4 pl-11 text-base text-[#111418] dark:text-white placeholder-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all duration-200" id="email" placeholder={isLogin ? "your@email.com or username" : "name@example.com"} type="email"/>
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200">
                     <User className="h-[22px] w-[22px]" />
                   </div>
@@ -688,4 +699,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
