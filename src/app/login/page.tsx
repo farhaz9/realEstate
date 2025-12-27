@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseError } from 'firebase/app';
 import Link from 'next/link';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, User as FirebaseUser, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, User as FirebaseUser, signOut, sendEmailVerification } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { Eye, EyeOff, AlertCircle, User, Mail, Lock, Home, KeyRound, Briefcase, Paintbrush2, CheckCircle2, Building2, Wrench, Check, Circle, Phone, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -263,6 +263,16 @@ export default function LoginPage() {
             const userCredential = await signInWithEmailAndPassword(auth, finalEmail, password);
             const user = userCredential.user;
 
+            if (!user.emailVerified) {
+              await signOut(auth);
+              toast({
+                  title: 'Email Not Verified',
+                  description: 'Please check your inbox and verify your email address to log in.',
+                  variant: 'destructive',
+              });
+              return;
+            }
+
             const userDocRef = doc(firestore, 'users', user.uid);
             const userDoc = await getDoc(userDocRef);
             if (userDoc.exists() && userDoc.data().isBlocked) {
@@ -355,17 +365,20 @@ export default function LoginPage() {
 
         await setDoc(userDocRef, userData);
         
-        // Send welcome email
-        if (user.email && fullName) {
-          await sendWelcomeEmail({ name: fullName, email: user.email });
-        }
+        await sendEmailVerification(user);
         
+        await signOut(auth);
+
         toast({
-          title: 'Sign Up Successful!',
-          description: 'Welcome to Falcon Estates! You have received 1 free listing credit.',
+          title: 'Almost there!',
+          description: "We've sent a verification link to your email. Please check your inbox to complete your sign-up.",
           variant: 'success',
+          duration: 10000,
         });
-        router.push('/');
+
+        // Toggle to login view so the user can log in after verifying
+        setIsLogin(true);
+
       } catch (error) {
         handleAuthError(error);
       }
