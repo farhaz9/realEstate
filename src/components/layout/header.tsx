@@ -192,7 +192,8 @@ export default function Header() {
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   const isVendor = userProfile?.category === 'vendor';
   const isCurrentlyVerified = userProfile?.isVerified && userProfile?.verifiedUntil && userProfile.verifiedUntil.toDate() > new Date();
-  const hasFreeCredit = user ? (userProfile?.listingCredits ?? 0) > 0 : true;
+  
+  const showFreeBadge = !user || (!!userProfile && (userProfile.listingCredits ?? 0) === 1 && (userProfile.transactions?.length ?? 0) === 0);
 
   const currentPlan = useMemo(() => {
     if (!userProfile?.transactions || userProfile.transactions.length === 0) {
@@ -322,9 +323,7 @@ export default function Header() {
              </SheetHeader>
 
                 <div className="flex-1 space-y-2 p-4 overflow-y-auto">
-                    {user && (
-                        <PostPropertyButton className="w-full h-12 text-base font-bold relative mb-2 justify-start pl-4" />
-                    )}
+                    <PostPropertyButton className="w-full h-12 text-base font-bold relative mb-2 justify-start pl-4" />
                     <nav className="flex flex-col gap-1">
                       {visibleNavLinks.map((link) => {
                           const isActive = pathname === link.href;
@@ -335,7 +334,7 @@ export default function Header() {
                                 className={cn(
                                   "flex items-center gap-3 rounded-lg px-4 py-3 text-base font-semibold transition-all",
                                   isActive
-                                    ? "text-primary"
+                                    ? "text-primary bg-transparent"
                                     : "text-foreground hover:bg-muted"
                                 )}
                               >
