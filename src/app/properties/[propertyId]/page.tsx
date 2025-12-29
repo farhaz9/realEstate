@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -26,6 +25,22 @@ import { WhatsAppIcon } from '@/components/icons/whatsapp-icon';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { FirestorePermissionError, errorEmitter } from '@/firebase';
+import type { Metadata } from 'next';
+
+// This is a server-side function, but we can't use it directly in this client component.
+// It's here to show what would be needed for server-side metadata generation.
+// Since this is a client component, metadata will be handled on the client side via useEffect.
+export async function generateMetadata({ params }: { params: { propertyId: string } }): Promise<Metadata> {
+  const propertyId = params.propertyId;
+  // In a real server component, you'd fetch the property data here.
+  // For now, we'll return generic metadata.
+  
+  return {
+    title: `Property Details`,
+    description: "View details for this luxury property listing on Falcon Estates.",
+  };
+}
+
 
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
@@ -129,6 +144,17 @@ export default function PropertyDetailPage() {
 
   const { data: relatedPropertiesData } = useCollection<Property>(relatedPropertiesQuery);
   const relatedProperties = relatedPropertiesData?.filter(p => p.id !== propertyId);
+  
+    useEffect(() => {
+    if (property) {
+      document.title = `${property.title} | Falcon Estates`;
+      
+      const descriptionMeta = document.querySelector('meta[name="description"]');
+      if (descriptionMeta) {
+        descriptionMeta.setAttribute('content', property.description.slice(0, 155));
+      }
+    }
+  }, [property]);
 
   const isInWishlist = userProfile?.wishlist?.includes(propertyId) ?? false;
   
@@ -308,8 +334,42 @@ export default function PropertyDetailPage() {
 
   const listingDate = property.dateListed?.toDate ? property.dateListed.toDate() : (property.dateListed ? new Date(property.dateListed) : null);
   const isOwnerVerified = owner?.verifiedUntil && owner.verifiedUntil.toDate() > new Date();
+  
+    const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@type": "Residence",
+    name: property.title,
+    description: property.description,
+    image: mainImage,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: property.location.address,
+      addressLocality: property.location.state,
+      addressRegion: property.location.state,
+      postalCode: property.location.pincode,
+      addressCountry: "IN",
+    },
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: "INR",
+      availability: "https://schema.org/InStock",
+      url: typeof window !== 'undefined' ? window.location.href : '',
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: property.location.latitude,
+      longitude: property.location.longitude,
+    },
+  };
+
 
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
     <div className="bg-muted/40 pb-24 md:pb-8">
        <div className="container mx-auto px-4 pt-8">
         <div className="mb-6 hidden md:block">
@@ -555,5 +615,6 @@ export default function PropertyDetailPage() {
       </div>
 
     </div>
+    </>
   );
 }

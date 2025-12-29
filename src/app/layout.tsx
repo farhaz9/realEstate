@@ -19,39 +19,27 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://estates.falconaxe.com";
+const siteUrl = "https://estates.falconaxe.com";
 const siteTitle = "Falcon Estates | Buy, Sell, Rent Properties in India | Real Estate & Interior Design";
 const siteDescription = "Your premier destination for real estate in India. Falcon Estates helps you buy, sell, and rent properties, with a special focus on Delhi. Explore verified listings for apartments, plots, and homes with expert interior design services.";
-
-// Favicon generation
-const faviconSvg = `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22white%22></rect><text x=%2250%22 y=%2250%22 font-size=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Poppins, sans-serif%22 font-weight=%22600%22><tspan fill=%22black%22>F</tspan><tspan fill=%22%236D28D9%22>E</tspan></text></svg>`;
-const faviconDataUrl = `data:image/svg+xml,${faviconSvg}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: siteTitle,
-    template: `%s | Falcon Estates`,
+    default: "Falcon Estates – Buy, Sell & Rent Premium Properties",
+    template: "%s | Falcon Estates",
   },
-  description: siteDescription,
-  keywords: [
-    "Falcon Estates",
-    "real estate India",
-    "buy property India",
-    "rent property India",
-    "property listings",
-    "real estate in Delhi",
-    "property in rohini",
-    "buy property delhi",
-    "sell property delhi",
-    "rent house rohini",
-    "apartments in rohini",
-    "plots in delhi",
-    "interior design delhi",
-  ],
+  description: "Find verified properties across India with Falcon Estates.",
+  alternates: {
+    canonical: siteUrl,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     title: siteTitle,
-    description: "Trusted real estate platform for buyers, sellers, and interior design in India, with a focus on Delhi.",
+    description: siteDescription,
     url: siteUrl,
     siteName: "Falcon Estates",
     type: "website",
@@ -65,17 +53,16 @@ export const metadata: Metadata = {
     ],
     locale: 'en_IN',
   },
-  robots: "index, follow",
   twitter: {
     card: 'summary_large_image',
     title: siteTitle,
     description: siteDescription,
-    images: [`/og-image.jpg`],
+    images: [`${siteUrl}/og-image.jpg`],
   },
   icons: {
-    icon: faviconDataUrl,
-    shortcut: faviconDataUrl,
-    apple: faviconDataUrl,
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
