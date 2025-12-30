@@ -27,21 +27,6 @@ import { useRouter } from 'next/navigation';
 import { FirestorePermissionError, errorEmitter } from '@/firebase';
 import type { Metadata } from 'next';
 
-// This is a server-side function, but we can't use it directly in this client component.
-// It's here to show what would be needed for server-side metadata generation.
-// Since this is a client component, metadata will be handled on the client side via useEffect.
-export async function generateMetadata({ params }: { params: { propertyId: string } }): Promise<Metadata> {
-  const propertyId = params.propertyId;
-  // In a real server component, you'd fetch the property data here.
-  // For now, we'll return generic metadata.
-  
-  return {
-    title: `Property Details`,
-    description: "View details for this luxury property listing on Falcon Estates.",
-  };
-}
-
-
 const amenityIcons: { [key: string]: React.ElementType } = {
   'gym': Dumbbell,
   'swimming pool': Droplets,
