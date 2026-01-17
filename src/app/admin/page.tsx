@@ -429,9 +429,9 @@ export default function AdminPage() {
   }, [firestore]);
 
   const notificationsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !isAuthorizedAdmin) return null;
     return query(collection(firestore, 'notifications'), orderBy('timestamp', 'desc'));
-  }, [firestore]);
+  }, [firestore, isAuthorizedAdmin]);
 
   const { data: properties, isLoading: isLoadingProperties } = useCollection<Property>(allPropertiesQuery);
   const { data: users, isLoading: isLoadingUsers } = useCollection<User>(allUsersQuery);
